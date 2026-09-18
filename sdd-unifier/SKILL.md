@@ -1,6 +1,13 @@
 ---
 name: sdd-unifier
-description: Generate, transform, or reformat Solution Design Documents (SDDs) into the user's standardised template. ALWAYS trigger when the user asks to create, generate, author, draft, write, or build an SDD, Solution Design Document, technical design document, system design document, HLD, or architecture design document. ALSO trigger when asked to transform, convert, reformat, standardise, unify, or migrate an existing SDD or technical design into this template. ALSO trigger when asked to derive, generate, or scaffold an SDD from a BRD (including the chunked or combined output of the brd-unifier skill). Output is Markdown only. Accepts an explicit mode argument: `sdd-unifier chunks` produces the multi-file chunked layout; `sdd-unifier combined` produces a single monolithic SDD; `sdd-unifier` with no argument defaults to chunks (Enter / empty / `y` / `chunks` all confirm). Default mode is CHUNKS. The skill can generate from scratch, transform an existing SDD into this template, or derive an SDD skeleton from one BRD (chunked folder or single file). This skill owns the entire HOW: the BRD (brd-unifier) is business-language only — user journeys, per-persona UC-NN use cases, a Users & Use Cases Matrix, business-level integrations and NFRs — so the SDD supplies all technical decisions, reading the BRD's Appendix § Technical Inputs for the SDD (source technical mandates parked verbatim) and falling back to CLAUDE.md defaults plus the platform architecture doctrine (EDA + DDD + hexagonal). The §6 Ecosystem Overview is never filled silently: the skill first offers the proposed ecosystem for a one-shot accept-all, and if declined walks the user through the items with BRD-informed recommendations. The template carries three platform-level catalogues beyond the per-service specs: a Centralized Event Hub (chunk 10 — the contract registry for topic names, event names, and payload contracts, which every per-service chunk must match verbatim), a Centralized User Roles & Authorities catalogue (chunk 11), and an End-to-End System Design chunk (chunk 16, authored last). The `Specs` section (Mission, Tech Stack, Roadmap, Project Type) is owned by lld-unifier, not this skill; Project Type (greenfield/brownfield) is still asked at SDD intake and gates the whole generation. Every generation run ends with a post-generation cleared-context reviewer pass producing an `Open Items & Clarifications` section (chunk 17) where every item carries a concrete Recommended Answer; the skill then walks the user through each item to accept, adjust, or defer, and reflects accepted answers into the SDD body. All diagrams are authored as inline Mermaid by default; Miro boards are produced only on explicit request.
+description: >-
+  Generate, transform, or reformat a Solution Design Document (SDD) into the user's standard
+  template. Use when asked to create, draft, write, or build an SDD, technical design, system
+  design, HLD, or architecture design document; to convert an existing SDD or technical design into
+  this template; or to derive an SDD from a BRD (including brd-unifier output). The SDD owns the
+  technical HOW: architecture, services, a centralized event hub, user roles, cross-cutting
+  concerns, and an end-to-end design. Arguments: [chunks|combined], default chunks. Output is
+  Markdown only, with inline Mermaid diagrams.
 ---
 
 # SDD Unifier
@@ -10,6 +17,22 @@ Author, transform, and unify Solution Design Documents (SDDs) into the user's st
 The embedded templates in this skill folder are the authoritative source — `TEMPLATE-COMBINED.md` for the single-file layout and `chunks/*.md` for the chunked layout. Both were lifted verbatim from the user's working templates at `W:\ITV\STANDARDZzzz\`.
 
 This skill is a sibling of `brd-unifier` — they work in concert when the workflow is SoW → BRD → SDD.
+
+---
+
+## Running outside Claude Code
+
+This skill follows the Agent Skills format and also runs in Codex, Kimi Code, and other compatible agents. Where the text names a Claude Code tool or file, use the equivalent below. In Claude Code, follow the text as written.
+
+| Written as | Outside Claude Code |
+|---|---|
+| `CLAUDE.md` defaults | The project instruction file (`AGENTS.md`, or `CLAUDE.md` if present). If neither states a default, use the defaults this skill states and flag the gap. |
+| `Agent` tool with a `subagent_type` | Start a sub-agent with a fresh context if the runtime supports it. Otherwise run the step yourself as a separate pass: re-read the files from disk, set aside your drafting reasoning, and follow the same brief. For a named agent (for example `general-purpose` or a `plugin:agent` name), take on the role its brief describes. |
+| `AskUserQuestion` (and `ToolSearch` to load it) | Ask in chat: numbered questions, each with options, tradeoffs, and your recommendation first. Wait for the answer before continuing. |
+| Miro MCP | Use only if a Miro tool is available; otherwise follow this skill's rule for when Miro is unavailable. |
+| Invoking this skill | Claude Code: `/<skill-name> <args>`. Codex: `$<skill-name> <args>`. Kimi Code: `/skill:<skill-name> <args>`. |
+
+Paths in this file are relative to the skill folder.
 
 ---
 

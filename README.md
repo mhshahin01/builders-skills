@@ -152,13 +152,13 @@ Chunk 17 holds the Open Items and Clarifications from the reviewer pass.
 
 ## Installation and usage
 
-These skills run in two environments.
+These skills follow the open Agent Skills format (`SKILL.md` folders) and run in Claude (claude.ai and Claude Code), OpenAI Codex, and Kimi Code. Each `SKILL.md` has a "Running outside Claude Code" section that maps Claude-only tools to plain fallbacks.
 
 ### claude.ai (web or desktop)
 
 Upload each skill through Settings, under Capabilities or Customize, then Skills. Each skill must be a folder containing its `SKILL.md` (plus any reference files), zipped and uploaded individually, then toggled on. Custom skills are private to your account; on Team or Enterprise plans an owner can optionally share them org-wide.
 
-Note the 1024-character cap on the `description` frontmatter field on upload. The current descriptions are tuned for Claude Code triggering and run longer than that, so trim the description in the zipped copy before uploading.
+Note the 1024-character cap on the `description` frontmatter field. All descriptions are kept under it and written as YAML block scalars (`description: >-`) so strict parsers accept them; keep both rules when editing.
 
 ### Claude Code (CLI)
 
@@ -175,6 +175,44 @@ dir $env:USERPROFILE\.claude\skills
 ```
 
 Common failure causes if a skill does not appear: the session was not reloaded, Windows extraction created a double-nested folder, or the `SKILL.md` frontmatter is invalid. Two caveats for CLI use: the Miro MCP must be configured separately via `claude mcp add`, and the pre-BRD Excel export needs Python with `openpyxl` installed.
+
+### Codex and Kimi Code
+
+Both scan `~/.agents/skills` for user-level skills (Kimi also reads `~/.kimi-code/skills`; Codex also reads `.agents/skills` in a repo). Keep this repo as the single source and link each skill in with a junction, so edits here apply everywhere:
+
+```powershell
+$src = "$env:USERPROFILE\.claude\skills"; $dst = "$env:USERPROFILE\.agents\skills"
+foreach ($s in 'pre-brd-unifier','brd-unifier','sdd-unifier','lld-unifier','business-reviewer-unifier') {
+  New-Item -ItemType Junction -Path "$dst\$s" -Target "$src\$s"
+}
+```
+
+| Agent | List skills | Invoke explicitly | Automatic |
+| ----- | ----------- | ----------------- | --------- |
+| Claude Code | `/skills` | `/brd-unifier chunks parts` | Yes, from the description |
+| Codex (CLI, IDE, app) | `/skills` | `$brd-unifier chunks parts` | Yes, from the description |
+| Kimi Code | ask "which skills do you have" | `/skill:brd-unifier chunks parts` | Yes, from the description |
+
+Differences outside Claude Code: agents without sub-agents run the reviewer pass in the same context (weaker than Claude's fresh-context review), and questions are asked in chat instead of through a question tool. The pre-BRD Excel export needs Python with `openpyxl` in every runtime.
+
+### How to use each skill
+
+Call a skill by name with its arguments, or just describe the task in plain words and the agent picks the skill from its description. The prefix depends on the agent: `/` in Claude Code, `$` in Codex, `/skill:` in Kimi Code.
+
+| Skill | Arguments | Claude Code | Codex | Kimi Code | Plain-words example |
+| ----- | --------- | ----------- | ----- | --------- | ------------------- |
+| pre-BRD | `[chunks\|combined]` | `/pre-brd-unifier chunks` | `$pre-brd-unifier chunks` | `/skill:pre-brd-unifier chunks` | "Validate this idea with a pre-BRD" |
+| BRD | `[chunks\|combined] [parts\|whole]` | `/brd-unifier chunks parts` | `$brd-unifier chunks parts` | `/skill:brd-unifier chunks parts` | "Turn this SoW into a BRD" |
+| SDD | `[chunks\|combined]` | `/sdd-unifier chunks` | `$sdd-unifier chunks` | `/skill:sdd-unifier chunks` | "Derive an SDD from the BRD in ./brd-acme" |
+| LLD | `[chunks\|combined]` | `/lld-unifier chunks` | `$lld-unifier chunks` | `/skill:lld-unifier chunks` | "Write the LLD for the wallet service from the SDD" |
+| Business reviewer | `[panel\|walkthrough\|apply\|verify]` | `/business-reviewer-unifier panel` | `$business-reviewer-unifier panel` | `/skill:business-reviewer-unifier panel` | "Review the BRD and SDD from different angles" |
+
+Tips:
+
+- Run from the project folder where the documents should be written; each skill writes its chunks there.
+- Point the skill at its input: an idea or notes for pre-BRD, a SoW or old BRD for BRD, the BRD folder for SDD, the SDD folder or a code path for LLD.
+- In `parts` mode the BRD stops after parts 1 and 2; reply "continue" to go on.
+- Say "export to Excel" after approving a pre-BRD to get the `.xlsx`.
 
 ---
 

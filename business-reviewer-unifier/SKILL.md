@@ -1,6 +1,14 @@
 ---
 name: business-reviewer-unifier
-description: Run a multi-angle adversarial review panel over business and design documents (pure-business docs, domain identification, service boundaries, project preparation, BRDs, SDDs) and drive the findings to resolution. ALWAYS trigger when the user asks to review documents from different angles, run a review panel, run a multi-agent or multi-angle review, challenge the docs, do a business review, or adversarially review a document chain. ALSO trigger when asked to resume a review, walk through review points, apply review comments, or verify applied review changes. Produces and maintains a persistent review-comments-tracker.md in the project root. Accepts an explicit phase argument; `business-reviewer-unifier panel` dispatches the reviewer panel and builds the tracker; `walkthrough` resumes point-by-point resolution; `apply` applies decided points chain-wide; `verify` runs the cleared-context consistency re-review and versioning. With no argument, the phase is detected from the tracker file state. This is the cross-document panel review; it is distinct from the single-agent post-generation reviewer pass embedded in brd-unifier, sdd-unifier, and pre-brd-unifier. Sibling of those skills; it typically consumes their outputs.
+description: >-
+  Run a multi-angle adversarial review panel over business and design documents (business docs,
+  domain identification, service boundaries, project preparation, BRDs, SDDs) and drive the findings
+  to resolution. Use when asked to review documents from different angles, run a review panel or
+  multi-agent review, challenge the docs, do a business review, resume a review, walk through review
+  points, apply review comments, or verify applied changes. Keeps a review-comments-tracker.md in
+  the project root. Arguments: [panel|walkthrough|apply|verify]; with none, the phase is detected
+  from the tracker. This is the cross-document panel, not the single reviewer pass built into
+  brd-unifier, sdd-unifier, and pre-brd-unifier.
 ---
 
 # Business Reviewer Unifier
@@ -8,6 +16,22 @@ description: Run a multi-angle adversarial review panel over business and design
 Run an adversarial, multi-persona review of a business document chain, merge
 the findings into a persistent tracker, walk the user through each point with
 full context, apply decisions chain-wide, then verify and version.
+
+---
+
+## Running outside Claude Code
+
+This skill follows the Agent Skills format and also runs in Codex, Kimi Code, and other compatible agents. Where the text names a Claude Code tool or file, use the equivalent below. In Claude Code, follow the text as written.
+
+| Written as | Outside Claude Code |
+|---|---|
+| `CLAUDE.md` defaults | The project instruction file (`AGENTS.md`, or `CLAUDE.md` if present). If neither states a default, use the defaults this skill states and flag the gap. |
+| `Agent` tool with a `subagent_type` | Start a sub-agent with a fresh context if the runtime supports it. Otherwise run the step yourself as a separate pass: re-read the files from disk, set aside your drafting reasoning, and follow the same brief. For a named agent (for example `general-purpose` or a `plugin:agent` name), take on the role its brief describes. |
+| `AskUserQuestion` (and `ToolSearch` to load it) | Ask in chat: numbered questions, each with options, tradeoffs, and your recommendation first. Wait for the answer before continuing. |
+| Miro MCP | Use only if a Miro tool is available; otherwise follow this skill's rule for when Miro is unavailable. |
+| Invoking this skill | Claude Code: `/<skill-name> <args>`. Codex: `$<skill-name> <args>`. Kimi Code: `/skill:<skill-name> <args>`. |
+
+Paths in this file are relative to the skill folder.
 
 ---
 

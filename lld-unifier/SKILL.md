@@ -1,6 +1,13 @@
 ---
 name: lld-unifier
-description: Generate, transform, or reformat Low-Level Design Documents (LLDs) into the user's standardised template. ALWAYS trigger when the user asks to create, generate, author, draft, write, build, or unify an LLD, Low-Level Design, low-level design document, implementation design, detailed design, or service design. ALSO trigger when asked to reverse-engineer an LLD from existing code (from-code mode), or to derive an LLD from an SDD (from-sdd mode), or to compare an SDD against existing code and produce a unified LLD with drift markers (hybrid mode). The skill is bidirectional — it can author the LLD before code exists (greenfield, from SDD/BRD) or after code exists (reverse-engineering). Output is Markdown only. Accepts an explicit shape argument: `lld-unifier chunks` produces multi-file chunked layout (default); `lld-unifier combined` produces a single monolithic LLD. The skill ALWAYS asks the user which mode (from-code / from-sdd / hybrid) at the start of any invocation. The skill OWNS the constitution-grade Specs section (Mission, Tech Stack, Roadmap, Project Type — chunk `17-specs.md`; combined: `# 20. Specs`), synthesised AFTER the LLD body from the source SDD as the direct input for speckit `/constitution`; legacy chains carried a Specs at the SDD's `15-specs.md` or the BRD's `12-specs.md` and those are consumed as read-only input. Project Type adjusts the suggested direction and Tech Stack steers pattern selection and version pinning. The skill orchestrates two specialist agents — `feature-dev:code-explorer` for structural discovery and `code-documentation:docs-architect` for narrative synthesis — to produce implementation-ready LLDs that any AI agent or developer can execute against. Every generation run ends with a post-generation cleared-context reviewer pass producing an `Open Items & Clarifications` chunk that complements the author-generated open-questions index. Diagrams are inline Mermaid by default; Miro links are optional for whiteboard-richer visuals.
+description: >-
+  Generate, transform, or reformat a Low-Level Design (LLD) into the user's standard template. Use
+  when asked to create, draft, write, build, or unify an LLD, low-level design, implementation
+  design, detailed design, or service design. Three modes, always asked first: from-sdd (design
+  before code exists), from-code (reverse-engineer an LLD from a codebase), and hybrid (compare an
+  SDD with the code and mark drift). Also owns the Specs section (Mission, Tech Stack, Roadmap,
+  Project Type) used as input for speckit /constitution. Arguments: [chunks|combined], default
+  chunks. Output is Markdown only.
 ---
 
 # LLD Unifier
@@ -16,6 +23,22 @@ SoW → BRD (brd-unifier) → SDD (sdd-unifier) → LLD (lld-unifier) → implem
 ```
 
 It is the bridge from architectural intent to executable code: the LLD it produces is intended to be consumed directly by an AI implementer (or human developer) to write the source code.
+
+---
+
+## Running outside Claude Code
+
+This skill follows the Agent Skills format and also runs in Codex, Kimi Code, and other compatible agents. Where the text names a Claude Code tool or file, use the equivalent below. In Claude Code, follow the text as written.
+
+| Written as | Outside Claude Code |
+|---|---|
+| `CLAUDE.md` defaults | The project instruction file (`AGENTS.md`, or `CLAUDE.md` if present). If neither states a default, use the defaults this skill states and flag the gap. |
+| `Agent` tool with a `subagent_type` | Start a sub-agent with a fresh context if the runtime supports it. Otherwise run the step yourself as a separate pass: re-read the files from disk, set aside your drafting reasoning, and follow the same brief. For a named agent (for example `general-purpose` or a `plugin:agent` name), take on the role its brief describes. |
+| `AskUserQuestion` (and `ToolSearch` to load it) | Ask in chat: numbered questions, each with options, tradeoffs, and your recommendation first. Wait for the answer before continuing. |
+| Miro MCP | Use only if a Miro tool is available; otherwise follow this skill's rule for when Miro is unavailable. |
+| Invoking this skill | Claude Code: `/<skill-name> <args>`. Codex: `$<skill-name> <args>`. Kimi Code: `/skill:<skill-name> <args>`. |
+
+Paths in this file are relative to the skill folder.
 
 ---
 

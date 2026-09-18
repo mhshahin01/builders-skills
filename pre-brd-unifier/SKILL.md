@@ -1,6 +1,15 @@
 ---
 name: pre-brd-unifier
-description: Generate, transform, or reformat a pre-BRD (the discovery layer that runs before a full BRD) into the user's standardised 22-framework template across five tiers (Idea Definition, Market & Competition, Prioritization, Strategy & Planning, Synthesis). ALWAYS trigger when the user asks to create, generate, author, draft, write, or build a pre-BRD, PRE-BRD, discovery doc, market study, idea validation, or go/no-go analysis. ALSO trigger when asked to transform notes, an idea, a concept brief, or a Scope of Work into the pre-BRD template, or to run a competitor/market-sizing/PESTLE/SWOT/RICE analysis, an investor-style Go vs No-Go scoring, or a go-to-market strategy as part of pre-BRD discovery. Runs multi-agent web research (market sizing, competitor scan, macro and internal factor analysis) to fill the frameworks with sourced values. Output is Markdown only by default. Accepts an explicit mode argument: `pre-brd-unifier chunks` produces the multi-file chunked layout; `pre-brd-unifier combined` produces a single consolidated file; `pre-brd-unifier` with no argument prompts (chunks is the default). On demand AFTER the user reviews and approves the Markdown, it exports a styled .xlsx that clones the reference workbook PRE-BRD v1.1.xlsx with identical fonts, settings, sample columns, and live formulas. Excel is never produced from the argument and never before approval.
+description: >-
+  Generate, transform, or reformat a pre-BRD (the discovery layer before a BRD) into the user's
+  standard 22-framework template across five tiers, ending in a go/no-go scoreboard and an investor
+  assessment. Use when asked to create, draft, write, or build a pre-BRD, discovery doc, market
+  study, idea validation, or go/no-go analysis; to turn notes, an idea, a concept brief, or a Scope
+  of Work into the pre-BRD template; or to run a competitor, market-sizing, PESTLE, SWOT, or RICE
+  analysis, investor-style Go vs No-Go scoring, or go-to-market strategy as part of discovery. Runs
+  multi-agent web research to fill the frameworks with sourced values. Arguments: [chunks|combined].
+  Output is Markdown; a styled .xlsx export is produced only on request, after the user approves the
+  Markdown.
 ---
 
 # Pre-BRD Unifier
@@ -8,6 +17,22 @@ description: Generate, transform, or reformat a pre-BRD (the discovery layer tha
 Author, transform, and unify a pre-BRD: 22 analysis and market-study frameworks across five tiers, ending in a mechanical go/no-go Executive Summary Scoreboard followed by an independent Investor Assessment (chunk 23). This is the discovery-layer companion to `brd-unifier` - it performs the analysis (market sizing, competitor scan, macro/competitive/internal factors) rather than templating requirements.
 
 The embedded templates in `chunks/` are the authoritative section skeletons. The embedded `reference/PRE-BRD-v1.1.xlsx` is the authoritative styling + formula source for Excel export.
+
+---
+
+## Running outside Claude Code
+
+This skill follows the Agent Skills format and also runs in Codex, Kimi Code, and other compatible agents. Where the text names a Claude Code tool or file, use the equivalent below. In Claude Code, follow the text as written.
+
+| Written as | Outside Claude Code |
+|---|---|
+| `CLAUDE.md` defaults | The project instruction file (`AGENTS.md`, or `CLAUDE.md` if present). If neither states a default, use the defaults this skill states and flag the gap. |
+| `Agent` tool with a `subagent_type` | Start a sub-agent with a fresh context if the runtime supports it. Otherwise run the step yourself as a separate pass: re-read the files from disk, set aside your drafting reasoning, and follow the same brief. For a named agent (for example `general-purpose` or a `plugin:agent` name), take on the role its brief describes. |
+| `AskUserQuestion` (and `ToolSearch` to load it) | Ask in chat: numbered questions, each with options, tradeoffs, and your recommendation first. Wait for the answer before continuing. |
+| Miro MCP | Use only if a Miro tool is available; otherwise follow this skill's rule for when Miro is unavailable. |
+| Invoking this skill | Claude Code: `/<skill-name> <args>`. Codex: `$<skill-name> <args>`. Kimi Code: `/skill:<skill-name> <args>`. |
+
+Paths in this file are relative to the skill folder.
 
 ---
 

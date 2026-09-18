@@ -1,6 +1,13 @@
 ---
 name: brd-unifier
-description: Generate, transform, or reformat Business Requirements Documents (BRDs and BRD-HLDs) into the user's standardised template. ALWAYS trigger when the user asks to create, generate, author, draft, write, or build a BRD, BRD-HLD, Business Requirements Document, or High-Level Design. ALSO trigger when asked to transform, convert, reformat, standardise, unify, or migrate a Scope of Work (SoW), Statement of Work, project brief, product spec, RFP scope, or an existing BRD into this template. ALSO trigger to update a BRD's product-manager to-do (`14-todo.md`), to add the use-case diagrams and flowcharts (to-do step 5), or to generate or refresh the implementation plan, the UAT/BAT test cases, or the presentation and video brief. Output is Markdown only. Accepts an explicit mode argument; `brd-unifier chunks` produces the multi-file chunked layout; `brd-unifier combined` produces a single monolithic BRD; `brd-unifier` with no argument prompts the user to choose. A second, optional argument sets the generation option: `parts` (default in chunks mode: three parts, stopping for the user's review after parts 1 and 2) or `whole` (everything in one go). The skill can either generate from scratch (using context, conversation, or a SoW) or transform an existing document (old-format BRD, single-file BRD, scattered notes) into the unified template. The BRD is business-language only; it states the WHAT — user journeys, per-user use cases with detailed steps (UC-NN blocks), a Users & Use Cases permission matrix, business-level integrations (e.g., "Integration with Payment Gateway"), and NFRs phrased as business expectations (highly available, scalable). No technical stack, no technical terminology — the HOW is owned by sdd-unifier; the constitution-grade Specs section is owned by lld-unifier. The whole BRD is written in plain language: simple, clear, precise, easy to understand, no complex words. Every full generation ends with a post-generation cleared-context reviewer pass (chunk 13; in `parts`, during part 3) producing an `Open Items & Clarifications` section where every item carries a concrete Recommended Answer; the skill then walks the user through each item to accept, adjust, or defer, and reflects accepted answers into the BRD body. It then writes `14-todo.md`, the product-manager checklist. `15-implementation.md`, `16-uat-bat-test-cases.md`, and `17-for-ppt.md` are locked until that to-do is fully cleared. All diagrams are authored as inline Mermaid by default; Miro boards are produced only on explicit request.
+description: >-
+  Generate, transform, or reformat a Business Requirements Document (BRD or BRD-HLD) into the user's
+  standard template. Use when asked to create, draft, write, or build a BRD, BRD-HLD, or High-Level
+  Design, or to convert a Scope of Work, Statement of Work, project brief, product spec, RFP scope,
+  or old BRD into this template. Also use to update a BRD's to-do (14-todo.md), add use-case
+  diagrams and flowcharts, or generate the implementation plan, UAT/BAT test cases, or presentation
+  brief. Arguments: [chunks|combined] [parts|whole]. The BRD is business language only (the WHAT);
+  the technical HOW belongs to sdd-unifier. Output is Markdown only.
 ---
 
 # BRD Unifier
@@ -8,6 +15,22 @@ description: Generate, transform, or reformat Business Requirements Documents (B
 Author, transform, and unify Business Requirements Documents (BRDs / BRD-HLDs) into the user's standardised template. This skill encapsulates the section structure, the per-persona use-case convention (`Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules / Acceptance Criteria / Future Enhancements / UI/UX`), the Users & Use Cases Matrix, the chunking model, the SoW-and-BRD transformation rules, and the inline-Mermaid-first diagram policy.
 
 The embedded templates in this skill folder are the authoritative source — `TEMPLATE-COMBINED.md` for the single-file layout and `chunks/*.md` for the chunked layout.
+
+---
+
+## Running outside Claude Code
+
+This skill follows the Agent Skills format and also runs in Codex, Kimi Code, and other compatible agents. Where the text names a Claude Code tool or file, use the equivalent below. In Claude Code, follow the text as written.
+
+| Written as | Outside Claude Code |
+|---|---|
+| `CLAUDE.md` defaults | The project instruction file (`AGENTS.md`, or `CLAUDE.md` if present). If neither states a default, use the defaults this skill states and flag the gap. |
+| `Agent` tool with a `subagent_type` | Start a sub-agent with a fresh context if the runtime supports it. Otherwise run the step yourself as a separate pass: re-read the files from disk, set aside your drafting reasoning, and follow the same brief. For a named agent (for example `general-purpose` or a `plugin:agent` name), take on the role its brief describes. |
+| `AskUserQuestion` (and `ToolSearch` to load it) | Ask in chat: numbered questions, each with options, tradeoffs, and your recommendation first. Wait for the answer before continuing. |
+| Miro MCP | Use only if a Miro tool is available; otherwise follow this skill's rule for when Miro is unavailable. |
+| Invoking this skill | Claude Code: `/<skill-name> <args>`. Codex: `$<skill-name> <args>`. Kimi Code: `/skill:<skill-name> <args>`. |
+
+Paths in this file are relative to the skill folder.
 
 ---
 

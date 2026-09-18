@@ -63,10 +63,21 @@ The BRD can arrive in two forms:
 The user points the skill at a folder. Recognise it by:
 
 - Folder path matches `brd-*/` (kebab-case slug after `brd-`).
-- Contains 14+ files with names like `00-cover-and-changelog.md`, `01-executive-summary-and-context.md`, `02-glossary-assumptions-facts.md`, `03-definitions-and-domain-concepts.md`, `04-scope-and-personas.md`, `05-user-journeys-overview.md`, `06a-use-cases-*.md` (one or more), `07-users-use-cases-matrix.md`, `08-integrations.md`, `09-reporting-and-analytics.md`, `10-nfrs.md`, `11-summary-and-uiux.md`, `12-appendix-and-wishlist.md`, `13-open-items-and-clarifications.md`. (Legacy chunked BRDs use `05-fr-overview.md`, `06a-fr-*.md`, `07-integrations.md`, `10-summary-uiux-tech.md`, `12-specs.md` — same logical reading order.)
+- Contains 14+ files with names like `00-cover-and-changelog.md`, `01-executive-summary-and-context.md`, `02-glossary-assumptions-facts.md`, `03-definitions-and-domain-concepts.md`, `04-scope-and-personas.md`, `05-user-journeys-overview.md`, `06a-use-cases-*.md` (one or more), `07-users-use-cases-matrix.md`, `08-integrations.md`, `09-reporting-and-analytics.md`, `10-nfrs.md`, `11-summary-and-uiux.md`, `12-appendix-and-wishlist.md`, `13-open-items-and-clarifications.md`. Newer BRDs also carry delivery chunks: `14-todo.md` always, and `15-implementation.md`, `16-uat-bat-test-cases.md`, `17-for-ppt.md` only once the BRD's to-do has been fully cleared (see the reading order below for how each is treated). (Legacy chunked BRDs use `05-fr-overview.md`, `06a-fr-*.md`, `07-integrations.md`, `10-summary-uiux-tech.md`, `12-specs.md` — same logical reading order.)
 - Each file begins with `<!-- CHUNK: NN ... PART OF: BRD — ... -->`.
 
 **Reading order:** numeric (00, 01, 02, 03, 03a, 03b, 04, 05, 06a, 06b, 06c, 07, 08, 09, 10, 11, 12, 13). Multi-letter chunks (`06a`, `06b`) are read alphabetically within their numeric prefix.
+
+**Unfinished BRD.** If `brd-master.md` shows a generation part that is `Pending` or `In progress` (brd-unifier writes BRDs in parts), the BRD is not finished. Stop, tell the user which part is missing, and do not derive an SDD from it.
+
+**Delivery chunks (14-17) are not BRD requirements.** They are derived from chunks 00-13 by `brd-unifier` and never add a requirement:
+
+- **Skip** `14-todo.md` (product-manager checklist) and `17-for-ppt.md` (presentation and video brief) entirely. They are also never part of a merged or combined BRD.
+- Read `15-implementation.md` and `16-uat-bat-test-cases.md` **as input context only**, after chunk 13, when they exist (see the field mapping table). They are absent until the BRD's to-do is cleared; their absence is not a gap. In a combined or merged BRD they are the `# Implementation Plan` section and the `# UAT/BAT Test Cases` section (in a merged file the second heading carries the project name: `# [Project Name] - UAT/BAT Test Cases`).
+- Read 15 and 16 as current only when `brd-master.md` shows them `Up to date`. A `Stale` or `Provisional` one is read with care and named in the handoff.
+- If a delivery chunk and the BRD body disagree, the body wins; note the discrepancy in the handoff.
+
+A legacy unnumbered `uat-bat-test-cases.md` in a BRD folder gets the same treatment as chunk 16.
 
 **Treat as one logical BRD.** Do not produce one SDD per chunk. Read all chunks first, build a unified mental map, then write one SDD.
 
@@ -114,6 +125,9 @@ This is the authoritative mapping. Each row says: BRD source section → SDD des
 | Appendix (other rows) | §20 Appendix | Carry references; add SDD-specific rows (OpenAPI specs path, event schemas, ADR repo, threat model, capacity plan). |
 | Wishlist | §21 Wishlist | **Reference + delta.** Link the BRD wishlist; list ONLY architectural/platform-level future enhancements the SDD adds. |
 | Open Items & Clarifications (BRD chunk 13) | Input context only | Read the BRD's resolved/deferred items — deferred business decisions often become SDD risks or flags. Do not copy the section; the SDD gets its own reviewer pass (chunk 17). |
+| Implementation Plan (BRD chunk 15 / `# Implementation Plan`) | Input context only | Business-level delivery order of the use cases. Its Dependency problems and `Provisional` / `Blocked` tasks often become §4 Risks or flags, and the task ordering is context when ordering §13 Services Decomposition. Never copy tasks and never treat a task as an architectural decision: the plan states the what, the SDD decides the how. |
+| UAT/BAT Test Cases (BRD chunk 16 / `# UAT/BAT Test Cases`) | Input context only | Business acceptance expectations. Context for §18 Environments (UAT) and for the §17 stress-testing scenarios; technical test cases belong to the SDD, so nothing is copied. `(Provisional)` cases point at business decisions still open. |
+| Product Manager To-Do (BRD chunk 14) and Presentation & Video Brief (BRD chunk 17) | Ignored | Working and presentation artifacts, not requirements. Do not read them as BRD content. |
 
 ---
 

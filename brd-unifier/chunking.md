@@ -29,8 +29,8 @@ Use this as the default. Numbering is stable — `08-` is always "Integrations" 
 | 02 | `02-glossary-assumptions-facts.md` | `chunks/02-glossary-assumptions-facts.md` | Glossary (business terms only), Assumptions / Constraints, Facts, Challenges (incl. challenge evidence table), Dependencies. | Medium |
 | 03 | `03-definitions-and-domain-concepts.md` | `chunks/03-definitions-and-domain-concepts.md` | Definitions & Important Details — the domain deep-dive, in business terms. Often the longest chunk; if >600 lines, split into `03a-`, `03b-`. | Medium–Large |
 | 04 | `04-scope-and-personas.md` | `chunks/04-scope-and-personas.md` | Project Scope (narrative + In Scope / Out of Scope), Personas / Actors. Every persona becomes a matrix column and a use-case chunk. | Small |
-| 05 | `05-user-journeys-overview.md` | `chunks/05-user-journeys-overview.md` | User Journeys (one narrative per persona), Summarized Workflow (inline Mermaid), Use Case Summary table. **No detailed UC blocks here.** | Medium |
-| 06a, 06b, … | `06a-use-cases-[persona-slug].md` | `chunks/06a-use-cases-detailed.md` | Detailed use-case blocks, grouped **per persona** — one chunk per persona, in chunk-05 order. UC IDs sequential across the whole BRD. | Medium–Large each |
+| 05 | `05-user-journeys-overview.md` | `chunks/05-user-journeys-overview.md` | User Journeys (one narrative per persona), Summarized Workflow (inline Mermaid), Use Case Summary table. **No detailed UC blocks here.** A `Use Case Diagrams` section is added later, at checklist step 5 (gated; see `delivery-chunks.md`). | Medium |
+| 06a, 06b, … | `06a-use-cases-[persona-slug].md` | `chunks/06a-use-cases-detailed.md` | Detailed use-case blocks, grouped **per persona** — one chunk per persona, in chunk-05 order. UC IDs sequential across the whole BRD. A `Flowchart` sub-section is added later to branching use cases, at checklist step 5 (gated). | Medium–Large each |
 | 07 | `07-users-use-cases-matrix.md` | `chunks/07-users-use-cases-matrix.md` | **Users & Use Cases Matrix** — every persona (column) × every use case (row); Yes / - cells with footnotes for conditional access. Derived from the UC Actor fields; generated AFTER the 06x chunks and cross-checked against them. | Small–Medium |
 | 08 | `08-integrations.md` | `chunks/08-integrations.md` | Integrations — business systems/partners, business purpose, information exchanged. No protocols, formats, auth, or SLAs (SDD-owned). | Small–Medium |
 | 09 | `09-reporting-and-analytics.md` | `chunks/09-reporting-and-analytics.md` | Reporting / Analytics — what each report shows, audience, frequency, format. | Small |
@@ -38,10 +38,18 @@ Use this as the default. Numbering is stable — `08-` is always "Integrations" 
 | 11 | `11-summary-and-uiux.md` | `chunks/11-summary-and-uiux.md` | Summary, UI/UX Expectations. No Technical Implementation Expectations — that content lives in the SDD. | Small |
 | 12 | `12-appendix-and-wishlist.md` | `chunks/12-appendix-and-wishlist.md` | Appendix (incl. optional **Technical Inputs for the SDD** — source technical mandates parked verbatim), Wishlist. | Small |
 | 13 | `13-open-items-and-clarifications.md` | `chunks/13-open-items-and-clarifications.md` | **Open Items & Clarifications** — output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases; each item carries Options AND a concrete **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply. Generated *after* the body; never authored by the same context that wrote it. Followed by the user review-and-accept loop (see SKILL.md Step 8). | Small–Medium |
+| 14 | `14-todo.md` | `chunks/14-todo.md` | **Product Manager To-Do** (delivery chunk) - prioritised living checklist: resolve open items, consistency check, grill-me, Figma mockups, use-case diagrams and flowcharts. Tracks the gated diagram step; never the home of a diagram. **Excluded from merge.** | Medium |
+| 15 | `15-implementation.md` | `chunks/15-implementation.md` | **Implementation Plan** (delivery chunk) - every `06*` use case consolidated into dependency-ordered tasks (`TASK-NN`) with waves, dependency problems, completion criteria. **Locked until chunk 14 is cleared.** Included in merge. | Medium–Large |
+| 16 | `16-uat-bat-test-cases.md` | `chunks/16-uat-bat-test-cases.md` | **UAT/BAT Test Cases** (delivery chunk) - business-level acceptance cases traced to use cases, NFRs, and tasks, with provisional scenarios and coverage gaps. **Locked until chunk 14 is cleared.** Included in merge. | Large |
+| 17 | `17-for-ppt.md` | `chunks/17-for-ppt.md` | **Presentation & Video Brief** (delivery chunk) - executive slide sequence plus a series of 30-second use-case videos. **Locked until chunk 14 is cleared.** **Excluded from merge.** | Medium–Large |
 
-Total typical chunk count: **14–18** depending on how many personas / use-case chunks exist.
+Chunks 14-17 are **delivery chunks**, derived from the finished BRD in the order 14 -> 15 -> 16 -> 17. They cite the body by ID and link and never add requirements. **Chunk 14 is written at the end of every generation**, after the Open Items acceptance loop (in `parts` generation, at the end of part 3). **Chunks 15, 16, and 17 are locked**: they cannot be generated or refreshed until every action item in chunk 14 is closed (all five to-do steps `Complete` with evidence, every item `Resolved`; `Deferred` does not count; no override). Rules: `delivery-chunks.md` § The delivery gate.
+
+Total typical chunk count: **15–19** after a first run (body plus `14-todo.md`), **18–22** once the delivery gate has opened, depending on how many personas / use-case chunks exist.
 
 `brd-master.md` (also in `chunks/`) is a master index pointing at the chunks. Regenerate it per project so it links to that project's chunks specifically.
+
+**Generation parts.** By default the chunks are written in three parts, with a stop for the user's review after parts 1 and 2: part 1 = 00-05 (plus `brd-master.md`), part 2 = every `06*` chunk and 07, part 3 = 08-14. `whole` writes 00-14 in one run. See `parts-mode.md`.
 
 ---
 
@@ -69,13 +77,15 @@ CHUNK: 06a
 TITLE: Detailed Use Cases - Tenant Admin
 PROJECT: Wallet Management Service
 VERSION: 1.0
-PART OF: BRD — Wallet Management Service
+PART OF: BRD - Wallet Management Service
 -->
 
 # Detailed Use Cases - Tenant Admin
 
 ...
 ```
+
+Delivery chunks (14-17) add two keys to this block: `TYPE: Delivery chunk` and `MERGE: Included | Excluded`. The merge step reads `MERGE:` to decide whether the chunk is concatenated.
 
 After the comment, the chunk's top-level heading begins at `#`. Sub-sections use `##`, `###`. Heading levels are scoped per chunk. The merge step does not demote headings — each chunk's `#` becomes a distinct major section of the merged doc.
 
@@ -102,14 +112,17 @@ Do NOT deviate because a chunk "looks too short" — short chunks are fine when 
 - **UI/UX per UC** — include the heading; if no wireframe yet, reference the global UI/UX Expectations and write `No wireframe required for this use case.` or `Wireframe pending — see global UI/UX standards in chunk 11.`
 - **Technical Inputs for the SDD** in chunk 12 — include only if the source material contained technical mandates; otherwise omit the sub-section.
 - **Matrix footnotes** in chunk 07 — only where access is conditional; a bare `Yes` / `-` is the norm.
+- **Use Case Diagrams** in chunk 05 and **Flowchart** per UC in chunks `06*`: never emitted at first generation. They are added at checklist step 5 (`14-todo.md`) after steps 1-4 are confirmed complete. A flowchart is required only for use cases with 3 or more Main Flow steps and at least one decision point; linear or very short use cases skip it, with the reason recorded in `14-todo.md`.
+- **`14-todo.md`**: generated at the end of every generation (in `parts`, at the end of part 3). Skipped only when the user explicitly asks for the BRD alone; say so in the handoff.
+- **Chunks 15, 16, 17**: never generated while the delivery gate is shut. Their absence after a first run is expected, not a gap.
 
 ---
 
 ## Merge handling (chunks → combined)
 
-On merge, chunks are concatenated in numeric order (00, 01, 02, 03, 03a, 03b, 04, 05, 06a, 06b, …, 07, 08, 09, 10, 11, 12, 13). The merge step:
+On merge, chunks are concatenated in numeric order (00, 01, 02, 03, 03a, 03b, 04, 05, 06a, 06b, …, 07, 08, 09, 10, 11, 12, 13, then 15 and 16 when they exist). **Chunks 14 (`14-todo.md`) and 17 (`17-for-ppt.md`) are never merged**: skip every chunk whose header says `MERGE: Excluded`. They stay as separate files next to the merged BRD, and links to them keep working because the merged file lives in the same folder. The merge step:
 
-1. Strips the `<!-- CHUNK: ... -->` comment from each chunk.
+1. Strips the `<!-- CHUNK: ... -->` comment from each chunk, and its `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer comment.
 2. Concatenates with a single blank line between chunks (no extra `---` separators unless the template calls for one).
 3. Regenerates the Table of Contents in chunk 00 against the merged heading outline.
 4. Regenerates the Figures and Tables indices if they exist.
@@ -130,5 +143,6 @@ When asked to split a combined BRD into chunks:
    a. Prepend the `<!-- CHUNK: NN ... -->` comment block.
    b. Promote the first matching `## ` heading to `# ` (since chunks are scoped to a single major section).
    c. Adjust deeper heading levels accordingly (was `###` in combined → becomes `##` in chunk).
-5. Write each chunk to `./brd-[slug]/NN-*.md`.
-6. Keep the original combined file.
+5. Write each chunk to `./brd-[slug]/NN-*.md`. The combined file's `# Implementation Plan` and `# UAT/BAT Test Cases` sections become chunks 15 and 16.
+6. `14-todo.md` and `17-for-ppt.md` already exist as files in `./brd-[slug]/` (combined mode writes them there). Keep them, and repoint their BRD links from the combined file to the new chunk files.
+7. Keep the original combined file.

@@ -40,4 +40,32 @@ LANGUAGE: Business language only. No technology names, protocols, or implementat
 | **[Persona 2]** | | | |
 | UC-03 | [Short Title] | [Persona 2] | [Summary] |
 
+<!--
+USE CASE DIAGRAMS SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated chunk.
+Add the section below only after to-do steps 1-4 are confirmed complete. One overview diagram if it fits about 30 lines, otherwise one per persona in the order above. Every UC-NN (except rows marked Merged into or Removed) appears in at least one diagram; every association matches the use-case actor fields and the matrix (07); include / extend only where a narrative documents it. Notation: mermaid-diagrams.md § Use-case diagrams.
+
+## Use Case Diagrams
+
+### Figure N - Use cases: [Overview | Persona name]
+
+```mermaid
+flowchart LR
+  P1["[Persona 1]"]
+  P2["[Persona 2]"]
+  X1["[External business party]"]
+  subgraph SYS["[Product Name]"]
+    UC01(["UC-01 [Short Title]"])
+    UC02(["UC-02 [Short Title]"])
+    UC03(["UC-03 [Short Title]"])
+  end
+  P1 --- UC01
+  P1 --- UC02
+  P2 --- UC03
+  UC03 -- "supporting" --- X1
+  UC02 -. "include" .-> UC01
+```
+
+**Summary:** [1-2 sentences: who does what inside the product boundary, and the relationships shown.]
+-->
+
 <!-- MASTER: brd-master.md | PREV: 04-scope-and-personas.md | NEXT: 06a-use-cases-detailed.md -->

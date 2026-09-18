@@ -85,6 +85,12 @@ Do NOT treat as a transform target. Treat as raw context for GENERATE — extrac
 
 ---
 
+## Transform and the generation option
+
+A transform from a source that needs authoring (SoW, a BRD in another format, a loose spec) uses the generation option like a fresh generation: `parts` by default in CHUNKS mode (`parts-mode.md`). Pure conversions (merge, re-chunk) and targeted updates of an existing BRD always run `whole`: there is nothing to review between parts.
+
+---
+
 ## What "transform" actually means
 
 Transform is not "copy the source verbatim into the new shape". It is:
@@ -107,6 +113,7 @@ Treat as TRANSFORM with targeted regeneration:
 - Identify which sections the user wants changed.
 - Regenerate only those (chunks: rewrite the affected chunk files; combined: rewrite the affected sections in place).
 - Bump the version in the Changes Log with a one-line description of what changed.
+- Refresh `14-todo.md` per `delivery-chunks.md` § Refresh triggers, keeping every identifier stable. If chunks 15-17 exist, mark them `Stale`; they are refreshed only while the delivery gate is open (SKILL.md step 8c). If the BRD predates the delivery chunks, generate `14-todo.md` (step 8a); a BRD with no chunk 13 gets the reviewer pass first (steps 7-8).
 
 ### "Combine these into one BRD" (multiple source docs)
 

@@ -1,0 +1,12 @@
+# Local-only skills and sync cache (not part of this suite)
+synced/
+*-delegate/
+delegate-setup/
+grill-me/
+grilling/
+arch-wiki/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/

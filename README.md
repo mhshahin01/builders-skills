@@ -1,114 +1,152 @@
 # Product Documentation Skill Suite
 
-A set of four reusable skills that cover the full product documentation lifecycle, from idea validation through to implementation-ready design. Each skill owns one stage. Used in order, they take a raw idea and carry it to a buildable specification with consistent structure, numbering, and diagramming conventions across every stage.
+A set of five reusable skills that cover the full product documentation lifecycle, from idea validation through to implementation-ready design, plus a cross-document review panel. Four authoring skills each own one stage; a fifth reviews the chain. Used in order, they take a raw idea and carry it to a buildable specification with consistent structure, numbering, and diagramming conventions across every stage.
 
 ```text
 Idea  ->  pre-BRD  ->  BRD  ->  SDD  ->  LLD  ->  Build
           validate     what     how-      how-       code
                        /why     overall   detailed
+
+          \_____________ business-reviewer (any stage) ____________/
 ```
 
-| Stage              | Skill   | Question it answers               | Primary output                                    |
-| ------------------ | ------- | --------------------------------- | ------------------------------------------------- |
-| 1. Discovery       | pre-BRD | Is this worth building?           | Strategic framework set plus go / no-go verdict   |
-| 2. Requirements    | BRD     | What are we building, and why?    | Functional plus non-functional requirements       |
-| 3. Solution design | SDD     | How does the system fit together? | Architecture, services, cross-cutting concerns    |
-| 4. Detailed design | LLD     | How is each service built?        | Schemas, APIs, sequence flows, class-level detail |
+| Stage              | Skill                       | Question it answers                      | Primary output                                                 |
+| ------------------ | --------------------------- | ---------------------------------------- | -------------------------------------------------------------- |
+| 1. Discovery       | `pre-brd-unifier`           | Is this worth building?                  | 22 frameworks, go / no-go scoreboard, investor assessment      |
+| 2. Requirements    | `brd-unifier`               | What are we building, and why?           | Business-language BRD: journeys, UC-NN use cases, NFRs         |
+| 3. Solution design | `sdd-unifier`               | How does the system fit together?        | Architecture, services, event hub, roles, cross-cutting design |
+| 4. Detailed design | `lld-unifier`               | How is each service built?               | Schemas, APIs, events, sequences, Specs for SpecKit            |
+| Review             | `business-reviewer-unifier` | Does the document chain hold up?         | Persistent review tracker driven to resolution                 |
 
 ---
 
 ## Shared conventions
 
-All four skills follow the same house style, so output is interchangeable and tool-friendly across stages.
+All skills follow the same house style, so output is interchangeable and tool-friendly across stages.
 
-- **Markdown only.** No `.docx` or `.pdf` unless explicitly requested.
+- **Markdown only.** No `.docx` or `.pdf` unless explicitly requested. The one exception is the pre-BRD `.xlsx` export, produced only on demand after the Markdown is approved.
 - **No em dash characters.** Use commas, colons, parentheses, or sentence breaks instead.
-- **Chunked by default.** Long deliverables are split into multiple context-scoped `.md` files, one per logical grouping, not one monolithic file. Merge into a single document only on request.
-- **Stable two-digit numbering.** Files use the `NN-kebab-name.md` pattern so ordering is deterministic and cross-references stay valid.
-- **Self-describing front-matter.** Each chunk opens with an HTML comment block (chunk number, title, tier or stage, parent document) so an agent can reassemble the set.
-- **Diagrams as inline Mermaid by default.** Architecture and flow diagrams are authored as inline Mermaid blocks, each with a short prose summary so the document reads without a renderer. Miro boards are created via the Miro MCP only when explicitly requested, and the board link is additive (`> Miro: <url>` under the Mermaid block), never a replacement.
-- **Tech defaults.** Java 21, Spring Boot 3.4+, PostgreSQL, Kafka, Angular 17+ with Tailwind and PrimeNG, UUID v7 primary keys, BIGINT minor units for money, UTC for all timestamps.
+- **Chunks or combined.** Every authoring skill takes a mode argument: `chunks` (one `.md` file per logical section grouping, the default) or `combined` (one monolithic file).
+- **Stable two-digit numbering.** Files use the `NN-kebab-name.md` pattern so ordering is deterministic and cross-references stay valid. Each chunked set has a master file (`*-master.md`) that indexes the chunks.
+- **What vs how split.** The BRD is business language only (the WHAT). The SDD owns every technical decision (the HOW). The LLD owns the constitution-grade Specs section (Mission, Tech Stack, Roadmap, Project Type) that feeds SpecKit `/constitution`.
+- **Cleared-context reviewer pass.** Every full generation ends with an independent reviewer subagent that writes an `Open Items & Clarifications` chunk. Each item carries a concrete Recommended Answer, and the skill walks the user through accept, adjust, or defer, then applies accepted answers to the body.
+- **Diagrams as inline Mermaid by default.** Each diagram has a short prose summary so the document reads without a renderer. Miro boards are created via the Miro MCP only when explicitly requested, and the board link is additive (`> Miro: <url>` under the Mermaid block), never a replacement.
+- **Tech defaults (SDD and LLD only).** Java 21, Spring Boot 3.5+, PostgreSQL 17+, Kafka, Angular 17+ with Tailwind and PrimeNG, UUIDv7 primary keys, BIGINT minor units for money, UTC for all timestamps.
 
 ---
 
-## 1. pre-BRD
+## 1. pre-BRD (`pre-brd-unifier`)
 
-**Purpose:** the discovery layer that runs before any requirements are written. It validates that an idea is worth building before effort is spent on a full BRD.
+**Purpose:** the discovery layer that runs before any requirements are written. It validates that an idea is worth building before effort is spent on a full BRD. It performs the analysis (market sizing, competitor scan, macro and internal factors) through multi-agent web research, rather than only templating it.
 
-**Structure:** a five-tier framework workbook delivered as a master index plus 22 framework files.
+**Usage:** `pre-brd-unifier [chunks|combined]` (chunks is the default).
+
+**Structure:** a master index (`00-pre-brd-master.md`) plus 24 chunks.
 
 1. Idea definition: Concept Sheet, Product Charter, Lean Canvas, Value Proposition Canvas, Empathy Map.
 2. Market and competition: Market Comparison, Market Sizing, PESTLE, Porter's Five Forces, EFAS, IFAS, SWOT.
 3. Prioritization: RICE, MoSCoW.
 4. Strategy and planning: OKRs, BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle, Roadmap and Project Plan.
 5. Synthesis: Executive Summary Scoreboard with a composite score and go / no-go thresholds.
+6. Chunk 23, Investor Assessment: an independent investor-style Go vs No-Go verdict, including go-to-market strategy.
+7. Chunk 24, Open Items and Assumptions Log: the reviewer's output plus every material assumption with its basis and risk.
 
 **Key behaviors:**
 
-- The master file (`00-pre-brd-master.md`) links every framework by relative path and states a fill contract: empty cells in the Answer column (descriptive frameworks) or empty value cells (scoring tables) are where values get injected. Guidance and description columns are read-only context.
-- Scoring and calculation rules are stated in prose so they can be computed deterministically: Porter's 1 to 3 average, EFAS and IFAS weight times rating with weights summing to 1, RICE = Reach times Impact times Confidence divided by Effort, BCG growth-rate and relative-share formulas, VRIO result legend, Ansoff decision scoring, the Market Sizing top-down vs bottom-up cross-check, and the Executive Summary composite with go / no-go thresholds.
-- Fixed-row frameworks (PESTLE, Porter's, SWOT, MoSCoW, Ansoff, Product Lifecycle) ship with their rows already in place.
+- Compute, do not hardcode: Porter's averages, EFAS and IFAS weighted scores, RICE, BCG, VRIO, Ansoff, TAM to SAM to SOM with a top-down vs bottom-up cross-check, and the Tier-5 composite all come from formulas in `frameworks.md`.
+- Market figures are sourced and reconciled across chunks (`research-orchestration.md`); the reviewer flags any figure cited differently in two places.
+- **Excel export:** after the user approves the Markdown, `scripts/export_xlsx.py` clones the reference workbook `reference/PRE-BRD-v1.1.xlsx` (fonts, settings, sample columns, live formulas) using `reference/cell-map.json`. See `xlsx-export.md`. Tests live in `scripts/tests/`.
 
-**Feeds into:** the BRD. A validated pre-BRD supplies the problem statement, target users, market context, and prioritized scope that the BRD turns into requirements.
-
----
-
-## 2. BRD (`product-brd-unified-generator`)
-
-**Purpose:** generate or update a Business Requirements Document, or a combined BRD-HLD, in the standardized house template.
-
-**Triggers:** any request to create, generate, author, draft, write, or build a BRD, BRD-HLD, Business Requirements Document, High-Level Design, or product requirements document. Also triggers on requests to transform, convert, reformat, or standardize a Scope of Work (SoW), Statement of Work, project brief, product spec, or RFP scope into a BRD.
-
-**Package contents:**
-
-- `SKILL.md`: entry point with trigger description, workflow, and the mode matrix. The frontmatter description is kept under the 1024-character limit so it uploads cleanly to claude.ai; the longer detail lives in the body.
-- `TEMPLATE.md`: the standard BRD-HLD template.
-- `references/chunking.md`: the canonical 11 to 16 chunk map with stable two-digit numbering.
-- `references/sow-transformation.md`: SoW-to-BRD field mapping.
-- `mermaid-diagrams.md`: which sections warrant diagrams, the Mermaid dialect per diagram type, business-language-only rules, and the Miro-on-demand flow.
-- `references/fr-quality.md`: pass and fail tests for each of the five FR sub-sections (What, Why, How, Constraints, UI/UX), plus guidance on handling cross-cutting concerns once rather than repeating them per FR.
-
-**Modes:**
-
-- **Chunked (default):** one `.md` file per logical section grouping.
-- **Merged (on request):** triggers like "merge", "consolidate", "single file", or "full doc" concatenate the chunks into one unified BRD.
-
-**Feeds into:** the SDD. Domain facts and behavioral constraints in the BRD become the functional scope the SDD designs against. When using SpecKit, behavioral requirements route to `spec.md`, technical constraints to `plan.md`, and stakeholder rationale stays in the BRD only.
+**Feeds into:** the BRD. A validated pre-BRD supplies the problem statement, target users, market context, and prioritized scope.
 
 ---
 
-## 3. SDD
+## 2. BRD (`brd-unifier`)
 
-**Purpose:** the Solution Design Document. Extends the BRD with technical architecture depth: how the system fits together at the design level.
+**Purpose:** generate, or transform an existing document (SoW, old-format BRD, loose notes) into, a Business Requirements Document in the house template. The BRD is business language only and written in plain language (`writing-style.md`): short sentences, common words, every number and rule kept.
 
-**Two template variants:**
+**Usage:** `brd-unifier [chunks|combined] [parts|whole]`.
 
-- `SDD-Template-Unified.md`: fully populated reference template with worked examples throughout. Used as a reference and onboarding aid.
-- `SDD-Template-Unified-Empty.md`: clean fill-in version with placeholder brackets in every field and only structural scaffolding plus canonical defaults retained. This is the working starting point for each new SDD.
+- `parts` (default in chunks mode): the BRD is written in three parts, stopping for the user's review after parts 1 and 2 (`parts-mode.md`). Part 1 settles scope, personas, and the use case list; part 2 writes the detailed use cases; part 3 writes the rest and runs the review.
+- `whole`: everything in one go. Combined mode is always `whole`.
 
-**Sections covered:** document metadata, executive summary, scope, assumptions, risks, glossary, ecosystem overview, system users with use case diagrams, high-level architecture (context, workflow, and sequence diagrams), architecture style and principles, an architectural decisions table, cross-cutting concerns (database modeling, multi-tenancy, deployment, observability, configuration management), an integrations table, detailed per-service specs (DB modeling, ERDs, API lists, EDA event models, error handling, observability, compliance, deployment, future enhancements), performance and capacity planning, environments, operations runbook, appendix, and wishlist.
+**Chunk map:**
 
-**Diagrams:** inline Mermaid as the default, each with a mandatory prose summary; Miro boards only on explicit request. The SDD also carries three platform-level catalogues: a Centralized Event Hub (event catalog + payload contracts — the contract registry every per-service spec must match), a Centralized User Roles & Authorities catalogue, and an End-to-End System Design chunk authored last.
+| Chunks | Content |
+| ------ | ------- |
+| 00-04 | Cover and changelog, executive summary, glossary and assumptions, domain concepts, scope and personas |
+| 05, 06a, 07 | User journeys with use-case diagrams, detailed UC-NN use cases, Users and Use Cases permission matrix |
+| 08-12 | Business-level integrations, reporting, NFRs as business expectations, summary and UI/UX, appendix and wishlist |
+| 13 | Open Items and Clarifications (reviewer output) |
+| 14 | Product-manager to-do: resolve open items, consistency check, grill-me session, Figma mockups, use-case diagrams and flowcharts |
+| 15-17 | Implementation plan, UAT/BAT test cases, presentation and video brief |
 
-**Feeds into:** the LLD. Each service identified and bounded in the SDD becomes the subject of its own LLD.
+**Delivery gate:** chunks 15, 16, and 17 are locked until every step in `14-todo.md` is closed (gate conditions G1 to G5 in `delivery-chunks.md`). There is no override.
+
+**Reference files:** `chunking.md`, `modes.md`, `parts-mode.md`, `transform-detection.md`, `sow-transformation.md`, `mermaid-diagrams.md`, `use-case-quality.md`, `writing-style.md`, `delivery-chunks.md`, `TEMPLATE-COMBINED.md`.
+
+**Feeds into:** the SDD. Technical mandates found in a source document are parked verbatim in the BRD Appendix under Technical Inputs for the SDD, never in the business body.
 
 ---
 
-## 4. LLD
+## 3. SDD (`sdd-unifier`)
 
-**Purpose:** the Low-Level Design. Takes a single service or component that the SDD scoped and specifies it to an implementation-ready level of detail.
+**Purpose:** the Solution Design Document. Owns the entire HOW. It can generate from scratch, transform an existing SDD, or derive an SDD from a BRD (chunked folder or single file, see `brd-to-sdd.md`).
 
-**Typical contents per service:**
+**Usage:** `sdd-unifier [chunks|combined]` (chunks is the default).
 
-- Database schema: full table definitions, keys, constraints (including database-enforced invariants such as balance floors), and ERDs.
-- API design: endpoint-by-endpoint request and response contracts, status codes, and error catalog.
-- Sequence diagrams for the critical flows, including the edge cases (race conditions, idempotency, expiry, retries).
-- Concurrency and safety patterns: locking strategy (pessimistic, optimistic, or atomic conditional update), idempotency handling, atomic gating, and the outbox or CDC pattern where events are emitted.
-- Class-level and component-level breakdown mapping the design onto the Java and Spring Boot reference structure.
+**Key behaviors:**
 
-**Relationship to the SDD:** the SDD and LLD are often authored together as a combined HLD plus LLD document for a single service, with the HLD section setting context (system context, architecture overview, tenant and domain model, technology stack) and the LLD section carrying the implementation detail above. The LLD inherits all shared conventions and tech defaults.
+- Project Type (greenfield or brownfield) is asked at intake and gates the whole generation.
+- The Ecosystem Overview is never filled silently: the skill offers the proposed ecosystem for a one-shot accept-all, or walks the user through each item with BRD-informed recommendations.
+- Falls back to CLAUDE.md defaults plus the platform doctrine (EDA, DDD, hexagonal) when the BRD is silent.
+
+**Chunk map:** cover, executive summary and risks, ecosystem overview, users and use cases, architecture style and diagrams, workflows and sequences, principles and decisions, cross-cutting concerns, integrations, services summary, per-service detailed specs (`10a`), performance and capacity, environments, operations runbook, appendix and wishlist, and three platform-level catalogues:
+
+- **Centralized Event Hub** (chunk 10): the contract registry for topic names, event names, and payload contracts. Every per-service chunk must match it verbatim.
+- **Centralized User Roles and Authorities** (chunk 11).
+- **End-to-End System Design** (chunk 16), authored last.
+
+Chunk 17 holds the Open Items and Clarifications from the reviewer pass.
+
+**Feeds into:** the LLD. Each service bounded in the SDD becomes the subject of its own LLD.
+
+---
+
+## 4. LLD (`lld-unifier`)
+
+**Purpose:** the Low-Level Design. Specifies a single service or component to an implementation-ready level any AI agent or developer can execute against.
+
+**Usage:** `lld-unifier [chunks|combined]` (chunks is the default). The skill always asks for the mode first:
+
+- **from-sdd:** greenfield, author the LLD before code exists (`sdd-to-lld.md`).
+- **from-code:** reverse-engineer an LLD from an existing codebase (`code-extraction.md`).
+- **hybrid:** compare an SDD against existing code and produce a unified LLD with drift markers (`hybrid-drift.md`).
+
+**Chunk map:** metadata, purpose and scope, context, architecture, implementation, data model, API contracts, event contracts, state and rules, cross-cutting, operations, security, performance, testing, frontend, open questions, references, Specs (chunk 17), and Open Items and Clarifications (chunk 18).
+
+**Key behaviors:**
+
+- Orchestrates two specialist agents: `feature-dev:code-explorer` for structural discovery and `code-documentation:docs-architect` for narrative synthesis (`agent-orchestration.md`).
+- Owns the Specs section (Mission, Tech Stack, Roadmap, Project Type), synthesised after the LLD body as the direct input for SpecKit `/constitution`. Legacy Specs in an SDD or BRD are read as input only.
+- Confidence and pattern rules (`confidence-rules.md`, `pattern-rules.md`) govern how inferred facts are marked and which patterns apply.
 
 **Feeds into:** implementation, including SpecKit-driven and Claude Code-assisted builds.
+
+---
+
+## 5. Business Reviewer (`business-reviewer-unifier`)
+
+**Purpose:** a multi-angle adversarial review panel over business and design documents (pure-business docs, domain identification, service boundaries, project preparation, BRDs, SDDs), driven to resolution. This is the cross-document panel review; it is separate from the single-agent reviewer pass built into each authoring skill.
+
+**Usage:** `business-reviewer-unifier [panel|walkthrough|apply|verify]`. With no argument, the phase is detected from the tracker state.
+
+- `panel`: dispatches the reviewer personas and builds `review-comments-tracker.md` in the project root.
+- `walkthrough`: resumes point-by-point resolution with the user.
+- `apply`: applies decided points across the whole document chain.
+- `verify`: cleared-context consistency re-review and versioning.
+
+**Reference files:** `reviewer-personas.md`, `panel-orchestration.md`, `tracker-schema.md`, `walkthrough-protocol.md`, `apply-and-verify.md`.
 
 ---
 
@@ -120,7 +158,7 @@ These skills run in two environments.
 
 Upload each skill through Settings, under Capabilities or Customize, then Skills. Each skill must be a folder containing its `SKILL.md` (plus any reference files), zipped and uploaded individually, then toggled on. Custom skills are private to your account; on Team or Enterprise plans an owner can optionally share them org-wide.
 
-Note the 1024-character cap on the `description` frontmatter field: any skill whose description runs longer is rejected on upload, so keep trigger-rich detail in the body.
+Note the 1024-character cap on the `description` frontmatter field on upload. The current descriptions are tuned for Claude Code triggering and run longer than that, so trim the description in the zipped copy before uploading.
 
 ### Claude Code (CLI)
 
@@ -136,14 +174,15 @@ List installed skills with `/skills` inside a session, or this command in PowerS
 dir $env:USERPROFILE\.claude\skills
 ```
 
-Common failure causes if a skill does not appear: the session was not reloaded, Windows extraction created a double-nested folder, or the `SKILL.md` frontmatter is invalid. Two caveats for CLI use: the Miro MCP must be configured separately via `claude mcp add`, and any output paths that reference `/mnt/user-data/outputs/` are sandbox-specific and may need adjusting.
+Common failure causes if a skill does not appear: the session was not reloaded, Windows extraction created a double-nested folder, or the `SKILL.md` frontmatter is invalid. Two caveats for CLI use: the Miro MCP must be configured separately via `claude mcp add`, and the pre-BRD Excel export needs Python with `openpyxl` installed.
 
 ---
 
 ## Suggested workflow
 
 1. Run **pre-BRD** to validate the idea and produce a go / no-go verdict.
-2. If go, run the **BRD** skill to convert the validated concept (or an inbound SoW) into requirements.
+2. If go, run the **BRD** skill to convert the validated concept (or an inbound SoW) into business requirements. Clear the to-do in chunk 14 to unlock the implementation plan, UAT/BAT cases, and presentation brief.
 3. Run **SDD** to design the system architecture against those requirements.
-4. Run **LLD** per service to reach implementation-ready detail.
-5. Hand the LLD to SpecKit and Claude Code for the build.
+4. Run **LLD** per service to reach implementation-ready detail and produce the Specs.
+5. Run **business-reviewer** at any point to challenge the document chain from several angles.
+6. Hand the LLD and its Specs to SpecKit and Claude Code for the build.

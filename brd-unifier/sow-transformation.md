@@ -140,7 +140,7 @@ When the source is already a BRD but in a different format (vendor template, IEE
 1. **Build a section crosswalk first.** Before writing, map each source section to a target template section. Note any source sections with no target (often: change history in non-standard format, sign-off pages, glossary in a non-tabular format).
 2. **For sections present in both:** carry content across, restructure to match the template's expected sub-structure (e.g., requirements become UC blocks using `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX`, grouped per persona). Technical content in the source body moves to Appendix § Technical Inputs for the SDD.
 3. **For target sections missing from source:** flag the entire section with `[NEEDS CLARIFICATION: section X is required by the template but not present in the source]` and produce a stub with the heading.
-4. **For source sections with no target:** evaluate — is the content useful? If yes, find the closest target section. If not (vendor sign-off block, commercial appendix), drop it and note in the handoff.
+4. **For source sections with no target:** evaluate — is the content useful? If yes, find the closest target section. If not (vendor sign-off block, commercial appendix), drop it and note in the handoff. Source test cases, delivery plans, or slide material go to the Appendix (12) as reference files: they are input for chunks 15-17 once the delivery gate opens, never chunks 15-17 themselves.
 
 ### Common source-format peculiarities
 
@@ -171,12 +171,14 @@ Source docs are often written for one audience; the BRD targets the delivery tea
 
 | Source voice | Target voice |
 |---|---|
-| "The Vendor shall implement X" (SoW) | "The system shall support X" or "X is implemented as follows: ..." |
+| "The Vendor shall implement X" (SoW) | "The system supports X" or "X works as follows: ..." |
 | "The Supplier is responsible for ensuring Y" | "Y is ensured by ..." (active, system-as-subject) |
 | "The user/client should be able to..." (vague capability) | "The system supports the following capability: ..." (concrete behaviour) |
 | Passive contractual hedging ("It is intended that...") | Direct: "The system does X." |
 
 Drop vendor-obligation scaffolding; keep the behavioural commitment.
+
+Then apply the plain-language style (`writing-style.md`): sources written for procurement or legal readers use long sentences and heavy words. Rewrite them in short, simple sentences and keep every fact exactly (numbers, dates, names, commitments).
 
 ---
 
@@ -220,3 +222,5 @@ Before declaring the transformation done, verify:
 - [ ] The Figures index lists every Mermaid figure in the document (each with its prose summary).
 - [ ] No section was silently dropped — empty sections still have their heading plus an explanation.
 - [ ] No invented numbers — every quantitative claim traces to source or carries a `[NEEDS CLARIFICATION: ...]` marker.
+- [ ] Plain-language pass done (`writing-style.md`): short sentences, common words, no vague wording, and no fact lost while simplifying.
+- [ ] `14-todo.md` generated after the Open Items acceptance loop (SKILL.md step 8a) and the `delivery-chunks.md` verification list passed. Chunks 15, 16, and 17 NOT generated unless the delivery gate is open. No new use-case diagram or flowchart drawn yet (gated to to-do step 5).

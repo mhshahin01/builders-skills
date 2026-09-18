@@ -7,6 +7,8 @@
 
 <!-- LANGUAGE RULE: The whole BRD is business language only - it states the WHAT. No technology names, protocols, frameworks, or implementation terminology anywhere in the body. The HOW (tech stack, architecture, technical targets) is owned by the SDD (sdd-unifier). Technical mandates found in source material are parked verbatim in Appendix > Technical Inputs for the SDD. -->
 
+<!-- STYLE RULE: Plain language everywhere: simple, clear, precise, easy to understand. Short sentences, common words, active voice, one term for one thing, the exact number instead of a vague word. Simple never means incomplete: every number, rule, and exception stays. See writing-style.md. -->
+
 ---
 
 ## Changes Log
@@ -209,6 +211,8 @@ Core capabilities:
 | **[Persona 2]** | | | |
 | UC-03 | [Short Title] | [Persona 2] | [Summary] |
 
+<!-- USE CASE DIAGRAMS SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-4 are confirmed complete, add a "## Use Case Diagrams" section at this position: actors, use cases, system boundary, and documented relationships as inline Mermaid plus the Summary line. Structure: chunks/05-user-journeys-overview.md. Notation: mermaid-diagrams.md § Use-case diagrams. -->
+
 ## Detailed Use Cases
 
 All detailed use cases follow this structure:
@@ -218,6 +222,7 @@ All detailed use cases follow this structure:
 - **Preconditions**: What must be true before the use case can start.
 - **Main Flow**: Numbered detailed steps - actor action, system response, alternating.
 - **Alternate & Exception Flows**: What happens when the path branches or fails, in business terms.
+- **Flowchart** (branching use cases only, added once the requirements are final): The main, alternate, and exception paths in one diagram, derived from the narrative.
 - **Business Rules & Constraints**: Rules, limits, and conditions that govern the use case.
 - **Acceptance Criteria**: Testable conditions that confirm the use case is complete.
 - **Future Enhancements**: Low-complexity follow-ups that could ship next.
@@ -260,6 +265,8 @@ All detailed use cases follow this structure:
 
 - **A1 - [Branching condition]:** At step [N], [what happens instead, in business terms].
 - **E1 - [Failure condition]:** The system informs [Actor] that [what they see and what they can do next].
+
+<!-- FLOWCHART SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-4 are confirmed complete, add a "##### Flowchart" sub-section at this position when the use case has 3 or more Main Flow steps and at least one decision point. Linear or shorter use cases get none; the skip reason is recorded in 14-todo.md. Notation and example: mermaid-diagrams.md § Use-case flowcharts. -->
 
 ##### Business Rules & Constraints
 
@@ -407,7 +414,7 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 | **Concern** | One paragraph. What was missed and why it matters. |
 | **Options** | Concrete choices, each with a one-line tradeoff. At least 2 where a choice exists. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content. This is what gets injected into the body when accepted. |
-| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives — the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
+| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives: the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
 | **Status** | Open / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. |
 
 ## Open Items
@@ -418,8 +425,8 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 - **Type:** [Gap | Missing scenario | Corner case | Ambiguity | Risk | Inconsistency | Duplication]
 - **Concern:** [One paragraph.]
 - **Options:**
-  - **A.** [Option A] — [one-line tradeoff].
-  - **B.** [Option B] — [one-line tradeoff].
+  - **A.** [Option A] - [one-line tradeoff].
+  - **B.** [Option B] - [one-line tradeoff].
 - **Recommended Answer:** [Option letter + the concrete resolution text, ready to paste into the BRD.]
 - **Why:** [The reason this option wins: evidence (source section, business expectation, domain practice) + the tradeoff accepted.]
 - **Status:** Open
@@ -430,7 +437,7 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 
 | ID | Resolution Date | Resolved In | Outcome |
 |----|----------------|-------------|---------|
-| [OI-XX] | [YYYY-MM-DD] | [Section / UC ID] | [Accepted recommendation | Adjusted: short note | Deferred | Rejected] |
+| [OI-XX] | [YYYY-MM-DD] | [Section / UC ID] | [Accepted recommendation / Adjusted: short note / Deferred / Rejected] |
 
 ## Reviewer Notes
 
@@ -438,3 +445,94 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 
 - [Note 1]
 - [Note 2]
+
+---
+
+<!--
+DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
+- GUARDRAIL: the two sections below (15 Implementation Plan, 16 UAT/BAT Test Cases) are NOT written on a first run. They are appended only once the delivery gate is open: every action item in 14-todo.md closed (all five steps Complete with evidence, every item Resolved, Deferred counts as open, no override). Until then this file ends with Open Items & Clarifications.
+- Their full block structure is in chunks/15-implementation.md and chunks/16-uat-bat-test-cases.md; use the same blocks with the COMBINED mode adaptations of delivery-chunks.md (cite use cases and NFRs by identifier in plain text; only links to 14-todo.md are file links).
+- 14 (Product Manager To-Do) and 17 (Presentation & Video Brief) are NEVER part of this file. 14 is written at the end of every generation as ./brd-[project-slug]/14-todo.md; 17 is written as ./brd-[project-slug]/17-for-ppt.md once the gate is open.
+-->
+
+# Implementation Plan
+
+> **What this is.** Every use case turned into scoped tasks with stable IDs, ordered so that no task comes before something it depends on. It names what to deliver and how completion is judged; the SDD and LLD own the how.
+
+**Plan status:** [Up to date / Provisional (TD-NN) / Stale] | **Basis:** BRD v[X.X] | **Gate verified:** [YYYY-MM-DD] (see [14-todo.md](./brd-[project-slug]/14-todo.md)) | **Flowcharts used:** [Figures N-M] | **New items raised while writing this plan:** [0, or TD-NN ...]
+
+## How to use this plan
+
+<!-- The six rules from chunks/15-implementation.md. -->
+
+## Use-case coverage
+
+| Use case | Tasks |
+|----------|-------|
+| UC-01 [Short Title] | TASK-01, TASK-03 |
+
+## Execution sequence
+
+| Wave | Tasks (can run in parallel) | Depends on |
+|------|-----------------------------|-----------|
+| 1 | TASK-01, TASK-02 | None |
+
+## Dependency problems
+
+| ID | Type | Tasks and use cases affected | Evidence | Needed to unblock | To-do item | Status |
+|----|------|------------------------------|----------|-------------------|-----------|--------|
+| DP-01 | [Circular dependency / Missing prerequisite / Blocker] | [...] | [...] | [...] | [TD-NN] | [Open / Resolved] |
+
+## Tasks
+
+### TASK-01: [Title - a capability, in business terms]
+
+<!-- Task block exactly as in chunks/15-implementation.md: header table (Objective, Scope, Type, Wave, Source use cases, Source requirements, Dependencies, Can run in parallel with, Status basis), Expected deliverables, Completion criteria, Assumptions / open questions / blockers. Repeat per task, in execution order. -->
+
+---
+
+# UAT/BAT Test Cases
+
+**Owner:** [Owner Name] | **Prepared:** [YYYY-MM-DD] | **Baseline:** BRD v[X.X] (all sections) | **Design reference:** Figma - [Project Name] UI/UX ([n] screens)
+
+**Suite status:** [Up to date / Provisional (TD-NN) / Stale] | **Gate verified:** [YYYY-MM-DD] (see [14-todo.md](./brd-[project-slug]/14-todo.md)) | **Flowchart cross-check:** done on [YYYY-MM-DD] | **New items raised while writing this suite:** [0, or TD-NN ...]
+
+**Scope note:** [Default execution scope. Define every scope tag used in a TC Name. Name the cases that need another team's cooperation.]
+
+<!-- Sections exactly as in chunks/16-uat-bat-test-cases.md: How to use this document; Test environment and data prerequisites; one numbered section per feature area with the nine-column table; Cross-Cutting UI/UX Standards; NFR Acceptance; Traceability Matrix; Provisional and blocked scenarios; Coverage gaps; Execution summary; Exit criteria (BAT sign-off). -->
+
+## 1. [Feature area] ([UC-NN, screen IDs, NFR-NN])
+
+| TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Testing Result | Testing Comment |
+|-------|---------|----------------|------------|------------------|-----------|--------------|----------------|-----------------|
+| TC-XXX-01 | [Short name] | Verify [...] | [Concrete example] | [Observable outcome] | UC-NN (AC-1) | TASK-NN | | |
+
+## Traceability Matrix
+
+| BRD Reference | Covered By |
+|---------------|-----------|
+| UC-01 [Use case title] | TC-XXX-01..NN |
+
+## Provisional and blocked scenarios
+
+| TC ID | Why the expected result is not final | To-do item | What finalises it |
+|-------|--------------------------------------|-----------|-------------------|
+
+## Coverage gaps
+
+**Checked:** [n] Main Flows, [n] alternate flows, [n] exception flows, [n] acceptance criteria, [n] numeric or time-based rules, [n] NFRs, [n] flowchart branches. **Without a case:** [n].
+
+| BRD Reference | Gap | Reason | To-do item / action |
+|---------------|-----|--------|---------------------|
+
+## Execution summary (fill at the end of the cycle)
+
+| Metric | Count |
+|--------|-------|
+| Total test cases | [n] |
+| Success | |
+| Failed | |
+| Blocked | |
+| Not Run | |
+
+**Exit criteria (BAT sign-off):** [all Critical-path cases pass; no open Failed case without a business-accepted deviation; no `(Provisional)` case left unresolved].

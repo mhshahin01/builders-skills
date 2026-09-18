@@ -4,6 +4,11 @@ The User Journeys & Use Cases section is where a BRD earns (or loses) its useful
 
 **Overriding rule: business language only.** Every part of a use case describes what the actor does and what the system does *for them* — never how the system is built. If a sentence names a technology, protocol, framework, or internal component, it is design content: move it to Appendix § Technical Inputs for the SDD (if it came from the source) or drop it (if it was invented).
 
+**Second overriding rule: plain language.** Use cases are read by business owners, testers, designers, and delivery teams. Write each step, flow, rule, and criterion so all of them understand it on the first read: short sentences, common words, active voice, one action per step, the exact number instead of a vague word. See `writing-style.md`.
+
+> Heavy: "Upon validation of the submitted request, the system shall facilitate notification of the relevant stakeholders."
+> Plain: "The system checks the request. It then notifies the operator and the customer."
+
 ## The use-case block structure
 
 Every UC block has these sub-sections in this order (per the template):
@@ -17,6 +22,8 @@ Every UC block has these sub-sections in this order (per the template):
 7. **Acceptance Criteria** — testable conditions.
 8. **Future Enhancements** — near-term follow-ups.
 9. **UI/UX** — wireframe reference.
+
+One more sub-section is added later, never at first generation: **Flowchart**, placed directly after Alternate & Exception Flows, at step 5 of the product-manager checklist (`14-todo.md`) once steps 1-4 are confirmed complete. See § Flowchart below.
 
 Each sub-section has a quality bar. The tests below help you recognise whether you've met that bar.
 
@@ -81,6 +88,20 @@ This is where the use case is won or lost. The Main Flow is the contract between
 - Technical failure language ("timeout", "5xx", "retry with backoff") — express failures as what the user experiences; the technical handling is SDD content.
 
 **Test:** For each step where an actor decides, or an external party is involved, is there a branch or exception? If not, either it genuinely cannot fail (rare) or a flow is missing.
+
+## Flowchart - the derived view (checklist step 5 only)
+
+**When:** only after to-do steps 1-4 are confirmed complete. **Which use cases:** those with 3 or more Main Flow steps and at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). A linear use case, or one with fewer than 3 steps, gets no flowchart: the numbered steps are the diagram, and the skip reason is recorded in `14-todo.md`.
+
+**Good:** Starts at the Trigger, ends at each documented outcome. Step nodes name their Main Flow step ("Step 3: ..."); branch edges carry their `A1` / `E1` identifier; an exception the narrative does not tie to a step starts from its own start node; every documented alternate and exception flow appears; decision nodes are phrased as the question the actor or the business rule answers. Followed by the mandatory Summary line. Notation: `mermaid-diagrams.md` § Use-case flowcharts.
+
+**Bad:**
+- A path, rejoin point, or outcome the narrative does not state. (The flowchart never adds behaviour. A gap becomes a to-do item and the flowchart stays `Provisional`.)
+- A flowchart that drops an exception flow because it made the picture busy.
+- Component or system-internal steps the actor cannot observe.
+- A flowchart for a linear use case, drawn "for consistency".
+
+**Test:** Walk every path of the flowchart against the narrative, then every flow of the narrative against the flowchart. Any element found on one side only is a defect: fix the narrative first (it is the source of truth), then the flowchart.
 
 ## Business Rules & Constraints
 
@@ -151,6 +172,8 @@ Merge what looks like two UCs into one when:
 - Numbering is sequential across the whole BRD: `UC-01`, `UC-02`, … — not per persona chunk.
 - If the source (SoW, RFP, prior conversation) already uses a scheme, keep it and note the mapping.
 - Never renumber UCs mid-document if the user has seen the prior numbering — renumbering breaks cross-references (including the matrix). If numbering must change, flag it in the changelog.
+- An ID is never reused. A use case that disappears keeps its row in the Use Case Summary: `Merged into UC-NN` when it was folded into another, `Removed: [reason]` when it was dropped. Such a row has no detailed block and is left out of the matrix, the diagrams, the to-do step 5 tables, the implementation plan, and the test cases.
+- A new use case takes the next free ID, even if that puts IDs out of order inside a persona group.
 
 ## Matrix consistency (chunk 07)
 

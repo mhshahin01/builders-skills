@@ -110,6 +110,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 | Section | Chunk |
 |---------|-------|
 | Open Items & Clarifications | [13-open-items-and-clarifications.md](./13-open-items-and-clarifications.md) |
+| Decision history & clarification Q&A (companion register) | [decision-log.md](./decision-log.md) once it exists; created on the first decided clarification |
 
 > Generated *after* the main BRD by a cleared-context reviewer. Captures gaps, missing scenarios, corner cases the body did not flag inline. Every item carries a **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply; the skill walks the user through each item for acceptance, then reflects accepted answers into the body and logs them in the Resolution Log.
 

@@ -76,6 +76,7 @@ Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run
 - [ ] UC IDs are sequential across the whole summary when first assigned. (After the user has seen them they are never renumbered, so gaps and out-of-order IDs appear later. That is expected.)
 - [ ] The Glossary covers every business term and acronym used in 00-05.
 - [ ] The Summarized Workflow parses and has its Summary line. No new use-case diagram was drawn (gated); a diagram kept from a transformed source is captioned `Pre-existing - re-verify at step 5`.
+- [ ] No decision-process narration in content chunks (search for `Resolved on`, `The user selected/answered`, `remains partial`, `option A/B` as narrative). Settled rules appear as plain requirements; the decision story is in `decision-log.md` with working rule-home links.
 
 **Part 2**
 
@@ -83,6 +84,7 @@ Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run
 - [ ] The matrix (07) is derived from the actor fields by the SKILL.md step 6a rules, checked both ways.
 - [ ] The Use Case Summary (05) matches the detailed headings and actors after the back-fill.
 - [ ] No new use-case flowchart was drawn (gated to to-do step 5).
+- [ ] No decision-process narration in content chunks (search for `Resolved on`, `The user selected/answered`, `remains partial`, `option A/B` as narrative). Clarifications raised or decided in this part are recorded in `decision-log.md` with working rule-home links.
 
 **Part 3**
 
@@ -90,6 +92,7 @@ Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run
 - [ ] No NFR measure was invented; a missing measure is a clarification marker.
 - [ ] Technical mandates from the source are parked verbatim in 12, not spread in the body.
 - [ ] The back-fill of 00, 02, 03, and 05 is done.
+- [ ] No decision-process narration in content chunks (search for `Resolved on`, `The user selected/answered`, `remains partial`, `option A/B` as narrative). Accepted open items are applied as plain requirement text; their narrative is in `decision-log.md` with working rule-home links.
 
 ---
 

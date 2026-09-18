@@ -4,6 +4,8 @@ An easy BRD is a requirement, not a nice-to-have. Every reader should understand
 
 **The style in four words: simple, clear, precise, easy.** Simplicity is essential. If a simpler way to say it exists, use it.
 
+Readability covers the whole reading experience. Requirement text never uses process vocabulary (delegation, walkthrough, checkpoint, "resolved on") and reads smoothly for someone who never saw the decision process; the decision story belongs in `decision-log.md` (see SKILL.md's core principles).
+
 This style applies to everything the skill writes: all BRD chunks (00-13), the delivery chunks (14-17), table cells, diagram labels, Summary lines, open items, test cases, slides, and voiceover.
 
 ---

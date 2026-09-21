@@ -129,7 +129,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 >
 > **Guardrail.** The to-do (14) is written at the end of every generation. Chunks 15, 16, and 17 are **locked** until every action item in the to-do is closed: all five steps complete with evidence and every item resolved. A deferred item counts as open. There is no override. `Locked` means the file does not exist yet.
 >
-> Use-case diagrams (chunk 05) and use-case flowcharts (chunks 06a+) are added only at step 5 of the to-do, after steps 1-4 are complete.
+> Use-case diagrams (chunk 05) and use-case flowcharts (chunks 06a+) are added only at step 5 of the to-do, after steps 1-3 are complete (in parallel with step 4).
 
 ---
 

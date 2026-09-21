@@ -32,7 +32,7 @@ This file is the rulebook for those four chunks. The skeletons live in `chunks/1
 | G1 | To-do step 1 is `Complete`: every `TD-NN` row is `Resolved` | No `TD-NN` row is `Open` or `Deferred`. No `OI-NN` in chunk 13 is `Open` or `Deferred` (closed means `Accepted - applied`, `Adjusted - applied`, or `Rejected`). No `[NEEDS CLARIFICATION: ...]` marker is left in chunks 00-12. |
 | G2 | To-do step 2 is `Complete`, and none of its findings is still waiting | A check run is recorded after the last content change to chunks 00-13 (§ Refresh triggers, Version). Every `CF-NN` has a disposition, and none is still waiting on a decision: each is `Corrected`, `No change`, or was raised as an item that is now `Resolved`. (A finding deferred for clarification lets step 2 complete, but its `TD-NN` keeps step 1, and so the gate, open.) |
 | G3 | To-do step 3 is `Complete` | The product manager confirmed the grill-me session (date recorded) and every decision from it is applied. |
-| G4 | To-do step 4 is `Complete` | Every mockup row is `Approved`, the product manager confirmed the review (date recorded), and the Figma links are in the use cases' UI/UX sections. |
+| G4 | To-do step 4 is `Complete` | Every mockup row is `Approved`, the product manager confirmed the review and a play-through of the prototype (dates recorded), and the Figma links are in the use cases' UI/UX sections. |
 | G5 | To-do step 5 is `Complete` | The use-case diagrams are in chunk 05, every qualifying use case has its flowchart, every other use case has a skip reason, all Mermaid blocks parse, and the consistency check was rerun after the diagrams. |
 
 **`Deferred` does not count as closed.** A deferred item keeps the gate shut until a decision is taken. `Resolved` means a decision is recorded and applied to the BRD. It does not mean the outside world has delivered: a pending dependency is resolved when the product manager decides how the BRD treats it (confirmed, replaced, or taken out of scope).
@@ -120,7 +120,7 @@ In COMBINED mode, the two sections are added to the combined file only when the 
 
 A prioritised, living checklist. Five steps, in this fixed order. Every step carries **Status**, **Required inputs**, **Expected output**, **Completion criteria**, and **Evidence**.
 
-**Step status values:** `Not started` / `In progress` / `Blocked` (say by what) / `Pending gate` (step 5 only, while G1-G4 do not hold) / `Complete` (Evidence mandatory). In the step 5 tables, a use case planned as a skip is `Skipped` from the start; every other row is `Pending gate` until the gate opens, then `Drafted`, `Provisional (TD-NN)`, or `Final`.
+**Step status values:** `Not started` / `In progress` / `Blocked` (say by what) / `Pending gate` (steps 4 and 5, while G1-G3 do not hold) / `Complete` (Evidence mandatory). In the step 5 tables, a use case planned as a skip is `Skipped` from the start; every other row is `Pending gate` until the gate opens, then `Drafted`, `Provisional (TD-NN)`, or `Final`.
 
 **Owner and priority cells are never guessed.** The Owner of a to-do row is the person the user named, otherwise the BRD author from chunk 00, written as `Recommendation: [name]`. Mockup priority follows the use case's place on the main journey: `P1` when it sits on the Summarized Workflow of chunk 05, otherwise `P2`.
 
@@ -131,7 +131,7 @@ A prioritised, living checklist. Five steps, in this fixed order. Every step car
 | 1 | Every `TD-NN` row is `Resolved`, each with its pointer (Resolution Log row or Changes Log entry). A `Deferred` row keeps the step open. | Stays `In progress` |
 | 2 | A check run is recorded and every `CF-NN` has a disposition. A finding deferred for clarification stays visible as a `TD-NN`, so it keeps step 1 open. | Stays `In progress` |
 | 3 | The product manager confirms the grill-me session happened and hands back the decision list, and the decisions are applied | The skill cannot observe a session it did not run; never infer it |
-| 4 | The product manager confirms mockup review and the Figma links are recorded in each use case's UI/UX section | Never inferred from a link alone |
+| 4 | The product manager confirms the mockup review and a dated play-through of the prototype, and the Figma links are recorded in each use case's UI/UX section | Never inferred from a link alone |
 | 5 | The skill executed it and the completion criteria below hold | - |
 
 ### Step 1 - Resolve open items and clarifications
@@ -193,9 +193,14 @@ After corrections, **recheck** and add a run row. Unresolved findings go into th
 
 ### Step 4 - Generate mockups in Figma
 
-- One coverage row per screen or flow: the use cases it serves, the requirements and decisions it must honour, the states to cover, priority, status, Figma link. Use the screen identifiers already in chunk 11 or the use cases' UI/UX sections; assign `MK-NN` only where none exist.
+- **The standard is the global UI/UX constitution.** Mockups are generated in Figma or, if the user names another tool, in that tool. Either way, before any mockup is generated, read the project's `ui-ux-global-constitution.md` (the project's AGENTS.md points to it; if it cannot be found, ask the user for its location and do not work from memory): sections 2 and 3 (tokens), 12 (responsive), 13 (mockups and prototypes) and 14 (Figma prototypes). Its Figma rules apply in full to a Figma deliverable. For another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent (playable flow, frames per breakpoint, states as variants, tokens, labeled simulated data, dated play-through). This step never restates those rules; it points to them, so a change to the constitution changes the step.
+- **Write a mockup brief into step 4 of `14-todo.md`.** A ready-to-use prompt, recommended and never claimed as executed, built from the constitution's reusable generation brief: it names the BRD, the coverage table, the constitution and the sections above, and the tool. It tells the generating tool or agent to read the constitution first.
+- One coverage row per screen or flow: the use cases it serves, the requirements and decisions it must honour, the states to cover, priority, status, breakpoints delivered, playable, play-through, Figma link. Use the screen identifiers already in chunk 11 or the use cases' UI/UX sections; assign `MK-NN` only where none exist.
 - **Expected coverage:** every use case with an actor-facing interaction has at least one screen; every Main Flow step the actor can observe is visible on a screen; every A/E flow with a user-visible state has that state; role differences follow the matrix (07); global standards follow chunk 11 (loading, empty, and error states included).
-- **Review criteria:** each frame names its `UC-NN`; flows are walkable end to end; states are covered; visibility matches the matrix; chunk 11 standards hold; no mockup shows behaviour absent from the BRD (if one does, raise a `TD-NN`, do not absorb it).
+- **Prototype coverage (constitution section 14):** one named start frame; every Main Flow playable from it to its end with no dead ends; P1 rows have every actor-facing control wired (navigation, overlays, drawers, dialogs, tabs, filters, form validation and error paths, destructive-action confirmation); P2 rows are connected to their neighbouring frames; states are variants, not duplicate static frames.
+- **Responsive coverage (constitution section 12):** frames for mobile, tablet and desktop on P1 rows; desktop and mobile on P2 rows.
+- **Review criteria:** each frame names its `UC-NN`; flows are walkable end to end and playable in play mode with no dead ends; states are covered; visibility matches the matrix; chunk 11 standards hold; variables and text styles map to the constitution's tokens with no raw hex in components; simulated data and demo actions are labelled; the share link has view permission and opens on the start frame; no mockup shows behaviour absent from the BRD (if one does, raise a `TD-NN`, do not absorb it).
+- **Gate.** Begin only after steps 1-3 are `Complete` with evidence (G1-G3), the same gate as step 5. Step 5 is not a precondition: steps 4 and 5 run in parallel. If asked for mockups while G1-G3 are unmet, list what is missing and stop.
 - Rows touching an unresolved item are marked `Blocked by TD-NN`.
 
 ### Step 5 - Use-case diagrams and flowcharts
@@ -330,7 +335,7 @@ Per video: title, audience, objective, source use-case references; a timed story
 
 ## The gated diagram step (todo step 5)
 
-**Gate.** Begin only after steps 1-4 are `Complete` with evidence: verify conditions G1-G4 of § The delivery gate against the files. If asked for the diagrams while the gate is unmet: list what is missing and stop. The product manager's explicit confirmation is valid evidence for steps 3 and 4 (record it with the date); steps 1 and 2 are verified in the files. Never generate on an unconfirmed gate, and there is no override. (The Summarized Workflow in chunk 05 is not gated; it is part of normal generation.)
+**Gate.** Begin only after steps 1-3 are `Complete` with evidence: verify conditions G1-G3 of § The delivery gate against the files. Step 4 (mockups) is not a precondition: steps 4 and 5 run in parallel once G1-G3 hold. If asked for the diagrams while G1-G3 are unmet: list what is missing and stop. The product manager's explicit confirmation is valid evidence for step 3 (record it with the date); steps 1 and 2 are verified in the files. Never generate on an unconfirmed gate, and there is no override. (The Summarized Workflow in chunk 05 is not gated; it is part of normal generation.)
 
 **What is drawn, and where**
 
@@ -345,7 +350,7 @@ Notation and syntax rules: `mermaid-diagrams.md` § Use-case diagrams and § Use
 
 - The narrative is the source of truth; the diagram is a derived view. Every node and edge traces to a step, flow, rule, or actor field. Every documented A/E flow appears.
 - Keep existing identifiers: use-case IDs in node labels, step numbers in step nodes, `A1` / `E1` on branch edges.
-- Stay consistent with the finalised requirements and the approved mockups.
+- Stay consistent with the finalised requirements. Mockups may be in progress in parallel: if a mockup and a diagram disagree on a flow, record a `TD-NN`; do not pick one.
 - **Do not invent behaviour to close a gap** (for example an alternate flow that never says where it rejoins). Record a `TD-NN`, mark that diagram `Provisional` in the tracking table, and finalise it after the answer.
 - An exception the narrative does not tie to a step starts from its own start node (for example "At any time before the decision"). Never pick a step for it.
 - Every diagram is a numbered figure with the mandatory **Summary** line and a Figures index row in chunk 00. New figures take the next free number; existing figures are never renumbered.
@@ -367,12 +372,12 @@ Later confirmed changes must reach the downstream outputs. IDs stay stable; stat
 |---|---|---|
 | An open item is accepted, adjusted, or rejected | TD status, `Blocks`, step status, evidence | Nothing yet if they do not exist. If they exist: refresh what cited the item, once the gate is open. |
 | An open item is deferred, or a new one appears | TD row stays or is added; step 1 returns to `In progress` | `Stale` and locked |
-| A use case changes (flows, rules, acceptance criteria, actors) | Matrix (step 6a), consistency check rerun, step 5 tracking row; a changed diagrammed use case reopens step 5 | `Stale` until the to-do is clear again, then refresh the affected tasks, test cases and traceability, slides and videos |
+| A use case changes (flows, rules, acceptance criteria, actors) | Matrix (step 6a), consistency check rerun, step 5 tracking row; a changed diagrammed use case reopens step 5, and its mockup rows reopen step 4 | `Stale` until the to-do is clear again, then refresh the affected tasks, test cases and traceability, slides and videos |
 | A use case is added or removed | All of the above | As above, plus Use-case coverage (15), Traceability Matrix and totals (16), series overview (17) |
 | Scope, NFR, integration, report, or UI/UX standard changes | Consistency check rerun | `Stale`, then refresh the tasks, acceptance cases, and slides citing it |
 | Mockups change after approval | Step 4 returns to `In progress` | `Stale`, then refresh visuals and reference inputs in 17 |
 
-**A `Complete` step falls back to `In progress` when its inputs change:** a new `Open` or `Deferred` TD (step 1), any content change to chunks 00-13 after the last check run (step 2), a new decision to confirm (step 3), a decision that changes a screen (step 4), an edit to a diagrammed use case (step 5).
+**A `Complete` step falls back to `In progress` when its inputs change:** a new `Open` or `Deferred` TD (step 1), any content change to chunks 00-13 after the last check run (step 2), a new decision to confirm (step 3), a decision that changes a screen or a change to the constitution's Figma or responsive rules (step 4), an edit to a diagrammed use case (step 5). Because steps 4 and 5 run in parallel, a use-case change made for one reopens the affected rows of the other, and the consistency check is rerun once both are back to `Complete`.
 
 **Version.** Only a **content change** bumps the version: a change to what chunks 00-13 say about the product. It means one minor step per run (1.0 to 1.1), one Changes Log row, and the new VERSION in chunk 00, in `brd-master.md`, and in each chunk that was changed.
 
@@ -415,7 +420,8 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 
 - [ ] Chunk 14 keeps the fixed order: resolve open items -> consistency check -> grill-me -> Figma mockups -> use-case diagrams and flowcharts, with Miro optional afterwards.
 - [ ] Every step has Status, Required inputs, Expected output, Completion criteria, Evidence. No step is `Complete` without evidence. Steps 3 and 4 are not `Complete` without the product manager's confirmation.
-- [ ] Step 5 is `Pending gate` unless G1-G4 hold. No new use-case diagram or flowchart was drawn in 05 / `06*` before the gate.
+- [ ] Step 4 points to the constitution (sections 2, 3, 12, 13, 14), carries the mockup brief, and its coverage table has the Playable, Breakpoints delivered and Play-through columns.
+- [ ] Steps 4 and 5 are `Pending gate` unless G1-G3 hold, and neither is blocked by the other. No new use-case diagram or flowchart was drawn in 05 / `06*` before the gate.
 - [ ] If step 5 ran: every Mermaid block parses, agrees with its narrative, and has a Summary line and a Figures index row.
 - [ ] Every `CF-NN` has traceable references and a disposition; unresolved ones are visible as `TD-NN` / `OI-NN`.
 - [ ] CHUNKS mode: `brd-master.md` indexes chunk 14 and lists chunks 15-17 as `Locked` (plain text, no link) until they exist.

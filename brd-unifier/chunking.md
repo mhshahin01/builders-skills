@@ -113,7 +113,7 @@ Do NOT deviate because a chunk "looks too short" — short chunks are fine when 
 - **UI/UX per UC** — include the heading; if no wireframe yet, reference the global UI/UX Expectations and write `No wireframe required for this use case.` or `Wireframe pending — see global UI/UX standards in chunk 11.`
 - **Technical Inputs for the SDD** in chunk 12 — include only if the source material contained technical mandates; otherwise omit the sub-section.
 - **Matrix footnotes** in chunk 07 — only where access is conditional; a bare `Yes` / `-` is the norm.
-- **Use Case Diagrams** in chunk 05 and **Flowchart** per UC in chunks `06*`: never emitted at first generation. They are added at checklist step 5 (`14-todo.md`) after steps 1-4 are confirmed complete. A flowchart is required only for use cases with 3 or more Main Flow steps and at least one decision point; linear or very short use cases skip it, with the reason recorded in `14-todo.md`.
+- **Use Case Diagrams** in chunk 05 and **Flowchart** per UC in chunks `06*`: never emitted at first generation. They are added at checklist step 5 (`14-todo.md`) after steps 1-3 are confirmed complete (in parallel with step 4). A flowchart is required only for use cases with 3 or more Main Flow steps and at least one decision point; linear or very short use cases skip it, with the reason recorded in `14-todo.md`.
 - **`14-todo.md`**: generated at the end of every generation (in `parts`, at the end of part 3). Skipped only when the user explicitly asks for the BRD alone; say so in the handoff.
 - **Chunks 15, 16, 17**: never generated while the delivery gate is shut. Their absence after a first run is expected, not a gap.
 

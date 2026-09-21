@@ -211,7 +211,7 @@ Core capabilities:
 | **[Persona 2]** | | | |
 | UC-03 | [Short Title] | [Persona 2] | [Summary] |
 
-<!-- USE CASE DIAGRAMS SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-4 are confirmed complete, add a "## Use Case Diagrams" section at this position: actors, use cases, system boundary, and documented relationships as inline Mermaid plus the Summary line. Structure: chunks/05-user-journeys-overview.md. Notation: mermaid-diagrams.md § Use-case diagrams. -->
+<!-- USE CASE DIAGRAMS SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-3 are confirmed complete, add a "## Use Case Diagrams" section at this position: actors, use cases, system boundary, and documented relationships as inline Mermaid plus the Summary line. Structure: chunks/05-user-journeys-overview.md. Notation: mermaid-diagrams.md § Use-case diagrams. -->
 
 ## Detailed Use Cases
 
@@ -266,7 +266,7 @@ All detailed use cases follow this structure:
 - **A1 - [Branching condition]:** At step [N], [what happens instead, in business terms].
 - **E1 - [Failure condition]:** The system informs [Actor] that [what they see and what they can do next].
 
-<!-- FLOWCHART SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-4 are confirmed complete, add a "##### Flowchart" sub-section at this position when the use case has 3 or more Main Flow steps and at least one decision point. Linear or shorter use cases get none; the skip reason is recorded in 14-todo.md. Notation and example: mermaid-diagrams.md § Use-case flowcharts. -->
+<!-- FLOWCHART SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-3 are confirmed complete, add a "##### Flowchart" sub-section at this position when the use case has 3 or more Main Flow steps and at least one decision point. Linear or shorter use cases get none; the skip reason is recorded in 14-todo.md. Notation and example: mermaid-diagrams.md § Use-case flowcharts. -->
 
 ##### Business Rules & Constraints
 
@@ -364,7 +364,7 @@ All detailed use cases follow this structure:
 - **Data Tables**: [Sorting, pagination: default 20 rows/page, export (csv & excel), filtering standards]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
-- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum.
+- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum, following the breakpoints and behaviour in the global UI/UX constitution (section 12).
 - **Language & Locale**: [Supported languages, right-to-left support if applicable, date/number/currency formats per audience.]
 - [Other global UX rules]
 

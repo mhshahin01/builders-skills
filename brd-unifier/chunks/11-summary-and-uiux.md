@@ -24,7 +24,7 @@ LANGUAGE: Business language only. UI/UX expectations describe what users experie
 - **Data Tables**: [Sorting, pagination: default 20 rows/page, export (csv & excel), filtering standards]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
-- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum.
+- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum, following the breakpoints and behaviour in the global UI/UX constitution (section 12).
 - **Language & Locale**: [Supported languages, right-to-left support if applicable, date/number/currency formats per audience.]
 - [Other global UX rules]
 

@@ -42,7 +42,7 @@ LANGUAGE: Business language only. No technology names, protocols, or implementat
 
 <!--
 USE CASE DIAGRAMS SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated chunk.
-Add the section below only after to-do steps 1-4 are confirmed complete. One overview diagram if it fits about 30 lines, otherwise one per persona in the order above. Every UC-NN (except rows marked Merged into or Removed) appears in at least one diagram; every association matches the use-case actor fields and the matrix (07); include / extend only where a narrative documents it. Notation: mermaid-diagrams.md § Use-case diagrams.
+Add the section below only after to-do steps 1-3 are confirmed complete (it runs in parallel with step 4). One overview diagram if it fits about 30 lines, otherwise one per persona in the order above. Every UC-NN (except rows marked Merged into or Removed) appears in at least one diagram; every association matches the use-case actor fields and the matrix (07); include / extend only where a narrative documents it. Notation: mermaid-diagrams.md § Use-case diagrams.
 
 ## Use Case Diagrams
 

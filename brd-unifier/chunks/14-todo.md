@@ -21,7 +21,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 **Last updated:** [YYYY-MM-DD] | **BRD version:** [X.X] | **Steps complete:** [0] of 5
 
-**Status values:** `Not started` / `In progress` / `Blocked` (by what) / `Pending gate` (step 5, until steps 1-4 are complete) / `Complete` (evidence mandatory). A `Complete` step goes back to `In progress` when its inputs change.
+**Status values:** `Not started` / `In progress` / `Blocked` (by what) / `Pending gate` (steps 4 and 5, until steps 1-3 are complete; the two then run in parallel) / `Complete` (evidence mandatory). A `Complete` step goes back to `In progress` when its inputs change.
 
 ---
 
@@ -31,9 +31,9 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 |---|------|--------|----------|----------|
 | 1 | Resolve open items and clarifications | [Status] | [None yet, or pointer] | Step 2 |
 | 2 | Run a consistency check across all BRD chunks | [Status] | [Run #, date, findings dispositioned] | Step 3 |
-| 3 | Finalise requirements with the grill-me skill | [Status] | [PM confirmation + date] | Step 4 |
-| 4 | Generate mockups in Figma | [Status] | [Figma links + review confirmation] | Step 5 |
-| 5 | Update the use-case chunks with use-case diagrams and flowcharts | Pending gate | [None yet] | The delivery gate: chunks 15, 16, 17 |
+| 3 | Finalise requirements with the grill-me skill | [Status] | [PM confirmation + date] | Steps 4 and 5 |
+| 4 | Generate mockups in Figma | [Status] | [Figma links + review and play-through confirmation] | The delivery gate: chunks 15, 16, 17 (with step 5) |
+| 5 | Update the use-case chunks with use-case diagrams and flowcharts | Pending gate | [None yet] | The delivery gate: chunks 15, 16, 17 (with step 4) |
 
 ## Delivery gate
 
@@ -44,7 +44,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 | G1 | Step 1 complete: every to-do item `Resolved`; no open or deferred item in chunk 13; no clarification marker left in chunks 00-12 | [Met / Not met] | [TD-NN, OI-NN, markers in 06b ...] |
 | G2 | Step 2 complete: check rerun after the last BRD change; every finding has a disposition and none is still waiting on a decision | [Met / Not met] | [CF-NN ...; rerun needed] |
 | G3 | Step 3 complete: grill-me session confirmed; decisions applied | [Met / Not met] | [...] |
-| G4 | Step 4 complete: every mockup approved; review confirmed; Figma links in the use cases | [Met / Not met] | [MK-NN ...] |
+| G4 | Step 4 complete: every mockup approved; review and play-through confirmed; Figma links in the use cases | [Met / Not met] | [MK-NN ...] |
 | G5 | Step 5 complete: use-case diagrams and flowcharts added; consistency check rerun | [Met / Not met] | [...] |
 
 **Gate:** [Shut / Open] | **Next action:** [The one thing to do next, e.g. "Decide TD-01 to TD-06 (P1), then run /grill-me with the prompt in step 3."]
@@ -154,28 +154,49 @@ Do not edit any file during the session. End with a numbered decision list I can
 | | |
 |---|---|
 | **Status** | Not started |
-| **Required inputs** | Finalised use cases (06*), the matrix ([07](./07-users-use-cases-matrix.md)), UI/UX Expectations ([11](./11-summary-and-uiux.md)), decisions from steps 1-3 |
-| **Expected output** | Figma mockups covering the table below, reviewed against the criteria, with links recorded in each use case's UI/UX section |
-| **Completion criteria** | Every row is `Approved`; the product manager confirms the review; the Figma links are recorded in the use cases |
-| **Evidence** | [None yet] |
+| **Required inputs** | Finalised use cases (06*), the matrix ([07](./07-users-use-cases-matrix.md)), UI/UX Expectations ([11](./11-summary-and-uiux.md)), decisions from steps 1-3, and the global UI/UX constitution (`ui-ux-global-constitution.md`, sections 2, 3, 12, 13 and 14) |
+| **Expected output** | A playable, responsive prototype covering the table below, reviewed against the criteria, with links recorded in each use case's UI/UX section |
+| **Completion criteria** | Every row is `Approved`; the product manager confirms the review and a dated play-through; the Figma links are recorded in the use cases |
+| **Evidence** | [None yet. Play-through: date and result once confirmed.] |
+
+**Standard to follow.** The generating tool or agent reads the constitution before producing any frame. For Figma, section 14 applies in full; for another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent. P1 rows: every Main Flow playable from the named start frame with no dead ends, every actor-facing control wired, frames for mobile, tablet and desktop. P2 rows: connected to neighbouring frames, desktop and mobile. States are variants, not duplicate frames.
+
+**Ready-to-use mockup brief** (recommended; run it yourself in the mockup tool or agent):
+
+```text
+Use ui-ux-global-constitution.md as the shared visual and interaction baseline. Read it before generating any frame: sections 2, 3, 12, 13 and 14.
+Use the [Project Name] BRD v[X.X] in ./brd-[project-slug]/ for the workflows, fields, permissions and business rules. Read brd-master.md first, then 14-todo.md.
+Create a playable [Figma / tool] prototype covering every row of the Mockup coverage table below, for [target users].
+P1 rows: one named start frame, every Main Flow playable to its end with no dead ends, every actor-facing control wired, frames for mobile, tablet and desktop.
+P2 rows: connected to neighbouring frames, desktop and mobile frames.
+States are component variants. Variables and text styles map to the constitution tokens. Label simulated data and demo actions.
+Name the UC-NN on each frame. Do not add behaviour the BRD does not describe; list it instead.
+Return the share link (view permission, opening on the start frame) and the list of frames per breakpoint.
+```
 
 ### Mockup coverage
 
 <!-- Use the screen identifiers already defined in chunk 11 or the use cases' UI/UX sections; assign MK-NN only where none exist. -->
 
-| Mockup | Screen / flow | Use cases | Requirements and decisions to honour | States to cover | Priority | Status | Figma link |
-|--------|---------------|-----------|--------------------------------------|-----------------|----------|--------|-----------|
-| MK-01 | [Screen or flow name] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Not started / Blocked by TD-NN / In review / Approved] | [Link] |
+| Mockup | Screen / flow | Use cases | Requirements and decisions to honour | States to cover | Priority | Playable | Breakpoints delivered | Status | Play-through | Figma link |
+|--------|---------------|-----------|--------------------------------------|-----------------|----------|----------|-----------------------|--------|--------------|-----------|
+| MK-01 | [Screen or flow name] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Mobile, tablet, desktop] | [Not started / Blocked by TD-NN / In review / Approved] | [Confirmed by PM, date, result] | [Link] |
 
-**Expected coverage:** every use case with an actor-facing interaction has at least one screen; every observable Main Flow step is visible on a screen; every alternate or exception flow with a user-visible state has that state; role differences follow the matrix; global standards follow chunk 11.
+**Expected coverage:** every use case with an actor-facing interaction has at least one screen; every observable Main Flow step is visible on a screen; every alternate or exception flow with a user-visible state has that state; role differences follow the matrix; global standards follow chunk 11; P1 rows are fully interactive and delivered at mobile, tablet and desktop; P2 rows are connected and delivered at desktop and mobile.
 
 **Review criteria**
 
 - [ ] Each frame names the use case(s) it serves.
-- [ ] Every flow can be walked end to end without a missing screen.
-- [ ] Loading, empty, and error states are present where the use cases call for them.
+- [ ] Every flow can be walked end to end without a missing screen, and played in play mode from the named start frame with no dead ends.
+- [ ] Every actor-facing control on a P1 screen is wired (navigation, overlays, drawers, dialogs, tabs, filters, form validation and error paths, destructive-action confirmation).
+- [ ] Loading, empty, and error states are present where the use cases call for them, as variants rather than duplicate frames.
+- [ ] Frames exist for every breakpoint the row's priority requires.
 - [ ] What each role sees matches the Users & Use Cases Matrix.
 - [ ] Global UI/UX standards in chunk 11 hold on every screen.
+- [ ] Variables and text styles map to the constitution's tokens; no raw hex in components.
+- [ ] Simulated data and demo actions are labelled; nothing implies a change to a production system.
+- [ ] Contrast, focus order and keyboard order are annotated on key frames.
+- [ ] The share link has view permission and opens on the start frame.
 - [ ] No mockup shows behaviour the BRD does not describe (if one does, add a TD row; do not absorb it).
 
 ---
@@ -185,8 +206,8 @@ Do not edit any file during the session. End with a numbered decision list I can
 | | |
 |---|---|
 | **Status** | Pending gate |
-| **Gate** | Starts only after steps 1-4 are `Complete` with evidence (conditions G1-G4 above, verified in the files). The product manager's confirmation is the evidence for steps 3 and 4. No override. |
-| **Required inputs** | Finalised requirements and use-case narratives; approved mockups; this step's tracking tables |
+| **Gate** | Starts only after steps 1-3 are `Complete` with evidence (conditions G1-G3 above, verified in the files). Runs in parallel with step 4; neither waits for the other. The product manager's confirmation is the evidence for step 3. No override. |
+| **Required inputs** | Finalised requirements and use-case narratives; this step's tracking tables |
 | **Expected output** | Use-case diagrams added to [05-user-journeys-overview.md](./05-user-journeys-overview.md); a flowchart added to every qualifying use case in chunks 06*; consistency check rerun. Completing this step opens the delivery gate for chunks 15, 16, and 17. |
 | **Completion criteria** | Chunk 05 contains the applicable use-case diagrams; every qualifying 06* use case has its flowchart and every other use case has a recorded skip reason; all Mermaid blocks parse; the updated chunks pass the consistency check |
 | **Evidence** | [None yet] |

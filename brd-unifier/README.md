@@ -63,7 +63,7 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 7. **Adversarial review.** A cleared-context reviewer subagent hunts gaps, ambiguities, risks, matrix inconsistencies, and technical leaks, and writes chunk 13 with a Recommended Answer and Why per item.
 8. **Acceptance loop.** The user decides each Open Item (accept, choose another option, defer); accepted answers are applied to the body and recorded in `decision-log.md`.
 9. **Write the to-do.** `14-todo.md`: the open-items register, consistency check (C1-C8), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block.
-10. **Gated follow-ons, on later invocations.** Step 8b adds use-case diagrams and flowcharts once to-do steps 1-4 are confirmed. Step 8c writes chunks 15, 16, 17 in order, only once the delivery gate (G1-G5) verifies open against the files. Cross-mode conversion (merge, re-chunk, regenerate one chunk, refresh the to-do) is handled on explicit request.
+10. **Gated follow-ons, on later invocations.** Step 8b adds use-case diagrams and flowcharts once to-do steps 1-3 are confirmed (in parallel with the step 4 mockups). Step 8c writes chunks 15, 16, 17 in order, only once the delivery gate (G1-G5) verifies open against the files. Cross-mode conversion (merge, re-chunk, regenerate one chunk, refresh the to-do) is handled on explicit request.
 
 ### Outputs
 

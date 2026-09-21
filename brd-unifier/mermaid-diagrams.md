@@ -29,7 +29,7 @@ BRD diagrams follow the same rule as BRD text: **no technical terminology**. Nod
 
 **Do not** draw a diagram for: glossary, assumptions, scope, NFR tables, the Users & Use Cases Matrix, or any UC that is linear (no alternate flow, no exception flow, no path-changing rule) or has fewer than 3 Main Flow steps: the numbered steps are the diagram.
 
-**Gated diagrams.** Use-case diagrams and use-case flowcharts are never drawn during first generation. They are added to chunks 05 and `06*` at step 5 of the product-manager checklist (`14-todo.md`), only after steps 1-4 are confirmed complete. Rules: `delivery-chunks.md` § The gated diagram step. Every other diagram in this table is part of normal generation.
+**Gated diagrams.** Use-case diagrams and use-case flowcharts are never drawn during first generation. They are added to chunks 05 and `06*` at step 5 of the product-manager checklist (`14-todo.md`), only after steps 1-3 are confirmed complete (in parallel with the mockups of step 4). Rules: `delivery-chunks.md` § The gated diagram step. Every other diagram in this table is part of normal generation.
 
 ---
 

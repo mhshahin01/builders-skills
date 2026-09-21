@@ -23,7 +23,7 @@ Every UC block has these sub-sections in this order (per the template):
 8. **Future Enhancements** — near-term follow-ups.
 9. **UI/UX** — wireframe reference.
 
-One more sub-section is added later, never at first generation: **Flowchart**, placed directly after Alternate & Exception Flows, at step 5 of the product-manager checklist (`14-todo.md`) once steps 1-4 are confirmed complete. See § Flowchart below.
+One more sub-section is added later, never at first generation: **Flowchart**, placed directly after Alternate & Exception Flows, at step 5 of the product-manager checklist (`14-todo.md`) once steps 1-3 are confirmed complete. See § Flowchart below.
 
 Each sub-section has a quality bar. The tests below help you recognise whether you've met that bar.
 
@@ -91,7 +91,7 @@ This is where the use case is won or lost. The Main Flow is the contract between
 
 ## Flowchart - the derived view (checklist step 5 only)
 
-**When:** only after to-do steps 1-4 are confirmed complete. **Which use cases:** those with 3 or more Main Flow steps and at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). A linear use case, or one with fewer than 3 steps, gets no flowchart: the numbered steps are the diagram, and the skip reason is recorded in `14-todo.md`.
+**When:** only after to-do steps 1-3 are confirmed complete. **Which use cases:** those with 3 or more Main Flow steps and at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). A linear use case, or one with fewer than 3 steps, gets no flowchart: the numbered steps are the diagram, and the skip reason is recorded in `14-todo.md`.
 
 **Good:** Starts at the Trigger, ends at each documented outcome. Step nodes name their Main Flow step ("Step 3: ..."); branch edges carry their `A1` / `E1` identifier; an exception the narrative does not tie to a step starts from its own start node; every documented alternate and exception flow appears; decision nodes are phrased as the question the actor or the business rule answers. Followed by the mandatory Summary line. Notation: `mermaid-diagrams.md` § Use-case flowcharts.
 
@@ -145,7 +145,7 @@ This is where the use case is won or lost. The Main Flow is the contract between
 
 ## UI/UX — wireframe references
 
-**Good:** A Figma link (preferred), a wireframe sketch reference, or (if neither exists) a written reference to the global UI/UX Expectations section plus a note that a wireframe is pending.
+**Good:** A Figma prototype link (preferred) that names the frame where this use case's flow starts, a wireframe sketch reference, or (if neither exists) a written reference to the global UI/UX Expectations section plus a note that a wireframe is pending.
 
 **Bad:**
 - ASCII wireframes.

@@ -27,4 +27,4 @@ CONSISTENCY RULES: (1) Every UC ID from chunk 05 appears exactly once as a row. 
 
 - [Note 1, or remove this section if empty.]
 
-<!-- MASTER: brd-master.md | PREV: 06a-use-cases-detailed.md | NEXT: 08-integrations.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 06a-use-cases-detailed.md | NEXT: 08-integrations.md -->

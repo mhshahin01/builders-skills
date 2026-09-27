@@ -17,4 +17,4 @@ LANGUAGE: Business language only. Describe what each report shows and who reads 
 | [Report 1] | [The business question it answers, e.g., "Daily sales per branch with refund totals"] | [Admin / Manager / Tenant] | [Real-time / Daily / On-demand] | [Table / Chart / Export CSV & Excel] |
 | [Report 2] | [What it shows] | [Audience] | [Frequency] | [Format] |
 
-<!-- MASTER: brd-master.md | PREV: 08-integrations.md | NEXT: 10-nfrs.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 08-integrations.md | NEXT: 10-nfrs.md -->

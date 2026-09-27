@@ -93,7 +93,11 @@ All skills follow the same house style, so output is interchangeable and tool-fr
 
 **Purpose:** the Solution Design Document. Owns the entire HOW. It can generate from scratch, transform an existing SDD, or derive an SDD from a BRD (chunked folder or single file, see `brd-to-sdd.md`).
 
-**Usage:** `sdd-unifier [chunks|combined]` (chunks is the default).
+**Usage:** `sdd-unifier [chunks|combined] [parts|whole]`.
+
+- `parts` (default in chunks mode): the SDD is written in three parts, stopping for the user's review after parts 1 and 2 (`parts-mode.md`). Part 1 settles the architecture, ADRs, and service decomposition (00-09); part 2 writes the per-service specs, the event hub, the roles, and the API contracts, then reconciles them; part 3 writes operations and the appendix and runs the review. The end-to-end design (chunk 19) is written only once the open items (chunk 18) are cleared.
+- `whole`: everything in one go (one-shot). Combined mode is always `whole`.
+- Decision history (ecosystem walkthrough, clarification Q&A) goes to the companion `decision-log.md`; the chunks state only the settled design.
 
 **Key behaviors:**
 
@@ -101,13 +105,13 @@ All skills follow the same house style, so output is interchangeable and tool-fr
 - The Ecosystem Overview is never filled silently: the skill offers the proposed ecosystem for a one-shot accept-all, or walks the user through each item with BRD-informed recommendations.
 - Falls back to CLAUDE.md defaults plus the platform doctrine (EDA, DDD, hexagonal) when the BRD is silent.
 
-**Chunk map:** cover, executive summary and risks, ecosystem overview, users and use cases, architecture style and diagrams, workflows and sequences, principles and decisions, cross-cutting concerns, integrations, services summary, per-service detailed specs (`10a`), performance and capacity, environments, operations runbook, appendix and wishlist, and three platform-level catalogues:
+**Chunk map:** cover, executive summary and risks, ecosystem overview, users and use cases, architecture style and diagrams, workflows and sequences, principles and decisions, cross-cutting concerns, integrations, services summary, three platform-level registries, per-service detailed specs (`13a`, `13b`, ...), performance and capacity, environments, operations runbook, appendix and wishlist, open items, and the end-to-end design:
 
 - **Centralized Event Hub** (chunk 10): the contract registry for topic names, event names, and payload contracts. Every per-service chunk must match it verbatim.
-- **Centralized User Roles and Authorities** (chunk 11).
-- **End-to-End System Design** (chunk 16), authored last.
+- **Service Integration API Contracts** (chunk 11): URI, headers, body, responses, error codes, security, and auth for every synchronous integration. External contracts stay `TBD - external` until you supply the provider documentation.
+- **Centralized User Roles and Authorities** (chunk 12).
 
-Chunk 17 holds the Open Items and Clarifications from the reviewer pass.
+Chunk 18 holds the Open Items and Clarifications from the reviewer pass. Chunk 19, the **End-to-End System Design**, is gated: it is written only when every open item in chunk 18 is resolved (`Deferred` counts as open), with no override.
 
 **Feeds into:** the LLD. Each service bounded in the SDD becomes the subject of its own LLD.
 
@@ -203,7 +207,7 @@ Call a skill by name with its arguments, or just describe the task in plain word
 | ----- | --------- | ----------- | ----- | --------- | ------------------- |
 | pre-BRD | `[chunks\|combined]` | `/pre-brd-unifier chunks` | `$pre-brd-unifier chunks` | `/skill:pre-brd-unifier chunks` | "Validate this idea with a pre-BRD" |
 | BRD | `[chunks\|combined] [parts\|whole]` | `/brd-unifier chunks parts` | `$brd-unifier chunks parts` | `/skill:brd-unifier chunks parts` | "Turn this SoW into a BRD" |
-| SDD | `[chunks\|combined]` | `/sdd-unifier chunks` | `$sdd-unifier chunks` | `/skill:sdd-unifier chunks` | "Derive an SDD from the BRD in ./brd-acme" |
+| SDD | `[chunks\|combined] [parts\|whole]` | `/sdd-unifier chunks parts` | `$sdd-unifier chunks parts` | `/skill:sdd-unifier chunks parts` | "Derive an SDD from the BRD in ./brd-acme" |
 | LLD | `[chunks\|combined]` | `/lld-unifier chunks` | `$lld-unifier chunks` | `/skill:lld-unifier chunks` | "Write the LLD for the wallet service from the SDD" |
 | Business reviewer | `[panel\|walkthrough\|apply\|verify]` | `/business-reviewer-unifier panel` | `$business-reviewer-unifier panel` | `/skill:business-reviewer-unifier panel` | "Review the BRD and SDD from different angles" |
 
@@ -211,7 +215,7 @@ Tips:
 
 - Run from the project folder where the documents should be written; each skill writes its chunks there.
 - Point the skill at its input: an idea or notes for pre-BRD, a SoW or old BRD for BRD, the BRD folder for SDD, the SDD folder or a code path for LLD.
-- In `parts` mode the BRD stops after parts 1 and 2; reply "continue" to go on.
+- In `parts` mode the BRD and the SDD stop after parts 1 and 2; reply "continue" to go on.
 - Say "export to Excel" after approving a pre-BRD to get the `.xlsx`.
 
 ---

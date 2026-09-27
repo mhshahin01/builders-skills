@@ -97,7 +97,7 @@ If 4+ of these match, it's an sdd-unifier chunked output.
 **Combined file signs:**
 
 - Filename starts with `SDD-` (e.g., `SDD-WalletManagement-v1.0.md`).
-- Has the SDD section structure: §1 Executive Summary, §6 Ecosystem Overview, §13 Services Decomposition, §14 Centralized Event Hub, §15.X per-service blocks, §17 Performance & Capacity, §19 Operations Runbook (legacy SDDs: §13.1/§13.2.X services, §14 performance).
+- Has the SDD section structure: §1 Executive Summary, §6 Ecosystem Overview, §13 Services Decomposition, §14 Centralized Event Hub, §15 Service Integration API Contracts, §16 Centralized User Roles, §17.X per-service blocks, §18 Performance & Capacity, §20 Operations Runbook (earlier-map SDDs: §15.X services, §17 performance, §19 runbook; legacy SDDs: §13.1/§13.2.X services, §14 performance).
 
 If 5+ match, it's an SDD.
 

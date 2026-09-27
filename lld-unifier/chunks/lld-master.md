@@ -18,9 +18,9 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 >
 > **Tech Stack snapshot:** [Backend / Frontend / Mobile / Data / Messaging — canonical copy in [17-specs.md](./17-specs.md) § 2, consolidated from SDD `02-ecosystem-overview.md`]
 >
-> **Related SDD:** See [../sdd-[project-slug]/sdd-master.md](../sdd-[project-slug]/sdd-master.md) (if applicable).
+> **Related SDD:** See [../sdd-[project-slug]/[project-slug]-sdd-master.md](../sdd-[project-slug]/[project-slug]-sdd-master.md) (if applicable).
 >
-> **Related BRD:** See [../brd-[project-slug]/brd-master.md](../brd-[project-slug]/brd-master.md) (if applicable).
+> **Related BRD:** See [../brd-[project-slug]/[project-slug]-brd-master.md](../brd-[project-slug]/[project-slug]-brd-master.md) (if applicable).
 >
 > **Specs:** [17-specs.md](./17-specs.md) — owned by this LLD (Mission, Tech Stack, Roadmap, Project Type), synthesised from the SDD after the body; the direct input for speckit `/constitution`. (Legacy chains carried a Specs at `../sdd-[project-slug]/15-specs.md` or `../brd-[project-slug]/12-specs.md` — consumed as input if present.)
 
@@ -166,7 +166,7 @@ lld-master.md (you are here)
 | sdd/05 - Workflows & Sequences | lld/04-implementation/[svc].md (workflows) | SDD describes the cross-service flow; LLD refines per service with idempotency, outbox, saga steps |
 | sdd/07 - Cross-Cutting Concerns | lld/09 - Cross-Cutting | SDD sets defaults; LLD applies them concretely with Resilience4j config, error codes |
 | sdd/10 - Centralized Event Hub | lld/07 - Event Contracts | SDD's contract registry (topics, events, payloads) carries verbatim into the LLD's event contracts |
-| sdd/10a - Service Detailed Spec | lld/04-implementation/[svc].md | SDD defines the contract; LLD defines the implementation (classes, patterns, pseudocode) |
+| sdd/13a - Service Detailed Spec | lld/04-implementation/[svc].md | SDD defines the contract; LLD defines the implementation (classes, patterns, pseudocode) |
 | sdd/11 - Centralized User Roles | lld/11 - Security + lld/09 - Cross-Cutting | SDD's role/permission catalogue carries verbatim into authZ decisions and checks |
 | sdd/12 - Performance & Capacity | lld/12 - Performance | SDD lists targets; LLD describes the caching/index strategy that meets them |
 | sdd/14 - Operations Runbook | lld/10 - Operations | SDD describes procedures; LLD links to runbook URLs and exposes the metrics/logs they reference |

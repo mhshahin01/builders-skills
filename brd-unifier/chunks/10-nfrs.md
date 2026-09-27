@@ -22,4 +22,4 @@ LANGUAGE: Business language only. State WHAT quality the business expects (highl
 
 > The technical realisation of each NFR (targets like uptime percentages, latency budgets, capacity plans, and the architecture that achieves them) is defined in the SDD, not here.
 
-<!-- MASTER: brd-master.md | PREV: 09-reporting-and-analytics.md | NEXT: 11-summary-and-uiux.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 09-reporting-and-analytics.md | NEXT: 11-summary-and-uiux.md -->

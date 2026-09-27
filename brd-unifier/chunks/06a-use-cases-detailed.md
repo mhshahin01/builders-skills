@@ -85,4 +85,4 @@ All detailed use cases follow this structure:
 
 <!-- Repeat the UC block for each use case owned by this persona. -->
 
-<!-- MASTER: brd-master.md | PREV: 05-user-journeys-overview.md | NEXT: 07-users-use-cases-matrix.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 05-user-journeys-overview.md | NEXT: 07-users-use-cases-matrix.md -->

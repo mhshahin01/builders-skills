@@ -21,11 +21,11 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 | §8.5 Sequence Diagrams | One per critical interaction (sync + async) | `sequenceDiagram` |
 | §12 Integrations | Integration topology, edges labelled with protocol/mechanism | `flowchart LR` |
 | §14.2 Event hub (chunk 10) | Async backbone mechanism + hub fan-out landscape | `flowchart LR` |
-| §15.X DB Modeling | ERD per service | `erDiagram` |
-| §15.X Business Logic state machine | State diagram for genuinely stateful services | `stateDiagram-v2` |
-| §15.X Service-Level Diagrams | Per-service flow / internal sequence | `flowchart TD` / `sequenceDiagram` |
-| §16.9 User roles (chunk 11) | Role taxonomy, grant authority, per-request authorization | `flowchart TD` / `flowchart LR` / `sequenceDiagram` |
-| §22 E2E system design (chunk 16) | Context, layered architecture, fan-out maps, sagas | `flowchart` / `sequenceDiagram` |
+| §17.X DB Modeling | ERD per service | `erDiagram` |
+| §17.X Business Logic state machine | State diagram for genuinely stateful services | `stateDiagram-v2` |
+| §17.X Service-Level Diagrams | Per-service flow / internal sequence | `flowchart TD` / `sequenceDiagram` |
+| §16.9 User roles (chunk 12) | Role taxonomy, grant authority, per-request authorization | `flowchart TD` / `flowchart LR` / `sequenceDiagram` |
+| §24 E2E system design (chunk 19) | Context, layered architecture, fan-out maps, sagas | `flowchart` / `sequenceDiagram` |
 
 **Do not** draw a diagram for:
 - Glossary, Assumptions, Risks, Ecosystem Overview, Principles/ADRs, Environments — tabular/list content.

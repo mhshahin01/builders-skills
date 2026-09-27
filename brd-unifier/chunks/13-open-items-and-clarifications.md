@@ -91,4 +91,4 @@ Examples: patterns observed across multiple use cases, stylistic concerns, sugge
 - [Note 1]
 - [Note 2]
 
-<!-- MASTER: brd-master.md | PREV: 12-appendix-and-wishlist.md | NEXT: 14-todo.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 12-appendix-and-wishlist.md | NEXT: 14-todo.md -->

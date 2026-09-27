@@ -136,7 +136,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 ```text
 /grill-me Finalise the requirements of the [Project Name] BRD v[X.X] in ./brd-[project-slug]/.
-Read brd-master.md first, then 14-todo.md.
+Read [project-slug]-brd-master.md first, then 14-todo.md.
 Grill me in this order:
 1. Open questions and pending decisions: [TD-01 (OI-03, 06a / UC-04), TD-02 (06a / UC-02 step 4), ...]
 2. Unresolved consistency findings: [CF-01 (06a / UC-04 AC-2 vs E1), ...]
@@ -154,22 +154,23 @@ Do not edit any file during the session. End with a numbered decision list I can
 | | |
 |---|---|
 | **Status** | Not started |
-| **Required inputs** | Finalised use cases (06*), the matrix ([07](./07-users-use-cases-matrix.md)), UI/UX Expectations ([11](./11-summary-and-uiux.md)), decisions from steps 1-3, and the global UI/UX constitution (`ui-ux-global-constitution.md`, sections 2, 3, 12, 13 and 14) |
+| **Required inputs** | Finalised use cases (06*), the matrix ([07](./07-users-use-cases-matrix.md)), UI/UX Expectations ([11](./11-summary-and-uiux.md)), decisions from steps 1-3, and the project's global UI/UX constitution when one exists (`ui-ux-global-constitution.md`, sections 2, 3, 12, 13 and 14) [Found: path / No UI/UX constitution found; chunk 11 used] |
 | **Expected output** | A playable, responsive prototype covering the table below, reviewed against the criteria, with links recorded in each use case's UI/UX section |
 | **Completion criteria** | Every row is `Approved`; the product manager confirms the review and a dated play-through; the Figma links are recorded in the use cases |
 | **Evidence** | [None yet. Play-through: date and result once confirmed.] |
 
-**Standard to follow.** The generating tool or agent reads the constitution before producing any frame. For Figma, section 14 applies in full; for another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent. P1 rows: every Main Flow playable from the named start frame with no dead ends, every actor-facing control wired, frames for mobile, tablet and desktop. P2 rows: connected to neighbouring frames, desktop and mobile. States are variants, not duplicate frames.
+**Standard to follow.** When the project has a constitution, the generating tool or agent reads it before producing any frame; otherwise chunk 11 is the visual standard and the rules below still apply. For Figma, section 14 applies in full; for another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent. P1 rows: every Main Flow playable from the named start frame with no dead ends, every actor-facing control wired, frames for mobile, tablet and desktop. P2 rows: connected to neighbouring frames, desktop and mobile. States are variants, not duplicate frames.
 
 **Ready-to-use mockup brief** (recommended; run it yourself in the mockup tool or agent):
 
 ```text
-Use ui-ux-global-constitution.md as the shared visual and interaction baseline. Read it before generating any frame: sections 2, 3, 12, 13 and 14.
-Use the [Project Name] BRD v[X.X] in ./brd-[project-slug]/ for the workflows, fields, permissions and business rules. Read brd-master.md first, then 14-todo.md.
+[With a constitution:] Use ui-ux-global-constitution.md as the shared visual and interaction baseline. Read it before generating any frame: sections 2, 3, 12, 13 and 14.
+[Without one:] Use the UI/UX Expectations in 11-summary-and-uiux.md as the visual baseline.
+Use the [Project Name] BRD v[X.X] in ./brd-[project-slug]/ for the workflows, fields, permissions and business rules. Read [project-slug]-brd-master.md first, then 14-todo.md.
 Create a playable [Figma / tool] prototype covering every row of the Mockup coverage table below, for [target users].
 P1 rows: one named start frame, every Main Flow playable to its end with no dead ends, every actor-facing control wired, frames for mobile, tablet and desktop.
 P2 rows: connected to neighbouring frames, desktop and mobile frames.
-States are component variants. Variables and text styles map to the constitution tokens. Label simulated data and demo actions.
+States are component variants. Variables and text styles map to the constitution tokens [or: to the chunk 11 colors]. Label simulated data and demo actions.
 Name the UC-NN on each frame. Do not add behaviour the BRD does not describe; list it instead.
 Return the share link (view permission, opening on the start frame) and the list of frames per breakpoint.
 ```
@@ -193,7 +194,7 @@ Return the share link (view permission, opening on the start frame) and the list
 - [ ] Frames exist for every breakpoint the row's priority requires.
 - [ ] What each role sees matches the Users & Use Cases Matrix.
 - [ ] Global UI/UX standards in chunk 11 hold on every screen.
-- [ ] Variables and text styles map to the constitution's tokens; no raw hex in components.
+- [ ] Variables and text styles map to the constitution's tokens (or, with no constitution, to the chunk 11 colors); no raw hex in components.
 - [ ] Simulated data and demo actions are labelled; nothing implies a change to a production system.
 - [ ] Contrast, focus order and keyboard order are annotated on key frames.
 - [ ] The share link has view permission and opens on the start frame.
@@ -231,4 +232,4 @@ The diagrams are updates to chunks 05 and 06*. This file only tracks them. Gaps 
 
 **Optional, later:** mirror the diagrams to a Miro board for collaboration or presentation. Ask brd-unifier for it explicitly; the inline Mermaid stays authoritative.
 
-<!-- MASTER: brd-master.md | PREV: 13-open-items-and-clarifications.md | NEXT: 15-implementation.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 13-open-items-and-clarifications.md | NEXT: 15-implementation.md -->

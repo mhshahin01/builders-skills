@@ -48,13 +48,13 @@ brd-unifier [chunks|combined] [parts|whole]
 | `combined` | Single consolidated file `BRD-[ProjectName]-v[X.X].md`. |
 | `parts` | Write the BRD in three parts (00-05, then `06*` and 07, then 08-14), stopping for the user's review after parts 1 and 2. Default in chunks mode. |
 | `whole` | Write chunks 00-14 in one run. Always used in combined mode and for pure conversions and targeted updates. |
-| (empty) | Resume check first: if `brd-master.md` shows a part Pending or In progress, continue it; otherwise prompt for the mode (chunks is the default). |
+| (empty) | Resume check first: if `[project-slug]-brd-master.md` shows a part Pending or In progress, continue it; otherwise prompt for the mode (chunks is the default). |
 
 Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Code, `$brd-unifier chunks parts` in Codex, `/skill:brd-unifier chunks parts` in Kimi Code. Or describe the task in plain words ("turn this SoW into a BRD") and the agent picks the skill from its description. Words count as arguments too: "in one go" means `whole`, "part by part" means `parts`.
 
 ### The workflow
 
-1. **Resolve mode and generation option.** From the arguments or the interactive prompt (chunks is the default; never guessed silently). A resume check on `brd-master.md` runs first, so an interrupted parts run continues instead of restarting.
+1. **Resolve mode and generation option.** From the arguments or the interactive prompt (chunks is the default; never guessed silently). A resume check on `[project-slug]-brd-master.md` runs first, so an interrupted parts run continues instead of restarting.
 2. **Resolve intent.** Generate (fresh BRD from a SoW, conversation, or seed) or transform (re-shape an existing document into the template), per `transform-detection.md`. Both end in the same output shape.
 3. **Intake.** At most three questions: project name, source material, personas. Answers already in the conversation are not re-asked.
 4. **Plan and generate.** Enumerate the chunks (one use-case chunk per persona, plus `14-todo.md`) and write them from the embedded skeletons. Diagrams are inline Mermaid with a prose summary; Miro only on explicit request. Transforms preserve verbatim numbers, dates, and commitments.
@@ -67,7 +67,7 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 
 ### Outputs
 
-- Chunked: `./brd-[project-slug]/` with `NN-short-title.md` chunks (`06a`, `06b`, ... per persona), `brd-master.md` with its Generation Progress table, and `decision-log.md`, the companion decision register.
+- Chunked: `./brd-[project-slug]/` with `NN-short-title.md` chunks (`06a`, `06b`, ... per persona), `[project-slug]-brd-master.md` with its Generation Progress table, and `decision-log.md`, the companion decision register.
 - Combined: `./BRD-[ProjectName]-v[X.X].md`, with `14-todo.md` and `17-for-ppt.md` kept as separate files in `./brd-[project-slug]/`.
 - Delivery chunks, once the gate opens: `15-implementation.md`, `16-uat-bat-test-cases.md`, `17-for-ppt.md` (in combined mode, 15 and 16 are appended as the last two sections).
 - Markdown only, UTF-8, pipe tables, no hard line wrap. No `.docx` or `.pdf` unless explicitly requested.

@@ -1,22 +1,22 @@
 <!--
-CHUNK: 10a
+CHUNK: 13a
 TITLE: Detailed Service Spec - [Service Name]
 PROJECT: [Project Name]
 VERSION: [X.X]
-DEPENDS_ON: 09, 07, 10 (event hub - topic names, event names, and payload contracts must match chunk 10 verbatim)
+DEPENDS_ON: 09, 07, 10 (event hub - topic names, event names, and payload contracts must match chunk 10 verbatim), 11 (API contracts - integration endpoints carry their API ID and match chunk 11 verbatim), 12 (roles - permission tokens match chunk 12 verbatim)
 PART OF: SDD - [Project Name]
 -->
 
-# 15. Detailed Service Specs
+# 17. Detailed Service Specs
 
 <!--
-Repeat this chunk (10a, 10b, 10c, ...) for each service; the service number follows the chunk letter (10a -> 15.1, 10b -> 15.2, ...).
+Repeat this chunk (13a, 13b, 13c, ...) for each service; the service number follows the chunk letter (13a -> 17.1, 13b -> 17.2, ...).
 Each service follows the exact same structure for predictability and grep-ability.
 -->
 
 ---
 
-## 15.1 [Service Name]
+## 17.1 [Service Name]
 
 ### What
 
@@ -61,9 +61,11 @@ Transitions and triggers:
 
 ### Integrations
 
-| Integration | Direction | Protocol | Purpose | Failure Handling |
-|-------------|-----------|----------|---------|------------------|
-| [System] | [Inbound / Outbound / Sync / Async] | [Protocol] | [Purpose] | [Failure handling] |
+<!-- Every synchronous row carries its API ID; the full contract (URI, headers, body, error codes, security) lives in §15 (chunk 11) and is not restated here. Asynchronous rows reference the event in §14 (chunk 10). -->
+
+| Integration | Direction | Protocol | Purpose | Contract | Failure Handling |
+|-------------|-----------|----------|---------|----------|------------------|
+| [System] | [Inbound / Outbound / Sync / Async] | [Protocol] | [Purpose] | [API-NN (§15) / event name (§14)] | [Failure handling] |
 
 ### DB Modeling
 
@@ -140,9 +142,11 @@ erDiagram
 
 #### List of APIs (Swagger-friendly)
 
-| Method | Path | Summary | Request Body | Response | Auth Scope |
-|--------|------|---------|--------------|----------|------------|
-| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[scope]` |
+<!-- Endpoints called by another service or an external system carry their API ID and link to §15 (chunk 11), which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. -->
+
+| Method | Path | Summary | Request Body | Response | Auth Scope | API ID (§15) |
+|--------|------|---------|--------------|----------|------------|--------------|
+| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[scope]` | [API-NN / -] |
 
 ### Event-Driven Architecture (If Applicable)
 
@@ -259,4 +263,4 @@ sequenceDiagram
 - [Known gap or planned improvement 1]
 - [Known gap or planned improvement 2]
 
-<!-- MASTER: sdd-master.md | PREV: 10-events-hub.md | NEXT: 11-centralized-user-roles.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 12-centralized-user-roles.md | NEXT: 14-performance-and-capacity.md -->

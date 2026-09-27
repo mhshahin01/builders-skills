@@ -68,4 +68,4 @@ flowchart LR
 **Summary:** [1-2 sentences: who does what inside the product boundary, and the relationships shown.]
 -->
 
-<!-- MASTER: brd-master.md | PREV: 04-scope-and-personas.md | NEXT: 06a-use-cases-detailed.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 04-scope-and-personas.md | NEXT: 06a-use-cases-detailed.md -->

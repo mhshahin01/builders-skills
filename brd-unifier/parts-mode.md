@@ -22,7 +22,7 @@ Chunks 15, 16, and 17 are outside both options. They stay locked behind the deli
 
 | Part | Chunks | What it settles | The user reviews |
 |---|---|---|---|
-| **1** | 00, 01, 02, 03, 04, 05, plus `brd-master.md` | Why the product exists, the business terms, scope, personas, journeys, the list of use cases | Scope (in / out), personas, and the Use Case Summary: names, actors, and whether each use case holds one goal (split or merge now, before the details are written). These drive part 2; changing them later is costly. |
+| **1** | 00, 01, 02, 03, 04, 05, plus `[project-slug]-brd-master.md` | Why the product exists, the business terms, scope, personas, journeys, the list of use cases | Scope (in / out), personas, and the Use Case Summary: names, actors, and whether each use case holds one goal (split or merge now, before the details are written). These drive part 2; changing them later is costly. |
 | **2** | every `06*` chunk, then 07 | The detailed use cases and the Users & Use Cases Matrix | Main flows, alternate and exception flows, business rules with numbers, acceptance criteria, who may do what |
 | **3** | 08, 09, 10, 11, 12, then 13, then 14 | Integrations, reports, NFRs, UI/UX, appendix; the independent review; the to-do | The open items (acceptance loop) and the to-do |
 
@@ -61,7 +61,7 @@ When the user gives corrections: apply them to the existing chunks first, rerun 
 
 ### End of part 3
 
-Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run the plain-language pass and the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 13), the open items acceptance loop (step 8), the to-do (step 8a, chunk 14), the final `brd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on the whole BRD.
+Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run the plain-language pass and the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 13), the open items acceptance loop (step 8), the to-do (step 8a, chunk 14), the final `[project-slug]-brd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on the whole BRD.
 
 ---
 
@@ -98,7 +98,7 @@ Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run
 
 ## The progress record
 
-Parts mode keeps its state in `brd-master.md`, so any later session can resume. Write `brd-master.md` in part 1 and update it at the end of every part.
+Parts mode keeps its state in `[project-slug]-brd-master.md`, so any later session can resume. Write `[project-slug]-brd-master.md` in part 1 and update it at the end of every part.
 
 ```markdown
 ## Generation Progress
@@ -127,7 +127,7 @@ In `whole` runs the section holds one line: `**Generation:** whole`.
 
 ## Resuming
 
-When the skill is invoked on a folder whose `brd-master.md` shows a part that is `Pending` or `In progress`:
+When the skill is invoked on a folder whose `[project-slug]-brd-master.md` shows a part that is `Pending` or `In progress`:
 
 1. Say what was found: "Part 1 is complete (2026-09-17). Part 2 is next."
 2. Act on what the user asked:

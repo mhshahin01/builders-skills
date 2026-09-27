@@ -17,7 +17,7 @@ The claim is grounded in:
 Examples:
 - Class `FooController` exists at `src/main/java/com/example/foo/FooController.java:42`.
 - Table `foo` has columns `id uuid PK, tenant_id uuid NOT NULL, status text NOT NULL`.
-- Service `[service-a]` produces topic `foo.lifecycle.created` (per SDD §15.1 Event Model, verbatim - which itself must match SDD §14, the platform event catalog).
+- Service `[service-a]` produces topic `foo.lifecycle.created` (per SDD §17.1 Event Model, verbatim - which itself must match SDD §14, the platform event catalog).
 - Constructor injection only (CLAUDE.md hard rule, applied unconditionally).
 
 **Emission:** clean content. No flag.
@@ -121,7 +121,7 @@ Example:
 
 > ⚠ drift
 >
-> Designed: Strategy pattern with 3 concrete classes per tier (per SDD §15.1 Business Logic).
+> Designed: Strategy pattern with 3 concrete classes per tier (per SDD §17.1 Business Logic).
 >
 > Built: if/else chain in `PricingServiceImpl.calculate()` (FooServiceImpl:42).
 >

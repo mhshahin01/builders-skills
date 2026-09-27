@@ -44,4 +44,4 @@ PART OF: SDD - [Project Name]
 |---------|-------|---------|
 | Table 1 | [Title] | [Section] |
 
-<!-- MASTER: sdd-master.md | PREV: none | NEXT: 01-executive-summary-scope-risks.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: none | NEXT: 01-executive-summary-scope-risks.md -->

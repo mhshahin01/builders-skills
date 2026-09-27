@@ -13,7 +13,7 @@ PART OF: SDD - [Project Name]
 
 ### 8.1.1 What
 
-<!-- Name the style. Platform default (per the ecosystem doctrine in §6): microservices with an event-driven async backbone (EDA), DDD bounded contexts, hexagonal (ports & adapters) inside each service. Deviations need an ADR. -->
+<!-- Name the style chosen in the architecture questionnaire (SKILL.md step 3b; ADR-01): modular monolith, hybrid, or microservices, with its communication model. DDD bounded contexts and hexagonal (ports & adapters) structure apply in every style; anything that leaves the process goes through an outbox. When the questionnaire did not run, take the style from the source or flag it. A later change of style needs a new ADR. -->
 
 [Architecture style statement.]
 
@@ -80,4 +80,4 @@ flowchart TB
 
 **Summary:** [1-2 sentences: the layer composition and the load-bearing connections.]
 
-<!-- MASTER: sdd-master.md | PREV: 03-users-and-use-cases.md | NEXT: 05-workflows-and-sequences.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 03-users-and-use-cases.md | NEXT: 05-workflows-and-sequences.md -->

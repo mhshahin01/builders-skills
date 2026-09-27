@@ -4,9 +4,9 @@
 
 **Companion file rules.**
 
-- Lives in `./brd-[project-slug]/`, next to `brd-master.md` (in COMBINED mode, next to `14-todo.md`).
+- Lives in `./brd-[project-slug]/`, next to `[project-slug]-brd-master.md` (in COMBINED mode, next to `14-todo.md`).
 - Created on first use: when the first clarification is raised or decided. Do not write an empty register.
-- Linked from `brd-master.md` and from chunk 00's Table of Contents once it exists.
+- Linked from `[project-slug]-brd-master.md` and from chunk 00's Table of Contents once it exists.
 - Never merged into the combined or merged BRD. It is decision history, not requirement text.
 - Entries are append-only in spirit: a superseded decision keeps its record, and the later record says it supersedes the earlier one.
 - Every register entry that settled a rule carries a `Rule home:` link to the chunk section that now states the rule. The anchor must work.
@@ -75,7 +75,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 [The handoff instructions a part applied when writing its chunks (actor restrictions, rules every affected use case must carry). One section per part that needed one. The chunks carry the resulting rules; this section keeps the instructions themselves.]
 
-<!-- MASTER: brd-master.md | COMPANION FILE: decision history; not part of the numbered chunk sequence -->
+<!-- MASTER: [project-slug]-brd-master.md | COMPANION FILE: decision history; not part of the numbered chunk sequence -->
 ```
 
 ---
@@ -85,4 +85,4 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 - Applying a decision updates the chunk text as plain requirements in present tense ("The credential is revealed once, at generation") and removes the inline marker. The chunk never keeps a "resolved on [date]" stamp, an option letter, or a progress note.
 - Compact traceability references to stable IDs (Q-NN, UC-NN, OS-NN, D-NN) inside rule text and table cells are allowed in the chunks; storytelling is not.
 - Chunk 13 keeps each item's current status line. The narrative behind an accepted item moves here.
-- `brd-master.md` keeps the progress, checkpoints, and gates, and links this register; it does not duplicate the Q&A records.
+- `[project-slug]-brd-master.md` keeps the progress, checkpoints, and gates, and links this register; it does not duplicate the Q&A records.

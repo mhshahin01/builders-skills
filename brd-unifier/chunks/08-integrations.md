@@ -19,4 +19,4 @@ LANGUAGE: Business language only. Name the business system or partner and the bu
 
 > Technical integration details (protocols, authentication, data formats, availability targets) are defined in the SDD, not here.
 
-<!-- MASTER: brd-master.md | PREV: 07-users-use-cases-matrix.md | NEXT: 09-reporting-and-analytics.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 07-users-use-cases-matrix.md | NEXT: 09-reporting-and-analytics.md -->

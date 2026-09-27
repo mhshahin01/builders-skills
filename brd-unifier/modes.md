@@ -36,7 +36,7 @@ brd-[project-slug]/
 └── 17-for-ppt.md                     # delivery chunk - locked until 14 is cleared - never merged
 ```
 
-`brd-master.md` (also in `chunks/`) is the master index pointing at the chunks; regenerate it for each output project.
+`[project-slug]-brd-master.md` (skeleton: `chunks/brd-master.md`) is the master index pointing at the chunks; regenerate it for each output project.
 
 Chunks 14-17 are the **delivery chunks**, in the order 14 -> 15 -> 16 -> 17. `14-todo.md` is generated at the end of every generation, after the Open Items acceptance loop (in `parts`, at the end of part 3). Chunks 15, 16, and 17 are locked until every action item in `14-todo.md` is closed, so they are absent after a first run. See `delivery-chunks.md` § The delivery gate.
 

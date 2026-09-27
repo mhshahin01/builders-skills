@@ -32,4 +32,4 @@ PART OF: BRD - [Project Name]
 2. [Feature 2]
 3. [Feature 3]
 
-<!-- MASTER: brd-master.md | PREV: 11-summary-and-uiux.md | NEXT: 13-open-items-and-clarifications.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 11-summary-and-uiux.md | NEXT: 13-open-items-and-clarifications.md -->

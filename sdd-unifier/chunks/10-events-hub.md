@@ -4,7 +4,7 @@ TITLE: Centralized Event Hub (Platform Event Catalog & Payload Contracts)
 PROJECT: [Project Name]
 VERSION: [X.X]
 DEPENDS_ON: 05, 07, 08, 09
-RECONCILES_WITH: every per-service chunk (10a, 10b, ...) - Event Model + Messaging Infra sub-sections
+RECONCILES_WITH: every per-service chunk (13a, 13b, ...) - Event Model + Messaging Infra sub-sections
 PART OF: SDD - [Project Name]
 PURPOSE: Single cross-service catalog of every platform event - name, producer, consumers, envelope, payload contract, business what/when/why - plus the centralized event-hub topology. Consolidates what is otherwise distributed across the per-service Event Models.
 CONSISTENCY_RULE: This chunk is the platform contract registry. Topic names, event names, envelope fields, and payload contracts here MUST match the per-service chunks character-for-character. Consumer lists are reconciled from BOTH sides (each producer's published table AND each consumer's consumed table). Where a per-service spec and this catalog disagree, the per-service spec is authoritative for its own published events and the divergence is flagged in the Consistency Notes section - never silently reconciled.
@@ -12,7 +12,7 @@ CONSISTENCY_RULE: This chunk is the platform contract registry. Topic names, eve
 
 # 14. Centralized Event Hub (Platform Event Catalog & Payload Contracts)
 
-> **What this chunk is.** The one place that lists **every event on the platform** with its producer, consumers, key family, payload contract, and business meaning (what / when / why), plus the hub topology that carries them. It is a derived consolidation of the per-service Event Models (each `10x` chunk § Event-Driven Architecture). Downstream LLD generation and implementers read this chunk as the single contract surface - the key goal is a smooth implementation with no producer/consumer mismatches.
+> **What this chunk is.** The one place that lists **every event on the platform** with its producer, consumers, key family, payload contract, and business meaning (what / when / why), plus the hub topology that carries them. It is a derived consolidation of the per-service Event Models (each `13x` chunk § Event-Driven Architecture). Downstream LLD generation and implementers read this chunk as the single contract surface - the key goal is a smooth implementation with no producer/consumer mismatches.
 
 ---
 
@@ -181,7 +181,7 @@ The reconciliation ledger for producer/consumer consistency. Every divergence fo
 
 | # | Where (chunks) | Divergence | Resolution / flag |
 |---|---|---|---|
-| 1 | [10x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 10x on YYYY-MM-DD / flagged as OI-NN] |
+| 1 | [13x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 13x on YYYY-MM-DD / flagged as OI-NN] |
 
 ## 14.9 Payload Contract Samples
 
@@ -221,4 +221,4 @@ Define common value objects once, then reference them.
 |---|---|---|---|
 | `[EVENT_NAME]` | ✓ | [§14.9.1 / registry-only] | [committed] |
 
-<!-- MASTER: sdd-master.md | PREV: 09-services-summary.md | NEXT: 10a-service-detailed-template.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 09-services-summary.md | NEXT: 11-api-contracts.md -->

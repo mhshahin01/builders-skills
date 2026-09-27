@@ -38,4 +38,4 @@ Core capabilities:
 - [Objective 2]
 - [Objective 3]
 
-<!-- MASTER: brd-master.md | PREV: 00-cover-and-changelog.md | NEXT: 02-glossary-assumptions-facts.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 00-cover-and-changelog.md | NEXT: 02-glossary-assumptions-facts.md -->

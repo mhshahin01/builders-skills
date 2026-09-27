@@ -2,7 +2,7 @@
 
 The SDD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones — Architecture Style, Architectural Decisions, per-service Business Logic, Cross-Cutting Concerns, and Operations Runbook.
 
-The principle is the same as `fr-quality.md` in brd-unifier: substantive content, not template-shaped filler.
+The principle is the same as `use-case-quality.md` in brd-unifier: substantive content, not template-shaped filler.
 
 ---
 
@@ -78,7 +78,7 @@ If any of these are unstated, that's a gap, not a non-decision.
 
 ---
 
-## §15.X per-service Business Logic
+## §17.X per-service Business Logic
 
 Each service spec's Business Logic is where the SDD earns its keep.
 
@@ -116,7 +116,7 @@ Every row should have a concrete value, not a wave-of-the-hand.
 
 ---
 
-## §17 Performance & Capacity
+## §18 Performance & Capacity
 
 The most-often-empty section, and the one most likely to bite an SRE later.
 
@@ -145,7 +145,7 @@ For each peak scenario:
 
 ---
 
-## §19 Operations Runbook
+## §20 Operations Runbook
 
 The runbook is the single most-tested artefact during incidents. Empty runbook procedures cost time when an engineer is paged at 03:00.
 
@@ -174,15 +174,21 @@ Restart wallet-core service (single replica)
 
 ---
 
-## §14 Centralized Event Hub (and §16 Roles, §22 E2E)
+## §14 Centralized Event Hub (and §15 API Contracts, §16 Roles, §24 E2E)
 
 The platform catalogues are only useful if they are **reconciled** — a catalogue that drifts from the per-service chunks is worse than none, because implementers will trust it.
 
-**Test (event hub):** pick any event in a §15.X consumed table. Is it in the §14.5 catalog with the same name, on the same topic, published by exactly one service, with every payload field the consumer relies on present in §14.9? Pick any producer's published table — does its consumer list equal the union of the consumers' consumed tables? If either check fails and the divergence is not flagged in §14.8, the chunk is below the bar.
+**Test (event hub):** pick any event in a §17.X consumed table. Is it in the §14.5 catalog with the same name, on the same topic, published by exactly one service, with every payload field the consumer relies on present in §14.9? Pick any producer's published table — does its consumer list equal the union of the consumers' consumed tables? If either check fails and the divergence is not flagged in §14.8, the chunk is below the bar.
 
-**Test (roles):** pick any permission token in a §15.X authorization note — is it in the §16.11 grid with the same spelling and the same role set? Does every capability row trace to a BRD UC or an ADR (§16.10)?
+**Test (roles):** pick any permission token in a §17.X authorization note — is it in the §16.11 grid with the same spelling and the same role set? Does every capability row trace to a BRD UC or an ADR (§16.10)?
 
-**Test (e2e):** do the counts in §22 "Counts at a glance" match §13 (services), §14.4 (topics), and §14.9 coverage (events) exactly? Is every deliberate simplification listed under "no silent caps"?
+**Test (API contracts):** pick any synchronous row in a §17.X Integrations table. Does it carry an `API-NN` that exists in §15.2, with method and URI identical to the service's List of APIs? Does the contract state URI, version, security and auth (with a §16 permission token), headers, parameters, body with a sample, responses, error codes with retryability, and behaviour (idempotency, timeout, retries)? For an external system: are the provider-owned fields `TBD` with a `[TBD - EXTERNAL: ...]` marker instead of plausible invented values?
+
+**Good API contract:** "API-04 `POST /v1/wallets/{walletId}/debits`, OAuth2 client credentials, token `wallet:debit`; `Idempotency-Key` required; body `amount` (decimal, > 0, scale 2), `currency` (ISO 4217); 201 returns `debitId`; 409 `CONFLICT` on key reuse, 422 `INSUFFICIENT_FUNDS` (not retryable); timeout 800 ms, 2 retries on 503/504 with jitter."
+
+**Bad API contract:** "Payment service calls wallet service to debit the wallet via REST." No URI, no auth, no body, no errors: an OI, not a contract.
+
+**Test (e2e):** do the counts in §24 "Counts at a glance" match §13 (services), §14.4 (topics), and §14.9 coverage (events) exactly? Is every deliberate simplification listed under "no silent caps"?
 
 **Bad:** a §14.5 catalog that lists only the events the author remembered, with consumer columns copied from producer chunks without checking the consumers' own tables.
 

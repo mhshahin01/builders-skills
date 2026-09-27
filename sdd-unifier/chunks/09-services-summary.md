@@ -14,4 +14,4 @@ PART OF: SDD - [Project Name]
 | [Service Name] | [One-line] | [Responsibility] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
 | [Service Name] | [One-line] | [Responsibility] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
 
-<!-- MASTER: sdd-master.md | PREV: 08-integrations.md | NEXT: 10-events-hub.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 08-integrations.md | NEXT: 10-events-hub.md -->

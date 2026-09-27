@@ -136,7 +136,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 ## Chunk Dependency Graph
 
 ```
-brd-master.md (you are here)
+[project-slug]-brd-master.md (you are here)
 |
 +-- 00-cover-and-changelog.md .... metadata, version history
 +-- 01-executive-summary-and-context.md .... why this project exists

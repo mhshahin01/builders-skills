@@ -25,7 +25,7 @@ LANGUAGE: Business language only. UI/UX expectations describe what users experie
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
 - **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum, following the breakpoints and behaviour in the global UI/UX constitution (section 12).
-- **Language & Locale**: [Supported languages, right-to-left support if applicable, date/number/currency formats per audience.]
+- **Language & Locale**: [Supported languages; date/number/currency formats per audience. Add right-to-left support only when a right-to-left language such as Arabic is in scope; omit it for English-only products.]
 - [Other global UX rules]
 
-<!-- MASTER: brd-master.md | PREV: 10-nfrs.md | NEXT: 12-appendix-and-wishlist.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 10-nfrs.md | NEXT: 12-appendix-and-wishlist.md -->

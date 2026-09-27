@@ -59,4 +59,4 @@ PART OF: BRD - [Project Name]
 |-----------|------|-------|--------|-------|
 | [System/Team] | [Hard/Soft] | [Owner] | [Confirmed/Pending] | [Description] |
 
-<!-- MASTER: brd-master.md | PREV: 01-executive-summary-and-context.md | NEXT: 03-definitions-and-domain-concepts.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 01-executive-summary-and-context.md | NEXT: 03-definitions-and-domain-concepts.md -->

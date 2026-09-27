@@ -200,7 +200,7 @@ For from-sdd direction: skip Phase 1 + 2. Read the SDD chunks and apply the fiel
 
 - Skill identifies which services have code (uses `code-explorer` to enumerate existing service modules).
 - Run from-code pass on existing services.
-- Missing services → `> TODO: not yet built (SDD-described — see SDD §15.X)` placeholder in `04-implementation/<service>.md`.
+- Missing services → `> TODO: not yet built (SDD-described — see SDD §17.X)` placeholder in `04-implementation/<service>.md`.
 - Note the partial-code choice in `15-open-questions.md`.
 
 ### 6b. Synthesise the Specs chunk (mandatory, AFTER the body is complete)

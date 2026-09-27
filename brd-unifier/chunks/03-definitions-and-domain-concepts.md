@@ -32,4 +32,4 @@ LANGUAGE: Business language only. Explain domain concepts as the business unders
 
 [Repeat the pattern per concept.]
 
-<!-- MASTER: brd-master.md | PREV: 02-glossary-assumptions-facts.md | NEXT: 04-scope-and-personas.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 02-glossary-assumptions-facts.md | NEXT: 04-scope-and-personas.md -->

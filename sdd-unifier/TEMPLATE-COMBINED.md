@@ -65,6 +65,10 @@ Key technical bets and trade-offs:
 
 ---
 
+
+---
+
+
 # 2. Scope
 
 ## 2.1 In Scope
@@ -84,6 +88,10 @@ Key technical bets and trade-offs:
 
 ---
 
+
+---
+
+
 # 3. Assumptions
 
 <!-- Numbered list. Each assumption should be testable and unambiguous. Anything that, if false, would invalidate the design. -->
@@ -93,6 +101,10 @@ Key technical bets and trade-offs:
 3. **[Short Label]:** [Detailed assumption description].
 
 ---
+
+
+---
+
 
 # 4. Risks
 
@@ -108,12 +120,19 @@ Owner: who will own the mitigation and the monitoring of the risk.
 
 ---
 
+
+---
+
+
 # 5. Glossary
 
 | Term | Definition |
 |------|------------|
 | [Term 1] | [Definition] |
 | [Term 2] | [Definition] |
+
+
+---
 
 
 ---
@@ -164,6 +183,9 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 ---
 
 
+---
+
+
 # 7. System Users & Use Cases
 
 ## 7.1 Actors
@@ -204,13 +226,16 @@ flowchart LR
 ---
 
 
+---
+
+
 # 8. System Design / High-Level Architecture
 
 ## 8.1 Architecture Style
 
 ### 8.1.1 What
 
-<!-- Name the style. Platform default (per the ecosystem doctrine in §6): microservices with an event-driven async backbone (EDA), DDD bounded contexts, hexagonal (ports & adapters) inside each service. Deviations need an ADR. -->
+<!-- Name the style chosen in the architecture questionnaire (SKILL.md step 3b; ADR-01): modular monolith, hybrid, or microservices, with its communication model. DDD bounded contexts and hexagonal (ports & adapters) structure apply in every style; anything that leaves the process goes through an outbox. When the questionnaire did not run, take the style from the source or flag it. A later change of style needs a new ADR. -->
 
 [Architecture style statement.]
 
@@ -325,6 +350,9 @@ sequenceDiagram
 ---
 
 
+---
+
+
 # 9. Architecture Principles
 
 <!-- Cross-cutting principles every service in the system must honor. Add or remove rows per project. -->
@@ -346,6 +374,10 @@ sequenceDiagram
 
 ---
 
+
+---
+
+
 # 10. Architectural Decisions
 
 <!--
@@ -358,6 +390,9 @@ For deeper, individual ADRs, link to a separate ADR repository / folder.
 | AD-01 | [Proposed / Accepted / Superseded / Deprecated] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
 | AD-02 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
 | AD-03 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
+
+
+---
 
 
 ---
@@ -426,14 +461,20 @@ Each concern in this section is the platform-wide default. Individual services m
 ---
 
 
+---
+
+
 # 12. Integrations
 
-<!-- High-level table of all external integrations. One row per integrated system. -->
+<!-- High-level table of all external integrations. One row per integrated system. Every synchronous integration also has an API contract in §15; name its API-NN in Notes. External contracts stay `TBD - external` there until the user supplies the provider documentation. -->
 
 | Integration ID | What (System) | Purpose | How (Protocol / Mode) | When (Trigger) | Auth | Timeout | Rate Limit | Retries & Backoff | Fallback | Notes |
 |----------------|---------------|---------|------------------------|----------------|------|---------|------------|--------------------|-----------| ------|
 | INT-01 | [System] | [Purpose] | [Protocol] | [Trigger] | [Auth] | [Timeout] | [Rate limit] | [Retries / backoff] | [e.g., Return cached / Degrade / Queue for retry] | [Notes] |
 | INT-02 | [System] | [Purpose] | [Protocol] | [Trigger] | [Auth] | [Timeout] | [Rate limit] | [Retries / backoff] | [Fallback] | [Notes] |
+
+
+---
 
 
 ---
@@ -450,9 +491,12 @@ Each concern in this section is the platform-wide default. Individual services m
 ---
 
 
+---
+
+
 # 14. Centralized Event Hub (Platform Event Catalog & Payload Contracts)
 
-> **What this chunk is.** The one place that lists **every event on the platform** with its producer, consumers, key family, payload contract, and business meaning (what / when / why), plus the hub topology that carries them. It is a derived consolidation of the per-service Event Models (each `10x` chunk § Event-Driven Architecture). Downstream LLD generation and implementers read this chunk as the single contract surface - the key goal is a smooth implementation with no producer/consumer mismatches.
+> **What this chunk is.** The one place that lists **every event on the platform** with its producer, consumers, key family, payload contract, and business meaning (what / when / why), plus the hub topology that carries them. It is a derived consolidation of the per-service Event Models (each `13x` chunk § Event-Driven Architecture). Downstream LLD generation and implementers read this chunk as the single contract surface - the key goal is a smooth implementation with no producer/consumer mismatches.
 
 ---
 
@@ -621,7 +665,7 @@ The reconciliation ledger for producer/consumer consistency. Every divergence fo
 
 | # | Where (chunks) | Divergence | Resolution / flag |
 |---|---|---|---|
-| 1 | [10x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 10x on YYYY-MM-DD / flagged as OI-NN] |
+| 1 | [13x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 13x on YYYY-MM-DD / flagged as OI-NN] |
 
 ## 14.9 Payload Contract Samples
 
@@ -665,257 +709,217 @@ Define common value objects once, then reference them.
 ---
 
 
-# 15. Detailed Service Specs
+---
 
-<!--
-Repeat the service spec block below for each service (15.1, 15.2, ...).
-Each service follows the exact same structure for predictability and grep-ability.
--->
+
+# 15. Service Integration API Contracts
+
+> **What this section is.** One contract block per synchronous integration API (`API-NN`), with everything an implementer on either side needs: endpoint, security, headers, parameters, body, responses, error codes, and behaviour (idempotency, timeouts, retries). Internal contracts are fully defined here. External contracts are placeholders marked `TBD - external` for the user to complete from the provider's documentation.
+>
+> **What this section is not.** It does not list client-facing endpoints that no other service or external party calls (those stay in each service's "List of APIs" in chunks 13x and in the OpenAPI specs, §21). It does not hold event contracts (§14, chunk 10).
 
 ---
 
-## 15.1 [Service Name]
+## 15.1 Contract Conventions (platform defaults)
 
-### What
+<!-- Stated once here; every contract block inherits them and lists only its deviations. Values come from §6 (ecosystem), §11.6 (security defaults), and the doctrine. Missing value -> [NEEDS CLARIFICATION: ...]. -->
 
-<!-- Concise definition of the service and its bounded context. -->
+| Concern | Platform default | Source |
+|---------|------------------|--------|
+| URI pattern | `/v{major}/[resource]` (URI-prefix versioning; a breaking change is a new major version, never an in-place change) | §9 principles, platform doctrine |
+| Transport | [e.g., TLS 1.2+ everywhere; mTLS inside the mesh] | §6, §11.6 |
+| Internal authentication | [e.g., OAuth2 client credentials issued by the platform IAM; service identity per service] | §6 IAM row, §11.6 |
+| Authorization | Permission tokens from §16, verbatim | §16 (chunk 12) |
+| Tenant context | Carried on every call ([header or token claim]) | §11.2 |
+| Correlation | Carried on every call and propagated downstream ([header name]); W3C trace context for tracing | §11.4 |
+| Idempotency | `Idempotency-Key` header required on every write that touches money, wallet, notifications, or an external provider | §9 principles, platform doctrine |
+| Content type | `application/json`; errors as `application/problem+json` | - |
+| Date and time | ISO-8601, UTC | §6 ecosystem rules |
+| IDs | UUIDv7 | §6 ecosystem rules |
+| Error model | RFC 9457 Problem Details with an `errorCode` extension (standard codes in the table below) | §11 |
+| Resilience | Timeouts, retries with exponential backoff and jitter, circuit breaker, and bulkhead per downstream; values per contract, from §12 for external systems | §11, §12 |
+| Sync chain depth | At most one synchronous hop between services; a deeper chain is a design defect, flagged in §15.5 | §9 principles, platform doctrine |
 
-[Definition.]
+### Standard headers
 
-### Boundaries
+| Header | Direction | Required | Format / example | Purpose |
+|--------|-----------|----------|------------------|---------|
+| `Authorization` | Request | Yes | `Bearer <token>` | Caller authentication |
+| `Content-Type` | Request, Response | With a body | `application/json` | Body format |
+| `Accept` | Request | Yes | `application/json` | Response format |
+| [Correlation header, e.g. `X-Correlation-Id`] | Request, Response | Yes | UUID | End-to-end correlation |
+| [Tenant header, e.g. `X-Tenant-Id`] | Request | [Yes / No if carried in the token] | UUIDv7 | Tenant context |
+| `Idempotency-Key` | Request | On writes listed above | UUID | Safe retries |
+| `traceparent` | Request | Yes | W3C trace context | Distributed tracing |
 
-- **Owns:** [Entities / aggregates / data this service is the source of truth for]
-- **Does not own:** [Things explicitly outside its boundary]
-- **Upstream consumers:** [Who calls this service]
-- **Downstream dependencies:** [What this service calls / consumes]
+### Standard error codes
 
-### Input
+<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. -->
 
-| Type | Source | Description |
-|------|--------|-------------|
-| [REST / Event / Schedule / Other] | [Source] | [Description] |
+| HTTP status | `errorCode` | Meaning | Retryable | Consumer action |
+|-------------|-------------|---------|-----------|-----------------|
+| 400 | `VALIDATION_FAILED` | Request fails schema or field validation | No | Fix the request; `errors[]` lists each field |
+| 401 | `UNAUTHENTICATED` | Missing or invalid credentials | No (refresh token once) | Obtain a new token, retry once |
+| 403 | `FORBIDDEN` | Caller lacks the permission token | No | Do not retry; raise an alert |
+| 404 | `NOT_FOUND` | Resource does not exist for this tenant | No | Handle as a business outcome |
+| 409 | `CONFLICT` | State conflict or idempotency key reused with a different body | No | Re-read state; never reuse a key for a new request |
+| 422 | `BUSINESS_RULE_VIOLATION` | Valid request that breaks a domain rule | No | Surface the domain error |
+| 429 | `RATE_LIMITED` | Caller exceeded its limit | Yes, after `Retry-After` | Back off |
+| 500 | `INTERNAL_ERROR` | Unexpected provider failure | Yes (idempotent calls only) | Retry with backoff, then circuit-break |
+| 503 | `UNAVAILABLE` | Provider temporarily unavailable | Yes | Retry with backoff, then fallback |
+| 504 | `UPSTREAM_TIMEOUT` | Provider's own dependency timed out | Yes (idempotent calls only) | Retry with backoff, then fallback |
 
-### Business Logic
+---
 
-<!-- Plain-language description of the logic, including state machines for stateful services. -->
+## 15.2 Contract Index
 
-[Description of the core logic.]
+<!-- One row per API-NN. Type: Internal (service -> service), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). -->
 
-**State machine (if applicable):**
+| API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
+|--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
+| API-01 | [Operation] | [Service] | [Service] | Internal | `[METHOD] /v1/[path]` | [13x § Integrations] | [UC-NN] | Defined |
+| API-02 | [Operation] | [Service] | [External system] | External outbound | TBD | [INT-NN] | [UC-NN] | TBD - external |
 
-```text
-States: [State A] -> [State B] -> [State C]
+---
 
-Transitions and triggers:
-  [State A]   --[Trigger]--> [State B]
-  [State B]   --[Trigger]--> [State C]
+## 15.3 Contract Details
+
+### API-01: [Operation name] ([Consumer] -> [Provider])
+
+- **Type:** Internal
+- **Purpose:** [One sentence; link the use case and the service Integrations row.]
+- **Status:** Defined
+
+**Endpoint**
+
+| Method | URI | Version | Request content type | Response content type |
+|--------|-----|---------|----------------------|-----------------------|
+| [POST] | `/v1/[path]/{[id]}` | v1 | `application/json` | `application/json` |
+
+**Security and auth**
+
+| Aspect | Value |
+|--------|-------|
+| Transport | [Per §15.1, or deviation] |
+| Authentication | [Per §15.1, or deviation] |
+| Authorization | [Permission token from §16, verbatim] |
+| Tenant context | [Per §15.1; tenant isolation rule the provider enforces] |
+| Data classification | [e.g., contains PII: masked in logs] |
+
+**Request headers** (in addition to the standard headers)
+
+| Header | Required | Format / example | Notes |
+|--------|----------|------------------|-------|
+| [Header] | [Yes / No] | [Format] | [Notes] |
+
+**Path and query parameters**
+
+| Name | In | Type | Required | Constraints | Description |
+|------|----|------|----------|-------------|-------------|
+| [id] | path | UUIDv7 | Yes | - | [Description] |
+
+**Request body**
+
+| Field | Type | Required | Constraints | Description |
+|-------|------|----------|-------------|-------------|
+| [field] | [string] | [Yes] | [e.g., max 64, enum] | [Description] |
+
+```json
+{
+  "[field]": "[value]"
+}
 ```
 
-### Output
+**Responses**
 
-| Type | Destination | Description |
-|------|-------------|-------------|
-| [REST response / Event / File / Other] | [Destination] | [Description] |
+| Status | Meaning | Body | Response headers |
+|--------|---------|------|------------------|
+| [201] | [Created] | [Schema name / fields below] | [e.g., `Location`] |
 
-### Integrations
-
-| Integration | Direction | Protocol | Purpose | Failure Handling |
-|-------------|-----------|----------|---------|------------------|
-| [System] | [Inbound / Outbound / Sync / Async] | [Protocol] | [Purpose] | [Failure handling] |
-
-### DB Modeling
-
-#### Entity Relationship
-
-<!-- Inline Mermaid is the default diagram medium. Append an optional `> Miro: <url>` line below the block only if a richer whiteboard version exists on a real board. -->
-
-```mermaid
-erDiagram
-  ENTITY_A ||--o{ ENTITY_B : has
-  ENTITY_B ||--o{ ENTITY_C : contains
-  ENTITY_A {
-    uuid id PK
-  }
-  ENTITY_B {
-    uuid id PK
-    uuid entity_a_id FK
-  }
-  ENTITY_C {
-    uuid id PK
-    uuid entity_b_id FK
-  }
+```json
+{
+  "[field]": "[value]"
+}
 ```
 
-#### Tables Design
+**Error codes** (standard codes from §15.1 apply; list only the codes this operation returns and its domain codes)
 
-| Table | Column | Type | Constraints | Notes |
-|-------|--------|------|-------------|-------|
-| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
-| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
+| HTTP status | `errorCode` | When | Retryable | Consumer action |
+|-------------|-------------|------|-----------|-----------------|
+| [422] | [DOMAIN_CODE] | [Condition] | [No] | [Action] |
 
-#### Migration Strategy
+**Behaviour**
 
-- **Tool:** [Flyway / Liquibase]
-- **Backward compatibility:** [Approach, e.g., additive-only changes, expand-contract for breaking changes]
-- **Data backfill:** [Approach for populating new columns on existing rows]
-- **Rollback:** [How to roll back a failed migration]
+| Aspect | Value |
+|--------|-------|
+| Idempotency | [Key required? Dedup window; replay returns the original response] |
+| Timeout (consumer side) | [ms] |
+| Retries and backoff | [e.g., 3 attempts, exponential with jitter, idempotent failures only] |
+| Circuit breaker / bulkhead | [Thresholds] |
+| Rate limit | [Limit per caller] |
+| Pagination | [Not applicable / cursor-based] |
+| Fallback when unavailable | [Behaviour] |
 
-#### Retention Policy
+---
 
-- `[table_name]`: [Retention rule]
-- `[table_name]`: [Retention rule]
+### API-02: [Operation name] ([Service] -> [External system])
 
-#### Archival
+- **Type:** External outbound
+- **Purpose:** [One sentence; link the use case and INT-NN in §12.]
+- **Status:** TBD - external
 
-- **Cold storage:** [Destination]
-- **Format:** [Format]
-- **Schedule:** [Schedule]
-- **Restore SLA:** [SLA]
+**[TBD - EXTERNAL: update from the [Provider] API documentation: URI, version, headers, request body, responses, error codes, and authentication scheme.]**
 
-#### Data Encryption
+| Aspect | Value |
+|--------|-------|
+| Method and URI | TBD |
+| Version | TBD |
+| Authentication | TBD (provider scheme) |
+| Request headers | TBD |
+| Request body | TBD |
+| Responses | TBD |
+| Error codes | TBD (map each provider error to a platform `errorCode` once known) |
+| Credentials storage | [From §6 secrets row, e.g., secret per tenant in the secrets manager] |
+| Timeout, retries, circuit breaker | [From §12 INT-NN] |
+| Fallback when unavailable | [From §12 INT-NN] |
+| Source document | TBD (link the provider's API documentation once supplied) |
 
-- **At rest:** [Approach]
-- **In transit:** [Approach]
-- **Key management:** [KMS / Vault, rotation policy]
-- **PII columns:** [List + masking policy in non-prod]
+<!-- Repeat a contract block for each API-NN. External inbound contracts (callbacks, webhooks) follow the same TBD rule for provider-owned fields; our side (endpoint path, signature verification, idempotency, replay protection) is defined when the provider's scheme is known. -->
 
-### Multi-Tenancy Specifications
+---
 
-<!-- Override defaults from section 11.2 only if necessary. -->
+## 15.4 Coverage Matrix
 
-- **Strategy override:** [None / specify]
-- **Tenant filter:** [How filtered]
-- **Cross-tenant queries:** [Policy]
+<!-- Every synchronous integration has a contract. Sources: every §12 row with a synchronous protocol, every synchronous edge in §8.5 sequences, and every synchronous row in a service's Integrations table (chunks 13x). -->
 
-### API Standards
+| Source | Item | API ID(s) | Covered |
+|--------|------|-----------|---------|
+| §12 | [INT-NN - System] | [API-NN] | [Yes / No: flagged in §15.5] |
+| §8.5 | [Sequence name, step N] | [API-NN] | [Yes / No] |
+| §17.X | [Service - Integrations row] | [API-NN] | [Yes / No] |
 
-- **Style:** [REST / gRPC / GraphQL]
-- **Versioning:** [Approach]
-- **Authentication:** [Mechanism]
-- **Idempotency:** [Approach]
-- **Pagination:** [Approach]
-- **Error envelope:** [Schema]
+---
 
-#### List of APIs (Swagger-friendly)
+## 15.5 Consistency Notes & Drift Register
 
-| Method | Path | Summary | Request Body | Response | Auth Scope |
-|--------|------|---------|--------------|----------|------------|
-| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[scope]` |
+<!-- Divergences between this chunk and chunks 08, 13x (List of APIs), or 11 (permission tokens), and any synchronous chain deeper than one hop. Fixed divergences are not listed; open ones stay here until resolved. -->
 
-### Event-Driven Architecture (If Applicable)
+| # | Where | Divergence | Status |
+|---|-------|------------|--------|
+| [1] | [API-NN vs §17.X List of APIs] | [e.g., URI differs] | [Open / Fixed in vX.X] |
 
-<!--
-CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event name, and payload field in this sub-section MUST match §14 (chunk 10, Centralized Event Hub) character-for-character. List BOTH published AND consumed events - consumer lists in chunk 10 are reconciled from both sides. A divergence is flagged in chunk 10 §14.8, never silently reconciled.
--->
+---
 
-#### Event Model
+## 15.6 External Contracts Awaiting the User
 
-**Published events:**
+<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. -->
 
-| Event Name | Producer | Producer Specs | Consumers | Consumer Specs | Schema (Summary) | Delivery Guarantee |
-|------------|----------|----------------|-----------|----------------|------------------|---------------------|
-| `[EVENT_NAME]` | [This service] | [Topic (verbatim from §14.4), partitions, retention, key] | [Consumer services] | [Consumer group, idempotency] | `[Payload summary - fields per §14.9]` | [At-least-once / Exactly-once effect] |
+| API ID | Provider | Fields still TBD | Document needed from the user |
+|--------|----------|------------------|-------------------------------|
+| [API-02] | [External system] | [URI, headers, body, error codes, auth] | [Provider API reference / sandbox guide] |
 
-**Consumed events:**
 
-| Event Name | Producer (owning service) | Topic | Effect in this service | Idempotency / ordering |
-|------------|---------------------------|-------|------------------------|------------------------|
-| `[EVENT_NAME]` | [Producer service] | `[topic - verbatim from §14.4]` | [Projection update / state transition / trigger] | [Inbox dedup key, aggregate_version handling] |
-
-#### Messaging Infra
-
-- **Broker:** [Broker]
-- **Schema registry:** [Registry / approach]
-- **Serialization:** [Avro / JSON / Protobuf]
-- **Topic strategy:** [Naming + partitioning]
-- **Retention:** [Retention]
-- **DLQ strategy:** [DLQ + replay]
-
-### Constraints
-
-- [Constraint 1]
-- [Constraint 2]
-- [Constraint 3]
-
-### Error Handling
-
-- **Synchronous APIs:** [Approach]
-- **Validation errors:** [Approach]
-- **Domain errors:** [Approach]
-- **Auth errors:** [Approach]
-- **Server errors:** [Approach]
-- **Async consumers:** [Approach]
-- **Poison messages:** [Approach]
-
-### Observability & Monitoring
-
-#### Logging
-
-- [Format]
-- [Mandatory fields]
-- [Retention]
-
-#### Metrics
-
-| Metric | Type | Labels | Purpose |
-|--------|------|--------|---------|
-| `[metric_name]` | [counter / gauge / histogram] | [labels] | [purpose] |
-
-#### Tracing
-
-- [Instrumentation approach]
-- [Context propagation]
-- [Sampling]
-
-### Developer Notes
-
-- **Recommended patterns:** [Patterns]
-- **Avoid:** [Anti-patterns]
-- **Testing:** [Test strategy]
-
-### Service-Level Diagrams
-
-#### Implementation Flow Chart
-
-```mermaid
-flowchart TD
-  A[Step 1] --> B[Step 2]
-  B --> C[Step 3]
-```
-
-**Summary:** [1-2 sentence prose fallback so the flow is understandable without rendering the diagram.]
-
-#### Sequence Diagram (Service-Internal)
-
-```mermaid
-sequenceDiagram
-  participant P1
-  participant P2
-  P1->>P2: [message]
-  P2-->>P1: [response]
-```
-
-**Summary:** [1-2 sentence prose fallback describing the interaction.]
-
-### Compliance
-
-- **GDPR:** [Lawful basis, retention windows, right-to-erasure flow]
-- **PCI-DSS:** [Applicability + approach]
-- **ISO 27001 / SOC 2:** [Controls applicable]
-- **Local regulations:** [List + how met]
-
-### Deployment Strategy
-
-- **Service-specific override:** [None / specify]
-- **Replicas:** [min / max]
-- **Strategy:** [Rolling / Blue-Green / Canary]
-- **Health checks:** [Probes]
-- **Rollback:** [Trigger + approach]
-
-### Future Enhancements
-
-- [Known gap or planned improvement 1]
-- [Known gap or planned improvement 2]
+---
 
 
 ---
@@ -1040,9 +1044,9 @@ sequenceDiagram
 
 ## 16.10 Traceability
 
-<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (10x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. -->
+<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (13x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. -->
 
-| Capability / rule | Source (BRD UC / matrix row / ADR / 10x chunk) |
+| Capability / rule | Source (BRD UC / matrix row / ADR / 13x chunk) |
 |---|---|
 | [Capability] | [Source ref] |
 
@@ -1072,36 +1076,302 @@ sequenceDiagram
 
 | # | Where | Divergence | Resolution / flag |
 |---|---|---|---|
-| 1 | [BRD matrix vs 10x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] |
+| 1 | [BRD matrix vs 13x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] |
 
 
 ---
 
 
-# 17. Performance & Capacity Planning
+---
 
-## 17.1 Load Estimates
+
+# 17. Detailed Service Specs
+
+<!--
+Repeat the service spec block below for each service (15.1, 15.2, ...).
+Each service follows the exact same structure for predictability and grep-ability.
+-->
+
+---
+
+## 17.1 [Service Name]
+
+### What
+
+<!-- Concise definition of the service and its bounded context. -->
+
+[Definition.]
+
+### Boundaries
+
+- **Owns:** [Entities / aggregates / data this service is the source of truth for]
+- **Does not own:** [Things explicitly outside its boundary]
+- **Upstream consumers:** [Who calls this service]
+- **Downstream dependencies:** [What this service calls / consumes]
+
+### Input
+
+| Type | Source | Description |
+|------|--------|-------------|
+| [REST / Event / Schedule / Other] | [Source] | [Description] |
+
+### Business Logic
+
+<!-- Plain-language description of the logic, including state machines for stateful services. -->
+
+[Description of the core logic.]
+
+**State machine (if applicable):**
+
+```text
+States: [State A] -> [State B] -> [State C]
+
+Transitions and triggers:
+  [State A]   --[Trigger]--> [State B]
+  [State B]   --[Trigger]--> [State C]
+```
+
+### Output
+
+| Type | Destination | Description |
+|------|-------------|-------------|
+| [REST response / Event / File / Other] | [Destination] | [Description] |
+
+### Integrations
+
+<!-- Every synchronous row carries its API ID; the full contract (URI, headers, body, error codes, security) lives in §15 and is not restated here. Asynchronous rows reference the event in §14. -->
+
+| Integration | Direction | Protocol | Purpose | Contract | Failure Handling |
+|-------------|-----------|----------|---------|----------|------------------|
+| [System] | [Inbound / Outbound / Sync / Async] | [Protocol] | [Purpose] | [API-NN (§15) / event name (§14)] | [Failure handling] |
+
+### DB Modeling
+
+#### Entity Relationship
+
+<!-- Inline Mermaid is the default diagram medium. Append an optional `> Miro: <url>` line below the block only if a richer whiteboard version exists on a real board. -->
+
+```mermaid
+erDiagram
+  ENTITY_A ||--o{ ENTITY_B : has
+  ENTITY_B ||--o{ ENTITY_C : contains
+  ENTITY_A {
+    uuid id PK
+  }
+  ENTITY_B {
+    uuid id PK
+    uuid entity_a_id FK
+  }
+  ENTITY_C {
+    uuid id PK
+    uuid entity_b_id FK
+  }
+```
+
+#### Tables Design
+
+| Table | Column | Type | Constraints | Notes |
+|-------|--------|------|-------------|-------|
+| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
+| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
+
+#### Migration Strategy
+
+- **Tool:** [Flyway / Liquibase]
+- **Backward compatibility:** [Approach, e.g., additive-only changes, expand-contract for breaking changes]
+- **Data backfill:** [Approach for populating new columns on existing rows]
+- **Rollback:** [How to roll back a failed migration]
+
+#### Retention Policy
+
+- `[table_name]`: [Retention rule]
+- `[table_name]`: [Retention rule]
+
+#### Archival
+
+- **Cold storage:** [Destination]
+- **Format:** [Format]
+- **Schedule:** [Schedule]
+- **Restore SLA:** [SLA]
+
+#### Data Encryption
+
+- **At rest:** [Approach]
+- **In transit:** [Approach]
+- **Key management:** [KMS / Vault, rotation policy]
+- **PII columns:** [List + masking policy in non-prod]
+
+### Multi-Tenancy Specifications
+
+<!-- Override defaults from section 11.2 only if necessary. -->
+
+- **Strategy override:** [None / specify]
+- **Tenant filter:** [How filtered]
+- **Cross-tenant queries:** [Policy]
+
+### API Standards
+
+- **Style:** [REST / gRPC / GraphQL]
+- **Versioning:** [Approach]
+- **Authentication:** [Mechanism]
+- **Idempotency:** [Approach]
+- **Pagination:** [Approach]
+- **Error envelope:** [Schema]
+
+#### List of APIs (Swagger-friendly)
+
+<!-- Endpoints called by another service or an external system carry their API ID and link to §15, which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. -->
+
+| Method | Path | Summary | Request Body | Response | Auth Scope | API ID (§15) |
+|--------|------|---------|--------------|----------|------------|--------------|
+| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[scope]` | [API-NN / -] |
+
+### Event-Driven Architecture (If Applicable)
+
+<!--
+CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event name, and payload field in this sub-section MUST match §14 (chunk 10, Centralized Event Hub) character-for-character. List BOTH published AND consumed events - consumer lists in chunk 10 are reconciled from both sides. A divergence is flagged in chunk 10 §14.8, never silently reconciled.
+-->
+
+#### Event Model
+
+**Published events:**
+
+| Event Name | Producer | Producer Specs | Consumers | Consumer Specs | Schema (Summary) | Delivery Guarantee |
+|------------|----------|----------------|-----------|----------------|------------------|---------------------|
+| `[EVENT_NAME]` | [This service] | [Topic (verbatim from §14.4), partitions, retention, key] | [Consumer services] | [Consumer group, idempotency] | `[Payload summary - fields per §14.9]` | [At-least-once / Exactly-once effect] |
+
+**Consumed events:**
+
+| Event Name | Producer (owning service) | Topic | Effect in this service | Idempotency / ordering |
+|------------|---------------------------|-------|------------------------|------------------------|
+| `[EVENT_NAME]` | [Producer service] | `[topic - verbatim from §14.4]` | [Projection update / state transition / trigger] | [Inbox dedup key, aggregate_version handling] |
+
+#### Messaging Infra
+
+- **Broker:** [Broker]
+- **Schema registry:** [Registry / approach]
+- **Serialization:** [Avro / JSON / Protobuf]
+- **Topic strategy:** [Naming + partitioning]
+- **Retention:** [Retention]
+- **DLQ strategy:** [DLQ + replay]
+
+### Constraints
+
+- [Constraint 1]
+- [Constraint 2]
+- [Constraint 3]
+
+### Error Handling
+
+- **Synchronous APIs:** [Approach]
+- **Validation errors:** [Approach]
+- **Domain errors:** [Approach]
+- **Auth errors:** [Approach]
+- **Server errors:** [Approach]
+- **Async consumers:** [Approach]
+- **Poison messages:** [Approach]
+
+### Observability & Monitoring
+
+#### Logging
+
+- [Format]
+- [Mandatory fields]
+- [Retention]
+
+#### Metrics
+
+| Metric | Type | Labels | Purpose |
+|--------|------|--------|---------|
+| `[metric_name]` | [counter / gauge / histogram] | [labels] | [purpose] |
+
+#### Tracing
+
+- [Instrumentation approach]
+- [Context propagation]
+- [Sampling]
+
+### Developer Notes
+
+- **Recommended patterns:** [Patterns]
+- **Avoid:** [Anti-patterns]
+- **Testing:** [Test strategy]
+
+### Service-Level Diagrams
+
+#### Implementation Flow Chart
+
+```mermaid
+flowchart TD
+  A[Step 1] --> B[Step 2]
+  B --> C[Step 3]
+```
+
+**Summary:** [1-2 sentence prose fallback so the flow is understandable without rendering the diagram.]
+
+#### Sequence Diagram (Service-Internal)
+
+```mermaid
+sequenceDiagram
+  participant P1
+  participant P2
+  P1->>P2: [message]
+  P2-->>P1: [response]
+```
+
+**Summary:** [1-2 sentence prose fallback describing the interaction.]
+
+### Compliance
+
+- **GDPR:** [Lawful basis, retention windows, right-to-erasure flow]
+- **PCI-DSS:** [Applicability + approach]
+- **ISO 27001 / SOC 2:** [Controls applicable]
+- **Local regulations:** [List + how met]
+
+### Deployment Strategy
+
+- **Service-specific override:** [None / specify]
+- **Replicas:** [min / max]
+- **Strategy:** [Rolling / Blue-Green / Canary]
+- **Health checks:** [Probes]
+- **Rollback:** [Trigger + approach]
+
+### Future Enhancements
+
+- [Known gap or planned improvement 1]
+- [Known gap or planned improvement 2]
+
+
+---
+
+
+---
+
+
+# 18. Performance & Capacity Planning
+
+## 18.1 Load Estimates
 
 | Dimension | Year 1 | Year 2 | Year 3 | Notes |
 |-----------|--------|--------|--------|-------|
 | [Dimension] | [N] | [N] | [N] | [Assumptions] |
 | [Dimension] | [N] | [N] | [N] | [Assumptions] |
 
-## 17.2 Throughput Targets (per service)
+## 18.2 Throughput Targets (per service)
 
 | Service | Sustained RPS | Peak RPS | p50 latency | p95 latency | p99 latency |
 |---------|----------------|----------|-------------|-------------|-------------|
 | [Service Name] | [N] | [N] | [Xms] | [Xms] | [Xms] |
 | [Service Name] | [N] | [N] | [Xms] | [Xms] | [Xms] |
 
-## 17.3 Peak Scenarios
+## 18.3 Peak Scenarios
 
 | Scenario | Trigger | Expected Multiplier on Baseline | Mitigation |
 |----------|---------|---------------------------------|------------|
 | [Scenario] | [Trigger] | [Multiplier + duration] | [Mitigation] |
 | [Scenario] | [Trigger] | [Multiplier + duration] | [Mitigation] |
 
-## 17.4 Stress Testing Strategy
+## 18.4 Stress Testing Strategy
 
 - **Tooling:** [Tool]
 - **Environments:** [Where stress runs are executed]
@@ -1114,7 +1384,10 @@ sequenceDiagram
 ---
 
 
-# 18. Environments
+---
+
+
+# 19. Environments
 
 | Environment | Purpose | Data | Access | Promotion Source |
 |-------------|---------|------|--------|------------------|
@@ -1136,32 +1409,16 @@ sequenceDiagram
 ---
 
 
-# 19. Operations Runbook
+---
+
+
+# 20. Operations Runbook
 
 <!-- Living document. Each procedure should be runnable by an on-call engineer who did not write the service. -->
 
-## 19.1 Common Operations
+## 20.1 Common Operations
 
-### 19.1.1 Restart a Service
-
-```text
-1. [Step]
-2. [Step]
-3. [Step]
-4. [Step]
-5. [Step]
-```
-
-### 19.1.2 Clear Cache
-
-```text
-1. [Step]
-2. [Step]
-3. [Step]
-4. [Step]
-```
-
-### 19.1.3 Replay DLQ Messages
+### 20.1.1 Restart a Service
 
 ```text
 1. [Step]
@@ -1171,7 +1428,16 @@ sequenceDiagram
 5. [Step]
 ```
 
-### 19.1.4 Rotate Secrets
+### 20.1.2 Clear Cache
+
+```text
+1. [Step]
+2. [Step]
+3. [Step]
+4. [Step]
+```
+
+### 20.1.3 Replay DLQ Messages
 
 ```text
 1. [Step]
@@ -1181,7 +1447,17 @@ sequenceDiagram
 5. [Step]
 ```
 
-### 19.1.5 Database Failover
+### 20.1.4 Rotate Secrets
+
+```text
+1. [Step]
+2. [Step]
+3. [Step]
+4. [Step]
+5. [Step]
+```
+
+### 20.1.5 Database Failover
 
 ```text
 1. [Step]
@@ -1192,7 +1468,7 @@ sequenceDiagram
 6. [Step]
 ```
 
-### 19.1.6 Tenant-Specific Incident Response
+### 20.1.6 Tenant-Specific Incident Response
 
 ```text
 1. [Step]
@@ -1202,16 +1478,16 @@ sequenceDiagram
 5. [Step]
 ```
 
-### 19.1.X [Add additional common operations as needed]
+### 20.1.X [Add additional common operations as needed]
 
-## 19.2 Diagnostics Cheatsheet
+## 20.2 Diagnostics Cheatsheet
 
 | Severity | Symptom | First Check | Likely Cause | Action |
 |----------|---------|-------------|--------------|--------|
 | [SEV1 / SEV2 / SEV3] | [Symptom] | [Where to look first] | [Likely cause] | [Action] |
 | [Severity] | [Symptom] | [Where to look first] | [Likely cause] | [Action] |
 
-## 19.3 On-Call
+## 20.3 On-Call
 
 - **Rotation:** [Rotation policy]
 - **Escalation:** [Escalation path]
@@ -1222,7 +1498,10 @@ sequenceDiagram
 ---
 
 
-# 20. Appendix
+---
+
+
+# 21. Appendix
 
 | File / Reference | Description | Link |
 |------------------|-------------|------|
@@ -1237,7 +1516,11 @@ sequenceDiagram
 
 ---
 
-# 21. Wishlist
+
+---
+
+
+# 22. Wishlist
 
 *Future architectural enhancements (beyond per-service "Future Enhancements")*
 
@@ -1249,160 +1532,6 @@ sequenceDiagram
 ---
 
 
-# 22. End-to-End System Design (Services · Topics · Producers · Consumers)
-
-> **What this section is.** The bird's-eye, implementation-facing map of the entire platform: the service landscape, the system context, the layered architecture, the full producer → topic → consumer fan-out, the synchronous edges, and the key sagas. A new engineer (or AI implementer) reads this section to understand how the system fits together, following its references into §14/§15/§16 for the normative contracts. One fact, one home: content owned by §14 (mechanism, registry, guarantees, doctrines) is referenced here, never restated.
-
----
-
-## How to Read This Document
-
-<!-- One short paragraph: reading order of the sections, and what each diagram notation means. -->
-
-[Reading guidance.]
-
-### Counts at a Glance
-
-| Dimension | Count | Source of truth |
-|---|---|---|
-| Services | [N] | §13 (chunk 09) |
-| Topics | [N] | §14.4 (chunk 10) |
-| Distinct published events | [N] | §14.9 coverage matrix (chunk 10) |
-| Synchronous REST edges | [N] | §22.7 |
-| Sagas documented | [N] | §22.8 |
-
-### Faithfulness & Deliberate Simplifications (no silent caps)
-
-<!-- List every simplification made in this chunk's diagrams (e.g., "domain producers clustered into one node in §22.2", "only the 3 load-bearing sagas drawn"). If nothing was simplified, say so. -->
-
-- [Simplification 1 + where the full detail lives.]
-
-## 22.1 Service Landscape (archetype × phase)
-
-<!-- One row per service: archetype (domain / reusable-generic / edge / read-model / orchestrator), phase, key family, sync surface, async surface. Names verbatim from §13. -->
-
-| # | Service | Archetype | Phase | Publishes to | Consumes from | Sync surface |
-|---|---|---|---|---|---|---|
-| 1 | [service] | [archetype] | [P1] | `[topic]` | `[topics]` | [REST APIs exposed] |
-
-## 22.2 System Context
-
-```mermaid
-flowchart TB
-  U([Users / actor classes]) --> EDGE[Edge / Gateway]
-  EDGE --> PLATFORM[[Platform services]]
-  PLATFORM --> EXT1[(External provider 1)]
-  PLATFORM --> EXT2[(External provider 2)]
-```
-
-## 22.3 Layered High-Level Architecture
-
-```mermaid
-flowchart TB
-  subgraph L1[Edge]
-    GW[Gateway]
-  end
-  subgraph L2[Frontend]
-    FE[Apps]
-  end
-  subgraph L3[Services]
-    S1[Service 1]
-    S2[Service 2]
-  end
-  subgraph L4[Data]
-    DB[(Databases - one per service)]
-  end
-  subgraph L5[Async backbone]
-    BR[(Broker / topics)]
-  end
-  FE --> GW --> S1 & S2
-  S1 & S2 --> DB
-  S1 & S2 -.publish/consume.-> BR
-```
-
-## 22.4 The Universal Per-Event Mechanism (async backbone)
-
-<!-- Owned by §14.2.1 - referenced, never restated here. One prose sentence + the pointer. -->
-
-Every event on every topic flows through the one universal mechanism — outbox → relay → topic → per-consumer queue with inbox dedup and DLQ. **Normative definition and diagram: §14.2.1.**
-
-## 22.5 Producer → Topic → Consumer Fan-Out (the event map)
-
-<!-- One sub-section per delivery phase. Each: a Mermaid flowchart of producer -> topic -> consumers for that phase's services. Edge labels name the load-bearing events. The exhaustive matrix stays in §14.5; this is the navigable visual. -->
-
-### 22.5.1 Phase 1 Core
-
-```mermaid
-flowchart LR
-  S1[Service 1] --> T1[[topic-1]]
-  T1 -->|EVENT_A| C1[Consumer 1]
-  T1 -->|EVENT_B| C2[Consumer 2]
-```
-
-### 22.5.2 Phase 2+ Domains
-
-```mermaid
-flowchart LR
-  S3[Service 3] --> T3[[topic-3]]
-  T3 --> C4[Consumer 4]
-```
-
-### 22.5.3 Universal Subscribers (breadth rules)
-
-<!-- Name the broad consumers only (they would clutter every fan-out diagram above); their binding rules are owned by §14.7 - reference, don't restate. -->
-
-- [Universal subscriber — see §14.7 for its binding rule.]
-
-## 22.6 Cross-Service Doctrines
-
-<!-- Name each platform-wide interaction doctrine + a pointer to its normative home (§14.7 / ADR). Names only - the rules are not restated here. -->
-
-1. [Doctrine name — normative home §14.7 / AD-NN.]
-
-## 22.7 Synchronous REST Edges (one-hop rule)
-
-<!-- Every service-to-service synchronous call on the platform. Per CLAUDE.md: no chained REST more than one hop deep. Each row: caller -> callee, purpose, why it must be synchronous. -->
-
-| # | Caller → Callee | Purpose | Why synchronous |
-|---|---|---|---|
-| 1 | [svc] → [svc] | [Purpose] | [Justification] |
-
-## 22.8 Key Sagas (dynamic view)
-
-<!-- One sub-section per load-bearing cross-service flow: orchestrator (or choreography), participants, happy path, compensation path. Mermaid sequence diagrams. -->
-
-### 22.8.1 [Saga name] ([orchestrated by X / choreographed])
-
-```mermaid
-sequenceDiagram
-  participant O as Orchestrator
-  participant A as Service A
-  participant B as Service B
-  O->>A: step 1
-  A--)O: EVENT_A
-  O->>B: step 2
-  alt failure
-    O->>A: compensate
-  end
-```
-
-## 22.9 Normative References
-
-<!-- Pure pointer section - no tables, no restated rules. One fact, one home. -->
-
-- **Topic registry (one row per topic, owner, key family):** §14.4.
-- **Per-event consumer reconciliation:** §14.5; payload contracts: §14.9.
-- **Cross-cutting guarantees every edge inherits:** §14.6.
-- **Universal subscribers & doctrines:** §14.7.
-- **Roles & authorities behind every edge's authorization:** §16.
-
-## Sources
-
-<!-- The chunks this consolidation was built from, with a one-line note per source. -->
-
-- Chunk 09 (§13 decomposition) · chunk 10 (§14 event hub) · chunks 10a+ (§15 service specs) · chunk 11 (§16 roles).
-
-
 ---
 
 
@@ -1410,7 +1539,7 @@ sequenceDiagram
 
 > **What this section is.** A structured backlog of architectural concerns identified after the main SDD was authored, by a reviewer running with cleared context. Each item comes with a **Recommended Answer** - a concrete, ready-to-apply resolution. Items are decisions awaiting the architect's acceptance: accept the recommendation (or adjust it), and it gets reflected into the SDD body.
 >
-> **What this section is not.** It is not a list of inline `[NEEDS CLARIFICATION: ...]` markers found in the body - those remain inline. This section is the reviewer's *external* findings: gaps the body did not mark, scenarios the body did not consider, corner cases the body did not test for, and contract inconsistencies between the centralized catalogues (chunks 10, 11, 16) and the per-service chunks they consolidate.
+> **What this section is not.** It is not a list of inline `[NEEDS CLARIFICATION: ...]` markers found in the body - those remain inline. This section is the reviewer's *external* findings: gaps the body did not mark, scenarios the body did not consider, corner cases the body did not test for, and contract inconsistencies between the centralized catalogues (§14, §16, §15) and the per-service chunks they consolidate.
 
 ---
 
@@ -1419,7 +1548,7 @@ sequenceDiagram
 | Field | Meaning |
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
-| **Where** | Section number (e.g., §6, §15.1), service name, or "global" if cross-cutting. |
+| **Where** | Section number (e.g., §6, §17.1), service name, or "global" if cross-cutting. |
 | **Type** | Architecture gap / Missing scenario / Corner case / Ambiguity / Risk / Inconsistency / NFR shortfall / ADR needed / Contract mismatch (topic, event, payload, consumer list, or role/permission divergence across chunks) / Duplication (BRD content or another chunk's content restated instead of referenced). |
 | **Concern** | One paragraph. What was missed and why it matters for downstream LLD or implementation. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
@@ -1481,3 +1610,165 @@ sequenceDiagram
 - [Note 1]
 - [Note 2]
 
+
+---
+
+
+---
+
+
+# 24. End-to-End System Design (Services · Topics · Producers · Consumers)
+
+<!-- GATED: this section is appended only when the e2e gate is open (SKILL.md step 8b: every open item in §23 resolved, Deferred counts as open; no open contract divergence; no clarification marker left in §13-§17; reconciliation rerun after the last change). While the gate is shut, the heading is left out entirely: no stub, no draft. -->
+
+> **What this section is.** The bird's-eye, implementation-facing map of the entire platform: the service landscape, the system context, the layered architecture, the full producer → topic → consumer fan-out, the synchronous edges, and the key sagas. A new engineer (or AI implementer) reads this section to understand how the system fits together, following its references into §14/§17/§16/§15 for the normative contracts. One fact, one home: content owned by §14 (mechanism, registry, guarantees, doctrines) is referenced here, never restated.
+
+---
+
+## How to Read This Document
+
+<!-- One short paragraph: reading order of the sections, and what each diagram notation means. -->
+
+[Reading guidance.]
+
+### Counts at a Glance
+
+| Dimension | Count | Source of truth |
+|---|---|---|
+| Services | [N] | §13 (chunk 09) |
+| Topics | [N] | §14.4 (chunk 10) |
+| Distinct published events | [N] | §14.9 coverage matrix (chunk 10) |
+| Synchronous REST edges | [N] | §24.7 |
+| Sagas documented | [N] | §24.8 |
+
+### Faithfulness & Deliberate Simplifications (no silent caps)
+
+<!-- List every simplification made in this chunk's diagrams (e.g., "domain producers clustered into one node in §24.2", "only the 3 load-bearing sagas drawn"). If nothing was simplified, say so. -->
+
+- [Simplification 1 + where the full detail lives.]
+
+## 24.1 Service Landscape (archetype × phase)
+
+<!-- One row per service: archetype (domain / reusable-generic / edge / read-model / orchestrator), phase, key family, sync surface, async surface. Names verbatim from §13. -->
+
+| # | Service | Archetype | Phase | Publishes to | Consumes from | Sync surface |
+|---|---|---|---|---|---|---|
+| 1 | [service] | [archetype] | [P1] | `[topic]` | `[topics]` | [REST APIs exposed] |
+
+## 24.2 System Context
+
+```mermaid
+flowchart TB
+  U([Users / actor classes]) --> EDGE[Edge / Gateway]
+  EDGE --> PLATFORM[[Platform services]]
+  PLATFORM --> EXT1[(External provider 1)]
+  PLATFORM --> EXT2[(External provider 2)]
+```
+
+## 24.3 Layered High-Level Architecture
+
+```mermaid
+flowchart TB
+  subgraph L1[Edge]
+    GW[Gateway]
+  end
+  subgraph L2[Frontend]
+    FE[Apps]
+  end
+  subgraph L3[Services]
+    S1[Service 1]
+    S2[Service 2]
+  end
+  subgraph L4[Data]
+    DB[(Databases - one per service)]
+  end
+  subgraph L5[Async backbone]
+    BR[(Broker / topics)]
+  end
+  FE --> GW --> S1 & S2
+  S1 & S2 --> DB
+  S1 & S2 -.publish/consume.-> BR
+```
+
+## 24.4 The Universal Per-Event Mechanism (async backbone)
+
+<!-- Owned by §14.2.1 - referenced, never restated here. One prose sentence + the pointer. -->
+
+Every event on every topic flows through the one universal mechanism — outbox → relay → topic → per-consumer queue with inbox dedup and DLQ. **Normative definition and diagram: §14.2.1.**
+
+## 24.5 Producer → Topic → Consumer Fan-Out (the event map)
+
+<!-- One sub-section per delivery phase. Each: a Mermaid flowchart of producer -> topic -> consumers for that phase's services. Edge labels name the load-bearing events. The exhaustive matrix stays in §14.5; this is the navigable visual. -->
+
+### 24.5.1 Phase 1 Core
+
+```mermaid
+flowchart LR
+  S1[Service 1] --> T1[[topic-1]]
+  T1 -->|EVENT_A| C1[Consumer 1]
+  T1 -->|EVENT_B| C2[Consumer 2]
+```
+
+### 24.5.2 Phase 2+ Domains
+
+```mermaid
+flowchart LR
+  S3[Service 3] --> T3[[topic-3]]
+  T3 --> C4[Consumer 4]
+```
+
+### 24.5.3 Universal Subscribers (breadth rules)
+
+<!-- Name the broad consumers only (they would clutter every fan-out diagram above); their binding rules are owned by §14.7 - reference, don't restate. -->
+
+- [Universal subscriber — see §14.7 for its binding rule.]
+
+## 24.6 Cross-Service Doctrines
+
+<!-- Name each platform-wide interaction doctrine + a pointer to its normative home (§14.7 / ADR). Names only - the rules are not restated here. -->
+
+1. [Doctrine name — normative home §14.7 / AD-NN.]
+
+## 24.7 Synchronous REST Edges (one-hop rule)
+
+<!-- The whole-system view of every service-to-service synchronous call. The contracts themselves (URI, headers, body, error codes, auth) live in §15 and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. -->
+
+| # | Caller → Callee | API ID (§15) | Purpose | Why synchronous |
+|---|---|---|---|---|
+| 1 | [svc] → [svc] | [API-NN] | [Purpose] | [Justification] |
+
+## 24.8 Key Sagas (dynamic view)
+
+<!-- One sub-section per load-bearing cross-service flow: orchestrator (or choreography), participants, happy path, compensation path. Mermaid sequence diagrams. -->
+
+### 24.8.1 [Saga name] ([orchestrated by X / choreographed])
+
+```mermaid
+sequenceDiagram
+  participant O as Orchestrator
+  participant A as Service A
+  participant B as Service B
+  O->>A: step 1
+  A--)O: EVENT_A
+  O->>B: step 2
+  alt failure
+    O->>A: compensate
+  end
+```
+
+## 24.9 Normative References
+
+<!-- Pure pointer section - no tables, no restated rules. One fact, one home. -->
+
+- **Topic registry (one row per topic, owner, key family):** §14.4.
+- **Per-event consumer reconciliation:** §14.5; payload contracts: §14.9.
+- **Cross-cutting guarantees every edge inherits:** §14.6.
+- **Universal subscribers & doctrines:** §14.7.
+- **Roles & authorities behind every edge's authorization:** §16.
+- **Synchronous API contracts (URI, headers, body, error codes, security):** §15.
+
+## Sources
+
+<!-- The chunks this consolidation was built from, with a one-line note per source. -->
+
+- Chunk 09 (§13 decomposition) · chunk 10 (§14 event hub) · chunks 13a+ (§17 service specs) · chunk 12 (§16 roles) · chunk 11 (§15 API contracts) · chunk 18 (§23 open items, cleared).

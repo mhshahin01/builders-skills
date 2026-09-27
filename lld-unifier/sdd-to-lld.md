@@ -12,8 +12,8 @@ Every fact has exactly one owning document and section. The LLD **references** S
 
 1. **Reference + delta, never copy.** Design-level content (scope, assumptions, glossary, NFR targets, ADRs, principles) stays in the SDD. The LLD section links to the owning SDD chunk (`../sdd-[project-slug]/NN-....md` § heading) and adds ONLY the implementation-level delta.
 2. **Contract names must match; contract bodies are not restated.** Topic names, event names, and role/permission tokens in the LLD match SDD §14/§16 character-for-character (that is consistency, not duplication). Payload contracts and role catalogues are NOT copied — the LLD references SDD §14.9 / §16 (or the schema registry) and adds only implementation detail: consumer groups, serialization, DLQ config, retry policy, enforcement points.
-3. **Derived views declare their source.** The LLD's §6.3 Runtime Stack and §15 SLO rows are views of SDD §6/§17 — each row keeps its Source column pointing at the SDD; a value that disagrees with the SDD is drift to flag, never a silent local truth.
-4. **Scalar facts live once.** Version pins, targets, and counts are owned upstream (SDD §6/§17) or by the LLD's own Specs chunk — referenced everywhere else.
+3. **Derived views declare their source.** The LLD's §6.3 Runtime Stack and §15 SLO rows are views of SDD §6/§18 — each row keeps its Source column pointing at the SDD; a value that disagrees with the SDD is drift to flag, never a silent local truth.
+4. **Scalar facts live once.** Version pins, targets, and counts are owned upstream (SDD §6/§18) or by the LLD's own Specs chunk — referenced everywhere else.
 5. **Restated upstream content is a review defect.** The reviewer flags it as Type `Duplication` with the reference-based rewrite as the Recommendation.
 6. **Standalone export is the only exception.** When the user explicitly asks for a self-contained LLD for distribution, the merge step MAY inline referenced SDD sections — marked `> Inlined from SDD §X for standalone distribution`.
 
@@ -49,7 +49,7 @@ Tech Stack and Project Type are also **inputs to LLD generation itself** — res
 ## What derivation IS NOT
 
 - Inventing class names that aren't implied by the SDD or by CLAUDE.md naming conventions.
-- Inventing performance numbers from thin air. SLO targets carry from SDD §17; if the SDD didn't pin them, the LLD flags them.
+- Inventing performance numbers from thin air. SLO targets carry from SDD §18; if the SDD didn't pin them, the LLD flags them.
 - Inventing concrete OpenAPI schemas if the SDD didn't pin request / response shapes. The LLD proposes shapes per CLAUDE.md REST conventions and flags them for confirmation.
 - Producing complete pseudocode for every method. Only non-trivial methods get pseudocode; CRUD methods are described by signature alone.
 
@@ -64,7 +64,7 @@ The SDD can arrive in two forms:
 Recognise it by:
 
 - Folder path matches `sdd-*/`.
-- Contains files named `00-cover-and-changelog.md`, `01-executive-summary-scope-risks.md`, `02-ecosystem-overview.md`, `03-users-and-use-cases.md`, `04-architecture-style-and-diagrams.md`, `05-workflows-and-sequences.md`, `06-principles-and-decisions.md`, `07-cross-cutting-concerns.md`, `08-integrations.md`, `09-services-summary.md`, `10-events-hub.md`, `10a-service-*.md` (one per service), `11-centralized-user-roles.md`, `16-e2e-system-design.md`, etc. (Legacy chunked SDDs lack chunks 10/11/16 and may carry `15-specs.md` — same logical reading order.)
+- Contains files named `00-cover-and-changelog.md`, `01-executive-summary-scope-risks.md`, `02-ecosystem-overview.md`, `03-users-and-use-cases.md`, `04-architecture-style-and-diagrams.md`, `05-workflows-and-sequences.md`, `06-principles-and-decisions.md`, `07-cross-cutting-concerns.md`, `08-integrations.md`, `09-services-summary.md`, `10-events-hub.md`, `11-api-contracts.md`, `12-centralized-user-roles.md`, `13a-service-*.md` (one per service), `18-open-items-and-clarifications.md`, and `19-e2e-system-design.md` once the SDD's e2e gate is open. (SDDs from the earlier map use `10a-service-*.md`, `11-centralized-user-roles.md`, and `16-e2e-system-design.md` with no API contracts chunk; legacy chunked SDDs lack the registries and may carry `15-specs.md` — same logical reading order.)
 - Each file begins with `<!-- CHUNK: NN ... PART OF: SDD — ... -->`.
 
 **Reading order:** numeric (00, 01, 02, …), with multi-letter chunks read alphabetically within their numeric prefix.
@@ -104,30 +104,31 @@ This is the authoritative mapping. Each row says: SDD source section → LLD des
 | 08 Integrations | `06-api-contracts.md` (downstream REST) + `07-event-contracts.md` (downstream events) + `04-implementation/<svc>.md` (per-service Resilience4j config in `09-cross-cutting.md` § 12.3) | Each integration row becomes either an outbound API call (with timeout, retry, circuit breaker config) or an event subscription. |
 | 09 Services Decomposition (§13) | `lld-master.md` (table of services) + one `04-implementation/<service>.md` file per row | This is **the** structural mapping: one SDD service = one LLD per-service file. |
 | 10 Centralized Event Hub (§14) | `07-event-contracts.md` (topic inventory + producer/consumer implementation specs) + `09-cross-cutting.md` (outbox/inbox, delivery guarantees) | **Names match; bodies are referenced.** Topic and event names must match SDD §14 character-for-character. Payload contracts are NOT restated — each event row links to its SDD §14.9 contract (or the schema registry) and the LLD adds only implementation detail: consumer group naming, serialization, DLQ config, retry/redrive policy. |
-| 11 Centralized User Roles (§16) | `11-security.md` (authZ decisions) + `09-cross-cutting.md` § auth/tenant + per-service § 7.7 (authorization checks) | **Names match; catalogue is referenced.** Role names and permission tokens must match SDD §16 character-for-character, but the catalogue/matrix is not restated — the LLD references SDD §16 and adds only the enforcement implementation; the implementation seed (§16.12) becomes the role/permission migration + fixture plan. |
-| 16 E2E System Design (§22) | `02-context.md` § 5.4 Cross-Service Dependencies + saga narratives in `04-implementation/<orchestrator>.md` | The reconciled fan-out map and saga views orient the per-service derivation; sync one-hop edges (§22.7) become outbound API calls with resilience config. |
-| 10a (per service) Boundaries | `04-implementation/<svc>.md` § 7.1 Responsibility | Reframe from boundary statement to responsibility statement. |
-| 10a Input | `06-api-contracts.md` (REST inbound) + `07-event-contracts.md` (event consumers) | Inbound REST and event consumers each become rows in the contracts chunks; cross-referenced from the per-service file. |
-| 10a Business Logic | `04-implementation/<svc>.md` § 7.2 Class & Interface Map + § 7.3 Method Pseudocode + § 7.4 Design Patterns Applied | The SDD's business-logic prose becomes the LLD's class/interface map and pattern application. **This is the heaviest derivation step.** |
-| 10a State Machine (Business Logic subsection) | `08-state-and-rules.md` § 11.1 Aggregate State Machines | Convert to Mermaid `stateDiagram-v2`. |
-| 10a Output | `06-api-contracts.md` (REST outbound) + `07-event-contracts.md` (event producers) | Same as Input but for outputs. |
-| 10a Integrations (per service) | `04-implementation/<svc>.md` (cross-reference to `06-api-contracts.md` outbound calls) + Resilience4j config in `09-cross-cutting.md` § 12.3 | |
-| 10a DB Modeling | `05-data-model.md` § 8.2 Tables (in this service's schema) + § 8.3 Indexes + § 8.5 Migration Plan + § 8.6 Retention & Archival + § 8.7 Encryption | Direct lift; the SDD's ERD becomes the LLD's Mermaid `erDiagram`. |
-| 10a Multi-Tenancy Specifications | `05-data-model.md` § 8.4 Multi-Tenancy Strategy (per-service row) | |
-| 10a API Standards + List of APIs | `06-api-contracts.md` § 9.1 Endpoint Inventory + § 9.2 Request/Response Shapes + § 9.5 OpenAPI snippets | Per-service endpoint table; OpenAPI generation is downstream (LLD references `[path/openapi.yaml]` and lists snippets). |
-| 10a Event Model + Messaging Infra | `07-event-contracts.md` § 10.1 Topic Inventory + § 10.2 Event Schemas + § 10.3 Producer Specs + § 10.4 Consumer Specs | Per-topic detail. Cross-check against SDD §14 (the contract registry) — a divergence between a per-service Event Model and §14 is flagged as drift, never silently resolved. |
-| 10a Constraints | `04-implementation/<svc>.md` § 7.7 Error Handling (constraints that surface as exceptions) + `09-cross-cutting.md` (constraints that are platform rules) | |
-| 10a Error Handling | `04-implementation/<svc>.md` § 7.7 Error Handling (per-exception RFC 9457 mapping) | Each error becomes a row in the per-service error table. |
-| 10a Observability | `10-operations.md` § 13.3 Metrics (per-service custom metrics) | |
-| 10a Developer Notes | `04-implementation/<svc>.md` § 7.4 Design Patterns Applied + `13-testing.md` § 16 (test strategy) | |
-| 10a Service-Level Diagrams (Flow Chart, Sequence) | `04-implementation/<svc>.md` § 7.8 Use Case Workflows (Mermaid sequence per use case) | |
-| 10a Compliance | `11-security.md` § 14.6 Compliance | |
-| 10a Deployment Strategy | `03-architecture.md` § 6.2 Deployment Topology (per-service replicas / strategy if overrides exist) | |
-| 10a Future Enhancements | (Carried — surface in `15-open-questions.md` § 18.4 Decisions Pending if any inform near-term implementation) | |
-| 12 Performance & Capacity (§17) | `12-performance.md` (entire chunk) | **Reference + delta.** SLO rows reference the owning SDD §17 target (per-row link); the LLD adds ONLY the *meeting-the-targets* detail (caching, hot-path indexes, bulkhead sizes). |
-| 13 Environments (§18) | `10-operations.md` § 13.1 Configuration | Per-environment config rows. |
-| 14 Operations Runbook (§19) | `10-operations.md` § 13.8 Runbook Procedures | The SDD's runbook procedures carry; the LLD enriches with concrete commands once code exists. From SDD alone, runbook procedures may be skeleton-form with `> TODO: concrete commands once code exists — verify`. |
-| 15 Appendix (§20) | `16-references.md` (entire chunk) | Carry references; add LLD-specific rows. |
+| 11 Service Integration API Contracts (§15) | `06-api-contracts.md` (outbound and inbound integration calls) + per-service § 7.7 error mapping | **Contract names and URIs match; contract bodies are referenced.** Each SDD `API-NN` maps to the LLD endpoint and client that implement it; the LLD adds implementation detail (client class, DTO records, Resilience4j config) and never re-specifies headers, body, or error codes. An SDD contract still `TBD - external` stays a `> TODO:` in the LLD until the SDD is updated. |
+| 12 Centralized User Roles (§16) | `11-security.md` (authZ decisions) + `09-cross-cutting.md` § auth/tenant + per-service § 7.7 (authorization checks) | **Names match; catalogue is referenced.** Role names and permission tokens must match SDD §16 character-for-character, but the catalogue/matrix is not restated — the LLD references SDD §16 and adds only the enforcement implementation; the implementation seed (§16.12) becomes the role/permission migration + fixture plan. |
+| 19 E2E System Design (§24, gated; may be absent until the SDD open items are cleared) | `02-context.md` § 5.4 Cross-Service Dependencies + saga narratives in `04-implementation/<orchestrator>.md` | The reconciled fan-out map and saga views orient the per-service derivation; sync one-hop edges (§22.7) become outbound API calls with resilience config. |
+| 13a (per service) Boundaries | `04-implementation/<svc>.md` § 7.1 Responsibility | Reframe from boundary statement to responsibility statement. |
+| 13a Input | `06-api-contracts.md` (REST inbound) + `07-event-contracts.md` (event consumers) | Inbound REST and event consumers each become rows in the contracts chunks; cross-referenced from the per-service file. |
+| 13a Business Logic | `04-implementation/<svc>.md` § 7.2 Class & Interface Map + § 7.3 Method Pseudocode + § 7.4 Design Patterns Applied | The SDD's business-logic prose becomes the LLD's class/interface map and pattern application. **This is the heaviest derivation step.** |
+| 13a State Machine (Business Logic subsection) | `08-state-and-rules.md` § 11.1 Aggregate State Machines | Convert to Mermaid `stateDiagram-v2`. |
+| 13a Output | `06-api-contracts.md` (REST outbound) + `07-event-contracts.md` (event producers) | Same as Input but for outputs. |
+| 13a Integrations (per service) | `04-implementation/<svc>.md` (cross-reference to `06-api-contracts.md` outbound calls) + Resilience4j config in `09-cross-cutting.md` § 12.3 | |
+| 13a DB Modeling | `05-data-model.md` § 8.2 Tables (in this service's schema) + § 8.3 Indexes + § 8.5 Migration Plan + § 8.6 Retention & Archival + § 8.7 Encryption | Direct lift; the SDD's ERD becomes the LLD's Mermaid `erDiagram`. |
+| 13a Multi-Tenancy Specifications | `05-data-model.md` § 8.4 Multi-Tenancy Strategy (per-service row) | |
+| 13a API Standards + List of APIs | `06-api-contracts.md` § 9.1 Endpoint Inventory + § 9.2 Request/Response Shapes + § 9.5 OpenAPI snippets | Per-service endpoint table; OpenAPI generation is downstream (LLD references `[path/openapi.yaml]` and lists snippets). |
+| 13a Event Model + Messaging Infra | `07-event-contracts.md` § 10.1 Topic Inventory + § 10.2 Event Schemas + § 10.3 Producer Specs + § 10.4 Consumer Specs | Per-topic detail. Cross-check against SDD §14 (the contract registry) — a divergence between a per-service Event Model and §14 is flagged as drift, never silently resolved. |
+| 13a Constraints | `04-implementation/<svc>.md` § 7.7 Error Handling (constraints that surface as exceptions) + `09-cross-cutting.md` (constraints that are platform rules) | |
+| 13a Error Handling | `04-implementation/<svc>.md` § 7.7 Error Handling (per-exception RFC 9457 mapping) | Each error becomes a row in the per-service error table. |
+| 13a Observability | `10-operations.md` § 13.3 Metrics (per-service custom metrics) | |
+| 13a Developer Notes | `04-implementation/<svc>.md` § 7.4 Design Patterns Applied + `13-testing.md` § 16 (test strategy) | |
+| 13a Service-Level Diagrams (Flow Chart, Sequence) | `04-implementation/<svc>.md` § 7.8 Use Case Workflows (Mermaid sequence per use case) | |
+| 13a Compliance | `11-security.md` § 14.6 Compliance | |
+| 13a Deployment Strategy | `03-architecture.md` § 6.2 Deployment Topology (per-service replicas / strategy if overrides exist) | |
+| 13a Future Enhancements | (Carried — surface in `15-open-questions.md` § 18.4 Decisions Pending if any inform near-term implementation) | |
+| 14 Performance & Capacity (§18) | `12-performance.md` (entire chunk) | **Reference + delta.** SLO rows reference the owning SDD §18 target (per-row link); the LLD adds ONLY the *meeting-the-targets* detail (caching, hot-path indexes, bulkhead sizes). |
+| 15 Environments (§19) | `10-operations.md` § 13.1 Configuration | Per-environment config rows. |
+| 16 Operations Runbook (§20) | `10-operations.md` § 13.8 Runbook Procedures | The SDD's runbook procedures carry; the LLD enriches with concrete commands once code exists. From SDD alone, runbook procedures may be skeleton-form with `> TODO: concrete commands once code exists — verify`. |
+| 17 Appendix (§21) | `16-references.md` (entire chunk) | Carry references; add LLD-specific rows. |
 
 ---
 
@@ -165,7 +166,7 @@ The SDD names hot-path concerns; the LLD chooses the cache. From SDD alone, prop
 
 ### `12-performance.md` § 15.5 Peak Scenarios
 
-Carry from SDD §17.3 if pinned; otherwise: `> TODO: peak scenarios — verify with SDD §17.3`.
+Carry from SDD §18.3 if pinned; otherwise: `> TODO: peak scenarios — verify with SDD §18.3`.
 
 ### `14-frontend.md` (if applicable)
 

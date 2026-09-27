@@ -1,13 +1,14 @@
 <!--
-CHUNK: 17
+CHUNK: 18
 TITLE: Open Items & Clarifications
 PROJECT: [Project Name]
 VERSION: [X.X]
-DEPENDS_ON: all preceding SDD chunks (00 through 16)
+DEPENDS_ON: all preceding SDD chunks (00 through 17)
+GATES: chunk 19 (End-to-End System Design). Chunk 19 is written only after every item here is resolved: Accepted - applied, Adjusted - applied, or Rejected. Open and Deferred items keep the gate shut (SKILL.md step 8b).
 PART OF: SDD - [Project Name]
 PURPOSE: Output of the post-generation cleared-context reviewer pass. Captures architecture-level gaps, missing scenarios, integration corner cases, ADR ambiguities, and cross-chunk contract mismatches flagged by an independent reviewer. Every item carries a concrete Recommended Answer, ready to be applied to the SDD body once the architect accepts it.
 GENERATED_BY: sdd-unifier post-generation reviewer (cleared-context subagent run after the main SDD body is complete).
-SCOPE: The reviewer reads ALL preceding chunks. Contract-consistency findings are first-class: topic names, event names, payload fields, and consumer lists that diverge between the Centralized Event Hub (chunk 10), the per-service chunks (10x), the Centralized User Roles catalogue (chunk 11), and the End-to-End System Design (chunk 16) are valid OI items.
+SCOPE: The reviewer reads ALL preceding chunks. Contract-consistency findings are first-class: topic names, event names, payload fields, and consumer lists that diverge between the Centralized Event Hub (chunk 10), the per-service chunks (13x), the Centralized User Roles catalogue (chunk 12), and the Service Integration API Contracts (chunk 11) are valid OI items. The End-to-End System Design (chunk 19) does not exist yet when this review runs; it is written after this chunk is cleared.
 WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, or defer the Recommended Answer. Accepted answers are applied to the referenced chunk(s), the item moves to the Resolution Log, and the Changes Log is bumped.
 -->
 
@@ -24,7 +25,7 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 | Field | Meaning |
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
-| **Where** | Section number (e.g., §6, §15.1), service name, or "global" if cross-cutting. |
+| **Where** | Section number (e.g., §6, §17.1), service name, or "global" if cross-cutting. |
 | **Type** | Architecture gap / Missing scenario / Corner case / Ambiguity / Risk / Inconsistency / NFR shortfall / ADR needed / Contract mismatch (topic, event, payload, consumer list, or role/permission divergence across chunks) / Duplication (BRD content or another chunk's content restated instead of referenced). |
 | **Concern** | One paragraph. What was missed and why it matters for downstream LLD or implementation. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
@@ -86,4 +87,4 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 - [Note 1]
 - [Note 2]
 
-<!-- MASTER: sdd-master.md | PREV: 16-e2e-system-design.md | NEXT: none -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 17-appendix-and-wishlist.md | NEXT: 19-e2e-system-design.md -->

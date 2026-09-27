@@ -12,7 +12,7 @@ Every fact has exactly one owning document and section. The SDD **references** B
 
 1. **Reference + delta, never copy.** Business content (glossary terms, scope items, assumptions, wishlist, UC flows) stays in the BRD. The SDD section links to the owning BRD chunk (`../brd-[project-slug]/NN-....md` § heading) and adds ONLY its own delta: new technical terms, solution-level scope refinements, technical assumptions, architectural wishlist items.
 2. **Reference UCs by ID.** Per-service Business Logic cites `UC-NN` (with the link) for the behavioural contract and writes only the technical realisation — never a restated Main Flow.
-3. **Derived views declare their source.** Sections that consolidate (Actors from personas, §16 roles from the matrix, §17 targets from NFRs) are views, not copies: they transform to a different altitude and name the source row/UC they derive from.
+3. **Derived views declare their source.** Sections that consolidate (Actors from personas, §16 roles from the matrix, §18 targets from NFRs) are views, not copies: they transform to a different altitude and name the source row/UC they derive from.
 4. **Scalar facts live once.** Counts, versions, dates, and targets are stated in their owning section and referenced elsewhere — a restated number is a drift bug waiting to happen.
 5. **Restated upstream content is a review defect.** The reviewer flags it as Type `Duplication` with the reference-based rewrite as the Recommended Answer.
 6. **Standalone export is the only exception.** When the user explicitly asks for a self-contained SDD for an external party (vendor, formal review), the merge step MAY inline the referenced BRD sections — marked `> Inlined from BRD §X for standalone distribution` so the owning home stays clear.
@@ -26,9 +26,9 @@ The BRD (`brd-unifier` output) is **business-language only** — it states the W
 | BRD input | Where it lives | How it steers the SDD |
 |---|---|---|
 | **User journeys & use cases (UC-NN)** | Chunked: `05-user-journeys-overview.md` + `06a-use-cases-[persona].md`, `06b-…`; combined: `# User Journeys & Use Cases` | The core behavioural contract. Each UC has an actor, detailed Main Flow steps, alternate/exception flows, business rules, and acceptance criteria. UCs seed §7.2 Use Case Diagram, drive service decomposition, and fill per-service Business Logic. |
-| **Users & Use Cases Matrix** | Chunked: `07-users-use-cases-matrix.md`; combined: `# Users & Use Cases Matrix` | The authorization contract: persona × UC with Yes/- cells and conditional footnotes. Seeds §7.1 Actors, the §16 Centralized User Roles & Authorities catalogue, per-service authorization notes in §15.X Security/Constraints, and role definitions in §11 Cross-Cutting Security. |
+| **Users & Use Cases Matrix** | Chunked: `07-users-use-cases-matrix.md`; combined: `# Users & Use Cases Matrix` | The authorization contract: persona × UC with Yes/- cells and conditional footnotes. Seeds §7.1 Actors, the §16 Centralized User Roles & Authorities catalogue, per-service authorization notes in §17.X Security/Constraints, and role definitions in §11 Cross-Cutting Security. |
 | **Technical Inputs for the SDD** | Chunked: `12-appendix-and-wishlist.md` § Technical Inputs; combined: `# Appendix` § Technical Inputs | Source technical mandates parked **verbatim** by brd-unifier (named technologies, protocols, architecture rules, concrete technical targets). Highest-fidelity technical signal: seeds §6 Ecosystem Overview and **overrides CLAUDE.md defaults** where they conflict. May be absent — then CLAUDE.md defaults + architect input carry §6. |
-| **Business-language NFRs** | Chunked: `10-nfrs.md`; combined: `# Non-Functional Requirements` | The BRD states the what ("highly available", "handles seasonal peaks") with business measures. The SDD **quantifies** each into technical targets (§17) and realisation decisions (§8, §11) — every quantification the BRD doesn't imply is `[NEEDS CLARIFICATION: ...]` or an architect ask. NFRs are also evidence for the ecosystem selection recommendations (SKILL.md Step 3b). |
+| **Business-language NFRs** | Chunked: `10-nfrs.md`; combined: `# Non-Functional Requirements` | The BRD states the what ("highly available", "handles seasonal peaks") with business measures. The SDD **quantifies** each into technical targets (§18) and realisation decisions (§8, §11) — every quantification the BRD doesn't imply is `[NEEDS CLARIFICATION: ...]` or an architect ask. NFRs are also evidence for the ecosystem selection recommendations (SKILL.md Step 3b). |
 | **Business-level integrations** | Chunked: `08-integrations.md`; combined: `# Integrations` | Partner, purpose, information exchanged, direction, criticality. The SDD **enriches** each row with protocol, format, auth, timeout, retries, fallback (§12) — all SDD-only fields. |
 
 **Legacy BRDs (pre-restructure template):** older BRDs may carry a `Specs` section (`12-specs.md` / `# Specs`) and/or a `Technical Implementation Expectations` section, and FR-NN blocks instead of UC-NN. Consume them: Specs.Tech Stack / Technical Implementation Expectations rows go verbatim into §6 (they override CLAUDE.md defaults); Specs.Roadmap informs §13 phasing; Specs.Project Type answers the intake question; FR blocks map like UC blocks (the `How` plays the role of the Main Flow). Note "legacy BRD sections consumed" in the handoff summary. The Specs section is **owned by `lld-unifier` now** — it is never authored into the SDD, regardless of whether the BRD had one.
@@ -43,7 +43,7 @@ The BRD (`brd-unifier` output) is **business-language only** — it states the W
 - Auto-filling SDD sections that have direct BRD analogues (Glossary, Personas → Actors, Integrations, Scope, NFRs context).
 - Producing an SDD skeleton with all section headings present, in template order.
 - Flagging SDD-only sections (Architecture Style, ADRs, Cross-cutting overrides per service, Operations Runbook procedures) with `[NEEDS CLARIFICATION: ...]` markers naming the specific decision needed.
-- Falling back to the platform doctrine (EDA + DDD + hexagonal) and user CLAUDE.md defaults (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka, Keycloak, microservices-first, Angular 17+ standalone) for the Ecosystem Overview when the BRD's parked technical inputs don't override — always confirmed through the ecosystem selection flow (SKILL.md Step 3b).
+- Taking the architecture style from the architecture questionnaire (SKILL.md step 3b), then falling back to user CLAUDE.md defaults for the stack, adapted to that style (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka, Keycloak, Angular 17+ standalone) for the Ecosystem Overview when the BRD's parked technical inputs don't override — always confirmed through the ecosystem selection flow (SKILL.md Step 3b).
 
 **Derivation IS NOT:**
 
@@ -68,16 +68,18 @@ The user points the skill at a folder. Recognise it by:
 
 **Reading order:** numeric (00, 01, 02, 03, 03a, 03b, 04, 05, 06a, 06b, 06c, 07, 08, 09, 10, 11, 12, 13). Multi-letter chunks (`06a`, `06b`) are read alphabetically within their numeric prefix.
 
-**Unfinished BRD.** If `brd-master.md` shows a generation part that is `Pending` or `In progress` (brd-unifier writes BRDs in parts), the BRD is not finished. Stop, tell the user which part is missing, and do not derive an SDD from it.
+**Unfinished BRD.** If `[project-slug]-brd-master.md` shows a generation part that is `Pending` or `In progress` (brd-unifier writes BRDs in parts), the BRD is not finished. Stop, tell the user which part is missing, and do not derive an SDD from it.
 
 **Delivery chunks (14-17) are not BRD requirements.** They are derived from chunks 00-13 by `brd-unifier` and never add a requirement:
 
 - **Skip** `14-todo.md` (product-manager checklist) and `17-for-ppt.md` (presentation and video brief) entirely. They are also never part of a merged or combined BRD.
 - Read `15-implementation.md` and `16-uat-bat-test-cases.md` **as input context only**, after chunk 13, when they exist (see the field mapping table). They are absent until the BRD's to-do is cleared; their absence is not a gap. In a combined or merged BRD they are the `# Implementation Plan` section and the `# UAT/BAT Test Cases` section (in a merged file the second heading carries the project name: `# [Project Name] - UAT/BAT Test Cases`).
-- Read 15 and 16 as current only when `brd-master.md` shows them `Up to date`. A `Stale` or `Provisional` one is read with care and named in the handoff.
+- Read 15 and 16 as current only when `[project-slug]-brd-master.md` shows them `Up to date`. A `Stale` or `Provisional` one is read with care and named in the handoff.
 - If a delivery chunk and the BRD body disagree, the body wins; note the discrepancy in the handoff.
 
 A legacy unnumbered `uat-bat-test-cases.md` in a BRD folder gets the same treatment as chunk 16.
+
+**The BRD decision register (`decision-log.md`) is not a BRD requirement.** It is brd-unifier's decision history. Do not map it into any SDD section and do not import its narration. Read it only to understand why a BRD rule exists when that matters for a design choice (for example, to write the context of an ADR); the rule itself is always cited from the BRD chunk that is its `Rule home`. The SDD keeps its own `decision-log.md` for SDD decisions.
 
 **Treat as one logical BRD.** Do not produce one SDD per chunk. Read all chunks first, build a unified mental map, then write one SDD.
 
@@ -110,23 +112,24 @@ This is the authoritative mapping. Each row says: BRD source section → SDD des
 | Facts | Distributed: §1 Executive Summary, §6 Ecosystem Overview, §8.1 Architecture Style.Why | Facts often carry technical implications. Classify each into the section it most informs. |
 | Challenges | §4 Risks | Convert each challenge to a risk row: assign Likelihood (L/M/H), Impact (L/M/H), Mitigation (paraphrase from BRD if stated; otherwise `[NEEDS CLARIFICATION: mitigation strategy for R-NN]`), Owner (`[NEEDS CLARIFICATION: risk owner]`). |
 | Dependencies | §12 Integrations + §4 Risks (for hard dependencies) | Each external dependency becomes an Integration row. If the BRD marked a dependency as Hard with a real concern, also add it to Risks. |
-| Definitions & Important Details | Distributed: §6 Ecosystem Overview hints, §13/§15 per-service Business Logic & DB Modeling cues | The BRD's deep-dive section and the highest-value source for decomposition. Domain concepts often map to bounded contexts (services — DDD default). Business lifecycles map to per-service `Business Logic → State machine` and often imply domain events for the §14 event catalog. Concept structures inform per-service DB Modeling (conceptually — the schema is architect work). |
+| Definitions & Important Details | Distributed: §6 Ecosystem Overview hints, §13/§17 per-service Business Logic & DB Modeling cues | The BRD's deep-dive section and the highest-value source for decomposition. Domain concepts often map to bounded contexts (services — DDD default). Business lifecycles map to per-service `Business Logic → State machine` and often imply domain events for the §14 event catalog. Concept structures inform per-service DB Modeling (conceptually — the schema is architect work). |
 | Project Scope (In Scope / Out of Scope) | §2 Scope (In / Out) | **Reference + delta.** Link the BRD scope; state only the solution-design-level refinements (technical items in/out, phasing boundaries). BRD scope items are cited by their bullet, not restated. |
 | Personas / Actors | §7.1 Actors | Each persona becomes an Actor row. Add `Type (Human / System)` classification — usually all BRD personas are Human; supplement with System actors derived from Integrations (each external system that calls in is also a System actor). |
 | User Journeys (per-persona narratives) | §7.2 Use Case Diagram input + §8.4 Workflow Diagrams | Each journey seeds a workflow diagram candidate (inline Mermaid). The BRD's Summarized Workflow is the first §8.4 diagram to re-express technically. |
-| Use Case Summary + Detailed UC blocks (UC-NN) | §7.2 Use Case Diagram (UC IDs only) + distributed: §15.X per-service Business Logic, API list, Event Model | Each UC keeps its ID into the SDD's use case model — **cited by ID + link, never restated**. The UC's Main Flow + Alternate/Exception Flows inform the Business Logic of the service that owns it (write the technical realisation, reference `UC-NN` for the behavioural steps); Acceptance Criteria translate to API contract notes and possibly event names (which land in the §14 catalog); exception flows seed error-handling design. **This is the heaviest derivation work** and produces partial content + many flags. |
-| Users & Use Cases Matrix | §7.1 Actors (roles), §16 Centralized User Roles & Authorities, §11 Cross-Cutting Security (role model), §15.X per-service Constraints/Security notes | The authorization source of truth. Roles = personas; permissions = Yes cells (+ conditional footnotes → attribute-based rules). The matrix seeds the §16 role catalogue, capability matrix, and grant-authority table. Every service owning a UC gets the authorization note for that UC's allowed personas. Conditional footnotes ("own region only") become explicit authorization rules — flag each for the architect to place (token claim, row-level filter, etc.). |
+| Use Case Summary + Detailed UC blocks (UC-NN) | §7.2 Use Case Diagram (UC IDs only) + distributed: §17.X per-service Business Logic, API list, Event Model | Each UC keeps its ID into the SDD's use case model — **cited by ID + link, never restated**. The UC's Main Flow + Alternate/Exception Flows inform the Business Logic of the service that owns it (write the technical realisation, reference `UC-NN` for the behavioural steps); Acceptance Criteria translate to API contract notes and possibly event names (which land in the §14 catalog); exception flows seed error-handling design. **This is the heaviest derivation work** and produces partial content + many flags. |
+| Users & Use Cases Matrix | §7.1 Actors (roles), §16 Centralized User Roles & Authorities, §11 Cross-Cutting Security (role model), §17.X per-service Constraints/Security notes | The authorization source of truth. Roles = personas; permissions = Yes cells (+ conditional footnotes → attribute-based rules). The matrix seeds the §16 role catalogue, capability matrix, and grant-authority table. Every service owning a UC gets the authorization note for that UC's allowed personas. Conditional footnotes ("own region only") become explicit authorization rules — flag each for the architect to place (token claim, row-level filter, etc.). |
 | Integrations (BRD, business-level) | §12 Integrations (SDD) | Carry partner, purpose, information, direction, criticality. **Enrich each row with SDD-only fields**: Protocol, Data Format, Auth, Timeout, Rate Limit, Retries & Backoff, Fallback. Check the BRD's parked Technical Inputs first (the source may have stated mechanisms); each remaining field becomes `[NEEDS CLARIFICATION: ...]`. |
-| Reporting / Analytics | Distributed: §15.X per-service Output (where the report is served from), §17 Performance & Capacity context | Each report becomes an Output row in the service that produces it. Reporting frequency/audience inform §17 load estimates. Analytics-style consumers often become universal subscribers in the §14 event hub. |
-| Non-Functional Requirements (business language) | §17 Performance & Capacity + §11 Cross-Cutting Concerns + §8 architecture drivers | The BRD gives the what + business measure ("no more than X minutes of disruption per month"). The SDD **quantifies and realises**: translate each business measure into technical targets (availability %, latency budgets, capacity) — derive where arithmetic allows, otherwise `[NEEDS CLARIFICATION: technical target for NFR-NN]`. Security/privacy NFRs inform §11 defaults; availability/scalability NFRs are §8.1 architecture-style drivers. |
+| Integrations (BRD, business-level) | §15 Service Integration API Contracts | Every integration the BRD names that is called synchronously gets an `API-NN` contract. The BRD names the partner and purpose only, so an external partner's contract is `TBD - external` with a `[TBD - EXTERNAL: ...]` marker (URI, headers, body, error codes, auth) for the user to complete from the provider's documentation. Internal service-to-service contracts are designed by the architect or flagged. Never invent a provider's API. |
+| Reporting / Analytics | Distributed: §17.X per-service Output (where the report is served from), §18 Performance & Capacity context | Each report becomes an Output row in the service that produces it. Reporting frequency/audience inform §18 load estimates. Analytics-style consumers often become universal subscribers in the §14 event hub. |
+| Non-Functional Requirements (business language) | §18 Performance & Capacity + §11 Cross-Cutting Concerns + §8 architecture drivers | The BRD gives the what + business measure ("no more than X minutes of disruption per month"). The SDD **quantifies and realises**: translate each business measure into technical targets (availability %, latency budgets, capacity) — derive where arithmetic allows, otherwise `[NEEDS CLARIFICATION: technical target for NFR-NN]`. Security/privacy NFRs inform §11 defaults; availability/scalability NFRs are §8.1 architecture-style drivers. |
 | Summary (BRD) | §1 Executive Summary closing paragraph (optional) | Often redundant; only carry if it adds a technical angle. |
 | UI/UX Expectations | §11 Cross-Cutting Concerns notes (UX standards) + §6 Frontend Stack context | UX standards (error-message expectations, table/export standards, locale) inform §11 where they touch the backend (e.g., error envelope design must support plain-language messages). Frontend technology is NOT in the BRD — take it from parked Technical Inputs, CLAUDE.md defaults, or architect input. |
-| Appendix § Technical Inputs for the SDD | §6 Ecosystem Overview (primary), §9 Principles, §12 Integrations enrichment, §17 targets | **Read first among technical sources.** Verbatim source mandates: named technologies → §6 rows (override CLAUDE.md defaults; shown as `BRD-mandated` / locked in the ecosystem selection flow); architecture rules → §9 Principles or §8.1; integration mechanisms → §12 enrichment; concrete technical targets → §17. Note each consumed row in the handoff. |
-| Appendix (other rows) | §20 Appendix | Carry references; add SDD-specific rows (OpenAPI specs path, event schemas, ADR repo, threat model, capacity plan). |
-| Wishlist | §21 Wishlist | **Reference + delta.** Link the BRD wishlist; list ONLY architectural/platform-level future enhancements the SDD adds. |
+| Appendix § Technical Inputs for the SDD | §6 Ecosystem Overview (primary), §9 Principles, §12 Integrations enrichment, §18 targets | **Read first among technical sources.** Verbatim source mandates: named technologies → §6 rows (override CLAUDE.md defaults; shown as `BRD-mandated` / locked in the ecosystem selection flow); architecture rules → §9 Principles or §8.1; integration mechanisms → §12 enrichment; concrete technical targets → §18. Note each consumed row in the handoff. |
+| Appendix (other rows) | §21 Appendix | Carry references; add SDD-specific rows (OpenAPI specs path, event schemas, ADR repo, threat model, capacity plan). |
+| Wishlist | §22 Wishlist | **Reference + delta.** Link the BRD wishlist; list ONLY architectural/platform-level future enhancements the SDD adds. |
 | Open Items & Clarifications (BRD chunk 13) | Input context only | Read the BRD's resolved/deferred items — deferred business decisions often become SDD risks or flags. Do not copy the section; the SDD gets its own reviewer pass (chunk 17). |
 | Implementation Plan (BRD chunk 15 / `# Implementation Plan`) | Input context only | Business-level delivery order of the use cases. Its Dependency problems and `Provisional` / `Blocked` tasks often become §4 Risks or flags, and the task ordering is context when ordering §13 Services Decomposition. Never copy tasks and never treat a task as an architectural decision: the plan states the what, the SDD decides the how. |
-| UAT/BAT Test Cases (BRD chunk 16 / `# UAT/BAT Test Cases`) | Input context only | Business acceptance expectations. Context for §18 Environments (UAT) and for the §17 stress-testing scenarios; technical test cases belong to the SDD, so nothing is copied. `(Provisional)` cases point at business decisions still open. |
+| UAT/BAT Test Cases (BRD chunk 16 / `# UAT/BAT Test Cases`) | Input context only | Business acceptance expectations. Context for §19 Environments (UAT) and for the §18 stress-testing scenarios; technical test cases belong to the SDD, so nothing is copied. `(Provisional)` cases point at business decisions still open. |
 | Product Manager To-Do (BRD chunk 14) and Presentation & Video Brief (BRD chunk 17) | Ignored | Working and presentation artifacts, not requirements. Do not read them as BRD content. |
 
 ---
@@ -174,7 +177,7 @@ Always `[NEEDS CLARIFICATION: ...]` per intended ADR. List candidate decisions:
 
 ### §11 Cross-Cutting Concerns (defaults)
 
-Many of these have CLAUDE.md defaults — apply them and note "default per CLAUDE.md". The role model comes from the BRD's Users & Use Cases Matrix. For per-service overrides under §15.X:
+Many of these have CLAUDE.md defaults — apply them and note "default per CLAUDE.md". The role model comes from the BRD's Users & Use Cases Matrix. For per-service overrides under §17.X:
 
 `[NEEDS CLARIFICATION: any service-specific override of the default DB engine / multi-tenancy strategy / deployment strategy / observability instrumentation.]`
 
@@ -182,7 +185,7 @@ Many of these have CLAUDE.md defaults — apply them and note "default per CLAUD
 
 The BRD never names topics or events — this section is architect work seeded by derivation. The EDA doctrine plus UC flows imply the candidate events (state changes in UC Main Flows), and BRD integrations imply provider webhooks (which are NOT bus events). Produce: the envelope + topology skeleton with doctrine defaults (outbox, at-least-once, inbox dedup), candidate topic-per-service rows for the proposed decomposition, candidate event names per UC state change (each flagged `candidate`), and `[NEEDS CLARIFICATION: ...]` on payload contracts. The catalog firms up as the per-service Event Models are decided, then reconciles per SKILL.md Step 6a.
 
-### §15.X per-service detailed specs
+### §17.X per-service detailed specs
 
 The biggest gap. From the BRD, for each service identified in §13:
 
@@ -205,24 +208,24 @@ The biggest gap. From the BRD, for each service identified in §13:
 
 Seeded directly from the BRD's Users & Use Cases Matrix — the strongest BRD-derivable of the platform catalogues. Personas → user types/roles; Yes cells → capabilities; conditional footnotes → attribute-based rules; invite/create UCs → the grant-authority table. Flag for the architect: permission token naming, the resolution model (where each gate is enforced), and the implementation seed.
 
-### §17 Performance & Capacity
+### §18 Performance & Capacity
 
-- §17.1 Load Estimates: derivable from BRD business measures + Reporting frequencies; partial. Flag missing year-over-year projections.
-- §17.2 Throughput Targets: `[NEEDS CLARIFICATION: per-service sustained RPS, peak RPS, p50/p95/p99 latency targets. The BRD's business-language NFRs don't give per-service technical granularity.]`
-- §17.3 Peak Scenarios: derive triggers from BRD NFR business expectations ("seasonal peaks of N times normal traffic") where stated; multipliers and duration usually `[NEEDS CLARIFICATION: ...]`.
-- §17.4 Stress Testing Strategy: `[NEEDS CLARIFICATION: tooling, environments, scenario set, acceptance criteria, cadence.]`
+- §18.1 Load Estimates: derivable from BRD business measures + Reporting frequencies; partial. Flag missing year-over-year projections.
+- §18.2 Throughput Targets: `[NEEDS CLARIFICATION: per-service sustained RPS, peak RPS, p50/p95/p99 latency targets. The BRD's business-language NFRs don't give per-service technical granularity.]`
+- §18.3 Peak Scenarios: derive triggers from BRD NFR business expectations ("seasonal peaks of N times normal traffic") where stated; multipliers and duration usually `[NEEDS CLARIFICATION: ...]`.
+- §18.4 Stress Testing Strategy: `[NEEDS CLARIFICATION: tooling, environments, scenario set, acceptance criteria, cadence.]`
 
-### §18 Environments
+### §19 Environments
 
 `[NEEDS CLARIFICATION: per-environment data refresh policy, sizing rules, feature flag defaults, DNS naming, secrets strategy. The BRD does not specify the environment model.]`
 
-### §19 Operations Runbook
+### §20 Operations Runbook
 
 Always entirely `[NEEDS CLARIFICATION: ...]`. The BRD never specifies operational procedures. Produce the section heading and the standard sub-sections (Restart, Clear Cache, Replay DLQ, Rotate Secrets, DB Failover, Tenant Incident Response) as empty templates with the marker.
 
-### §22 End-to-End System Design (authored last among body sections)
+### §24 End-to-End System Design (gated: written only after §23 is cleared)
 
-Not derived from the BRD — a faithful consolidation of the completed §13/§14/§15/§16 per SKILL.md Step 6a. In a derivation skeleton, produce the section structure with counts marked `[pending reconciliation]`.
+Not derived from the BRD — a faithful consolidation of the completed §13/§14/§15/§16/§17, written only through SKILL.md step 8b once the open items (§23) are cleared. A derivation skeleton full of clarification markers keeps the gate shut, so this section is normally absent from a first derivation; the handoff says so.
 
 ### Specs (NOT an SDD section)
 
@@ -236,12 +239,12 @@ The constitution-grade Specs (Mission, Tech Stack, Roadmap, Project Type) is own
 2. **Read the BRD in full.** For chunked: read all chunks in numeric order. For combined: read end-to-end. Read Appendix § Technical Inputs for the SDD and the Users & Use Cases Matrix with particular care — they are the technical and authorization contracts.
 3. **Build a unified mental map.** What's the system? Who uses it and for what (personas × UCs)? What are the bounded contexts (likely services)? What technical mandates are parked? What business qualities must the design realise?
 4. **Identify the service decomposition.** This is the most-important inferred decision. From UC groupings / domain concepts, propose a service list. If the mapping is clean, use it. If not, flag and ask once: "Proposed service decomposition: [list]. Confirm or revise before I generate per-service chunks?"
-5. **Run the ecosystem selection flow** (SKILL.md Step 3b): parked Technical Inputs (locked), then CLAUDE.md defaults + doctrine (EDA/DDD/hexagonal), presented for accept-all or item-by-item walkthrough with BRD-evidence recommendations.
+5. **Run the architecture questionnaire** (SKILL.md step 3b, `architecture-questionnaire.md`): drivers from the BRD (stage, teams, load), then style, communication, data ownership, tenancy, and deployment, each recommended from those drivers; accept all or walk through. **Then run the ecosystem selection flow** (SKILL.md step 3c): parked Technical Inputs (locked), then CLAUDE.md defaults adapted to the chosen style, presented for accept-all or item-by-item walkthrough with BRD-evidence recommendations.
 6. **Walk the field mapping table** above, filling each SDD section.
 7. **Produce SDD-only section skeletons** with `[NEEDS CLARIFICATION: ...]` markers per the "SDD-only sections" list above.
 8. **Draw the derivable Mermaid diagrams inline** (Context, parts of HL Architecture, Workflow per critical journey), each with a prose Summary; flag undecided diagrams as `[NEEDS CLARIFICATION: diagram pending architect input]`.
 9. **Write output** per the chosen mode (chunks / combined).
-10. **Reconcile contracts and author chunk 16** per SKILL.md Step 6a, then run the reviewer pass (chunk 17) and the acceptance loop.
+10. **Reconcile contracts** (chunks 10, 11, 12 against the `13x` chunks) per SKILL.md step 6a, then run the reviewer pass (chunk 18) and the acceptance loop, then check the e2e gate (step 8b): chunk 19 is written only if it is open.
 11. **Surface a structured handoff summary**: file paths, chunk count, Mermaid diagram count, ecosystem selection outcome, count of `[NEEDS CLARIFICATION: ...]` markers grouped by section, list of service-decomposition assumptions made, list of parked Technical Inputs consumed and CLAUDE.md defaults applied.
 
 ---
@@ -291,7 +294,7 @@ Derived SDD service decomposition (proposed, flagged for confirmation):
 
 §6 Ecosystem Overview: Java 21 / Spring Boot and PostgreSQL from the parked Technical Inputs (source-mandated); remaining rows from CLAUDE.md defaults, each noted.
 
-§15.1 wallet-core gets:
+§17.1 wallet-core gets:
 - Boundaries (derived from UC ownership).
 - Business Logic (derived from UC-01..04 Main Flows; wallet lifecycle from §3 flagged as a state machine to formalise).
 - Constraints (derived from BRD Assumptions + UC business rules + matrix authorization notes).

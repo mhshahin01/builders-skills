@@ -193,7 +193,7 @@ After corrections, **recheck** and add a run row. Unresolved findings go into th
 
 ### Step 4 - Generate mockups in Figma
 
-- **The standard is the global UI/UX constitution.** Mockups are generated in Figma or, if the user names another tool, in that tool. Either way, before any mockup is generated, read the project's `ui-ux-global-constitution.md` (the project's AGENTS.md points to it; if it cannot be found, ask the user for its location and do not work from memory): sections 2 and 3 (tokens), 12 (responsive), 13 (mockups and prototypes) and 14 (Figma prototypes). Its Figma rules apply in full to a Figma deliverable. For another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent (playable flow, frames per breakpoint, states as variants, tokens, labeled simulated data, dated play-through). This step never restates those rules; it points to them, so a change to the constitution changes the step.
+- **The standard is the global UI/UX constitution.** Mockups are generated in Figma or, if the user names another tool, in that tool. Either way, before any mockup is generated, read the project's `ui-ux-global-constitution.md` (SKILL.md principle 16; the project's AGENTS.md may point to it; never work from memory): sections 2 and 3 (tokens), 12 (responsive), 13 (mockups and prototypes) and 14 (Figma prototypes). Its Figma rules apply in full to a Figma deliverable. For another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent (playable flow, frames per breakpoint, states as variants, tokens, labeled simulated data, dated play-through). This step never restates those rules; it points to them, so a change to the constitution changes the step. **No constitution in the project:** do not ask for one and do not block the step. The coverage rules below still apply in full (playable flow, breakpoints, states as variants, labelled simulated data, dated play-through); colors and type come from chunk 11, and step 4 records "No UI/UX constitution found; chunk 11 used".
 - **Write a mockup brief into step 4 of `14-todo.md`.** A ready-to-use prompt, recommended and never claimed as executed, built from the constitution's reusable generation brief: it names the BRD, the coverage table, the constitution and the sections above, and the tool. It tells the generating tool or agent to read the constitution first.
 - One coverage row per screen or flow: the use cases it serves, the requirements and decisions it must honour, the states to cover, priority, status, breakpoints delivered, playable, play-through, Figma link. Use the screen identifiers already in chunk 11 or the use cases' UI/UX sections; assign `MK-NN` only where none exist.
 - **Expected coverage:** every use case with an actor-facing interaction has at least one screen; every Main Flow step the actor can observe is visible on a screen; every A/E flow with a user-visible state has that state; role differences follow the matrix (07); global standards follow chunk 11 (loading, empty, and error states included).
@@ -305,6 +305,19 @@ Two clearly separated sections, both consistent with the latest confirmed requir
 
 **Audience, purpose, and length** come from the user. When the user has not said, write them as `Recommendation:` and ask in the handoff. Plan one video per representative use case, typically 3 to 6.
 
+### Design standard
+
+The project files that rule the whole generation (SKILL.md principle 16) apply here as everywhere. For the look of the deck and videos:
+
+- **Constitution found:** its sections 2 and 3 (color and typography tokens) drive the Color palette, Typography, on-screen text, and visual style. Name tokens; never restate or copy raw hex values. Do not work from memory of a constitution you have not read in this run.
+- **No constitution:** use chunk 11 (Primary Color, Language & Locale). Typography becomes `Recommendation:` and is asked in the handoff.
+
+Record what was used on the **Design standard** line of the chunk. Chunk 11 is the business baseline and the constitution the visual detail; if they conflict (for example a different primary color), do not pick one: raise a `TD-NN` and label the affected Deck settings row `Provisional (TD-NN)`.
+
+**Logo is optional.** Use it when the user or project provides one (file or link); otherwise write "None provided" and use the product name as a text wordmark. A missing logo is never a `TD-NN` and never blocks the chunk. Never generate or describe an invented logo.
+
+**Accessibility and locale.** Slide text, on-screen video text, and key visuals meet at least 4.5:1 contrast; meaning is never carried by color alone. Numbers, dates, and currency follow chunk 11 Language & Locale, with the currency code shown in multi-currency figures.
+
 ### A. Executive presentation brief
 
 Input for a deck-generating agent. A suggested slide sequence; every slide has an ID (`SL-NN`), a **title**, one **key message**, 3-5 concise **talking points**, a **suggested visual** (cite the figure, mockup, or table when it exists), **sources**, and a **status** (`Confirmed` / `Provisional (TD-NN)`).
@@ -324,6 +337,7 @@ Per video: title, audience, objective, source use-case references; a timed story
 | Scene durations are whole seconds and **sum to 30**. Show the total row. | The total is verified before presenting |
 | Voiceover: at most 70 words per video, and no scene above about 2.5 words per second. Show the word count. Count a hyphenated word as one word and a number as it is spoken ("30" is one word, "24/7" is three). | Keeps narration speakable in the time |
 | On-screen text: 7 words or fewer per scene, added in the edit, never requested from the video model | Generated text is unreliable |
+| On-screen text uses the Deck settings typography and palette; generation prompts describe the palette in plain color words, never hex codes or token names | Keeps the series on brand; video models do not read tokens |
 | Product screens come only from the approved mockups (to-do step 4, approved before this chunk can exist), used as reference images or composited in the edit. Never ask the model to invent a product screen. | Invented screens misrepresent the product |
 | The prompts are written for **Higgsfield**. "Compatible" means three things only: one plain-language prompt per clip, one clip per generation, and an optional reference image per clip. Verify these at generation time; where one does not hold, composite in the edit instead. | Keeps the prompts usable without claiming features |
 | Generation prompts are plain natural language, self-contained per clip (subject, action, setting, camera, lighting, style, mood), and repeat the continuity phrases verbatim | A video model does not remember earlier clips |
@@ -376,15 +390,18 @@ Later confirmed changes must reach the downstream outputs. IDs stay stable; stat
 | A use case is added or removed | All of the above | As above, plus Use-case coverage (15), Traceability Matrix and totals (16), series overview (17) |
 | Scope, NFR, integration, report, or UI/UX standard changes | Consistency check rerun | `Stale`, then refresh the tasks, acceptance cases, and slides citing it |
 | Mockups change after approval | Step 4 returns to `In progress` | `Stale`, then refresh visuals and reference inputs in 17 |
+| The project's `AGENTS.md` / `AGENT.md` changes, appears, or is removed | Consistency check rerun | `Stale`, then refresh what it affects |
+| The project's `ui-ux-global-constitution.md` changes, appears, or is removed | Step 4 returns to `In progress` when the Figma or responsive rules changed | 17 `Stale`, then refresh Deck settings, the Design standard line, and the continuity guide |
+| A logo is provided or replaced | Nothing | Refresh the Logo row and end cards in 17 (not a content change) |
 
 **A `Complete` step falls back to `In progress` when its inputs change:** a new `Open` or `Deferred` TD (step 1), any content change to chunks 00-13 after the last check run (step 2), a new decision to confirm (step 3), a decision that changes a screen or a change to the constitution's Figma or responsive rules (step 4), an edit to a diagrammed use case (step 5). Because steps 4 and 5 run in parallel, a use-case change made for one reopens the affected rows of the other, and the consistency check is rerun once both are back to `Complete`.
 
-**Version.** Only a **content change** bumps the version: a change to what chunks 00-13 say about the product. It means one minor step per run (1.0 to 1.1), one Changes Log row, and the new VERSION in chunk 00, in `brd-master.md`, and in each chunk that was changed.
+**Version.** Only a **content change** bumps the version: a change to what chunks 00-13 say about the product. It means one minor step per run (1.0 to 1.1), one Changes Log row, and the new VERSION in chunk 00, in `[project-slug]-brd-master.md`, and in each chunk that was changed.
 
 These are **not** content changes. They bump nothing, do not reopen step 2, and make nothing `Stale`:
 
 - status and link updates in chunk 14;
-- Table of Contents, index, and `brd-master.md` rows for the delivery chunks (chunk 00's Table of Contents lists 14 always, 15-17 once written);
+- Table of Contents, index, and `[project-slug]-brd-master.md` rows for the delivery chunks (chunk 00's Table of Contents lists 14 always, 15-17 once written);
 - PREV / NEXT footers;
 - an open item that a delivery chunk raises about itself (it reopens step 1 and labels that chunk `Provisional`).
 
@@ -405,7 +422,7 @@ User phrases such as "refresh the delivery chunks", "update the todo", "regenera
 ### COMBINED mode adaptations (chunks 14 and 17 as separate files)
 
 - The BRD is one file, `../BRD-[ProjectName]-v[X.X].md`. Every link that would point at a chunk points at that file, with the section name or the identifier in the link text: `[UC-04 (Detailed Use Cases)](../BRD-Refunds-v1.2.md)`.
-- There is no `brd-master.md`. The grill-me handoff prompt says "Read ../BRD-[ProjectName]-v[X.X].md first, then 14-todo.md".
+- There is no `[project-slug]-brd-master.md`. The grill-me handoff prompt says "Read ../BRD-[ProjectName]-v[X.X].md first, then 14-todo.md".
 - The footer becomes `<!-- BRD: ../BRD-[ProjectName]-v[X.X].md | PREV: none | NEXT: 17-for-ppt.md -->` in 14, and the mirror of it in 17.
 - The combined file name carries the version. After every version bump, repoint the links in 14 and 17.
 - Inside the combined file, sections 15 and 16 cite use cases and NFRs by identifier in plain text. Only their links to `./brd-[project-slug]/14-todo.md` are file links.
@@ -420,11 +437,11 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 
 - [ ] Chunk 14 keeps the fixed order: resolve open items -> consistency check -> grill-me -> Figma mockups -> use-case diagrams and flowcharts, with Miro optional afterwards.
 - [ ] Every step has Status, Required inputs, Expected output, Completion criteria, Evidence. No step is `Complete` without evidence. Steps 3 and 4 are not `Complete` without the product manager's confirmation.
-- [ ] Step 4 points to the constitution (sections 2, 3, 12, 13, 14), carries the mockup brief, and its coverage table has the Playable, Breakpoints delivered and Play-through columns.
+- [ ] Step 4 points to the constitution (sections 2, 3, 12, 13, 14) when the project has one, or records "No UI/UX constitution found; chunk 11 used", carries the mockup brief, and its coverage table has the Playable, Breakpoints delivered and Play-through columns.
 - [ ] Steps 4 and 5 are `Pending gate` unless G1-G3 hold, and neither is blocked by the other. No new use-case diagram or flowchart was drawn in 05 / `06*` before the gate.
 - [ ] If step 5 ran: every Mermaid block parses, agrees with its narrative, and has a Summary line and a Figures index row.
 - [ ] Every `CF-NN` has traceable references and a disposition; unresolved ones are visible as `TD-NN` / `OI-NN`.
-- [ ] CHUNKS mode: `brd-master.md` indexes chunk 14 and lists chunks 15-17 as `Locked` (plain text, no link) until they exist.
+- [ ] CHUNKS mode: `[project-slug]-brd-master.md` indexes chunk 14 and lists chunks 15-17 as `Locked` (plain text, no link) until they exist.
 - [ ] **Delivery gate:** if any of G1-G5 fails, chunks 15, 16, and 17 were not written or refreshed, no draft or preview of them exists, their Downstream outputs rows say `Locked` (or `Stale`) with the failed conditions, and the handoff lists what is still open.
 
 **Only when 15-17 were written (gate open)**
@@ -434,6 +451,7 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 - [ ] No task appears before its prerequisites; cycles, missing prerequisites, and blockers are in Dependency problems, not in the waves.
 - [ ] Every test case traces to a use case or NFR and to a task; Coverage gaps and Provisional scenarios are explicit; the total equals the row count.
 - [ ] Chunk 17 has both sections; every storyboard sums to 30 seconds; voiceover word counts are within budget; prompts are separate from editing instructions.
+- [ ] Chunk 17's Design standard line names the constitution used, or says "None found"; palette and typography come from the constitution tokens when it exists, otherwise from chunk 11; the logo is used only when provided; contrast and locale rules are stated.
 - [ ] Every gap found while writing 15-17 has a `TD-NN`, the affected content is labelled `Provisional (TD-NN)`, and the next chunk was not started.
-- [ ] Chunk numbers, filenames, links, PREV/NEXT footers, and `brd-master.md` reflect 13 -> 14 -> 15 -> 16 -> 17, and the master now links the chunks that were written.
+- [ ] Chunk numbers, filenames, links, PREV/NEXT footers, and `[project-slug]-brd-master.md` reflect 13 -> 14 -> 15 -> 16 -> 17, and the master now links the chunks that were written.
 - [ ] Chunk 14 was updated last (links, `Blocks`, Downstream outputs).

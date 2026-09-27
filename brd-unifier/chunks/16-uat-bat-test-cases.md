@@ -113,4 +113,4 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 
 **Exit criteria (BAT sign-off):** all Critical-path cases pass (Recommendation: sections [list], chosen because their use cases carry a Business Objective or sit on the main journey; the product manager confirms the list); no open Failed case without a business-accepted deviation; no `(Provisional)` case left unresolved; [any acceptance evidence the NFRs name, validated by the named persona].
 
-<!-- MASTER: brd-master.md | PREV: 15-implementation.md | NEXT: 17-for-ppt.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 15-implementation.md | NEXT: 17-for-ppt.md -->

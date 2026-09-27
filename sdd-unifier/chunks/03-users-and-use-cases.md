@@ -43,4 +43,4 @@ flowchart LR
 
 **Summary:** [1-2 sentences: which actors drive which use-case clusters.]
 
-<!-- MASTER: sdd-master.md | PREV: 02-ecosystem-overview.md | NEXT: 04-architecture-style-and-diagrams.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 02-ecosystem-overview.md | NEXT: 04-architecture-style-and-diagrams.md -->

@@ -66,4 +66,4 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Dependency scanning:** [Tool + policy for critical CVEs]
 - **CORS policy:** [Default rules]
 
-<!-- MASTER: sdd-master.md | PREV: 06-principles-and-decisions.md | NEXT: 08-integrations.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 06-principles-and-decisions.md | NEXT: 08-integrations.md -->

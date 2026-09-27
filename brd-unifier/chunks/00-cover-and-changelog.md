@@ -40,4 +40,4 @@ PART OF: BRD - [Project Name]
 |---------|-------|---------|
 | Table 1 | Glossary Table | [Section] |
 
-<!-- MASTER: brd-master.md | PREV: none | NEXT: 01-executive-summary-and-context.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: none | NEXT: 01-executive-summary-and-context.md -->

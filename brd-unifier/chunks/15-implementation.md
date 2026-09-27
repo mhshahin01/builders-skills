@@ -23,7 +23,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 
 ## How to use this plan
 
-1. Read [brd-master.md](./brd-master.md), then the use cases a task cites, before starting the task.
+1. Read [[project-slug]-brd-master.md](./[project-slug]-brd-master.md), then the use cases a task cites, before starting the task.
 2. Work wave by wave. Start a task only when every task in its **Dependencies** is complete.
 3. Tasks listed together in a wave can run in parallel.
 4. A task is complete when every completion criterion holds and the test cases in [16-uat-bat-test-cases.md](./16-uat-bat-test-cases.md) whose Related Task names it pass.
@@ -103,4 +103,4 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 
 <!-- Only when dependency problems exist: the task blocks that are Blocked or caught in a cycle go here, after the last wave, with Wave = "Not sequenced". Remove this heading when every task is sequenced. -->
 
-<!-- MASTER: brd-master.md | PREV: 14-todo.md | NEXT: 16-uat-bat-test-cases.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 14-todo.md | NEXT: 16-uat-bat-test-cases.md -->

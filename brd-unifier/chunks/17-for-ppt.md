@@ -10,11 +10,14 @@ GATE: Locked until 14-todo.md is fully cleared (all five steps Complete with evi
 MERGE: Excluded. Never part of the merged or combined BRD. Not an input to sdd-unifier.
 PURPOSE: (A) a presentation-ready brief of the Statement of Work and the use cases, usable as input to a deck-generating agent; (B) a coherent series of 30-second use-case videos with storyboards and generation prompts.
 RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes a requirement. An item raised while writing this brief is labelled Provisional with its TD reference.
+DESIGN STANDARD: The project-level ui-ux-global-constitution.md when it exists (SKILL.md principle 16; sections 2 and 3 for color and typography tokens), otherwise chunk 11. See delivery-chunks.md § Chunk 17 - Design standard.
 -->
 
 # Presentation & Video Brief
 
 **Brief status:** [Up to date / Provisional (TD-NN) / Stale] | **Basis:** BRD v[X.X] | **Gate verified:** [YYYY-MM-DD] (see [14-todo.md](./14-todo.md)) | **SoW source:** [SoW name and version, or "No SoW provided; scope summarised from chunks 01 and 04"] | **New items raised while writing this brief:** [0, or TD-NN ...]
+
+**Design standard:** [ui-ux-global-constitution.md: path and version or date, or "None found; chunk 11 used"]
 
 ---
 
@@ -28,8 +31,12 @@ RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes
 | **Purpose** | [What the deck must achieve: approval, alignment, kickoff. From the user; otherwise "Recommendation: ...".] |
 | **Length** | [n] slides, about [n] minutes [From the user; otherwise "Recommendation: ...".] |
 | **Tone** | [Executive, plain language, no technical terms] |
-| **Branding** | [Primary color from 11 / Primary Color, logo, product name. Carry any open clarification as is.] |
-| **Language** | [Language(s); right-to-left if chunk 11 requires it] |
+| **Product name** | [From chunk 00 / 01] |
+| **Logo** | [Optional. File or link when one is available; otherwise "None provided; use the product name as a text wordmark". Never invented.] |
+| **Color palette** | [Constitution color tokens by name: primary, secondary, neutrals, semantic. No constitution: Primary Color from 11 only. Carry any open clarification as is.] |
+| **Typography** | [Constitution typography tokens by name: typefaces, weights, heading and body scale. No constitution: "Not defined; recommendation: ..." and ask in the handoff.] |
+| **Accessibility** | Text and key visuals meet at least 4.5:1 contrast against their background; meaning is never carried by color alone. |
+| **Language & locale** | English. Numbers, dates, and currency formatted per chunk 11 Language & Locale, with the currency code in multi-currency figures. |
 
 ## Instructions for the deck-generating agent
 
@@ -38,6 +45,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes
 - Build each visual from the named source (figure, mockup, or table). Every named source exists once the gate is open; if one is missing, stop and report it.
 - Add no claim, number, date, or commitment that is not in this brief.
 - Keep every `Provisional` label visible on the slide it applies to.
+- Style every slide from Deck settings only: palette and typography tokens by name, no other colors or typefaces. Place the logo only when one is provided.
 
 ## Slide sequence
 
@@ -153,11 +161,11 @@ RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes
 |---------|-----------|
 | **Characters** | [One recurring character per persona, described by persona and appearance: age range, clothing, distinguishing detail. No invented names or job titles beyond the persona.] |
 | **Setting** | [The recurring place(s) and time of day] |
-| **Visual style** | [Look, palette anchored on the brand color, lighting, camera language, pacing] |
+| **Visual style** | [Look, lighting, camera language, pacing; palette from the Deck settings color palette, described in plain words in the prompts (never hex codes)] |
 | **Continuity phrases** | [The exact character, setting, and style sentences repeated verbatim at the start of every generation prompt] |
 | **Aspect ratio** | [16:9 for presentations / 9:16 for social; one ratio for the whole series] |
 | **Product screens** | [Only the approved mockups from to-do step 4, used as reference images or composited in the edit. Never invented by the video model.] |
-| **On-screen text** | [Typeface, position, maximum 7 words per scene; added in the edit] |
+| **On-screen text** | [Typeface and weight from the Deck settings typography, color from the palette at 4.5:1 contrast or more, position, maximum 7 words per scene; added in the edit] |
 | **Transitions** | [Cut style within a video; how each video opens and closes so the series feels like one piece] |
 | **Audio** | [One narrator voice and register for the series; music mood; level under voiceover] |
 
@@ -192,7 +200,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes
 | V-01-C2 | 2 | 7 | [...] | [...] |
 | V-01-C3 | 3 | 8 | [...] | [Approved mockup MK-NN as the screen shown] |
 | V-01-C4 | 4 | 6 | [...] | [...] |
-| V-01-C5 | 5 | 4 | [...] | [Brand end-card artwork] |
+| V-01-C5 | 5 | 4 | [...] | [Logo end-card when a logo is provided; otherwise a product-name end-card built in the edit] |
 
 ### Editing and assembly
 
@@ -205,4 +213,4 @@ RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes
 
 <!-- Repeat the V-NN block for every video in the series. -->
 
-<!-- MASTER: brd-master.md | PREV: 16-uat-bat-test-cases.md | NEXT: none -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 16-uat-bat-test-cases.md | NEXT: none -->

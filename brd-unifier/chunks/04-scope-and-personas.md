@@ -34,4 +34,4 @@ PART OF: BRD - [Project Name]
 | [Persona 1] | [Role description] | [What they need to accomplish] | [Admin / Operator / Viewer / etc.] |
 | [Persona 2] | [Role description] | [What they need to accomplish] | [Access level] |
 
-<!-- MASTER: brd-master.md | PREV: 03-definitions-and-domain-concepts.md | NEXT: 05-user-journeys-overview.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 03-definitions-and-domain-concepts.md | NEXT: 05-user-journeys-overview.md -->

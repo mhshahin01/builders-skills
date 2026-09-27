@@ -76,7 +76,7 @@ The skill takes Phase 1 + Phase 2 outputs and routes them into the chunks:
 
 For sections the agents cannot fill from code alone:
 
-- **SLO targets** (`12-performance.md`) — code rarely declares SLOs. From-code mode emits `> TODO: SLO targets — verify with SDD §14 or production data`.
+- **SLO targets** (`12-performance.md`) — code rarely declares SLOs. From-code mode emits `> TODO: SLO targets — verify with SDD §18 or production data`.
 - **Threat notes** (`11-security.md`) — code rarely captures threat reasoning. From-code mode emits `> TODO: threat notes — verify with security review or threat model`.
 - **Compliance applicability** (`11-security.md` § 14.6) — code shows what's done; *whether it's compliant* needs human judgement. Flag with `> Confirm:`.
 - **Future enhancements** (`16-references.md`) — code rarely tracks future work. Skip if no `// TODO`-style markers found; otherwise transcribe what exists.

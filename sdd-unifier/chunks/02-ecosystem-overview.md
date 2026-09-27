@@ -48,4 +48,4 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 - [Rule, e.g., service-to-service auth]
 - [Rule, e.g., secrets handling]
 
-<!-- MASTER: sdd-master.md | PREV: 01-executive-summary-scope-risks.md | NEXT: 03-users-and-use-cases.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 01-executive-summary-scope-risks.md | NEXT: 03-users-and-use-cases.md -->

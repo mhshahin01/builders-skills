@@ -93,6 +93,7 @@ If the user has already implied a mode in their request ("give me the full doc i
 13. **Delivery chunks are derived, evidence-gated, and locked behind the to-do.** Every generation ends with `14-todo.md`, the product-manager checklist (`delivery-chunks.md`); in `parts` generation that is the end of part 3. **Chunks 15, 16, and 17 cannot be generated or refreshed until chunk 14 is cleared:** all five to-do steps `Complete` with evidence and every item `Resolved`. `Deferred` does not count, and there is no override. The order stays 14 -> 15 -> 16 -> 17. Delivery chunks cite the body (00-13) by ID and link and never add a requirement, decision, acceptance criterion, or resolution; a gap found while deriving them becomes a to-do item, not invented content, and shuts the gate again. Generating a checklist is never evidence that a decision or review happened: no step is `Complete` without recorded evidence. Use-case diagrams (chunk 05) and use-case flowcharts (chunks `06*`) are drawn only at to-do step 5, after steps 1-3 are complete, in parallel with the step 4 mockups.
 14. **Plain language: simple, clear, precise, easy to understand.** An easy BRD is essential, and simplicity is essential. Short sentences, common words, active voice, one idea per sentence, one term for one thing, the exact number or name instead of a vague word. No complex words where a simple one fits. Simple never means vague or incomplete: every number, rule, exception, and limit stays. This applies to every chunk (00-17), table cell, diagram label, test case, slide, and voiceover. Readability covers the whole reading experience: requirement text never uses process vocabulary (delegation, walkthrough, checkpoint) and reads smoothly for someone who never saw the decision process. Rules, word list, and the mandatory plain-language pass: `writing-style.md`.
 15. **Parts by default, with a real stop.** In CHUNKS mode the BRD is written in three parts (00-05, then `06*` and 07, then 08-14). After parts 1 and 2 the skill shows a short summary, says what to review, and **stops until the user says to continue**. Scope, personas, and the use-case list are agreed before the use cases are detailed. `whole` writes everything in one run. Rules: `parts-mode.md`.
+16. **Project files rule the generation when they exist.** Before any generation, transform, refresh, or delivery chunk, look in the project root for `AGENTS.md` (or `AGENT.md`) and `ui-ux-global-constitution.md`. Both are optional; never ask for one the project does not have. When present, they govern the whole BRD (chunks 00-17): `AGENTS.md` gives the project's directions and how its features link together, so use it to connect related use cases, journeys, and integrations and to follow its conventions; the constitution is the UI/UX standard for chunk 11, the step 4 mockups, and the look of chunk 17 (color and typography tokens, named, never copied as raw hex). Business language (principle 2) still applies: technical content from either file goes to Appendix § Technical Inputs, never into the body. If either file conflicts with the source material or another chunk, do not pick one: raise an `OI-NN`. Say in the handoff which of the two files were found and used.
 
 ---
 
@@ -102,7 +103,7 @@ If the user has already implied a mode in their request ("give me the full doc i
 
 Per the Argument parsing section above. Do not skip this — the mode determines the output shape, and the generation option determines whether the run stops for review between parts.
 
-**Resume check.** If the target folder already holds a `brd-master.md` whose Generation Progress shows a part that is `Pending` or `In progress`, this is a resume. Do not start over. Say which part is next, then act on what the user asked (`parts-mode.md` § Resuming): start that part only when the request says to go on ("continue", "next part", "part 3"); if the request is empty, ask "Continue with part N?" and wait; if the request is something else, do that and name the part that is still waiting.
+**Resume check.** If the target folder already holds a `[project-slug]-brd-master.md` whose Generation Progress shows a part that is `Pending` or `In progress`, this is a resume. A folder from an earlier version of this skill may hold the index as plain `brd-master.md`: treat it the same, rename it to `[project-slug]-brd-master.md`, and repoint the `MASTER:` footers and links (not a content change). Do not start over. Say which part is next, then act on what the user asked (`parts-mode.md` § Resuming): start that part only when the request says to go on ("continue", "next part", "part 3"); if the request is empty, ask "Continue with part N?" and wait; if the request is something else, do that and name the part that is still waiting.
 
 ### 2. Resolve intent: generate vs transform
 
@@ -123,6 +124,8 @@ Ask at most **three** questions before starting, only those that genuinely block
 
 If an answer is already in the conversation, do not re-ask.
 
+Before asking, read the project's `AGENTS.md` / `AGENT.md` and `ui-ux-global-constitution.md` when they exist (principle 16). Do not ask what they already answer.
+
 ### 4. Plan internally
 
 Enumerate which sections (combined) or chunks (chunked) will exist — including one use-case chunk per persona, plus `14-todo.md` (chunks 15-17 come later, behind the delivery gate) — and which Mermaid diagrams each will carry. The canonical chunk list is in `chunking.md`.
@@ -141,9 +144,9 @@ All diagrams (persona journey summaries, summarized workflows, context sketches)
 
 | Part | Writes | Then |
 |---|---|---|
-| 1 | Chunks 00-05 and `brd-master.md` with its Generation Progress table | Exit checklist, plain-language pass, part summary, **stop and wait** |
+| 1 | Chunks 00-05 and `[project-slug]-brd-master.md` with its Generation Progress table | Exit checklist, plain-language pass, part summary, **stop and wait** |
 | 2 | Every `06*` chunk, then the matrix (step 6a); back-fill of 00-05 | Exit checklist, plain-language pass, part summary, **stop and wait** |
-| 3 | Chunks 08-12; back-fill; plain-language pass and exit checklist; then steps 7, 8, and 8a (chunks 13 and 14) | Final `brd-master.md` and chunk 00, full handoff (step 9) |
+| 3 | Chunks 08-12; back-fill; plain-language pass and exit checklist; then steps 7, 8, and 8a (chunks 13 and 14) | Final `[project-slug]-brd-master.md` and chunk 00, full handoff (step 9) |
 
 Never start the next part in the same turn, and never without the user's go-ahead. In `whole`, run steps 6 to 9 straight through, as one run.
 
@@ -152,7 +155,7 @@ Never start the next part in the same turn, and never without the user's go-ahea
 - Use `chunks/*.md` (embedded in this skill folder) as the section skeleton.
 - Write output to `./brd-[project-slug]/` (relative to the working directory) unless the user specifies a different path.
 - Each chunk starts with the self-describing comment block (see `chunking.md`).
-- Write `brd-master.md` from `chunks/brd-master.md`, linking this project's real chunk files (one row per `06*` persona chunk). In `parts` it is written in part 1 and updated at the end of every part; in `whole` it is written once the chunks exist and updated after step 8a. Chunks not written yet are plain text: `Pending (part N)`, or `Locked` for 15-17.
+- Write `[project-slug]-brd-master.md` from `chunks/brd-master.md`, linking this project's real chunk files (one row per `06*` persona chunk). In `parts` it is written in part 1 and updated at the end of every part; in `whole` it is written once the chunks exist and updated after step 8a. Chunks not written yet are plain text: `Pending (part N)`, or `Locked` for 15-17.
 - Detailed use cases: one chunk per persona — `06a-use-cases-[persona-slug].md`, `06b-use-cases-[persona-slug].md`, … in the persona order of chunk 05. UC IDs are sequential across the whole BRD.
 - The `USE CASE DIAGRAMS SLOT` (chunk 05) and `FLOWCHART SLOT` (each UC) in the skeletons stay empty at this stage: emit nothing for them, and do not copy the slot comments into the generated files. At to-do step 5, take the structure from the skeleton. Exception: a use-case diagram or flowchart that already exists in a transformed source is kept at the slot position, captioned `Pre-existing - re-verify at step 5`.
 - `14-todo.md` is written in step 8a. Chunks 15-17 are written only in step 8c, behind the delivery gate.
@@ -236,7 +239,7 @@ Read `delivery-chunks.md` and `chunks/14-todo.md` first. Chunk 14 is the only de
 1. **Open items register.** Consolidate every unresolved question, assumption needing validation, and pending decision (`TD-NN`, each linked to its source chunk and identifier, stating the decision needed, sorted by priority).
 2. **Consistency check, Run 1** (checks C1-C8). Record every finding as `CF-NN` with its disposition; apply only confirmed corrections, raise business ambiguities as `OI-NN` + `TD-NN`, recheck.
 3. **Steps 3-5.** The grill-me inputs and the ready-to-use handoff prompt (recommended, never claimed as executed); the Figma mockup coverage, review criteria and the ready-to-use mockup brief (which points the generating tool to the global UI/UX constitution); the step 5 tracking tables (`Pending gate`, or `Skipped` for planned skips).
-4. **Delivery gate block.** Fill conditions G1-G5 with `Met` / `Not met` and what is still open, state the gate (`Shut` on a normal first run), and name the next action. Set the three Downstream outputs rows to `Locked`. In CHUNKS mode, update `brd-master.md` (chunk 14 linked, chunks 15-17 listed as `Locked`) and add chunk 14 to the Table of Contents in chunk 00. In COMBINED mode, the combined file's Table of Contents links it as `./brd-[project-slug]/14-todo.md`.
+4. **Delivery gate block.** Fill conditions G1-G5 with `Met` / `Not met` and what is still open, state the gate (`Shut` on a normal first run), and name the next action. Set the three Downstream outputs rows to `Locked`. In CHUNKS mode, update `[project-slug]-brd-master.md` (chunk 14 linked, chunks 15-17 listed as `Locked`) and add chunk 14 to the Table of Contents in chunk 00. In COMBINED mode, the combined file's Table of Contents links it as `./brd-[project-slug]/14-todo.md`.
 5. Run the plain-language pass (`writing-style.md`) on chunk 14, then the "Whenever chunk 14 is written or updated" block of `delivery-chunks.md` § Verification before presenting.
 
 **Do not write `15-implementation.md`, `16-uat-bat-test-cases.md`, or `17-for-ppt.md` here**, and do not write drafts, previews, or outlines of them. They belong to step 8c and are locked until chunk 14 is cleared.
@@ -296,7 +299,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 | "update the todo", or decisions handed back from a grill-me session | Apply confirmed decisions through the step 8 mechanics, rerun the consistency check, and refresh `14-todo.md` (statuses, evidence, Delivery gate block). Every ID stays stable. |
 | "generate / refresh the implementation plan", "the test cases", "the ppt or video brief", "the delivery chunks" | Step 8c (gated): verify G1-G5 first. Gate shut means nothing is written and the user gets the list of what is open. |
 | "run step 5", "add the use-case diagrams", "add the flowcharts" | Step 8b (gated). |
-| "continue", "next part", "part 2", "part 3" (a part is `Pending` in `brd-master.md`) | Resume with the next pending part, in order (`parts-mode.md`). Read every chunk already written first. |
+| "continue", "next part", "part 2", "part 3" (a part is `Pending` in `[project-slug]-brd-master.md`) | Resume with the next pending part, in order (`parts-mode.md`). Read every chunk already written first. |
 | "redo part N" | Follow `parts-mode.md` § Resuming (redo a completed part). Decisions taken since are kept, not lost. |
 | "just finish it", "do the rest in one go" | Switch to `whole` for the remaining parts; no more checkpoints. |
 
@@ -308,8 +311,8 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - `chunks/*.md` — the per-chunk template skeletons. Read at the start of any CHUNKS-mode generation.
 - `chunking.md` — canonical chunk map, naming convention, merge rules.
 - `modes.md` — chunks vs combined behavioural details.
-- `parts-mode.md`: the generation option. The three parts, what each settles and what the user reviews, the checkpoint (stop and wait), the exit checklists, the back-fill of earlier parts, the progress record in `brd-master.md`, and resuming. Read at the start of every CHUNKS-mode generation.
-- `decision-log.md`: the companion decision register. What belongs there (clarification Q&A, choices, dates, rationales, superseded history, walkthrough and delegation notes, per-decision assessments, part-handoff records), its canonical structure, the companion-file rules (created on first use, linked from `brd-master.md` and chunk 00's Table of Contents, never merged), and the rule that content chunks carry only the settled outcome. Read whenever a clarification is raised, decided, or applied.
+- `parts-mode.md`: the generation option. The three parts, what each settles and what the user reviews, the checkpoint (stop and wait), the exit checklists, the back-fill of earlier parts, the progress record in `[project-slug]-brd-master.md`, and resuming. Read at the start of every CHUNKS-mode generation.
+- `decision-log.md`: the companion decision register. What belongs there (clarification Q&A, choices, dates, rationales, superseded history, walkthrough and delegation notes, per-decision assessments, part-handoff records), its canonical structure, the companion-file rules (created on first use, linked from `[project-slug]-brd-master.md` and chunk 00's Table of Contents, never merged), and the rule that content chunks carry only the settled outcome. Read whenever a clarification is raised, decided, or applied.
 - `transform-detection.md` — rules for deciding generate vs transform.
 - `sow-transformation.md` — how to map SoW or existing-BRD content into this template.
 - `mermaid-diagrams.md` — inline Mermaid conventions for every diagram the template implies (including the gated use-case diagram and flowchart notation), plus the Miro-on-demand flow.
@@ -328,7 +331,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - **Combined output filename**: `BRD-[ProjectName]-v[X.X].md` (PascalCase project name, no spaces).
 - **Merged-from-chunks filename**: `BRD-[ProjectName]-v[X.X]-MERGED.md`, written inside `./brd-[project-slug]/`.
 - **Delivery chunks**: `14-todo.md` (every generation; in `parts`, at the end of part 3), then `15-implementation.md`, `16-uat-bat-test-cases.md`, `17-for-ppt.md` (only once the delivery gate is open), in `./brd-[project-slug]/`. In COMBINED mode 15 and 16 are sections of the combined file; 14 and 17 are still files in `./brd-[project-slug]/`. 14 and 17 are never merged.
-- **Decision register**: `decision-log.md`, the companion decision register, in `./brd-[project-slug]/` next to `brd-master.md` (in COMBINED mode, next to `14-todo.md`). Created on first use (the first decided clarification), linked from `brd-master.md` and chunk 00's Table of Contents, never merged into merged or combined output. Structure and rules: the `decision-log.md` reference in this skill folder.
+- **Decision register**: `decision-log.md`, the companion decision register, in `./brd-[project-slug]/` next to `[project-slug]-brd-master.md` (in COMBINED mode, next to `14-todo.md`). Created on first use (the first decided clarification), linked from `[project-slug]-brd-master.md` and chunk 00's Table of Contents, never merged into merged or combined output. Structure and rules: the `decision-log.md` reference in this skill folder.
 - **Delivery identifiers**: `TD-NN`, `CF-NN`, `MK-NN`, `TASK-NN`, `DP-NN`, `TC-[AREA]-NN`, `SL-NN`, `V-NN` / `V-NN-Cn`. The one list with meanings is in `delivery-chunks.md` § Ground rules. Stable across refreshes; never renumbered.
 - **Encoding**: UTF-8, LF line endings.
 - **Tables**: pipe-table format, no hard line wrap.

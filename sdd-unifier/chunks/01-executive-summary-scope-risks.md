@@ -83,4 +83,4 @@ Owner: who will own the mitigation and the monitoring of the risk.
 | [Term 1] | [Definition] |
 | [Term 2] | [Definition] |
 
-<!-- MASTER: sdd-master.md | PREV: 00-cover-and-changelog.md | NEXT: 02-ecosystem-overview.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 00-cover-and-changelog.md | NEXT: 02-ecosystem-overview.md -->

@@ -1,12 +1,12 @@
 <!--
-CHUNK: 11
+CHUNK: 12
 TITLE: Centralized User Roles & Authorities (Platform-Wide)
 PROJECT: [Project Name]
 VERSION: [X.X]
-DEPENDS_ON: 03, 07, 09 (+ per-service chunks 10a, 10b, ... for per-service authorization notes)
+DEPENDS_ON: 03, 07, 09 (+ per-service chunks 13a, 13b, ... for per-service authorization notes)
 PART OF: SDD - [Project Name]
 PURPOSE: Single platform-wide reference for user types, roles, sub-roles, and their authorities - who can do what, who can create whom, which services each role touches, and how a role resolves to an allowed action at request time. Consolidates the BRD's Users & Use Cases Matrix and the per-service authorization notes into one canonical catalogue. Companion reference to the Centralized Event Hub (chunk 10).
-CONSISTENCY_RULE: Role names, permission tokens, and per-service authorization notes in the 10x chunks MUST match this catalogue verbatim. Divergences are flagged here (see the drift register), never silently reconciled.
+CONSISTENCY_RULE: Role names, permission tokens, and per-service authorization notes in the 13x chunks MUST match this catalogue verbatim. Divergences are flagged here (see the drift register), never silently reconciled.
 -->
 
 # 16. Centralized User Roles & Authorities (Platform-Wide)
@@ -128,9 +128,9 @@ sequenceDiagram
 
 ## 16.10 Traceability
 
-<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (10x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. -->
+<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (13x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. -->
 
-| Capability / rule | Source (BRD UC / matrix row / ADR / 10x chunk) |
+| Capability / rule | Source (BRD UC / matrix row / ADR / 13x chunk) |
 |---|---|
 | [Capability] | [Source ref] |
 
@@ -160,6 +160,6 @@ sequenceDiagram
 
 | # | Where | Divergence | Resolution / flag |
 |---|---|---|---|
-| 1 | [BRD matrix vs 10x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] |
+| 1 | [BRD matrix vs 13x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] |
 
-<!-- MASTER: sdd-master.md | PREV: 10a-service-detailed-template.md | NEXT: 12-performance-and-capacity.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 11-api-contracts.md | NEXT: 13a-service-detailed-template.md -->

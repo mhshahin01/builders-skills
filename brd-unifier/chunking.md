@@ -48,9 +48,9 @@ Chunks 14-17 are **delivery chunks**, derived from the finished BRD in the order
 
 Total typical chunk count: **15–19** after a first run (body plus `14-todo.md`), **18–22** once the delivery gate has opened, depending on how many personas / use-case chunks exist.
 
-`brd-master.md` (also in `chunks/`) is a master index pointing at the chunks. Regenerate it per project so it links to that project's chunks specifically.
+`[project-slug]-brd-master.md` (skeleton: `chunks/brd-master.md`) is a master index pointing at the chunks. Regenerate it per project so it links to that project's chunks specifically.
 
-**Generation parts.** By default the chunks are written in three parts, with a stop for the user's review after parts 1 and 2: part 1 = 00-05 (plus `brd-master.md`), part 2 = every `06*` chunk and 07, part 3 = 08-14. `whole` writes 00-14 in one run. See `parts-mode.md`.
+**Generation parts.** By default the chunks are written in three parts, with a stop for the user's review after parts 1 and 2: part 1 = 00-05 (plus `[project-slug]-brd-master.md`), part 2 = every `06*` chunk and 07, part 3 = 08-14. `whole` writes 00-14 in one run. See `parts-mode.md`.
 
 ---
 

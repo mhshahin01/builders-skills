@@ -12,8 +12,8 @@ The user almost never says "I want intent X" explicitly. The skill must infer in
 Is there a source document attached, pasted, or referenced by path?
 ├── No  → GENERATE (from conversation / topic seed)
 └── Yes → Inspect the source:
-         ├── Source is a BRD (chunked folder OR combined file)?
-         │   → DERIVE-FROM-BRD (see brd-to-sdd.md)
+         ├── Source is one or more BRDs (chunked folders OR combined files)?
+         │   → DERIVE-FROM-BRD (see brd-to-sdd.md); several BRDs = one SDD with several parents
          ├── Source already follows this SDD template structure?
          │   ├── Yes (single-file form, target is chunks)  → TRANSFORM (re-chunk)
          │   ├── Yes (chunked form, target is combined)    → TRANSFORM (merge)
@@ -52,6 +52,8 @@ If 4+ of these match, it's a brd-unifier chunked output.
 If 5+ of these section names are present in template order, it's a BRD. (Multiple of these match the section names regardless of authoring tool — the structure is what matters, not the filename.)
 
 In either case → **DERIVE-FROM-BRD**. Read the BRD per `brd-to-sdd.md` § Detecting BRD input form.
+
+**Several BRDs.** Detect each one on its own. When they describe one system (for example, the products of one platform, or a phase-2 BRD for an existing product), they are the parents of one SDD: each is registered with a key and they are reconciled against each other (`brd-to-sdd.md` § Source BRDs and lineage). When it is unclear whether they describe one system or separate systems, ask once: "One SDD with these BRDs as parents, or one SDD per BRD?"
 
 ### Already follows this SDD template
 

@@ -7,7 +7,29 @@
 **Reviewers:** [Reviewer Name(s)]
 **Approvers:** [Approver Name(s)]
 **Date:** [YYYY-MM-DD]
-**Related BRD:** [Link / file name of the corresponding BRD-HLD]
+**Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
+
+---
+
+## Document Lineage
+
+<!-- Rules: brd-to-sdd.md § Source BRDs and lineage. With no source BRD, write "None - generated without a BRD" in Source BRDs. -->
+
+### Source BRDs (parents)
+
+<!-- One row per source BRD. Key: a short capital name from the BRD's project name (REFUNDS, WALLET), stable once seen; every BRD reference in this SDD carries it (REFUNDS/UC-04). Version: the BRD version this SDD was derived from or last reconciled against. Link: the BRD master (chunked) or combined file, relative to this file. -->
+
+| Key | BRD | Version | Link | Covers |
+|-----|-----|---------|------|--------|
+| [KEY] | [BRD project name] | [X.X] | [[project-slug]-brd-master.md](./brd-[project-slug]/[project-slug]-brd-master.md) | [What this BRD contributes] |
+
+### Child LLDs (children)
+
+<!-- Written by lld-unifier: each LLD derived from this SDD (from-sdd or hybrid) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling lld-*/*lld-master.md files whose Related SDD line links here are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
+
+| LLD | Scope (§13 services) | Direction | Version | Link |
+|-----|----------------------|-----------|---------|------|
+| None yet | - | - | - | - |
 
 ---
 
@@ -201,7 +223,7 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 
 **Figure 1: Use Case Diagram**
 
-<!-- Inline Mermaid is the default diagram medium. Carry the UC IDs verbatim from the BRD. Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
+<!-- Inline Mermaid is the default diagram medium. Carry the UC IDs verbatim from the BRD with their BRD key, as plain quoted labels (no links inside Mermaid; the links to the BRD are in §7.3). Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
 
 ```mermaid
 flowchart LR
@@ -211,8 +233,8 @@ flowchart LR
   EXT([External System])
 
   subgraph System
-    UC01((UC-01))
-    UC02((UC-02))
+    UC01(("KEY/UC-01"))
+    UC02(("KEY/UC-02"))
   end
 
   A1 --> UC01
@@ -221,6 +243,28 @@ flowchart LR
 ```
 
 **Summary:** [1-2 sentences: which actors drive which use-case clusters.]
+
+## 7.3 Use Case Traceability (BRD → SDD)
+
+<!--
+Derive-from-BRD only. For an SDD with no source BRD, keep this heading and write: "Not applicable - no source BRD."
+One row per use case of every source BRD, including the rows a BRD marks "Merged into UC-NN" or "Removed". Rows are grouped by BRD in the order of the Source BRDs register (§ Document Lineage in the cover), each group under a row naming the BRD (data source) with its version, key, and a link to its master. Inside a group, rows follow that BRD's Use Case Summary. Every use case carries its BRD key: [KEY/UC-NN](link).
+A consolidated view: every column is read from its home and never states a mapping the home does not state.
+  Use case (BRD), Title, Status: the BRD Use Case Summary (title exactly as the BRD writes it).
+  Owner: the §13 "Use cases (BRD)" column, the home of ownership (exactly one owner per active use case).
+  Entry points: the named service's List of APIs (§17.X), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]).
+  Flows: the "Use cases:" lines in §8.4 and §8.5.
+  APIs: §15.2 "Use case ref".
+  Events: the "when" citations in §14.5.
+Links: each UC ID links to its heading in the BRD (file + anchor; from this combined file the BRD is at ./brd-[project-slug]/ or ./BRD-[ProjectName]-v[X.X].md). Owner and Flows link to headings in this file. Rules: brd-to-sdd.md § Use-case traceability.
+Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATION: ...] in that cell; these markers keep the e2e gate shut. Flows, APIs, and Events may be "-". Merged or removed rows show "-" in every mapping column.
+-->
+
+| Use case (BRD) | Title | Owner (§17.X) | Entry points | Flows (§8.4 / §8.5) | APIs (§15) | Events (§14) | Status |
+|----------------|-------|---------------|--------------|---------------------|------------|--------------|--------|
+| **[[BRD project name] v[X.X]](./brd-[project-slug]/[project-slug]-brd-master.md) ([KEY])** | | | | | | | |
+| [[KEY]/UC-01](./brd-[project-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [Short title, as in the BRD] | [[service-name](#171-[service-name-slug])] | `[METHOD] /v1/[path]` | [[§8.4.1](#841-workflow-[flow-slug]) / -] | [API-NN / -] | [`EVENT_NAME` / -] | Active |
+| [[KEY]/UC-02](./brd-[project-slug]/05-user-journeys-overview.md#use-case-summary) | [Short title] | - | - | - | - | - | [Merged into UC-01 / Removed] |
 
 
 ---
@@ -310,8 +354,11 @@ flowchart TB
 
 <!-- This chunk continues the System Design section from chunk 04 (Architecture Style & Diagrams). -->
 <!-- Add one workflow per critical end-to-end business flow. Inline Mermaid is the default diagram medium; each diagram gets a 1-2 sentence prose Summary so it reads without rendering. Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
+<!-- Derive-from-BRD: every workflow and sequence starts with a "Use cases:" line linking the BRD use cases it shows (link rules: brd-to-sdd.md § Use-case traceability), or "None - platform flow". §7.3 reads its Flows column from these lines. Inside the Mermaid block, use cases stay plain IDs. With no source BRD, leave the line out. -->
 
 ### 8.4.1 Workflow: [Flow Name]
+
+**Use cases:** [[KEY/UC-NN](BRD link), [KEY/UC-NN](BRD link) / None - platform flow]
 
 ```mermaid
 flowchart TD
@@ -331,6 +378,8 @@ flowchart TD
 <!-- Add one sequence diagram per critical interaction (sync + async). -->
 
 ### 8.5.1 Sequence: [Flow Name]
+
+**Use cases:** [[KEY/UC-NN](BRD link) / None - platform flow]
 
 ```mermaid
 sequenceDiagram
@@ -482,10 +531,12 @@ Each concern in this section is the platform-wide default. Individual services m
 
 # 13. Services Decomposition (Summary)
 
-| Service | Overview | Responsibility | Owns DB | Input | Output | Business Logic (Summary) | Integrations | Characteristics |
-|---------|----------|----------------|---------|-------|--------|--------------------------|--------------|--------------------|
-| [Service Name] | [One-line] | [Responsibility] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
-| [Service Name] | [One-line] | [Responsibility] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
+<!-- Use cases (BRD), derive-from-BRD: the BRD use cases this service owns, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability). This column is the home of ownership: every active BRD use case has exactly one owner here, and §7.3 reads it. A service that owns no use case writes "None - [what it serves]", e.g. "None - serves the BRD chunk 09 reports". A merged or removed service row writes "-". With no source BRD, write "-". -->
+
+| Service | Overview | Responsibility | Use cases (BRD) | Owns DB | Input | Output | Business Logic (Summary) | Integrations | Characteristics |
+|---------|----------|----------------|-----------------|---------|-------|--------|--------------------------|--------------|--------------------|
+| [Service Name] | [One-line] | [Responsibility] | [[KEY/UC-NN](BRD link), [KEY/UC-NN](BRD link)] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
+| [Service Name] | [One-line] | [Responsibility] | [None - what it serves] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
 
 
 ---
@@ -614,6 +665,7 @@ flowchart LR
 Grouped by producing service / topic - one sub-section per producer, in §13 decomposition order.
 Status legend: committed = wired in its phase; candidate = name fixed, no consumer wired until the contract ratifies; Analytics-only = no named domain consumer.
 Consumer reconciliation: consumer lists are reconciled from BOTH the producer's published table AND every consumer's consumed table. Where a producer under-lists, show the broader real set and footnote it.
+Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "when" cites it as a link with the step, e.g. "[REFUNDS/UC-04](BRD link) step 6". §7.3 reads its Events column from these citations. An event with another trigger (schedule, external callback, another event) names that trigger instead.
 -->
 
 **Status legend:** `committed` / `candidate` / `Analytics-only` / `Pn` = phase.
@@ -622,7 +674,7 @@ Consumer reconciliation: consumer lists are reconciled from BOTH the producer's 
 
 | Event | Consumers | Payload (beyond envelope) | Business: what · when · why | Status |
 |---|---|---|---|---|
-| `[EVENT_NAME]` | [Consumer services] | `[fields beyond the envelope]` | [What fact] · [when it fires] · [why downstream cares] | [committed] |
+| `[EVENT_NAME]` | [Consumer services] | `[fields beyond the envelope]` | [What fact] · [when it fires: [KEY/UC-NN](BRD link) step N, or the other trigger] · [why downstream cares] | [committed] |
 | `[EVENT_NAME]` | [Consumer services] | `[fields]` | [what · when · why] | [candidate] |
 
 ### 14.5.2 [Producer Service] — `[topic-name]` ([key family]; [phase])
@@ -773,12 +825,12 @@ Define common value objects once, then reference them.
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). -->
+<!-- One row per API-NN. Type: Internal (service -> service), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
-| API-01 | [Operation] | [Service] | [Service] | Internal | `[METHOD] /v1/[path]` | [13x § Integrations] | [UC-NN] | Defined |
-| API-02 | [Operation] | [Service] | [External system] | External outbound | TBD | [INT-NN] | [UC-NN] | TBD - external |
+| API-01 | [Operation] | [Service] | [Service] | Internal | `[METHOD] /v1/[path]` | [13x § Integrations] | [[KEY/UC-NN](BRD link) / -] | Defined |
+| API-02 | [Operation] | [Service] | [External system] | External outbound | TBD | [INT-NN] | [[KEY/UC-NN](BRD link) / -] | TBD - external |
 
 ---
 
@@ -787,7 +839,7 @@ Define common value objects once, then reference them.
 ### API-01: [Operation name] ([Consumer] -> [Provider])
 
 - **Type:** Internal
-- **Purpose:** [One sentence; link the use case and the service Integrations row.]
+- **Purpose:** [One sentence; link the use case ([KEY/UC-NN](BRD link)) and the service Integrations row.]
 - **Status:** Defined
 
 **Endpoint**
@@ -865,7 +917,7 @@ Define common value objects once, then reference them.
 ### API-02: [Operation name] ([Service] -> [External system])
 
 - **Type:** External outbound
-- **Purpose:** [One sentence; link the use case and INT-NN in §12.]
+- **Purpose:** [One sentence; link the use case ([KEY/UC-NN](BRD link)) and INT-NN in §12.]
 - **Status:** TBD - external
 
 **[TBD - EXTERNAL: update from the [Provider] API documentation: URI, version, headers, request body, responses, error codes, and authentication scheme.]**
@@ -1044,11 +1096,11 @@ sequenceDiagram
 
 ## 16.10 Traceability
 
-<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (13x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. -->
+<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (13x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. Cite a BRD use case as a link to its BRD heading and a matrix row as a link to the BRD matrix (brd-to-sdd.md § Use-case traceability). -->
 
 | Capability / rule | Source (BRD UC / matrix row / ADR / 13x chunk) |
 |---|---|
-| [Capability] | [Source ref] |
+| [Capability] | [[KEY/UC-NN](BRD link) / matrix row in [KEY matrix](BRD matrix link) / ADR-NN / §17.X] |
 
 ## 16.11 Permission × Role Matrix (platform-wide)
 
@@ -1117,7 +1169,7 @@ Each service follows the exact same structure for predictability and grep-abilit
 
 ### Business Logic
 
-<!-- Plain-language description of the logic, including state machines for stateful services. -->
+<!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (§13 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2", "AC-1" (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
 
 [Description of the core logic.]
 
@@ -1262,6 +1314,8 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 - [Constraint 3]
 
 ### Error Handling
+
+<!-- Derive-from-BRD: tie each domain error to the exception flow it realises, e.g. "[REFUNDS/UC-04](BRD link) E1 -> 422 PAYOUT_REFUSED". -->
 
 - **Synchronous APIs:** [Approach]
 - **Validation errors:** [Approach]
@@ -1619,7 +1673,7 @@ sequenceDiagram
 
 # 24. End-to-End System Design (Services · Topics · Producers · Consumers)
 
-<!-- GATED: this section is appended only when the e2e gate is open (SKILL.md step 8b: every open item in §23 resolved, Deferred counts as open; no open contract divergence; no clarification marker left in §13-§17; reconciliation rerun after the last change). While the gate is shut, the heading is left out entirely: no stub, no draft. -->
+<!-- GATED: this section is appended only when the e2e gate is open (SKILL.md step 8b: every open item in §23 resolved, Deferred counts as open; no open contract divergence; no clarification marker left in §13-§17 or §7.3; reconciliation rerun after the last change). While the gate is shut, the heading is left out entirely: no stub, no draft. -->
 
 > **What this section is.** The bird's-eye, implementation-facing map of the entire platform: the service landscape, the system context, the layered architecture, the full producer → topic → consumer fan-out, the synchronous edges, and the key sagas. A new engineer (or AI implementer) reads this section to understand how the system fits together, following its references into §14/§17/§16/§15 for the normative contracts. One fact, one home: content owned by §14 (mechanism, registry, guarantees, doctrines) is referenced here, never restated.
 
@@ -1739,9 +1793,11 @@ flowchart LR
 
 ## 24.8 Key Sagas (dynamic view)
 
-<!-- One sub-section per load-bearing cross-service flow: orchestrator (or choreography), participants, happy path, compensation path. Mermaid sequence diagrams. -->
+<!-- One sub-section per load-bearing cross-service flow: orchestrator (or choreography), participants, happy path, compensation path. Mermaid sequence diagrams. Derive-from-BRD: a "Use cases:" line links the BRD use cases the saga realises, traced to §7.3. -->
 
 ### 24.8.1 [Saga name] ([orchestrated by X / choreographed])
+
+**Use cases:** [[KEY/UC-NN](BRD link), [KEY/UC-NN](BRD link)]
 
 ```mermaid
 sequenceDiagram

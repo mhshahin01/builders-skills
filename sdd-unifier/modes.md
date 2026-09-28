@@ -81,7 +81,7 @@ See `chunking.md` for chunking strategy and merge handling.
 4. Risks
 5. Glossary
 6. Ecosystem Overview (incl. Architecture Doctrine: EDA + DDD + Hexagonal)
-7. System Users & Use Cases (Actors + Use Case Diagram)
+7. System Users & Use Cases (Actors + Use Case Diagram + Use Case Traceability)
 8. System Design / High-Level Architecture (Style, Context, HL Arch, Workflow, Sequence diagrams)
 9. Architecture Principles
 10. Architectural Decisions (ADR summary table)

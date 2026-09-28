@@ -128,11 +128,11 @@ sequenceDiagram
 
 ## 16.10 Traceability
 
-<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (13x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. -->
+<!-- Map back to the sources: BRD Users & Use Cases Matrix rows, per-service authorization notes (13x chunks), and ADRs that shaped the model. Every capability row must trace to at least one BRD UC or an ADR. Cite a BRD use case as a link to its BRD heading and a matrix row as a link to the BRD chunk 07 file (brd-to-sdd.md § Use-case traceability). -->
 
 | Capability / rule | Source (BRD UC / matrix row / ADR / 13x chunk) |
 |---|---|
-| [Capability] | [Source ref] |
+| [Capability] | [[KEY/UC-NN](BRD link) / matrix row in [KEY 07](BRD chunk 07 link) / ADR-NN / 13x chunk] |
 
 ## 16.11 Permission × Role Matrix (platform-wide)
 

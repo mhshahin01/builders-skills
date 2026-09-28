@@ -39,7 +39,7 @@ Each service follows the exact same structure for predictability and grep-abilit
 
 ### Business Logic
 
-<!-- Plain-language description of the logic, including state machines for stateful services. -->
+<!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (chunk 09 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2", "AC-1" (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
 
 [Description of the core logic.]
 
@@ -184,6 +184,8 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 - [Constraint 3]
 
 ### Error Handling
+
+<!-- Derive-from-BRD: tie each domain error to the exception flow it realises, e.g. "[REFUNDS/UC-04](BRD link) E1 -> 422 PAYOUT_REFUSED". -->
 
 - **Synchronous APIs:** [Approach]
 - **Validation errors:** [Approach]

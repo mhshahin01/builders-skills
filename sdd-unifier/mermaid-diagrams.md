@@ -14,7 +14,7 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 
 | Template section | Diagram | Mermaid dialect |
 |---|---|---|
-| §7.2 Use Case Diagram | Actors → use-case clusters (carry UC IDs from the BRD) | `flowchart LR` |
+| §7.2 Use Case Diagram | Actors → use-case clusters (carry the keyed UC IDs as plain quoted labels, e.g. `UC04(("REFUNDS/UC-04"))`; the links to the BRD live in §7.3) | `flowchart LR` |
 | §8.2 Context Diagram | System in the middle, externals around it, edges labelled protocol + purpose | `flowchart TB` |
 | §8.3 High-Level Architecture | Layers (edge, frontend, services, data, async backbone, external, observability) | `flowchart TB` with `subgraph` |
 | §8.4 Workflow Diagrams | One per critical end-to-end flow | `flowchart TD` |

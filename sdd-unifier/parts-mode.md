@@ -22,7 +22,7 @@ Intake (SKILL.md step 3), the Project Type ask (step 3a), the architecture quest
 
 | Part | Chunks | What it settles | The user reviews |
 |---|---|---|---|
-| **1** | 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, plus `[project-slug]-sdd-master.md` | The shape of the system: scope and risks, the ecosystem, actors, architecture style, context and high-level architecture, critical workflows and sequences, principles and ADRs, cross-cutting defaults, integrations, and the service decomposition | The architecture style and ADRs, the cross-cutting defaults (tenancy model, deployment, security), the integrations, and above all the **Services Decomposition** (09): service names, bounded contexts, data ownership, which BRD use cases each service serves. These drive part 2; changing the service list later is costly. |
+| **1** | 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, plus `[project-slug]-sdd-master.md` | The shape of the system: scope and risks, the ecosystem, actors, architecture style, context and high-level architecture, critical workflows and sequences, principles and ADRs, cross-cutting defaults, integrations, and the service decomposition | The architecture style and ADRs, the cross-cutting defaults (tenancy model, deployment, security), the integrations, and above all the **Services Decomposition** (09): service names, bounded contexts, data ownership, which BRD use cases each service owns (09 `Use cases (BRD)`, traced one row per use case in 03 §7.3). These drive part 2; changing the service list later is costly. |
 | **2** | every `13x` service chunk, then 10, then 12, then 11, then the contract reconciliation (SKILL.md step 6a) | The per-service specs and the three contract registries: the Centralized Event Hub (10), the Service Integration API Contracts (11), and the Centralized User Roles (12) | Per-service boundaries, APIs, DB models, published and consumed events, error handling; the event contracts in chunk 10; the API contracts in chunk 11 (internal contracts defined, external ones `TBD - external` for you to complete); the role catalogue in chunk 12; every divergence flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12 |
 | **3** | 14, 15, 16, 17, then 18, then 19 (gated) | Performance and capacity, environments, runbook, appendix; the independent review; the end-to-end design once the open items are cleared | The open items (acceptance loop); then chunk 19 is written only if the e2e gate opens |
 
@@ -41,8 +41,9 @@ Inside part 2, keep the contract generation order from SKILL.md step 6: draft th
    - A decision taken while writing a service or a registry that affects the whole platform becomes an ADR in 06 §10 (next free ADR ID). A deviation from a cross-cutting default is recorded as an override in the service chunk and, if it changes the default itself, in 07.
    - The Services Decomposition (09) follows the service chunks: if part 2 renamed, split, merged, or re-scoped a service, the service chunk wins and 09 is updated, together with the service boxes in the 04 diagrams and any 05 workflow or sequence that names it. Say clearly that this is a change to what the user approved in part 1.
    - Integration rows in 08 gain the owning service and any protocol detail settled in the service chunk.
+   - Derive-from-BRD: §7.3 in 03 gets its Entry points, APIs, and Events columns in part 2 (after chunk 11, before step 6a), and each Owner becomes a link to its `13x` chunk. A service renamed, split, or merged updates 09 `Use cases (BRD)` and the §7.3 Owner cells in the same pass.
    - Figures index and Tables index in chunk 00.
-4. **Keep IDs stable.** Once the user has seen an ID, it is never renumbered and never reused: service chunk letters (`13a`, `13b`, ...), ADR-NN, AP-NN, API-NN, risk IDs, topic names, event names, role names, permission tokens, and OI-NN. A service added in part 2 takes the next free chunk letter and is appended to 09. A service merged away keeps its 09 row, marked `Merged into [service]`, and gets no chunk; a removed one keeps its row, marked `Removed: [reason]`. The §17.X number follows the chunk letter (`13c` is §17.3) even when an earlier letter has no chunk; the gap is expected. A renamed event or topic is a contract change: update chunk 10 and every `13x` chunk in the same pass, and add a Changes Log note if the old name was already shown to the user.
+4. **Keep IDs stable.** Once the user has seen an ID, it is never renumbered and never reused: service chunk letters (`13a`, `13b`, ...), BRD keys, ADR-NN, AP-NN, API-NN, risk IDs, topic names, event names, role names, permission tokens, and OI-NN. A service added in part 2 takes the next free chunk letter and is appended to 09. A service merged away keeps its 09 row, marked `Merged into [service]`, and gets no chunk; a removed one keeps its row, marked `Removed: [reason]`. The §17.X number follows the chunk letter (`13c` is §17.3) even when an earlier letter has no chunk; the gap is expected. A renamed event or topic is a contract change: update chunk 10 and every `13x` chunk in the same pass, and add a Changes Log note if the old name was already shown to the user.
 5. **Run the part's exit checklist** (below). Fix what fails; flag what cannot be fixed with `[NEEDS CLARIFICATION: ...]`.
 6. **Update the progress record** (below).
 7. **Present the part summary and STOP** (parts 1 and 2). Part 3 goes on as § End of part 3 says.
@@ -52,7 +53,7 @@ Inside part 2, keep the contract generation order from SKILL.md step 6: draft th
 Show a short part summary:
 
 - The files written, and the chunks of earlier parts that were changed by the back-fill, with the reason.
-- Counts: services, ADRs, Mermaid figures, `[NEEDS CLARIFICATION: ...]` markers in this part. In part 2 also: topics, events, roles, API contracts (internal `Defined` vs `TBD - external`), and the number of contract divergences flagged.
+- Counts: services, ADRs, Mermaid figures, `[NEEDS CLARIFICATION: ...]` markers in this part. Derive-from-BRD: the source BRDs with their keys (part 1: say the keys are now fixed), the cross-BRD conflicts found, and per BRD the use cases with an owner vs flagged in §7.3. In part 2 also: topics, events, roles, API contracts (internal `Defined` vs `TBD - external`), and the number of contract divergences flagged.
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 
@@ -60,7 +61,7 @@ Then **stop and wait**. Do not start the next part in the same turn. Do not star
 
 When the user gives corrections: apply them to the existing chunks first, rerun the exit checklist of that part, update the summary, and only then move on if they asked to. Record each decision that settles an open question in `decision-log.md`; the chunks carry only the resulting design.
 
-**A correction removes or merges a service at the end of part 1.** Every BRD use case, integration, and entity the service owned must move to another service. If the user did not say where, ask before applying anything (one question per orphaned responsibility, recommendation first), and do not continue until it is answered.
+**A correction removes or merges a service at the end of part 1.** Every BRD use case, integration, and entity the service owned must move to another service (for use cases: 09 `Use cases (BRD)` and the §7.3 Owner cells). If the user did not say where, ask before applying anything (one question per orphaned responsibility, recommendation first), and do not continue until it is answered.
 
 **A correction at the end of part 2 changes a contract.** Apply it to chunk 10, 11, or 12 and to every affected `13x` chunk in the same pass, then rerun step 6a before the summary.
 
@@ -78,7 +79,8 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 - [ ] §8.1 Architecture Style has What / Why / How at the bar of `sdd-quality.md`; the minimum ADR set is present or flagged.
 - [ ] Every actor in 03 traces to a BRD persona (derive-from-BRD) or to the source; none is invented.
 - [ ] Every service in 09 has a bounded context, owns its data, and serves at least one use case or platform concern. No entity is owned by two services.
-- [ ] Every BRD use case in scope maps to at least one service in 09, or is flagged (derive-from-BRD).
+- [ ] Derive-from-BRD: chunk 00 § Document Lineage lists every source BRD with its key, version, and link, and Child LLDs reads `None yet` (or the LLDs found); every BRD reference in 00-09 carries its key; with two or more BRDs, every cross-BRD conflict is asked, recorded as an ADR, or flagged (`brd-to-sdd.md` § Source BRDs and lineage).
+- [ ] Derive-from-BRD: every use case of every source BRD has its §7.3 row in 03, under its BRD's group (title and status as the BRD states them); every active one has exactly one owner in 09 `Use cases (BRD)`, or a `[NEEDS CLARIFICATION: ...]` in its Owner cell; every §8.4 and §8.5 diagram has its `**Use cases:**` line; every UC link resolves (file and anchor).
 - [ ] Every integration in 08 names the service that owns it, or is flagged.
 - [ ] Brownfield only: the §1 Existing System Context sub-section exists and 07 marks each concern inherit / override / new.
 - [ ] The Glossary covers every term and acronym used in 00-09.
@@ -92,6 +94,7 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 - [ ] Every synchronous integration has an `API-NN` in chunk 11 with URI, headers, parameters, body, responses, error codes, security, and auth; the §15.4 coverage matrix has no uncovered row; method and URI in each `13x` List of APIs match chunk 11; external contracts are `TBD - external` with nothing invented.
 - [ ] Every divergence that could not be fixed is flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12.
 - [ ] Per-service authorization notes agree with the BRD Users & Use Cases Matrix (derive-from-BRD), or the difference is flagged.
+- [ ] Derive-from-BRD: §7.3 Entry points, APIs, and Events are filled, every Owner links to its `13x` chunk, and the use-case traceability check of step 6a passes (every owned use case is cited in its owner's Business Logic; no active use case lacks an entry point, or it is flagged).
 - [ ] 09, 04, 05, and 08 match the service chunks after the back-fill.
 - [ ] No per-service DB model, API list, or Event Model was invented from the BRD alone; missing architect input is flagged.
 - [ ] No decision-process narration in content chunks. Clarifications raised or decided in this part are recorded in `decision-log.md` with working rule-home links.
@@ -124,7 +127,7 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 | 3 | 14-18, 19 (gated) | In progress (14-17 written; reviewer next) | - |
 ```
 
-- Write the **Source** line in part 1: the path of every source file, or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
+- Write the **Source** line in part 1: the path of every source file (every source BRD's master or combined file), or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
 - Status is `Pending`, `In progress ([last step done])`, or `Complete`. Parts 2 and 3 have several steps, so record each one as it finishes. Part 2: `13x written`, `10 written`, `12 written`, `11 written`, `reconciled`. Part 3: `14-17 written`, `18 written`, `acceptance loop done`, `19 written` or `19 Locked (gate shut)`. Part 3 becomes `Complete` when the gate check has run: chunk 19 is then either written or `Locked`, and a later request refreshes it through SKILL.md step 8b.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
 - Chunk 00 shows `**Status:** Draft - part N of 3` until part 3 is complete, then `Draft`.

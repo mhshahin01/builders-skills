@@ -71,12 +71,12 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). -->
+<!-- One row per API-NN. Type: Internal (service -> service), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
-| API-01 | [Operation] | [Service] | [Service] | Internal | `[METHOD] /v1/[path]` | [13x § Integrations] | [UC-NN] | Defined |
-| API-02 | [Operation] | [Service] | [External system] | External outbound | TBD | [INT-NN] | [UC-NN] | TBD - external |
+| API-01 | [Operation] | [Service] | [Service] | Internal | `[METHOD] /v1/[path]` | [13x § Integrations] | [[KEY/UC-NN](BRD link) / -] | Defined |
+| API-02 | [Operation] | [Service] | [External system] | External outbound | TBD | [INT-NN] | [[KEY/UC-NN](BRD link) / -] | TBD - external |
 
 ---
 
@@ -85,7 +85,7 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 ### API-01: [Operation name] ([Consumer] -> [Provider])
 
 - **Type:** Internal
-- **Purpose:** [One sentence; link the use case and the service Integrations row.]
+- **Purpose:** [One sentence; link the use case ([KEY/UC-NN](BRD link)) and the service Integrations row.]
 - **Status:** Defined
 
 **Endpoint**
@@ -163,7 +163,7 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 ### API-02: [Operation name] ([Service] -> [External system])
 
 - **Type:** External outbound
-- **Purpose:** [One sentence; link the use case and INT-NN in §12.]
+- **Purpose:** [One sentence; link the use case ([KEY/UC-NN](BRD link)) and INT-NN in §12.]
 - **Status:** TBD - external
 
 **[TBD - EXTERNAL: update from the [Provider] API documentation: URI, version, headers, request body, responses, error codes, and authentication scheme.]**

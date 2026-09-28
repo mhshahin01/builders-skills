@@ -104,6 +104,8 @@ All skills follow the same house style, so output is interchangeable and tool-fr
 - Project Type (greenfield or brownfield) is asked at intake and gates the whole generation.
 - The Ecosystem Overview is never filled silently: the skill offers the proposed ecosystem for a one-shot accept-all, or walks the user through each item with BRD-informed recommendations.
 - Falls back to CLAUDE.md defaults plus the platform doctrine (EDA, DDD, hexagonal) when the BRD is silent.
+- One SDD has one or more parent BRDs and zero or more child LLDs, listed in chunk 00 § Document Lineage. Each BRD gets a short key (`REFUNDS`), and conflicts between BRDs are never resolved silently.
+- Traces every BRD use case when derived from brd-unifier output: each use case carries its BRD key and links to its heading in that BRD (`[REFUNDS/UC-04](...)`), chunk 09 names its one owner service, and §7.3 Use Case Traceability shows its entry points, flows, API contracts, and events.
 
 **Chunk map:** cover, executive summary and risks, ecosystem overview, users and use cases, architecture style and diagrams, workflows and sequences, principles and decisions, cross-cutting concerns, integrations, services summary, three platform-level registries, per-service detailed specs (`13a`, `13b`, ...), performance and capacity, environments, operations runbook, appendix and wishlist, open items, and the end-to-end design:
 

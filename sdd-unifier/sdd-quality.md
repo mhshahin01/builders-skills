@@ -194,6 +194,29 @@ The platform catalogues are only useful if they are **reconciled** — a catalog
 
 ---
 
+## §7.3 Use Case Traceability (derive-from-BRD)
+
+Traceability is only useful if a reader can follow it both ways without searching.
+
+**Test:** pick any BRD use case. Its ID in the SDD names its source BRD (the key) and one click opens its heading in that BRD. From its §7.3 row you reach the owner's `13x` chunk, the endpoint that starts it, the diagram that shows it, and the API contracts and events it drives, and each of those places cites the same keyed use case. Then pick any service in 09: every use case in its `Use cases (BRD)` cell has a §7.3 row naming that service, and its Business Logic cites each one with the steps it realises.
+
+**Good rows:**
+
+| Use case (BRD) | Title | Owner (§17.X) | Entry points | Flows (§8.4 / §8.5) | APIs (§15) | Events (§14) | Status |
+|---|---|---|---|---|---|---|---|
+| **[Refunds Portal v1.0](../brd-refunds-portal/refunds-portal-brd-master.md) (REFUNDS)** | | | | | | | |
+| [REFUNDS/UC-04](../brd-refunds-portal/06b-use-cases-branch-manager.md#uc-04-approve--reject-refund) | Approve / Reject Refund | [refund-service](./13b-service-refund.md) | `POST /v1/refunds/{refundId}/decision` | [§8.5.2](./05-workflows-and-sequences.md#852-sequence-refund-decision-and-payout) | API-03 | `REFUND_APPROVED`, `REFUND_REJECTED` | Active |
+
+**Bad:**
+
+- `UC-04 | refund-service | see §17.2`: no key, no link, no entry point, and nothing to check against.
+- `[UC-04](...)` in an SDD with two source BRDs: a reader cannot tell which BRD's UC-04 it is.
+- Ownership only in prose ("refund-service handles UC-04 and UC-05"), with no 09 column or §7.3 row.
+- A link built from a guessed title (`#uc-04-approve-reject-refund` when the heading is `UC-04: Approve / Reject Refund`, whose anchor is `#uc-04-approve--reject-refund`). It looks right and lands nowhere.
+- A new `UC-12` the SDD made up for key rotation. The SDD cites BRD use cases; it never adds one.
+
+---
+
 ## When to defer to flags vs to write
 
 If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. In that case, these sections come out as `[NEEDS CLARIFICATION: ...]` markers — *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.

@@ -30,11 +30,11 @@ PART OF: SDD - [Project Name]
 
 | Key | BRD | Version | Link | Covers |
 |-----|-----|---------|------|--------|
-| [KEY] | [BRD project name] | [X.X] | [[project-slug]-brd-master.md](../brd-[project-slug]/[project-slug]-brd-master.md) | [What this BRD contributes] |
+| [KEY] | [BRD project name] | [X.X] | [[brd-slug]-brd-master.md](../brd-[brd-slug]/[brd-slug]-brd-master.md) | [What this BRD contributes] |
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD derived from this SDD (from-sdd or hybrid) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling lld-*/*lld-master.md files whose Related SDD line links here are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD derived from this SDD (from-sdd or hybrid) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
 
 | LLD | Scope (§13 services) | Direction | Version | Link |
 |-----|----------------------|-----------|---------|------|

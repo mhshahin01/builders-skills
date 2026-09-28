@@ -62,8 +62,8 @@ Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATI
 
 | Use case (BRD) | Title | Owner (§17.X) | Entry points | Flows (§8.4 / §8.5) | APIs (§15) | Events (§14) | Status |
 |----------------|-------|---------------|--------------|---------------------|------------|--------------|--------|
-| **[[BRD project name] v[X.X]](../brd-[project-slug]/[project-slug]-brd-master.md) ([KEY])** | | | | | | | |
-| [[KEY]/UC-01](../brd-[project-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [Short title, as in the BRD] | [[service-name](./13a-service-[slug].md)] | `[METHOD] /v1/[path]` | [[§8.4.1](./05-workflows-and-sequences.md#841-workflow-[flow-slug]) / -] | [API-NN / -] | [`EVENT_NAME` / -] | Active |
-| [[KEY]/UC-02](../brd-[project-slug]/05-user-journeys-overview.md#use-case-summary) | [Short title] | - | - | - | - | - | [Merged into UC-01 / Removed] |
+| **[[BRD project name] v[X.X]](../brd-[brd-slug]/[brd-slug]-brd-master.md) ([KEY])** | | | | | | | |
+| [[KEY]/UC-01](../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [Short title, as in the BRD] | [[service-name](./13a-service-[slug].md)] | `[METHOD] /v1/[path]` | [[§8.4.1](./05-workflows-and-sequences.md#841-workflow-[flow-slug]) / -] | [API-NN / -] | [`EVENT_NAME` / -] | Active |
+| [[KEY]/UC-02](../brd-[brd-slug]/05-user-journeys-overview.md#use-case-summary) | [Short title] | - | - | - | - | - | [Merged into UC-01 / Removed] |
 
 <!-- MASTER: [project-slug]-sdd-master.md | PREV: 02-ecosystem-overview.md | NEXT: 04-architecture-style-and-diagrams.md -->

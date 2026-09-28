@@ -54,11 +54,11 @@ The single biggest source of "looks structured but is empty" in SDDs.
 
 | ID | Status | Decision | Why | How | Consequences | Alternatives & Trade-offs |
 |---|---|---|---|---|---|---|
-| AD-03 | Accepted | Use Kafka for inter-service async messaging. | At-least-once delivery semantics + per-key ordering match the wallet ledger's append-only invariant. Platform standard per CLAUDE.md. | Single Kafka cluster (3 brokers, replication factor 3). Topics named `<context>.<entity>.<event>`. JSON Schema in confluent schema registry. Consumer idempotency mandatory. | Operational complexity (Kafka cluster management, schema evolution). Coupling to broker availability. | RabbitMQ rejected (no per-key ordering at scale). SNS+SQS rejected (we are on-prem). Direct REST chains rejected (creates synchronous fan-out fragility). |
+| ADR-03 | Accepted | Use Kafka for inter-service async messaging. | At-least-once delivery semantics + per-key ordering match the wallet ledger's append-only invariant. Platform standard per CLAUDE.md. | Single Kafka cluster (3 brokers, replication factor 3). Topics named `<context>.<entity>.<event>`. JSON Schema in confluent schema registry. Consumer idempotency mandatory. | Operational complexity (Kafka cluster management, schema evolution). Coupling to broker availability. | RabbitMQ rejected (no per-key ordering at scale). SNS+SQS rejected (we are on-prem). Direct REST chains rejected (creates synchronous fan-out fragility). |
 
 **Bad ADR row:**
 
-| AD-03 | Accepted | Use Kafka. | Better than alternatives. | Run Kafka. | Some complexity. | Other things. |
+| ADR-03 | Accepted | Use Kafka. | Better than alternatives. | Run Kafka. | Some complexity. | Other things. |
 
 **Test:** Could a senior engineer joining the team next year understand from this row alone (a) what was decided, (b) why, and (c) what would have to change to revisit the decision? If not, rewrite.
 
@@ -182,7 +182,7 @@ The platform catalogues are only useful if they are **reconciled** — a catalog
 
 **Test (roles):** pick any permission token in a §17.X authorization note — is it in the §16.11 grid with the same spelling and the same role set? Does every capability row trace to a BRD UC or an ADR (§16.10)?
 
-**Test (API contracts):** pick any synchronous row in a §17.X Integrations table. Does it carry an `API-NN` that exists in §15.2, with method and URI identical to the service's List of APIs? Does the contract state URI, version, security and auth (with a §16 permission token), headers, parameters, body with a sample, responses, error codes with retryability, and behaviour (idempotency, timeout, retries)? For an external system: are the provider-owned fields `TBD` with a `[TBD - EXTERNAL: ...]` marker instead of plausible invented values?
+**Test (API contracts):** pick any synchronous row in a §17.X Integrations table. Does it carry an `API-NN` that exists in §15.2, with method and URI identical to the service's List of APIs? Does the contract state URI, version, security and auth (a §16 permission token on an internal contract, per §15.1 Authorization by contract type), headers, parameters, body with a sample, responses, error codes with retryability, and behaviour (idempotency, timeout, retries)? For an external system: are the provider-owned fields `TBD` with a `[TBD - EXTERNAL: ...]` marker instead of plausible invented values?
 
 **Good API contract:** "API-04 `POST /v1/wallets/{walletId}/debits`, OAuth2 client credentials, token `wallet:debit`; `Idempotency-Key` required; body `amount` (decimal, > 0, scale 2), `currency` (ISO 4217); 201 returns `debitId`; 409 `CONFLICT` on key reuse, 422 `INSUFFICIENT_FUNDS` (not retryable); timeout 800 ms, 2 retries on 503/504 with jitter."
 
@@ -219,6 +219,6 @@ Traceability is only useful if a reader can follow it both ways without searchin
 
 ## When to defer to flags vs to write
 
-If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. In that case, these sections come out as `[NEEDS CLARIFICATION: ...]` markers — *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
+If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. The architecture questionnaire settles §8.1 and the ADRs it covers, which meet the bar above; the decisions still open come out as `[NEEDS CLARIFICATION: ...]` markers — *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
 
 If the SDD is being **generated fresh** or **transformed from another SDD format**, the quality bar above applies in full.

@@ -40,7 +40,7 @@ The chunk skeletons are embedded in this skill folder under `chunks/` — they a
 | 16 | `16-operations-runbook.md` | `chunks/16-operations-runbook.md` | §20 Operations Runbook (Common Operations procedures, Diagnostics Cheatsheet, On-Call). | Medium |
 | 17 | `17-appendix-and-wishlist.md` | `chunks/17-appendix-and-wishlist.md` | §21 Appendix (BRD link, OpenAPI specs, event schemas, ADR repo, threat model, capacity plan, runbooks, diagrams source), §22 Wishlist. | Small |
 | 18 | `18-open-items-and-clarifications.md` | `chunks/18-open-items-and-clarifications.md` | **Open Items & Clarifications** (§23) — output of the post-generation cleared-context reviewer pass. Architecture-level gaps, missing scenarios, ADR ambiguities, and cross-chunk contract mismatches. Each item carries options AND a concrete **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply. Generated *after* the body by an independent reviewer; never authored by the same context that wrote the SDD. Followed by the user review-and-accept loop (see SKILL.md). | Small–Medium |
-| 19 | `19-e2e-system-design.md` | `chunks/19-e2e-system-design.md` | §24 End-to-End System Design — service landscape, system context, layered architecture, producer→topic→consumer fan-out maps, sync REST edges, key sagas, plus normative references into §14/§16 (one fact, one home: nothing owned by chunks 10/11 is restated). All inline Mermaid. **Gated: written only after chunk 18 is cleared** (SKILL.md step 8b, conditions E1-E4); it consolidates the final reconciled and reviewed state of 09/10/11/12/13x. | Medium–Large |
+| 19 | `19-e2e-system-design.md` | `chunks/19-e2e-system-design.md` | §24 End-to-End System Design — service landscape, system context, layered architecture, producer→topic→consumer fan-out maps, sync REST edges, key sagas, plus normative references into §14/§15/§16 (one fact, one home: nothing owned by chunks 10/11 is restated). All inline Mermaid. **Gated: written only after chunk 18 is cleared** (SKILL.md step 8b, conditions E1-E4); it consolidates the final reconciled and reviewed state of 09/10/11/12/13x. | Medium–Large |
 
 Total typical chunk count: **19 + N services** (so 21–25 for a typical multi-service system; chunk 19 appears once the e2e gate opens), plus the regenerated `[project-slug]-sdd-master.md` index.
 
@@ -50,7 +50,7 @@ Total typical chunk count: **19 + N services** (so 21–25 for a typical multi-s
 
 **Parts.** In `parts` generation the chunks are written in three parts: 00-09, then `13x` + 10 + 12 + 11, then 14-18 with 19 behind the e2e gate (`parts-mode.md`).
 
-**Specs is not an SDD chunk.** The constitution-grade `Specs` (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with the LLD (`./lld-[project-slug]/17-specs.md`), synthesised from this SDD's body. Legacy SDDs may still carry a `15-specs.md` — treat it as read-only input for the LLD, not part of this template.
+**Specs is not an SDD chunk.** The constitution-grade `Specs` (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with each child LLD (`./lld-[lld-slug]/17-specs.md`), synthesised from this SDD's body. Legacy SDDs may still carry a `15-specs.md` — treat it as read-only input for the LLD, not part of this template.
 
 ---
 
@@ -88,7 +88,7 @@ The key goal is a smooth implementation: the LLD and implementers must read ONE 
 1. **Chunk 10 is the event contract registry.** Topic names, event names, envelope fields, and payload contracts are canonical there. Every `13x` chunk's Event Model (published AND consumed tables) must match it character-for-character.
 2. **Consumer lists are reconciled from both sides.** A producer's published table and every consumer's consumed table must agree. Where a producer under-lists its consumers, chunk 10 shows the reconciled set and footnotes the source.
 3. **Every consumed event has exactly one producer.** An event consumed in any `13x` chunk that no service publishes is a generation error — fix it or flag it.
-4. **Chunk 12 is the role/permission registry.** Role names and permission tokens in per-service authorization notes and in chunk 11's contracts must match its catalogue verbatim.
+4. **Chunk 12 is the role/permission registry.** Role names and permission tokens in per-service authorization notes and in chunk 11's internal contracts (HTTP and in-process) must match its catalogue verbatim; external contracts carry the provider's scheme instead (chunk 11 §15.1).
 5. **Chunk 11 is the API contract registry.** Every synchronous integration has an `API-NN` there; method and URI in every `13x` List of APIs match it verbatim; headers, body, responses, and error codes live only there. External contracts stay `TBD - external` until the user supplies the provider documentation, never invented.
 6. **Chunk 19 consolidates, never invents, and comes last.** Counts, names, and edges in the e2e chunk must trace to chunks 09/10/11/12/13x, and it is written only once chunk 18 is cleared (SKILL.md step 8b).
 7. **Divergences are flagged, never silently reconciled.** Unresolvable mismatches land in chunk 10 §14.8 (events), chunk 11 §15.5 (APIs), or chunk 12 §16.12 (roles) with a pointer, and the reviewer pass (chunk 18) treats any remaining mismatch as a Contract mismatch OI.
@@ -176,8 +176,9 @@ When asked to split a combined SDD into chunks:
 5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block.
 6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed).
 7. Write each chunk file.
-8. Keep the original combined file.
-9. **Legacy combined SDDs** (pre-restructure: §13.1/§13.2.X services, §14 performance, §19 Specs, §20 Open Items) are renumbered into the current map during re-chunking; a Specs section is NOT carried into the SDD chunks — hand it to the LLD folder (or flag it) per the Specs note above.
+8. Write `[project-slug]-sdd-master.md`. The cover's **Reconciled:** and **E2E gate (§24):** lines move into its Generation Progress (the gate line as **E2E gate (chunk 19):**); chunk 00 does not keep them.
+9. Keep the original combined file.
+10. **Legacy combined SDDs** (pre-restructure: §13.1/§13.2.X services, §14 performance, §19 Specs, §20 Open Items) are renumbered into the current map during re-chunking; a Specs section is NOT carried into the SDD chunks — hand it to the LLD folder (or flag it) per the Specs note above.
 
 ---
 

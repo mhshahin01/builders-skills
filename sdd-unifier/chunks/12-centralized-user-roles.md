@@ -29,6 +29,8 @@ CONSISTENCY_RULE: Role names, permission tokens, and per-service authorization n
 
 ## 16.3 User Types (Tier 1)
 
+<!-- A service that calls other services with no user context (client credentials) is a user type here too (identity source: an IAM client), so the permission tokens it holds appear in §16.11 and SKILL.md step 6a checks them. -->
+
 | User type | Tenancy plane | Identity source | Description |
 |---|---|---|---|
 | `[USER_TYPE]` | [Platform / Tenant / End-customer] | [IAM realm / pool] | [Description] |

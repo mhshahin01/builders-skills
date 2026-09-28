@@ -14,7 +14,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 > **Lineage:** this SDD's source BRDs (parents, each with its key) and child LLDs are listed in [00 § Document Lineage](./00-cover-and-changelog.md#document-lineage). Every BRD reference in the chunks carries its BRD key (`REFUNDS/UC-04`).
 
-> **Specs note:** The constitution-grade `Specs` chunk (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with the LLD (`../lld-[project-slug]/17-specs.md`), synthesised from this SDD's body. The SDD carries no Specs chunk.
+> **Specs note:** The constitution-grade `Specs` chunk (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with each child LLD (`../lld-[lld-slug]/17-specs.md`), synthesised from this SDD's body. The SDD carries no Specs chunk.
 
 > **Decision history:** [decision-log.md](./decision-log.md) holds the ecosystem selection record, the clarification Q&A, and how each decision was reached. The chunks below state only the settled design. (Link it once the register exists; it is created on first use and never merged.)
 
@@ -22,7 +22,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 ## Generation Progress
 
-<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: replace the table with the single line "**Generation:** whole". -->
+<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: set **Generation:** to whole and leave out the Part table; the Intent, Source, Reconciled, and E2E gate lines stay. -->
 
 **Generation:** parts
 **Intent:** [generate | transform | derive-from-BRD]
@@ -233,7 +233,7 @@ Each `13x` service chunk contains these sub-sections in order:
 | Check contract consistency | 10 §14.8, 11 §15.5, 12 §16.12 | every 13x Event Model and List of APIs |
 | Complete an external API contract | 11 §15.6 | the provider documentation, then 11 §15.3 |
 | Map BRD use cases to services | 03 §7.3 (use-case traceability) | 09, then the owner's 13x chunk; each UC ID links to the use case in the BRD |
-| Feed speckit `/constitution` | ../lld-[project-slug]/17-specs.md (LLD-owned) | 02, 09 |
+| Feed speckit `/constitution` | ../lld-[lld-slug]/17-specs.md (LLD-owned, one per child LLD) | 02, 09 |
 | Steer `lld-unifier` (tech choices, contracts) | 02, 10, 11 | 09, 12; 00 § Document Lineage (Child LLDs) |
 | Find the LLD for a use case | 03 §7.3 (owner service) | 00 § Document Lineage, the Child LLDs row whose scope names that service |
 | Triage reviewer findings | 18 | the chunk(s) referenced by each open item |
@@ -244,11 +244,11 @@ Each `13x` service chunk contains these sub-sections in order:
 
 | BRD Chunk | Related SDD Chunk(s) | Relationship |
 |-----------|---------------------|--------------|
-| [[KEY] 01 - Executive Summary](../brd-[project-slug]/01-executive-summary-and-context.md) | [sdd/01 - Executive Summary](./01-executive-summary-scope-risks.md) | BRD states business problem; SDD states technical solution |
-| [[KEY] 04 - Scope & Personas](../brd-[project-slug]/04-scope-and-personas.md) | [sdd/03 - Users & Use Cases](./03-users-and-use-cases.md) | BRD personas become SDD actors |
-| [[KEY] 05 - User Journeys Overview](../brd-[project-slug]/05-user-journeys-overview.md) | [sdd/03 §7.3 - Use Case Traceability](./03-users-and-use-cases.md), [sdd/09 - Services Summary](./09-services-summary.md) | Every BRD use case gets one §7.3 row and one owner service in 09 |
-| [[KEY] 06a - Use Cases: [Persona]](../brd-[project-slug]/06a-use-cases-[persona-slug].md) | [sdd/03 §7.3 - Use Case Traceability](./03-users-and-use-cases.md), the owners' 13x chunks | UC main/exception flows become service business logic and error handling; each UC ID in the SDD links to its heading here |
-| [[KEY] 07 - Users & Use Cases Matrix](../brd-[project-slug]/07-users-use-cases-matrix.md) | [sdd/12 - Centralized User Roles](./12-centralized-user-roles.md), [sdd/03 - Users & Use Cases](./03-users-and-use-cases.md) | Matrix drives the platform role catalogue and per-service authorization rules |
-| [[KEY] 08 - Integrations](../brd-[project-slug]/08-integrations.md) | [sdd/08 - Integrations](./08-integrations.md), [sdd/11 - API Contracts](./11-api-contracts.md) | BRD names partners and purpose; SDD details protocol/auth/retries and the API contract (external ones `TBD - external` until the provider documentation is supplied) |
-| [[KEY] 10 - NFRs](../brd-[project-slug]/10-nfrs.md) | [sdd/14 - Performance](./14-performance-and-capacity.md), [sdd/04 - Architecture](./04-architecture-style-and-diagrams.md) | Business expectations are quantified into technical targets and architecture drivers |
-| [[KEY] 12 - Appendix (Technical Inputs for the SDD)](../brd-[project-slug]/12-appendix-and-wishlist.md) | [sdd/02 - Ecosystem](./02-ecosystem-overview.md) | Source technical mandates (parked verbatim in the BRD) seed the SDD ecosystem selection and override CLAUDE.md defaults |
+| [[KEY] 01 - Executive Summary](../brd-[brd-slug]/01-executive-summary-and-context.md) | [sdd/01 - Executive Summary](./01-executive-summary-scope-risks.md) | BRD states business problem; SDD states technical solution |
+| [[KEY] 04 - Scope & Personas](../brd-[brd-slug]/04-scope-and-personas.md) | [sdd/03 - Users & Use Cases](./03-users-and-use-cases.md) | BRD personas become SDD actors |
+| [[KEY] 05 - User Journeys Overview](../brd-[brd-slug]/05-user-journeys-overview.md) | [sdd/03 §7.3 - Use Case Traceability](./03-users-and-use-cases.md), [sdd/09 - Services Summary](./09-services-summary.md) | Every BRD use case gets one §7.3 row and one owner service in 09 |
+| [[KEY] 06a - Use Cases: [Persona]](../brd-[brd-slug]/06a-use-cases-[persona-slug].md) | [sdd/03 §7.3 - Use Case Traceability](./03-users-and-use-cases.md), the owners' 13x chunks | UC main/exception flows become service business logic and error handling; each UC ID in the SDD links to its heading here |
+| [[KEY] 07 - Users & Use Cases Matrix](../brd-[brd-slug]/07-users-use-cases-matrix.md) | [sdd/12 - Centralized User Roles](./12-centralized-user-roles.md), [sdd/03 - Users & Use Cases](./03-users-and-use-cases.md) | Matrix drives the platform role catalogue and per-service authorization rules |
+| [[KEY] 08 - Integrations](../brd-[brd-slug]/08-integrations.md) | [sdd/08 - Integrations](./08-integrations.md), [sdd/11 - API Contracts](./11-api-contracts.md) | BRD names partners and purpose; SDD details protocol/auth/retries and the API contract (external ones `TBD - external` until the provider documentation is supplied) |
+| [[KEY] 10 - NFRs](../brd-[brd-slug]/10-nfrs.md) | [sdd/14 - Performance](./14-performance-and-capacity.md), [sdd/04 - Architecture](./04-architecture-style-and-diagrams.md) | Business expectations are quantified into technical targets and architecture drivers |
+| [[KEY] 12 - Appendix (Technical Inputs for the SDD)](../brd-[brd-slug]/12-appendix-and-wishlist.md) | [sdd/02 - Ecosystem](./02-ecosystem-overview.md) | Source technical mandates (parked verbatim in the BRD) seed the SDD ecosystem selection and override CLAUDE.md defaults |

@@ -45,13 +45,15 @@ Each service follows the exact same structure for predictability and grep-abilit
 
 **State machine (if applicable):**
 
-```text
-States: [State A] -> [State B] -> [State C]
-
-Transitions and triggers:
-  [State A]   --[Trigger]--> [State B]
-  [State B]   --[Trigger]--> [State C]
+```mermaid
+stateDiagram-v2
+  [*] --> StateA
+  StateA --> StateB: Trigger 1
+  StateB --> StateC: Trigger 2
+  StateC --> [*]
 ```
+
+**Summary:** [1-2 sentence prose fallback: the states and the triggers that move between them.]
 
 ### Output
 
@@ -138,7 +140,7 @@ erDiagram
 - **Authentication:** [Mechanism]
 - **Idempotency:** [Approach]
 - **Pagination:** [Approach]
-- **Error envelope:** [Schema]
+- **Error envelope:** [Per the §15.1 error model, or deviation]
 
 #### List of APIs (Swagger-friendly)
 

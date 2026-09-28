@@ -20,14 +20,14 @@ It runs once per SDD. On a resume it never reruns; a change later is a decision 
 ## The flow
 
 1. **Read the drivers from the BRD.** Scope and objectives (01, 04), use-case count and personas (05, 07), integrations (08), business NFRs (10), Appendix § Technical Inputs (12), and any roadmap or phasing. Technical Inputs that mandate a style are `BRD-mandated`: shown locked, not asked (an override is allowed and becomes an ADR). With several source BRDs, read the drivers from every BRD and cite each with its BRD key. Two BRDs that mandate different styles were already asked in the cross-BRD reconciliation (`brd-to-sdd.md` § Source BRDs and lineage); show the answer as decided, with its ADR. Drivers that point different ways across BRDs count as a conflict (step 3).
-2. **Pre-fill every question** with a recommended answer and its evidence (BRD chunk and ID). Use the recommendation rules below.
+2. **Pre-fill every question** with a recommended answer and its evidence (BRD chunk and ID). Use the recommendation rules below. When the BRD is silent on Q2, pre-fill it from Q1 as an assumption: One team for an MVP or a first production release, Two or three teams for a platform at scale, with `assumption - BRD silent` as the evidence. An assumed Q2 never counts as the driver that justifies a more distributed style.
 3. **Show the proposed answers as one compact table** (question, recommended answer, evidence, one-line tradeoff), then ask ONE question:
 
    > **Architecture: accept the recommended answers?**
    > - **Accept all** - skip the questionnaire and use the table as shown.
    > - **Walk through the questions** - answer each one, with options and a recommendation.
 
-   Mark **Accept all (Recommended)** when the drivers are clear and agree with each other. Mark **Walk through (Recommended)** when a driver is missing from the BRD or two drivers point different ways (for example, an MVP scope with high-availability NFRs); name the conflict in the option's description.
+   Mark **Accept all (Recommended)** when the drivers are clear and agree with each other. Mark **Walk through (Recommended)** when a driver is missing from the BRD or two drivers point different ways (for example, an MVP scope with high-availability NFRs); name the conflict in the option's description. An assumed Q2 counts as missing only when another team count would change the Q4 recommendation.
 4. **Walkthrough:** ask Q1-Q4 in one AskUserQuestion call and Q5-Q8 in a second (up to 4 per call). Each question lists the recommended option FIRST, labelled "(Recommended)", with a one-line reason citing the BRD evidence, then 2-3 alternatives with one-line tradeoffs. Re-derive the recommendations for Q5-Q8 from the answers to Q1-Q4 before asking them.
 5. **Record the outcome** (below), then run the ecosystem selection (step 3c) with the stack proposal adapted to the chosen style.
 
@@ -40,7 +40,7 @@ Q1-Q3 are the **drivers**. Q4-Q8 are the **design decisions** the drivers inform
 | # | Question | Options | Evidence in the BRD |
 |---|---|---|---|
 | Q1 | **What stage is this release?** | MVP / proof of concept · First production release of a product that will grow · Platform at scale (many tenants, many domains, long life) | Objectives, scope, roadmap, wishlist, "pilot" / "phase 1" wording |
-| Q2 | **How many teams will build and run it in the next 12 months?** | One team · Two or three teams · Four or more teams with separate release cycles | Stakeholders, delivery notes, Technical Inputs; ask when the BRD is silent |
+| Q2 | **How many teams will build and run it in the next 12 months?** | One team · Two or three teams · Four or more teams with separate release cycles | Stakeholders, delivery notes, Technical Inputs; when the BRD is silent, an assumption from Q1 (§ The flow, step 2) |
 | Q3 | **What load and availability does it face?** | Modest (internal or early users; normal business hours tolerance) · Moderate with peaks · High and uneven (independent scaling of parts is needed; strict availability) | Business NFRs (10), peak scenarios, tenant and user counts |
 | Q4 | **Architecture style** | Modular monolith (DDD modules, hexagonal inside, one deployable) · Hybrid (modular monolith core plus separate services for the parts that must scale, fail, or be released independently) · Microservices (one service per bounded context, own database, independent deployment) | Q1-Q3, the number and independence of bounded contexts, integration volume |
 | Q5 | **How do the parts talk to each other?** | In-process calls through module ports, with domain events and an outbox for anything that leaves the process · Event-driven backbone (broker, outbox mandatory) plus synchronous REST for queries · Mostly synchronous REST (one hop at most) | Q4, integration count and direction (08), audit and replay needs |
@@ -74,11 +74,11 @@ Rules that apply to every profile:
 
 | Answer | What changes in the SDD |
 |---|---|
-| Any | §6 Architecture Doctrine row states the style and communication model with source `questionnaire`; §8.1 Architecture Style (What / Why / How) is written from the answers; **ADR-01** records the style, the drivers, the options rejected, and the extraction or consolidation trigger. |
+| Any | §6 Architecture Doctrine row states the style and communication model with source `questionnaire`; §8.1 Architecture Style (What / Why / How) is written from the answers; **ADR-01** records the style, the drivers, the options rejected, and the extraction or consolidation trigger; §8.3 High-Level Architecture and the §8.5 sequences are drawn from the answers (`brd-to-sdd.md` § SDD-only sections). |
 | Modular monolith | §13 lists **modules** (one deployable). Each `13x` chunk is a **module spec** on the same template: "service" reads as "module", Deployment Strategy points to the single deployable, and DB Modeling uses the module's schema. Chunk 10 is the domain event catalog (in-process events, plus integration events published through the outbox). Chunk 11 covers external integrations over HTTP and, for module-to-module calls, **in-process port contracts** (Type `Internal (in-process)`: interface and operation name, request and response DTOs, errors raised, authorization token; no URI or headers). |
 | Hybrid | §13 marks each row as `module` (in the core deployable) or `service` (separate deployable). Chunk 11 holds HTTP contracts between the core and each service and in-process port contracts inside the core. The extraction trigger for each extracted service is in its ADR. |
 | Microservices | As the template describes: one service per bounded context, own database, HTTP contracts in chunk 11, events in chunk 10. |
-| Q5, Q6, Q7, Q8 | Feed §6 rows (broker, database topology, tenancy, runtime and deployment), §11 cross-cutting defaults, and the ecosystem proposal in step 3c (for example, no broker row is proposed for a monolith that needs none; a mesh row is `Not applicable` for one deployable). |
+| Q5, Q6, Q7, Q8 | Feed §6 rows (broker, database topology, tenancy, runtime and deployment), §11 cross-cutting defaults, the ADRs for the broker, tenancy, and synchronous vs event-driven calls, and the ecosystem proposal in step 3c (for example, no broker row is proposed for a monolith that needs none; a mesh row is `Not applicable` for one deployable). |
 
 ---
 

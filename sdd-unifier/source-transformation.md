@@ -68,7 +68,7 @@ SDDs target the engineering team — architects, senior developers, SREs, on-cal
 |---|---|
 | Vendor-obligation passive ("The Vendor shall implement...") | Active, system-as-subject ("The service exposes...") |
 | Marketing aspirational ("World-class scalability") | Concrete and testable ("Sustained 500 RPS at p99 < 80ms") |
-| Decision-without-rationale ("We use Kafka") | Decision-with-rationale ("Kafka chosen for: at-least-once semantics, partition-based ordering per key, mature ecosystem. See AD-03 for full alternative comparison.") |
+| Decision-without-rationale ("We use Kafka") | Decision-with-rationale ("Kafka chosen for: at-least-once semantics, partition-based ordering per key, mature ecosystem. See ADR-03 for full alternative comparison.") |
 | Implementation-detail in design doc ("Use ConcurrentHashMap with size 1024") | Behaviour-and-constraint ("Cache must support concurrent access; sized for working-set ~13k entries") |
 
 Drop vendor scaffolding; keep behavioural and architectural commitments.
@@ -77,7 +77,7 @@ Drop vendor scaffolding; keep behavioural and architectural commitments.
 
 ## Gap inventory and thresholds
 
-Per `brd-unifier`'s pattern, surface the count in the handoff:
+Per `brd-unifier`'s pattern, surface the count in the handoff. These bands apply to TRANSFORM and GENERATE. A DERIVE-FROM-BRD count is read differently: `brd-to-sdd.md` § Workflow when deriving from BRD, step 11.
 
 - **0–5 markers:** healthy. Source was rich.
 - **6–14 markers:** typical. Recommend review.

@@ -13,7 +13,7 @@
 
 **Relationship with ADRs (one fact, one home).** An ADR in chunk 06 §10 is design content: it states the decision, its context, its rationale, and its consequences in present tense, and it stays in the SDD. The register never restates an ADR. When a decision produced an ADR, the register entry records only the process (the question, the options offered, who chose, when, what it supersedes) and links the ADR as its `Rule home:`. The rationale then lives in the ADR only. When no ADR was needed, the rationale is written in the register entry.
 
-**What never goes here.** Current-state design (those are the chunks), ADR text (chunk 06), open review items and their statuses (chunk 18), contract divergence flags still open (chunk 10 §14.8, chunk 12 §16.12), and the generation progress (`[project-slug]-sdd-master.md`). The register records decisions and process; the chunks state the outcome.
+**What never goes here.** Current-state design (those are the chunks), ADR text (chunk 06), open review items and their statuses (chunk 18), contract divergence flags still open (chunk 10 §14.8, chunk 12 §16.12), and the generation progress (`[project-slug]-sdd-master.md`, or the cover lines of a combined SDD). The register records decisions and process; the chunks state the outcome.
 
 ---
 

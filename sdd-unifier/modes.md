@@ -121,13 +121,13 @@ The two modes are reversible.
 
 When the user says "merge", "consolidate", "single file", "full doc" after a chunks-mode generation:
 
-1. Read all `sdd-[slug]/NN-*.md` files in file-sort order (00 … 09, 10, 11, 12, 13a, 13b, …, 14 … 18, then 19 if it exists).
+1. Read all `sdd-[project-slug]/NN-*.md` files in file-sort order (00 … 09, 10, 11, 12, 13a, 13b, …, 14 … 18, then 19 if it exists).
 2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block.
 3. Concatenate with a single blank line between chunks.
 4. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first) and renumber the §17.X service blocks if out of order.
 5. Regenerate the Table of Contents in the cover section against the merged heading outline.
 6. Regenerate the Figures and Tables indices.
-7. Write to `./sdd-[slug]/SDD-[ProjectName]-v[X.X]-MERGED.md` (alongside the chunks). `[project-slug]-sdd-master.md` and `decision-log.md` are never merged.
+7. Write to `./sdd-[project-slug]/SDD-[ProjectName]-v[X.X]-MERGED.md` (alongside the chunks). `[project-slug]-sdd-master.md` and `decision-log.md` are never merged.
 8. Keep the original chunks.
 
 ### Combined → Chunks (re-chunk)
@@ -140,7 +140,7 @@ When the user says "split into chunks", "chunk this SDD", "re-chunk this":
 4. For section 17 (Detailed Service Specs), each `## 17.X` block becomes its own chunk file (`13a-service-*.md`).
 5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block.
 6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed).
-7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index).
+7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index, which takes over the cover's Reconciled and E2E gate lines).
 8. Keep the original combined file.
 
 ---

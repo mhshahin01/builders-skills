@@ -8,6 +8,10 @@
 **Approvers:** [Approver Name(s)]
 **Date:** [YYYY-MM-DD]
 **Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
+**Reconciled:** [YYYY-MM-DD of the last clean step 6a run]
+**E2E gate (§24):** [Locked | Open - Up to date | Stale] - [open conditions E1-E4, if any]
+
+<!-- Reconciled and E2E gate: the generation state a chunked SDD keeps in its master (SKILL.md steps 6a and 8b). -->
 
 ---
 
@@ -21,11 +25,11 @@
 
 | Key | BRD | Version | Link | Covers |
 |-----|-----|---------|------|--------|
-| [KEY] | [BRD project name] | [X.X] | [[project-slug]-brd-master.md](./brd-[project-slug]/[project-slug]-brd-master.md) | [What this BRD contributes] |
+| [KEY] | [BRD project name] | [X.X] | [[brd-slug]-brd-master.md](./brd-[brd-slug]/[brd-slug]-brd-master.md) | [What this BRD contributes] |
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD derived from this SDD (from-sdd or hybrid) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling lld-*/*lld-master.md files whose Related SDD line links here are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD derived from this SDD (from-sdd or hybrid) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md) whose Related SDD line links to this file are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
 
 | LLD | Scope (§13 services) | Direction | Version | Link |
 |-----|----------------------|-----------|---------|------|
@@ -256,15 +260,15 @@ A consolidated view: every column is read from its home and never states a mappi
   Flows: the "Use cases:" lines in §8.4 and §8.5.
   APIs: §15.2 "Use case ref".
   Events: the "when" citations in §14.5.
-Links: each UC ID links to its heading in the BRD (file + anchor; from this combined file the BRD is at ./brd-[project-slug]/ or ./BRD-[ProjectName]-v[X.X].md). Owner and Flows link to headings in this file. Rules: brd-to-sdd.md § Use-case traceability.
+Links: each UC ID links to its heading in the BRD (file + anchor; from this combined file the BRD is at ./brd-[brd-slug]/ or ./BRD-[BrdName]-v[X.X].md). Owner and Flows link to headings in this file. Rules: brd-to-sdd.md § Use-case traceability.
 Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATION: ...] in that cell; these markers keep the e2e gate shut. Flows, APIs, and Events may be "-". Merged or removed rows show "-" in every mapping column.
 -->
 
 | Use case (BRD) | Title | Owner (§17.X) | Entry points | Flows (§8.4 / §8.5) | APIs (§15) | Events (§14) | Status |
 |----------------|-------|---------------|--------------|---------------------|------------|--------------|--------|
-| **[[BRD project name] v[X.X]](./brd-[project-slug]/[project-slug]-brd-master.md) ([KEY])** | | | | | | | |
-| [[KEY]/UC-01](./brd-[project-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [Short title, as in the BRD] | [[service-name](#171-[service-name-slug])] | `[METHOD] /v1/[path]` | [[§8.4.1](#841-workflow-[flow-slug]) / -] | [API-NN / -] | [`EVENT_NAME` / -] | Active |
-| [[KEY]/UC-02](./brd-[project-slug]/05-user-journeys-overview.md#use-case-summary) | [Short title] | - | - | - | - | - | [Merged into UC-01 / Removed] |
+| **[[BRD project name] v[X.X]](./brd-[brd-slug]/[brd-slug]-brd-master.md) ([KEY])** | | | | | | | |
+| [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [Short title, as in the BRD] | [[service-name](#171-[service-name-slug])] | `[METHOD] /v1/[path]` | [[§8.4.1](#841-workflow-[flow-slug]) / -] | [API-NN / -] | [`EVENT_NAME` / -] | Active |
+| [[KEY]/UC-02](./brd-[brd-slug]/05-user-journeys-overview.md#use-case-summary) | [Short title] | - | - | - | - | - | [Merged into UC-01 / Removed] |
 
 
 ---
@@ -436,9 +440,9 @@ For deeper, individual ADRs, link to a separate ADR repository / folder.
 
 | ID | Status | Decision (What) | Why | How (Implementation) | Consequences | Alternatives & Trade-offs |
 |----|--------|-----------------|-----|----------------------|--------------|---------------------------|
-| AD-01 | [Proposed / Accepted / Superseded / Deprecated] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
-| AD-02 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
-| AD-03 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
+| ADR-01 | [Proposed / Accepted / Superseded / Deprecated] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
+| ADR-02 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
+| ADR-03 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
 
 
 ---
@@ -781,16 +785,27 @@ Define common value objects once, then reference them.
 | URI pattern | `/v{major}/[resource]` (URI-prefix versioning; a breaking change is a new major version, never an in-place change) | §9 principles, platform doctrine |
 | Transport | [e.g., TLS 1.2+ everywhere; mTLS inside the mesh] | §6, §11.6 |
 | Internal authentication | [e.g., OAuth2 client credentials issued by the platform IAM; service identity per service] | §6 IAM row, §11.6 |
-| Authorization | Permission tokens from §16, verbatim | §16 (chunk 12) |
+| Authorization | Per contract type (table below): a permission token from §16 on internal contracts; the provider's scheme on external ones | §16 (chunk 12) |
 | Tenant context | Carried on every call ([header or token claim]) | §11.2 |
 | Correlation | Carried on every call and propagated downstream ([header name]); W3C trace context for tracing | §11.4 |
 | Idempotency | `Idempotency-Key` header required on every write that touches money, wallet, notifications, or an external provider | §9 principles, platform doctrine |
 | Content type | `application/json`; errors as `application/problem+json` | - |
 | Date and time | ISO-8601, UTC | §6 ecosystem rules |
 | IDs | UUIDv7 | §6 ecosystem rules |
-| Error model | RFC 9457 Problem Details with an `errorCode` extension (standard codes in the table below) | §11 |
-| Resilience | Timeouts, retries with exponential backoff and jitter, circuit breaker, and bulkhead per downstream; values per contract, from §12 for external systems | §11, §12 |
+| Error model | RFC 9457 Problem Details with an `errorCode` extension (standard codes in the table below) | Platform doctrine (RFC 9457) |
+| Resilience | Timeouts, retries with exponential backoff and jitter, circuit breaker, and bulkhead per downstream; values per contract, from §12 for external systems | Platform doctrine; §12 for external systems |
 | Sync chain depth | At most one synchronous hop between services; a deeper chain is a design defect, flagged in §15.5 | §9 principles, platform doctrine |
+
+### Authorization by contract type
+
+<!-- One row per §15.2 Type. SKILL.md step 6a checks the token of every Internal and Internal (in-process) contract against §16. -->
+
+| Type | Authorization value | §16 permission token |
+|------|---------------------|----------------------|
+| Internal | A permission token from §16, verbatim, checked by the provider | Required |
+| Internal (in-process) | A permission token from §16, verbatim, checked at the port | Required |
+| External outbound | None on our side: the provider authorizes the call with its own scheme (the Authentication row, `TBD` until the provider documentation is supplied) | None |
+| External inbound | Our endpoint verifies the provider's signature or auth scheme (callback, webhook), `TBD - external` until the provider documentation is supplied | None |
 
 ### Standard headers
 
@@ -825,7 +840,7 @@ Define common value objects once, then reference them.
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
+<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
@@ -936,7 +951,7 @@ Define common value objects once, then reference them.
 | Fallback when unavailable | [From §12 INT-NN] |
 | Source document | TBD (link the provider's API documentation once supplied) |
 
-<!-- Repeat a contract block for each API-NN. External inbound contracts (callbacks, webhooks) follow the same TBD rule for provider-owned fields; our side (endpoint path, signature verification, idempotency, replay protection) is defined when the provider's scheme is known. -->
+<!-- Repeat a contract block for each API-NN. External inbound contracts (callbacks, webhooks) follow the same TBD rule for provider-owned fields; our side (endpoint path, signature verification, idempotency, replay protection) is defined when the provider's scheme is known. They carry no §16 permission token (§15.1 Authorization by contract type). -->
 
 ---
 
@@ -954,7 +969,7 @@ Define common value objects once, then reference them.
 
 ## 15.5 Consistency Notes & Drift Register
 
-<!-- Divergences between this chunk and chunks 08, 13x (List of APIs), or 11 (permission tokens), and any synchronous chain deeper than one hop. Fixed divergences are not listed; open ones stay here until resolved. -->
+<!-- Divergences between this section and §12, the §17.X List of APIs, or §16 (permission tokens), and any synchronous chain deeper than one hop. Fixed divergences are not listed; open ones stay here until resolved. -->
 
 | # | Where | Divergence | Status |
 |---|-------|------------|--------|
@@ -996,6 +1011,8 @@ Define common value objects once, then reference them.
 [Resolution model: identity -> role -> permission -> contextual gates, with enforcement points.]
 
 ## 16.3 User Types (Tier 1)
+
+<!-- A service that calls other services with no user context (client credentials) is a user type here too (identity source: an IAM client), so the permission tokens it holds appear in §16.11 and SKILL.md step 6a checks them. -->
 
 | User type | Tenancy plane | Identity source | Description |
 |---|---|---|---|
@@ -1140,7 +1157,7 @@ sequenceDiagram
 # 17. Detailed Service Specs
 
 <!--
-Repeat the service spec block below for each service (15.1, 15.2, ...).
+Repeat the service spec block below for each service (17.1, 17.2, ...).
 Each service follows the exact same structure for predictability and grep-ability.
 -->
 
@@ -1175,13 +1192,15 @@ Each service follows the exact same structure for predictability and grep-abilit
 
 **State machine (if applicable):**
 
-```text
-States: [State A] -> [State B] -> [State C]
-
-Transitions and triggers:
-  [State A]   --[Trigger]--> [State B]
-  [State B]   --[Trigger]--> [State C]
+```mermaid
+stateDiagram-v2
+  [*] --> StateA
+  StateA --> StateB: Trigger 1
+  StateB --> StateC: Trigger 2
+  StateC --> [*]
 ```
+
+**Summary:** [1-2 sentence prose fallback: the states and the triggers that move between them.]
 
 ### Output
 
@@ -1268,7 +1287,7 @@ erDiagram
 - **Authentication:** [Mechanism]
 - **Idempotency:** [Approach]
 - **Pagination:** [Approach]
-- **Error envelope:** [Schema]
+- **Error envelope:** [Per the §15.1 error model, or deviation]
 
 #### List of APIs (Swagger-friendly)
 
@@ -1781,7 +1800,7 @@ flowchart LR
 
 <!-- Name each platform-wide interaction doctrine + a pointer to its normative home (§14.7 / ADR). Names only - the rules are not restated here. -->
 
-1. [Doctrine name — normative home §14.7 / AD-NN.]
+1. [Doctrine name — normative home §14.7 / ADR-NN.]
 
 ## 24.7 Synchronous REST Edges (one-hop rule)
 

@@ -59,7 +59,7 @@ In either case → **DERIVE-FROM-BRD**. Read the BRD per `brd-to-sdd.md` § Dete
 
 Signs:
 
-- Section headings include §1 Executive Summary, §6 Ecosystem Overview, §7 System Users & Use Cases, §8 System Design / High-Level Architecture, §11 Cross-Cutting Concerns, §13 Services Decomposition, §14 Centralized Event Hub, §15.X per-service blocks, §15 Service Integration API Contracts, §16 Centralized User Roles, §18 Performance & Capacity, §20 Operations Runbook (the earlier map used §15.X services, §17 performance, §19 runbook, and no API contracts section, see `chunking.md` § Earlier chunk map; legacy SDDs use §13.1/§13.2.X services, §14 performance — recognise all three).
+- Section headings include §1 Executive Summary, §6 Ecosystem Overview, §7 System Users & Use Cases, §8 System Design / High-Level Architecture, §11 Cross-Cutting Concerns, §13 Services Decomposition, §14 Centralized Event Hub, §15 Service Integration API Contracts, §16 Centralized User Roles, §17.X per-service blocks, §18 Performance & Capacity, §20 Operations Runbook (the earlier map used §15.X services, §17 performance, §19 runbook, and no API contracts section, see `chunking.md` § Earlier chunk map; legacy SDDs use §13.1/§13.2.X services, §14 performance — recognise all three).
 - Per-service blocks use `Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / API Standards / Event Model / Constraints / Error Handling / Observability / Compliance / Deployment Strategy`.
 - Has a Changes Log with Reviewer + Approver columns.
 
@@ -124,10 +124,10 @@ Derive is a **structured partial fill** — the BRD has some content the SDD nee
 1. Read the BRD fully.
 2. Apply the field mapping in `brd-to-sdd.md` to fill BRD-derivable sections.
 3. For SDD-only sections, produce the heading + structure + a focused `[NEEDS CLARIFICATION: ...]` marker naming the specific decision the architect must make. Examples:
-   - "Architecture Style" → `[NEEDS CLARIFICATION: name the architecture style — e.g., microservices with event-driven async backbone, modular monolith, layered. Default per CLAUDE.md is microservices-first; confirm or override.]`
+   - "API style" → `[NEEDS CLARIFICATION: REST, gRPC, or GraphQL for <service>? The architecture questionnaire leaves it open.]`
    - "Multi-Tenancy default" → `[NEEDS CLARIFICATION: shared schema with tenant_id, schema-per-tenant, or DB-per-tenant? CLAUDE.md default is schema-per-tenant for high-volume services, shared-schema with tenant_id for low-volume. Confirm or override per service.]`
    - "Per-service Throughput Targets" → `[NEEDS CLARIFICATION: sustained RPS, peak RPS, p50/p95/p99 latency targets per service. Not derivable from the BRD's NFRs alone — needs architect input.]`
-4. Apply CLAUDE.md defaults where they fit (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka, Keycloak, Angular 17+ standalone). The architecture style comes from the source, or from the architecture questionnaire if the user asks for it (`architecture-questionnaire.md`); otherwise it is flagged in §8.1. Note in the Ecosystem Overview that these are defaults and can be overridden.
+4. Apply CLAUDE.md defaults where they fit (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka, Keycloak, Angular 17+ standalone). The architecture style comes from the architecture questionnaire (SKILL.md step 3b, `architecture-questionnaire.md`), which always runs for this intent. Note in the Ecosystem Overview that these are defaults and can be overridden.
 5. The output is intentionally an architect-ready skeleton, not a finished SDD.
 
 See `brd-to-sdd.md` for the full mapping table.

@@ -41,6 +41,7 @@ Inside part 2, keep the contract generation order from SKILL.md step 6: draft th
    - A decision taken while writing a service or a registry that affects the whole platform becomes an ADR in 06 §10 (next free ADR ID). A deviation from a cross-cutting default is recorded as an override in the service chunk and, if it changes the default itself, in 07.
    - The Services Decomposition (09) follows the service chunks: if part 2 renamed, split, merged, or re-scoped a service, the service chunk wins and 09 is updated, together with the service boxes in the 04 diagrams and any 05 workflow or sequence that names it. Say clearly that this is a change to what the user approved in part 1.
    - Integration rows in 08 gain the owning service and any protocol detail settled in the service chunk.
+   - The §8.5 sequences in 05 take the event names from chunk 10 and the API IDs from chunk 11 on their messages and calls.
    - Derive-from-BRD: §7.3 in 03 gets its Entry points, APIs, and Events columns in part 2 (after chunk 11, before step 6a), and each Owner becomes a link to its `13x` chunk. A service renamed, split, or merged updates 09 `Use cases (BRD)` and the §7.3 Owner cells in the same pass.
    - Figures index and Tables index in chunk 00.
 4. **Keep IDs stable.** Once the user has seen an ID, it is never renumbered and never reused: service chunk letters (`13a`, `13b`, ...), BRD keys, ADR-NN, AP-NN, API-NN, risk IDs, topic names, event names, role names, permission tokens, and OI-NN. A service added in part 2 takes the next free chunk letter and is appended to 09. A service merged away keeps its 09 row, marked `Merged into [service]`, and gets no chunk; a removed one keeps its row, marked `Removed: [reason]`. The §17.X number follows the chunk letter (`13c` is §17.3) even when an earlier letter has no chunk; the gap is expected. A renamed event or topic is a contract change: update chunk 10 and every `13x` chunk in the same pass, and add a Changes Log note if the old name was already shown to the user.
@@ -125,6 +126,9 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 | 1 | 00-09 | Complete | 2026-09-27 |
 | 2 | 13x, 10, 12, 11 | Complete (reconciled 2026-09-28) | 2026-09-28 |
 | 3 | 14-18, 19 (gated) | In progress (14-17 written; reviewer next) | - |
+
+**Reconciled:** 2026-09-28
+**E2E gate (chunk 19):** Locked - E1 (chunk 18 not written yet)
 ```
 
 - Write the **Source** line in part 1: the path of every source file (every source BRD's master or combined file), or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
@@ -135,7 +139,7 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 - PREV / NEXT footers may point at a chunk that does not exist yet. That is expected until its part is written.
 - When part 3 is complete, remove nothing: keep the table with all three parts `Complete`. It is the record of how the SDD was built.
 
-In `whole` runs the section holds one line: `**Generation:** whole`.
+In `whole` runs, **Generation:** reads `whole` and the Part table is left out; the Intent, Source, Reconciled, and E2E gate lines stay.
 
 ---
 

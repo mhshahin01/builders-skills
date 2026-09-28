@@ -130,6 +130,7 @@ flowchart LR
 Grouped by producing service / topic - one sub-section per producer, in §13 decomposition order.
 Status legend: committed = wired in its phase; candidate = name fixed, no consumer wired until the contract ratifies; Analytics-only = no named domain consumer.
 Consumer reconciliation: consumer lists are reconciled from BOTH the producer's published table AND every consumer's consumed table. Where a producer under-lists, show the broader real set and footnote it.
+Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "when" cites it as a link with the step, e.g. "[REFUNDS/UC-04](BRD link) step 6". §7.3 reads its Events column from these citations. An event with another trigger (schedule, external callback, another event) names that trigger instead.
 -->
 
 **Status legend:** `committed` / `candidate` / `Analytics-only` / `Pn` = phase.
@@ -138,7 +139,7 @@ Consumer reconciliation: consumer lists are reconciled from BOTH the producer's 
 
 | Event | Consumers | Payload (beyond envelope) | Business: what · when · why | Status |
 |---|---|---|---|---|
-| `[EVENT_NAME]` | [Consumer services] | `[fields beyond the envelope]` | [What fact] · [when it fires] · [why downstream cares] | [committed] |
+| `[EVENT_NAME]` | [Consumer services] | `[fields beyond the envelope]` | [What fact] · [when it fires: [KEY/UC-NN](BRD link) step N, or the other trigger] · [why downstream cares] | [committed] |
 | `[EVENT_NAME]` | [Consumer services] | `[fields]` | [what · when · why] | [candidate] |
 
 ### 14.5.2 [Producer Service] — `[topic-name]` ([key family]; [phase])

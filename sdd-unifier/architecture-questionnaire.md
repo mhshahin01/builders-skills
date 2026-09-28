@@ -19,7 +19,7 @@ It runs once per SDD. On a resume it never reruns; a change later is a decision 
 
 ## The flow
 
-1. **Read the drivers from the BRD.** Scope and objectives (01, 04), use-case count and personas (05, 07), integrations (08), business NFRs (10), Appendix § Technical Inputs (12), and any roadmap or phasing. Technical Inputs that mandate a style are `BRD-mandated`: shown locked, not asked (an override is allowed and becomes an ADR).
+1. **Read the drivers from the BRD.** Scope and objectives (01, 04), use-case count and personas (05, 07), integrations (08), business NFRs (10), Appendix § Technical Inputs (12), and any roadmap or phasing. Technical Inputs that mandate a style are `BRD-mandated`: shown locked, not asked (an override is allowed and becomes an ADR). With several source BRDs, read the drivers from every BRD and cite each with its BRD key. Two BRDs that mandate different styles were already asked in the cross-BRD reconciliation (`brd-to-sdd.md` § Source BRDs and lineage); show the answer as decided, with its ADR. Drivers that point different ways across BRDs count as a conflict (step 3).
 2. **Pre-fill every question** with a recommended answer and its evidence (BRD chunk and ID). Use the recommendation rules below.
 3. **Show the proposed answers as one compact table** (question, recommended answer, evidence, one-line tradeoff), then ask ONE question:
 

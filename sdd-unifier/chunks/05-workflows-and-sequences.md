@@ -11,8 +11,11 @@ PART OF: SDD - [Project Name]
 
 <!-- This chunk continues the System Design section from chunk 04 (Architecture Style & Diagrams). -->
 <!-- Add one workflow per critical end-to-end business flow. Inline Mermaid is the default diagram medium; each diagram gets a 1-2 sentence prose Summary so it reads without rendering. Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
+<!-- Derive-from-BRD: every workflow and sequence starts with a "Use cases:" line linking the BRD use cases it shows (link rules: brd-to-sdd.md § Use-case traceability), or "None - platform flow". §7.3 reads its Flows column from these lines. Inside the Mermaid block, use cases stay plain IDs. With no source BRD, leave the line out. -->
 
 ### 8.4.1 Workflow: [Flow Name]
+
+**Use cases:** [[KEY/UC-NN](BRD link), [KEY/UC-NN](BRD link) / None - platform flow]
 
 ```mermaid
 flowchart TD
@@ -32,6 +35,8 @@ flowchart TD
 <!-- Add one sequence diagram per critical interaction (sync + async). -->
 
 ### 8.5.1 Sequence: [Flow Name]
+
+**Use cases:** [[KEY/UC-NN](BRD link) / None - platform flow]
 
 ```mermaid
 sequenceDiagram

@@ -222,6 +222,7 @@ One actionable plan consolidating every `06*` use case, written so another agent
 - Default: one `Use-case delivery` task per use case. Consolidate use cases that cannot be delivered or released independently; split a use case only when one flow is large enough to stand alone. Every `06*` use case must appear in the **Use-case coverage** table with at least one task.
 - `Foundation` and `Cross-cutting` tasks need evidence: a precondition or domain concept (03) shared by two or more use cases, an integration (08) or report (09) used by two or more, access control from the matrix (07), a global UI/UX standard (11), or a cross-cutting NFR (10). Cite the evidence. No tasks the BRD does not imply (no environment, tooling, or technology setup; that is SDD/LLD territory).
 - Duplicate work across use cases is consolidated into one task that names every use case it serves.
+- A shared rule is checked where it shows. When a `Foundation` or `Cross-cutting` task sets up a rule that other tasks show on their own screens (access by role, a UI standard), each of those tasks carries the rule in its completion criteria for its own screens (`07 matrix: roles marked - are refused`). The shared task's own criteria cover what it delivers by itself. If it has nothing of its own to see, they cover the earliest screens that show it. Chunk 16 relates its test cases the same way (§ Chunk 16, Readiness and acceptance).
 
 **Dependencies and order**
 
@@ -230,6 +231,19 @@ One actionable plan consolidating every `06*` use case, written so another agent
 - Before declaring a circular dependency, try a split along the dependency: if UC-A needs only steps 1-4 of UC-B, make those steps their own task. Declare a cycle only when no split breaks it.
 - Order tasks topologically. **Document order is execution order**: no task appears before a task it depends on. Group tasks into **waves**; tasks in the same wave have no dependency path between them and can run in parallel. Start with tasks that have no unmet dependencies.
 - On refresh, new tasks take the next `TASK-NN` but are placed where the order requires. IDs are labels, not positions.
+
+**Two milestones per task: `Ready for test`, then `Accepted`**
+
+Implemented and complete are different states. Each task carries a **Delivery status**: `Not started` when the plan is written, then `In progress`, `Ready for test`, and `Accepted`.
+
+| Status | Means | Set when |
+|---|---|---|
+| `Ready for test` | Implemented: the task can be tested | The delivery team confirms that every expected deliverable is built and ready for testing. Record the date and who confirmed it. The skill never infers it. |
+| `Accepted` | Complete: the business accepts the task | Every required case of the task passes: each case in chunk 16 that names the task in `Related Task` (§ Chunk 16, Readiness and acceptance). Record the date. |
+
+- A task is complete only when it is `Accepted`. `Ready for test` is not complete.
+- A dependency is met when the task it names reaches `Ready for test`. A task can start once all its dependencies are met; their acceptance is not a start condition. A team may choose to wait for acceptance, except when one of the dependency's required cases lists the waiting task in its `Needs`: that wait would never end. Waves order the building. Acceptance follows each task's own required cases.
+- Recording a Delivery status is tracking, not a refresh: it needs no gate check and changes no version (§ Refresh triggers).
 
 **Dependency problems are flagged, never sequenced** (`DP-NN` rows)
 
@@ -243,7 +257,7 @@ Every dependency problem raises a `TD-NN`, so it shuts the gate again: finish ch
 
 **`Blocked` or `Provisional`?** `Blocked`: the task's Main Flow cannot be delivered without the answer; it must not be started. `Provisional (TD-NN)`: the task can start; only the part named by the TD is unsettled. A task that depends, directly or through other tasks, on a `Blocked` or not-sequenced task is `Blocked (waits for TASK-NN)` and leaves the waves too. Not-sequenced task blocks are written after the last wave, under a `### Not sequenced` heading, with `Wave` set to `Not sequenced`.
 
-**Every task carries:** Task ID and title; objective and scope (in / out); type; wave; source use-case and requirement references; dependencies by task ID or `None`; tasks it can run in parallel with; status basis (`Confirmed`, `Provisional (TD-NN)`, or `Blocked (...)`); expected deliverables; completion criteria grounded in the source (each cites `UC-NN AC-n`, a rule, an NFR, or a standard, with a short label instead of the restated text); assumptions, open questions, and blockers.
+**Every task carries:** Task ID and title; objective and scope (in / out); type; wave; source use-case and requirement references; dependencies by task ID or `None`; tasks it can run in parallel with; status basis (`Confirmed`, `Provisional (TD-NN)`, or `Blocked (...)`); delivery status (`Not started` when first written); expected deliverables; completion criteria grounded in the source (each cites `UC-NN AC-n`, a rule, an NFR, or a standard, with a short label instead of the restated text); assumptions, open questions, and blockers.
 
 Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh the affected tasks (see § Refresh triggers).
 
@@ -264,18 +278,26 @@ Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh 
 
 **Format**
 
-- Header comment, Owner / Prepared / Baseline / Design reference line, "How to use this document", "Test environment and data prerequisites" (`P1`, `P2`, ...), numbered feature-area sections, Traceability Matrix, Execution summary, Exit criteria.
-- Section heading: `## N. [Feature area] ([UC-NN, screen IDs, NFR-NN])`. A feature area is a group of cases a tester runs together because they share a screen or a goal. It may cover several use cases, or none (the reference has a dashboard section). Order the sections the way a tester walks the product: access first, then the main journey of chunk 05, then administration, then cross-cutting UI/UX standards, then NFR acceptance.
-- Table columns, in this order: `TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Testing Result | Testing Comment`. `Related Task` is the one added column, needed to trace each case to chunk 15. `Testing Result` and `Testing Comment` stay empty at generation.
+- Header comment, Owner / Prepared / Baseline / Design reference line, "How to use this document", "Test environment and data prerequisites" (`P1`, `P2`, ...), numbered feature-area sections, Traceability Matrix, Task acceptance, Provisional and blocked scenarios, Coverage gaps, Execution summary, Exit criteria.
+- Section heading: `## N. [Feature area] ([UC-NN, screen IDs, NFR-NN])`. A feature area is a group of cases that share a screen or a goal. It may cover several use cases, or none (the reference has a dashboard section). Order the sections the way a tester walks the product: access first, then the main journey of chunk 05, then administration, then cross-cutting UI/UX standards, then NFR acceptance.
+- Table columns, in this order: `TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment`. `Related Task` and `Needs` are the two added columns: they tie each case to chunk 15 and say when it can run (§ Readiness and acceptance). `Testing Result` and `Testing Comment` stay empty at generation.
 - `Related UC` names the use case or NFR and, in brackets, what the case proves: `UC-04 (E1, AC-3)`, `UC-07 (BR-2)`, `NFR-03`. Several references are allowed.
-- `TC ID` = `TC-[AREA]-NN`. Normally one 3-letter code per section; a section may hold a second code for a distinct sub-area, as the reference does (`NFR` and `LOG`). `TC Description` starts with "Verify". `TC Example` is a concrete action with realistic data and names the prerequisite it needs, as the reference does: "(P4)". `Success Criteria` states the observable outcome in business terms.
+- `TC ID` = `TC-[AREA]-NN`. Normally one 3-letter code per section; a section may hold a second code for a distinct sub-area, as the reference does (`NFR` and `LOG`). `TC Description` starts with "Verify". `TC Example` is a concrete action with realistic data. The prerequisites it needs go in `Needs`, not in the example. `Success Criteria` states the observable outcome in business terms.
 - Phased scope uses a tag at the end of the TC Name (the reference uses `(D2)`). Define every tag in the header SCOPE NOTE **and** in the visible `Scope note` line, because the header comment is stripped on merge.
 
 **Exit criteria.** The critical-path sections are those whose use cases carry a Business Objective or sit on the Summarized Workflow of chunk 05. Write the list as a `Recommendation:` for the product manager to confirm; do not present it as decided.
 
 **Level of detail.** Match the reference: about 3 to 12 cases per use case, one line per cell, concrete data in the example, one observable outcome per case. Read the reference file itself when it is reachable (`PricePulse/brd-pricepulse/uat-bat-test-cases.md` in the owner's eSIM workspace); the skeleton carries its structure when it is not.
 
-**Using chunk 15.** Chunk 15 gives each case its `Related Task`, and it gives the execution order: a section can run once every task in its `Related Task` column is complete, so the suite is executed wave by wave. A case whose task is `Blocked` or not sequenced is a **blocked scenario**: list it under Provisional and blocked scenarios with its `DP-NN` / `TD-NN`. (This is not the `Blocked` testing result, which a tester sets during execution.)
+**Readiness and acceptance.** Readiness is per case. A section groups cases for the tester. It is never a unit of readiness, and no case waits for the rest of its section.
+
+- **`Related Task`** is the task the case counts toward. Name the task that delivers the screen or step the case exercises. A shared rule checked on a later task's screen counts toward that later task: "Customer cannot open the approval queue" is a case of the approval task, not of the access task.
+- **`Needs`** lists what must be ready before the case can run: its Related Task, any other task whose screen, data, or result it uses, and the prerequisites it uses other than those marked `(all cases)`. Tasks come first, then prerequisites: `TASK-05, TASK-02; P4`. Leave out the tasks the Related Task depends on in chunk 15, directly or through other tasks: a task starts only after they reach `Ready for test`.
+- A case can run as soon as every task in its `Needs` has reached `Ready for test` (chunk 15) and every prerequisite there is in place. Prerequisites marked `(all cases)` are in place before the first case runs.
+- **Later waves stay out.** Every task in `Needs` comes from the Related Task's wave or an earlier one, so a task's acceptance never waits for a later wave. The one exception is a task with nothing of its own to see (a UI standard, a foundation that shows only on other tasks' screens). It is checked on the earliest screens that show it, in a case that names both tasks in `Related Task`. Later screens are checked in their own tasks' cases.
+- A task's **required cases** are the cases that name it in `Related Task`, retired cases excluded. The task is `Accepted` when all of them pass. Every task has at least one required case; a task with none is a coverage gap.
+- **Task acceptance** lists every task in chunk 15 with its wave and its required cases, derived from the `Related Task` column. The Delivery status itself is recorded in chunk 15.
+- A case whose Related Task, or a task in its `Needs`, is `Blocked` or not sequenced is a **blocked scenario**: list it under Provisional and blocked scenarios with its `DP-NN` / `TD-NN`. (This is not the `Blocked` testing result, which a tester sets during execution.)
 
 **Coverage per use case** (expected behaviour comes from the approved requirements and use cases; chunk 15 adds coverage, dependencies, and sequencing)
 
@@ -291,7 +313,7 @@ The flowcharts exist by now (gate condition G5). Cross-check every one: each dec
 
 **Unresolved expectations.** The gate guarantees the known items are resolved, so this only happens when writing the suite exposes a new gap. Raise a `TD-NN` (it shuts the gate for chunk 17). If an expected result cannot be finalised: add `(Provisional)` to the TC Name, state the currently documented expectation followed by `Pending TD-NN`, or `Cannot be finalised - pending TD-NN` when nothing is documented. List every such case in **Provisional and blocked scenarios**. Never invent an expected result.
 
-**Coverage gaps** are explicit: a use case, flow, rule, or NFR with no case is listed in **Coverage gaps** with the reason and its `TD-NN`. Always state the counts that were checked: Main Flows, alternate flows, exception flows, acceptance criteria, numeric rules, and NFRs, and how many of each have no case. `Total test cases` equals the actual number of TC rows, retired rows excluded: count them.
+**Coverage gaps** are explicit: a use case, flow, rule, or NFR with no case is listed in **Coverage gaps** with the reason and its `TD-NN`. Always state the counts that were checked: Main Flows, alternate flows, exception flows, acceptance criteria, numeric rules, NFRs, flowchart branches, and tasks, and how many of each have no case (for a task: no required case). `Total test cases` equals the actual number of TC rows, retired rows excluded: count them.
 
 **Legacy file.** If an unnumbered `uat-bat-test-cases.md` exists in the BRD folder, do not overwrite or delete it. Regenerate the suite as `16-uat-bat-test-cases.md` in the same folder, using the legacy file as input: keep its TC IDs and any filled Testing Result / Testing Comment cells. Where a legacy case disagrees with the BRD, the BRD wins and the difference is recorded as a `CF-NN`. Tell the user the legacy file can be retired.
 
@@ -396,6 +418,8 @@ Later confirmed changes must reach the downstream outputs. IDs stay stable; stat
 
 **A `Complete` step falls back to `In progress` when its inputs change:** a new `Open` or `Deferred` TD (step 1), any content change to chunks 00-13 after the last check run (step 2), a new decision to confirm (step 3), a decision that changes a screen or a change to the constitution's Figma or responsive rules (step 4), an edit to a diagrammed use case (step 5). Because steps 4 and 5 run in parallel, a use-case change made for one reopens the affected rows of the other, and the consistency check is rerun once both are back to `Complete`.
 
+**Delivery progress on a refresh.** A refresh of 15 or 16 keeps every Delivery status and every test result, except where it changes what was tested. When a refresh changes what a case checks (its description, example, or success criteria), clear its Testing Result and Testing Comment. When that happens to a required case of an `Accepted` task, or a refresh gives that task a new required case, set the task back to `Ready for test` until the case passes.
+
 **Version.** Only a **content change** bumps the version: a change to what chunks 00-13 say about the product. It means one minor step per run (1.0 to 1.1), one Changes Log row, and the new VERSION in chunk 00, in `[project-slug]-brd-master.md`, and in each chunk that was changed.
 
 These are **not** content changes. They bump nothing, do not reopen step 2, and make nothing `Stale`:
@@ -403,7 +427,8 @@ These are **not** content changes. They bump nothing, do not reopen step 2, and 
 - status and link updates in chunk 14;
 - Table of Contents, index, and `[project-slug]-brd-master.md` rows for the delivery chunks (chunk 00's Table of Contents lists 14 always, 15-17 once written);
 - PREV / NEXT footers;
-- an open item that a delivery chunk raises about itself (it reopens step 1 and labels that chunk `Provisional`).
+- an open item that a delivery chunk raises about itself (it reopens step 1 and labels that chunk `Provisional`);
+- a task's Delivery status in 15, and a case's Testing Result and Testing Comment in 16: execution tracking, recorded at any time, whether the gate is open or shut.
 
 At the start of every run, compare the basis line of 15-17 (`Basis:` in 15 and 17, `Baseline:` in 16) with the current BRD version: an older basis means `Stale`.
 
@@ -417,6 +442,7 @@ User phrases such as "refresh the delivery chunks", "update the todo", "regenera
 - **Open items raised after the acceptance loop.** The consistency check and the writing of 15-17 can raise new `OI-NN` entries. Write them in chunk 13 with the full schema, add "(raised by consistency check CF-NN)" or "(raised while writing chunk NN)" to their `Where` field, and walk the user through them with the same acceptance loop (SKILL.md step 8) before anything is applied. Name their count in the handoff.
 - **Decisions with no open item.** A grill-me decision that matches no `OI-NN` gets its own `TD-NN` row, status `Resolved`, pointing at the Changes Log entry.
 - **Delivery chunks from an earlier version of this skill.** Chunks 15-17 that sit next to a `14-todo.md` with no Delivery gate block were written before the gate existed. Mark them `Stale`; they are refreshed only once the gate is open. In a transform, source material of this kind (test cases, delivery plans, slide decks) goes to the Appendix (12) as reference files: it is input for 15-17 once the gate opens, never 15-17 itself.
+- **15 and 16 written before per-case readiness.** A chunk 15 with no Delivery status, or a chunk 16 with no `Needs` column, still carries the old rule that a section runs only after its tasks are complete. That rule can block every task. Refresh both to the current skeletons the next time the gate is open. Keep every `TASK-NN` and `TC-...` ID and every filled Testing Result and Testing Comment. Add the `Needs` cells and the Task acceptance table. Set each Delivery status from the evidence: `Accepted` when every required case shows `Success`, `In progress` or `Ready for test` when the delivery team confirms it, otherwise `Not started`. This is a format change, not a content change: it bumps no version.
 - **Collapsed layout.** When chunking.md's low-count rule merged 05 and `06*` into `05-user-journeys-and-use-cases.md`, read "`06*`" in this file as the Detailed Use Cases part of that chunk.
 
 ### COMBINED mode adaptations (chunks 14 and 17 as separate files)
@@ -450,6 +476,9 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 - [ ] Every `06*` use case appears in the Use-case coverage table of chunk 15.
 - [ ] No task appears before its prerequisites; cycles, missing prerequisites, and blockers are in Dependency problems, not in the waves.
 - [ ] Every test case traces to a use case or NFR and to a task; Coverage gaps and Provisional scenarios are explicit; the total equals the row count.
+- [ ] Every task has a Delivery status (`Not started` when first written). None is `Ready for test` without the delivery team's confirmation, and none is `Accepted` while one of its required cases has not passed.
+- [ ] Every test case has a `Needs` cell that holds its Related Task. No task in `Needs` comes from a later wave than the Related Task, except in the earliest-screen case of a task with nothing of its own to see. No readiness rule is written per section or per wave.
+- [ ] Task acceptance lists every task in chunk 15, each with at least one required case, and matches the `Related Task` column.
 - [ ] Chunk 17 has both sections; every storyboard sums to 30 seconds; voiceover word counts are within budget; prompts are separate from editing instructions.
 - [ ] Chunk 17's Design standard line names the constitution used, or says "None found"; palette and typography come from the constitution tokens when it exists, otherwise from chunk 11; the logo is used only when provided; contrast and locale rules are stated.
 - [ ] Every gap found while writing 15-17 has a `TD-NN`, the affected content is labelled `Provisional (TD-NN)`, and the next chunk was not started.

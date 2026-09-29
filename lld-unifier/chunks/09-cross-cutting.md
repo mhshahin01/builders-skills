@@ -50,10 +50,11 @@ PART OF: LLD - [Project Name]
 ## 12.4 Outbox Pattern (mandatory for state-changing events)
 
 - **Table:** `outbox` per service schema (see `05-data-model.md`).
-- **Writer:** inside the same transaction as the aggregate write.
-- **Publisher:** scheduled job, every 1s, batch up to 100 rows.
-- **At-least-once delivery:** publisher does not ack until Kafka returns acknowledgement; consumer dedup is mandatory.
-- **Monitoring:** alert if any row's age (`now() - created_at`) exceeds 30s.
+- **Writer:** inserts the outbox row in the same local transaction as the aggregate write, so both commit or neither does. The write path never sends to Kafka directly, inside the transaction or after commit.
+- **Publisher:** separate scheduled job with one active instance per service (scheduler lock or leader election), every 1s, batch up to 100 rows, oldest first. A second concurrent publisher would re-send rows and break per-key order.
+- **Processed only after acknowledgement:** the publisher waits up to `OUTBOX_SEND_TIMEOUT_MS` for the broker acknowledgement (`acks=all`) and only then sets `processed_at`. A failed or timed-out send leaves `processed_at` NULL, so the next poll retries the row; the poll stops at that row to keep per-key order.
+- **At-least-once delivery:** if the broker acknowledges but the `processed_at` update fails (database error, or a crash before the update), the next poll publishes the row again. A failed or timed-out send may also have reached the broker. The payload, including `eventId`, is fixed when the row is written, and consumer dedup is mandatory (`07-event-contracts.md` § 10.4).
+- **Monitoring:** `OutboxBacklog` alert on backlog size and oldest-row age (`10-operations.md` § 13.7).
 
 ## 12.5 Saga Pattern (cross-service transactions)
 

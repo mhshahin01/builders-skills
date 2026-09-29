@@ -35,12 +35,23 @@ These patterns MUST be applied in any service whose conditions match. From-sdd: 
 
 **FROM-SDD detection:** the SDD's per-service Event Model lists ≥1 event with the service as producer.
 
-**FROM-CODE detection:** structural — look for `KafkaTemplate.send` (or equivalent) called inside the same `@Transactional` boundary as a repository write, OR an `outbox` table + scheduled publisher.
+**FROM-CODE detection:** structural. Recognise the Outbox only when both hold, each cited with file:line:
+
+1. **Atomic write:** the service inserts a durable outbox record (an `outbox` table in its own schema) in the same local transaction as the aggregate change, so both commit or neither does.
+2. **Separate publisher:** a component outside that transaction reads committed outbox records and publishes them to the broker (a scheduled poller by default; a CDC relay on the outbox table also qualifies).
+
+A `KafkaTemplate.send` (or equivalent) beside a repository write is never evidence of an Outbox, whether it runs inside the transaction or after commit. Without the atomically written record it is a direct dual-write: report it under § Anti-patterns to flag.
 
 **Roles:**
 - Outbox table (in service schema).
 - Outbox writer (inside the same tx as the aggregate write).
-- Outbox publisher (scheduled job).
+- Outbox publisher (separate from the writing tx; scheduled job by default, one active instance per service).
+
+**Delivery contract** (the publisher the LLD specifies, and its pseudocode skeleton):
+- A record is marked processed only after the broker acknowledges the send (`acks=all`). The acknowledgement check is a visible step in the pseudocode, before `markProcessed`.
+- A failed or timed-out send leaves the record unprocessed, so the next poll retries it. It is never marked processed or deleted.
+- Duplicates are expected. If the broker acknowledges but the processed update fails (database error, or a crash before the update), the record is still unprocessed and the next poll publishes it again. A failed or timed-out send may also have reached the broker. The payload, including `eventId`, is fixed when the record is written, so a re-send is identical and consumers dedupe it (`chunks/07-event-contracts.md` § 10.4).
+- From-code mode documents the publisher as the code behaves. A breach of this contract stays visible in the skeleton and is flagged per § Anti-patterns to flag; the skeleton is never rewritten to comply.
 
 ### Idempotency (on money / wallet / notification / external-provider write endpoints)
 
@@ -192,7 +203,9 @@ The skill should surface these in `15-open-questions.md` as drift markers when f
 |--------------|------------------------|----------|
 | Field injection (`@Autowired` on fields) | "Constructor injection only" | MEDIUM |
 | DTO classes (not records) | "Records for DTOs" | LOW |
-| Direct dual-write (DB + Kafka in same method, no outbox) | "Outbox pattern is mandatory" | HIGH |
+| Direct dual-write: a database write plus a broker send in one operation with no outbox record written in the same transaction (send inside the transaction or after commit) | "No dual-writes to DB and Kafka" | HIGH |
+| Outbox record written outside the aggregate's transaction (`REQUIRES_NEW`, after commit) | "Outbox pattern is mandatory" | HIGH |
+| Outbox publisher marks a record processed without a successful broker acknowledgement (fire-and-forget send, or update before the acknowledgement) | "Outbox pattern is mandatory" | HIGH |
 | Missing idempotency on money endpoints | "Idempotency keys on all write endpoints touching money..." | HIGH |
 | Synchronous chained REST > 1 hop | "No service-to-service chained REST calls more than one hop deep" | MEDIUM |
 | Distributed 2PC / `XA` transactions | "No distributed 2PC" | HIGH |
@@ -211,7 +224,7 @@ Each anti-pattern, if detected, surfaces as a row in `15-open-questions.md` with
 
 When applying a pattern in from-sdd direction, the rationale should be specific to the service. Here are templates for common cases — the skill substitutes the service-specific bits:
 
-- **Outbox:** "State changes in `[aggregate]` emit `[event-name]` events to downstream consumers `[consumer-list]`. Direct dual-write to DB+Kafka would risk inconsistency on failure; outbox guarantees the event survives DB commit and is published asynchronously."
+- **Outbox:** "State changes in `[aggregate]` emit `[event-name]` events to downstream consumers `[consumer-list]`. Direct dual-write to DB+Kafka would risk inconsistency on failure. The outbox row commits in the same transaction as the state change, and a separate publisher delivers it at least once, marking it processed only after the broker acknowledges."
 - **Strategy:** "[Operation] differs per `[discriminator]` (`[variant-list]`). Hard-coding the variants in a single method would couple new-variant addition to a code change in `[ContextClass]`. Strategy decouples each variant into its own class, picked at runtime by `[discriminator]`."
 - **Saga (choreography):** "The `[business-flow]` flow modifies state in `[svc-A]` and `[svc-B]`. Distributed 2PC is forbidden by CLAUDE.md; choreography saga is the default — `[svc-A]` emits `[event-1]`, `[svc-B]` reacts and emits `[event-2]`. Compensation actions documented in each service's workflow section."
 - **Saga (orchestration):** "The `[business-flow]` flow has `[N]` steps with conditional branching at step `[K]`. Choreography would require each service to know the state of `[branch-condition]`; orchestration via `[OrchestratorService]` keeps that knowledge centralised. Each step has a documented compensation."

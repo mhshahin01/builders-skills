@@ -50,7 +50,7 @@ prompt: |
      - **Chain of Responsibility candidate:** ordered list of handlers with a shared interface (`canHandle` + `handle`).
      - **Mediator candidate:** single class injected by multiple peers, delegating cross-peer communication.
      - **Saga orchestrator candidate:** service class with explicit step methods + compensating step methods.
-     - **Outbox candidate:** `outbox` table + scheduled publisher + writes to outbox inside `@Transactional` boundary as aggregate writes.
+     - **Outbox candidate:** only when (a) the outbox row is inserted in the same database transaction as the aggregate write (check propagation: `REQUIRES_NEW` or an after-commit hook breaks this), and (b) a separate publisher (scheduled poller, or CDC relay on the outbox table) publishes committed rows. Also report whether the publisher marks a row processed only after a successful broker acknowledgement. A `KafkaTemplate.send` beside a repository write is not an Outbox candidate, inside the transaction or after commit; list it under § 13.
      For each detection: name the pattern, list the participating classes with file:line, and rate confidence (high if structurally clean, medium if heuristic-based).
 
   10. **Resilience4j config (per call)** — `@CircuitBreaker`, `@Retry`, `@Bulkhead`, `@TimeLimiter` annotations or programmatic `CircuitBreakerRegistry` usage. Per call: which downstream provider, which policies applied, threshold values.
@@ -61,7 +61,9 @@ prompt: |
 
   13. **Anti-patterns** — flag any of:
       - Field injection (`@Autowired` on fields).
-      - Direct dual-write to DB + Kafka in same `@Transactional` method without outbox.
+      - Direct dual-write: a repository write plus `KafkaTemplate.send` (or equivalent) in one operation with no outbox row written in the same transaction, whether the send runs inside the transaction or after commit.
+      - Outbox row written outside the aggregate's transaction (`REQUIRES_NEW`, after commit).
+      - Outbox publisher that marks a row processed without a successful broker acknowledgement (fire-and-forget send, or update before the acknowledgement).
       - Missing `Idempotency-Key` on write endpoints whose path mentions money/wallet/notify/payment/charge/transfer.
       - SQL queries lacking `tenant_id` predicate on shared-schema tables.
       - Logging statements at INFO level that include `tenant_id` or PII.
@@ -124,6 +126,7 @@ prompt: |
      - Mermaid `classDiagram` showing the pattern structure.
      - Pseudocode skeleton of the key method(s).
      - Confidence flag if Phase 1 marked the detection as medium/low confidence.
+     - Outbox: document the publisher (roles, skeleton, delivery rules) from the code as it is. If the code marks a row processed without a successful broker acknowledgement, keep that visible and point to the Phase 1 anti-pattern; never substitute the template's publisher text.
 
   4. **Use-case workflow narratives** (one per entry point or workflow)
      Target: `04-implementation/<service>.md` § 7.8 Use-Case Workflows
@@ -165,7 +168,7 @@ prompt: |
 
   ## CLAUDE.MD RULES (the user's standing design rules to attribute patterns to)
 
-  - "Outbox pattern is mandatory for any state change that must produce an event."
+  - "Outbox pattern is mandatory for any state change that must produce an event. No dual-writes to DB and Kafka."
   - "Idempotency keys on all write endpoints touching money/wallet/notifications or external providers."
   - "Sagas (choreography by default, orchestration when the flow is complex or needs central visibility) for cross-service business transactions."
   - "Constructor injection only, no field injection."

@@ -112,15 +112,15 @@ public interface FooService {
 
 > **Applied:** Outbox pattern (CLAUDE.md: "Outbox pattern is mandatory for any state change that must produce an event. No dual-writes to DB and Kafka.")
 >
-> **Rationale (this service):** [State changes in foo emit `foo.created` and `foo.updated` events to downstream consumers. Direct dual-write to DB+Kafka would risk inconsistency on failure; outbox guarantees the event survives DB commit and is published asynchronously.]
+> **Rationale (this service):** [State changes in foo emit `foo.created` and `foo.updated` events to downstream consumers. Direct dual-write to DB+Kafka would risk inconsistency on failure. The outbox row commits in the same transaction as the state change, and a separate publisher delivers it at least once, marking it processed only after the broker acknowledges.]
 
 **Roles:**
 
 | Role | Class / Component | Notes |
 |------|-------------------|-------|
-| Outbox table | `outbox` table in service schema | Append-only; columns: id, aggregate_type, aggregate_id, event_type, payload, created_at, processed_at |
+| Outbox table | `outbox` table in service schema | Append-only; columns: id, aggregate_type, aggregate_id, event_type, target_topic, payload, created_at, processed_at |
 | Outbox writer | `FooServiceImpl.create` (within tx) | Inserts outbox row inside the same transaction as the aggregate write |
-| Outbox publisher | `OutboxPublisher` (scheduled) | Polls unprocessed rows, publishes to Kafka, marks processed |
+| Outbox publisher | `OutboxPublisher` (scheduled, one active instance, outside the writer's tx) | Polls unprocessed rows oldest first, publishes each to Kafka, marks it processed only after the broker acknowledges |
 
 **Class diagram:**
 
@@ -152,11 +152,21 @@ classDiagram
 void poll() {
   rows = outbox.findUnprocessed(BATCH_SIZE);
   for row in rows {
-    kafka.send(topic = row.target_topic, key = row.aggregate_id, payload = row.payload);
+    outcome = kafka.send(topic = row.target_topic, key = row.aggregate_id, payload = row.payload)
+                   .awaitAck(SEND_TIMEOUT);
+    if (outcome != ACKED) {
+      return;
+    }
     outbox.markProcessed(row.id);
   }
 }
 ```
+
+**Delivery rules** (per `09-cross-cutting.md` § 12.4):
+
+- `markProcessed` runs only after `awaitAck` returns `ACKED`: the broker confirmed the write (`acks=all`).
+- `FAILED` (broker error) or `TIMED_OUT` (no acknowledgement within `SEND_TIMEOUT`, from `OUTBOX_SEND_TIMEOUT_MS`): the row keeps `processed_at = NULL` and the next poll retries it. The poll stops at that row, the simplest way to keep later rows for the same key from overtaking it; a row the broker keeps rejecting therefore blocks the outbox and raises `OutboxBacklog` until its cause is fixed.
+- Duplicate delivery: `markProcessed` commits per row (`poll` is not one transaction), so if the broker acknowledges but that update fails (database error, or a crash before the update), only that row is still unprocessed and the next poll publishes it again. A `FAILED` or `TIMED_OUT` send may also have reached the broker. The payload, including `eventId`, is fixed when the row is written, so consumers dedupe the re-send (`07-event-contracts.md` § 10.4).
 
 ### Pattern: Strategy (example)
 
@@ -311,7 +321,7 @@ sequenceDiagram
 
 **Outbox emission points:** [foo.created event emitted in step 3; topic `foo.lifecycle.created`; key = aggregate ID for per-aggregate ordering]
 
-**Retry / timeout policy:** [Outbox publisher retries with exponential backoff (Resilience4j); after 5 failures, row stays unprocessed and an alert fires]
+**Retry / timeout policy:** [A failed or timed-out publish leaves the outbox row unprocessed; the next poll (every 1s) retries it until the broker acknowledges. A row that stays unprocessed raises `OutboxBacklog` (`10-operations.md` § 13.7)]
 
 **Error handling:** [Validation → 400 + FooValidationException; idempotency conflict → 409; DB failure → 500 + retry-after header]
 

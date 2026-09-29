@@ -43,6 +43,20 @@ class FooServiceImplTest {
   @Test
   void create_invalidAmount_throwsFooValidationException() { ... }
 }
+
+class OutboxPublisherTest {
+  @Test
+  void poll_brokerAcknowledges_marksRowProcessed() { ... }
+
+  @Test
+  void poll_sendFails_leavesRowUnprocessed() { ... }
+
+  @Test
+  void poll_sendTimesOut_leavesRowUnprocessed() { ... }
+
+  @Test
+  void poll_markProcessedFailsAfterAck_republishesRowOnNextPoll() { ... }
+}
 ```
 
 ## 16.3 Integration Test Conventions
@@ -51,7 +65,7 @@ class FooServiceImplTest {
 - Apply Flyway migrations on container startup.
 - Each test runs in its own transaction; rolls back at the end (or uses Testcontainers' fresh-database-per-test mode).
 - Test the controller-to-DB-to-Kafka flow end-to-end.
-- Verify outbox row is written; consume from Kafka and assert payload shape.
+- Outbox flow tests use a fresh database per test, not rollback, because the publisher reads only committed rows. Verify the outbox row is written in the aggregate's transaction; consume from Kafka, assert payload shape, then assert the row's `processed_at` is set. With Kafka stopped, the row stays unprocessed and is published once Kafka is back.
 
 **Example:**
 

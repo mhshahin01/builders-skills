@@ -20,6 +20,7 @@ PART OF: LLD - [Project Name]
 | `[service-a]` | `KEYCLOAK_ISSUER_URI` | string | (none) | Token issuer |
 | `[service-a]` | `OUTBOX_POLL_INTERVAL_MS` | int | 1000 | Outbox publisher cadence |
 | `[service-a]` | `OUTBOX_BATCH_SIZE` | int | 100 | Outbox publisher batch |
+| `[service-a]` | `OUTBOX_SEND_TIMEOUT_MS` | int | 10000 | Max wait for the broker acknowledgement; on timeout the row stays unprocessed |
 
 ## 13.2 Health & Readiness
 
@@ -94,12 +95,14 @@ PART OF: LLD - [Project Name]
    kubectl get pods -n prod -l app=[service-a]
 3. Check Kafka producer health:
    kubectl logs <pod> -n prod | grep "KafkaProducer"
-4. If Kafka is healthy, scale outbox publisher (if separated) OR restart the service:
+4. If Kafka is healthy, restart the service (the publisher runs as one active instance, so adding replicas does not speed up the drain):
    kubectl rollout restart deployment/[service-a] -n prod
 5. Verify drain progresses:
    watch -n 5 'kubectl exec ... -- curl -sS localhost:8080/actuator/metrics/outbox.unprocessed'
 6. If drain stalls, escalate to architect on-call. See #incidents-[project].
 ```
+
+> Never set `processed_at` by hand or delete unprocessed rows to clear a backlog: those events would be lost. If one row is always rejected, fix its cause (for example, a message-size limit or a topic ACL) so the next poll delivers it. A restart can re-send rows whose processed update had not completed; consumers dedupe them.
 
 ### RB-02: Replay DLQ
 

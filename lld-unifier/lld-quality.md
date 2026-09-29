@@ -48,9 +48,9 @@ The single biggest source of "looks structured but is empty" in LLDs.
 ```markdown
 ### Pattern: Outbox
 
-> **Applied:** Outbox pattern (CLAUDE.md: "Outbox pattern is mandatory for any state change that must produce an event.")
+> **Applied:** Outbox pattern (CLAUDE.md: "Outbox pattern is mandatory for any state change that must produce an event. No dual-writes to DB and Kafka.")
 >
-> **Rationale (this service):** State changes in the wallet aggregate emit `wallet.balance-updated` events to reporting-aggregator. Direct dual-write to DB+Kafka would risk inconsistency on failure (DB commit succeeds but Kafka publish fails, or vice versa). The outbox table guarantees the event survives DB commit and is published asynchronously by the publisher, with at-least-once semantics that consumers must dedupe.
+> **Rationale (this service):** State changes in the wallet aggregate emit `wallet.balance-updated` events to reporting-aggregator. Direct dual-write to DB+Kafka would risk inconsistency on failure (DB commit succeeds but Kafka publish fails, or vice versa). The outbox row commits in the same transaction as the ledger update; a separate publisher sends it and marks it processed only after the broker acknowledges, so delivery is at-least-once and consumers must dedupe.
 
 **Roles:**
 
@@ -58,7 +58,7 @@ The single biggest source of "looks structured but is empty" in LLDs.
 |---|---|---|
 | Outbox table | `outbox` table in `app_wallet_core` schema | Append-only |
 | Outbox writer | `WalletServiceImpl.creditBalance` (within tx) | Inserts row inside same tx as ledger update |
-| Outbox publisher | `OutboxPublisher` (`@Scheduled(fixedDelay=1000)`) | Polls unprocessed rows; publishes; marks processed |
+| Outbox publisher | `OutboxPublisher` (`@Scheduled(fixedDelay=1000)`) | Polls unprocessed rows oldest first; publishes each; marks it processed only after the broker acknowledges |
 
 **Class diagram:**
 
@@ -78,6 +78,8 @@ We use outbox pattern. See CLAUDE.md.
 ```
 
 **Test:** Can a developer implement this pattern from the subsection alone — knowing which classes participate, what each contributes, and what the pseudocode for each is? If not, rewrite.
+
+**Outbox test:** the writer inserts the row in the aggregate's transaction, and the publisher skeleton shows the acknowledgement check before `markProcessed`, leaves failed or timed-out rows unprocessed, and names the duplicate case (`pattern-rules.md` § Outbox, Delivery contract). In from-code mode the skeleton matches the code; if the code marks rows processed without a successful acknowledgement, that stays visible and carries the HIGH anti-pattern flag (`pattern-rules.md` § Anti-patterns to flag).
 
 ### Minimum pattern set per service
 

@@ -71,7 +71,7 @@ PART OF: LLD - [Project Name]
 | `foo.lifecycle.created` | `[service-a]` | Yes (mandatory per CLAUDE.md) | `all` | 5 | snappy |
 | `foo.lifecycle.updated` | `[service-a]` | Yes | `all` | 5 | snappy |
 
-> **Outbox is mandatory** for all state-changing events (CLAUDE.md). The publisher reads from the outbox table inside the producing service and writes to Kafka. See `04-implementation/<service>.md` § Pattern: Outbox.
+> **Outbox is mandatory** for all state-changing events (CLAUDE.md). The producing service writes each event to its outbox table in the same transaction as the state change; a separate publisher sends it to Kafka and marks it processed only after the broker acknowledges (`acks=all`). Delivery is at-least-once. See `09-cross-cutting.md` § 12.4 and `04-implementation/<service>.md` § Pattern: Outbox.
 
 ## 10.4 Consumer Specs (per topic)
 
@@ -80,7 +80,7 @@ PART OF: LLD - [Project Name]
 | `foo.lifecycle.created` | `[service-b]` | `service-b-foo-listener` | `(eventId)` dedup table; idempotent insert into local projection | Retry 3x → DLQ |
 | `foo.lifecycle.created` | `[service-c]` | `service-c-foo-listener` | `(aggregateId, occurredAt)` natural key; upsert | Retry 3x → DLQ |
 
-> **Convention per CLAUDE.md:** idempotency on every consumer. Assume at-least-once delivery everywhere.
+> **Convention per CLAUDE.md:** idempotency on every consumer. Assume at-least-once delivery everywhere: the outbox publisher re-sends an event whose processed update failed, with the same payload and `eventId`.
 
 ## 10.5 DLQ Strategy
 

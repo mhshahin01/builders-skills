@@ -127,7 +127,7 @@ Subsection-level drift inside a per-service file:
 
 - Per concern: SDD specifies the default; code implements. Compare per-row.
 - Idempotency on money writes: code MUST implement (CLAUDE.md hard rule). If SDD says yes and code doesn't → `⚠ drift` flagged HIGH severity.
-- Outbox pattern: same — hard rule, missing outbox is HIGH severity drift.
+- Outbox pattern: same, hard rule. HIGH severity drift when the code has no outbox recognised per `pattern-rules.md` § Outbox (atomic aggregate-and-outbox write plus a separate publisher), writes to the database and Kafka directly, or marks outbox rows processed without a broker acknowledgement.
 
 ### `10-operations.md`
 
@@ -162,7 +162,7 @@ This is the **drift index** — every drift marker placed elsewhere has a row he
 
 | Location | Marker | Severity | Resolution |
 |----------|--------|----------|------------|
-| `04-implementation/wallet-core.md § 7.4 Pattern: Outbox` | `⚠ drift` | HIGH | SDD requires outbox; code does direct Kafka publish in same method as DB write. Reconcile by introducing outbox table + publisher. |
+| `04-implementation/wallet-core.md § 7.4 Pattern: Outbox` | `⚠ drift` | HIGH | SDD requires outbox; code does direct Kafka publish in same method as DB write (a dual-write, not an outbox). Reconcile by writing an outbox row in the aggregate's transaction and publishing it from a separate publisher. |
 | `04-implementation/wallet-core.md § 7.2` | `🆕 code-only` | LOW | Class `LegacyAdapter` exists in code but not in SDD. Investigate origin. |
 | `04-implementation/notification-dispatcher.md` | `⛔ sdd-only` | MEDIUM | Service in SDD §13.1 not yet built. |
 

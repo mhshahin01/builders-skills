@@ -52,9 +52,9 @@ erDiagram
 | `outbox` | `aggregate_id` | `uuid` | NOT NULL | Used as Kafka key |
 | `outbox` | `event_type` | `text` | NOT NULL | e.g. "foo.created" |
 | `outbox` | `target_topic` | `text` | NOT NULL | Kafka topic name |
-| `outbox` | `payload` | `jsonb` | NOT NULL | Event payload |
+| `outbox` | `payload` | `jsonb` | NOT NULL | Event payload, including `eventId`; fixed at write time |
 | `outbox` | `created_at` | `timestamptz` | NOT NULL | Insert time |
-| `outbox` | `processed_at` | `timestamptz` | NULL | Set by publisher; index `WHERE processed_at IS NULL` |
+| `outbox` | `processed_at` | `timestamptz` | NULL | Set by the publisher only after the broker acknowledges the send; NULL = pending or retryable |
 | `idempotency_record` | `tenant_id` | `uuid` | PK part 1 | Composite PK |
 | `idempotency_record` | `idempotency_key` | `text` | PK part 2 | From `Idempotency-Key` header |
 | `idempotency_record` | `status` | `text` | NOT NULL | IN_PROGRESS / COMPLETED / FAILED |
@@ -71,7 +71,7 @@ erDiagram
 |-------|-------|---------|------|-----------|
 | `idx_foo_tenant` | `foo` | `(tenant_id)` | btree | Required for tenant-scoped queries (CLAUDE.md: every index in shared-schema includes tenant_id) |
 | `idx_foo_tenant_status` | `foo` | `(tenant_id, status)` | btree | Hot-path: list by status |
-| `idx_outbox_unprocessed` | `outbox` | `(processed_at) WHERE processed_at IS NULL` | partial btree | Outbox publisher poll |
+| `idx_outbox_unprocessed` | `outbox` | `(created_at) WHERE processed_at IS NULL` | partial btree | Outbox publisher poll, oldest unprocessed first |
 | `idx_idempotency_created` | `idempotency_record` | `(created_at)` | btree | Cleanup job |
 
 ## 8.4 Multi-Tenancy Strategy
@@ -102,7 +102,7 @@ erDiagram
 | Table | Hot retention | Archival destination | Restore SLA |
 |-------|---------------|---------------------|-------------|
 | `foo` | Indefinite | N/A (operational) | N/A |
-| `outbox` | 7 days after `processed_at` | Cleanup job (delete) | N/A |
+| `outbox` | 7 days after `processed_at`; unprocessed rows are never deleted | Cleanup job (delete) | N/A |
 | `idempotency_record` | 24 hours | Cleanup job (delete) | N/A |
 | `audit_log` (if any) | 90 days hot | S3-compatible cold storage | 24h |
 

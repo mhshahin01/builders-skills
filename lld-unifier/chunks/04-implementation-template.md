@@ -16,7 +16,9 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file
 >
 > **Source code:** [path/to/service]
 >
-> **Owns workflows:** [list use cases this service owns or orchestrates]
+> **Owns use cases (SDD 09):** [[KEY]/UC-01](../../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]), [[KEY]/UC-02](../../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-02-[title-slug]) [or: None - what it serves / Not applicable - no source BRD]
+>
+> **Participates in:** [KEY]/UC-03 (owner: [service]) [or: None]
 
 ---
 
@@ -37,6 +39,8 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file
 | Class | Endpoints | Notes |
 |-------|-----------|-------|
 | `[FooController]` | `[GET /v1/foo/{id}, POST /v1/foo, ...]` | [Auth scope, idempotency rules] |
+
+> **Convention:** every entry point a § 7.8 traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (`09-cross-cutting.md` § 12.8). Platform endpoints carry none.
 
 ### Services (interfaces)
 
@@ -266,11 +270,23 @@ graph TB
 
 ## 7.8 Use-Case Workflows
 
-> **Convention:** one subsection per use case this service owns. Cross-service sagas live in the orchestrator service's file. Each workflow has: control flow, sequence diagram (Mermaid), idempotency points, outbox emission points, retry/timeout choices.
+> **Convention:** one subsection per active use case this service owns (SDD §7.3 Owner), headed with the SDD's BRD key and the BRD's ID and title exactly. A merged or removed use case gets no block. Cross-service sagas live in the orchestrator service's file. Each workflow has: the traceability line, control flow, sequence diagram (Mermaid), idempotency points, outbox emission points, retry/timeout choices.
 
-### UC-01: [Use Case Name]
+<!--
+TRACEABILITY LINE (required, directly under the heading; rules: sdd-to-lld.md § Use-case traceability). Fields in this order, read from their homes, never restated further:
+  BRD: the use case link (BRD heading anchor, built from the real heading). SDD: the §7.3 link, the same in every block.
+  Owner and Entry points: exactly as SDD §7.3 writes them (method + path, or Schedule: / Event: triggers, with the service named when it is not the owner).
+  UAT/BAT: every non-retired BRD chunk 16 case whose Related UC names this use case, one by one, each linked to its feature-area heading; "Pending (BRD 16 not written)" while chunk 16 is locked; "None - BRD coverage gap" when chunk 16 has none.
+  Screens: from 14-frontend.md § 17.3, the screen ID (else the MK-NN, linked to 14-todo.md#mockup-coverage) and each route that starts the use case; "Not applicable - no UI" when chunk 14 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
+Every BRD ID carries the key from the SDD's Source BRDs register. Paths are relative to this file (../../ reaches the sibling BRD and SDD folders).
+No source BRD, or pure from-code: heading "### Workflow: [Flow name]" and the line "> **Traceability:** Not applicable - no source BRD" (or "- no source SDD"). Never a made-up UC ID.
+-->
 
-**Trigger:** [REST endpoint / Kafka event consumer / Scheduled task / Other]
+### [KEY]/UC-01: [Use case title, exactly as the BRD writes it]
+
+> **Traceability:** BRD [[KEY]/UC-01](../../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) · SDD [§7.3](../../sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) · Owner: [service-name] · Entry points: `[METHOD] /v1/[path]` · UAT/BAT: [[KEY]/TC-[AREA]-01](../../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]), [[KEY]/TC-[AREA]-02](../../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) · Screens: [[KEY]/SCR-NN](../../brd-[brd-slug]/11-summary-and-uiux.md#[screens-heading-slug]) via `/[route]`
+
+**Trigger:** [The entry point above and its handler, e.g. `FooController.create` with `@UseCase("[KEY]/UC-01")` / Kafka listener / Scheduled task]
 
 **Pre-conditions:** [What must be true before this flow]
 
@@ -279,12 +295,12 @@ graph TB
 **Control flow:**
 
 ```text
-1. [Step]
-2. [Step]
+1. [Step] ([KEY]/UC-01 step 1)
+2. [Step] ([KEY]/UC-01 step 3)
 3. [Step — outbox emission point: emits foo.created]
 4. [Step]
 5. [Idempotency check: ...]
-6. [Step]
+6. [Step] ([KEY]/UC-01 E1: the exception flow this branch realises)
 ```
 
 **Sequence diagram:**
@@ -297,6 +313,7 @@ sequenceDiagram
   participant DB as PostgreSQL
   participant Outbox as outbox table
 
+  Note over Client,Controller: [KEY]/UC-01 step 1
   Client->>Controller: POST /v1/foo (Idempotency-Key: K)
   Controller->>Service: create(cmd, K)
   Service->>DB: SELECT idempotency_record WHERE (tenant, K)
@@ -323,11 +340,19 @@ sequenceDiagram
 
 **Retry / timeout policy:** [A failed or timed-out publish leaves the outbox row unprocessed; the next poll (every 1s) retries it until the broker acknowledges. A row that stays unprocessed raises `OutboxBacklog` (`10-operations.md` § 13.7)]
 
-**Error handling:** [Validation → 400 + FooValidationException; idempotency conflict → 409; DB failure → 500 + retry-after header]
+**Error handling:** [Validation → 400 + FooValidationException; [KEY]/UC-01 E1 → 409 + FooConflictException; DB failure → 500 + retry-after header]
 
-### UC-02: [Use Case Name]
+### [KEY]/UC-02: [Use case title, exactly as the BRD writes it]
 
-<!-- Repeat structure for each use case. -->
+<!-- Repeat the structure, traceability line included, for each active use case this service owns. -->
+
+### Participates in [KEY]/UC-03: [Use case title, exactly as the BRD writes it]
+
+<!-- Only when this service realises part of a use case another service owns (a saga step, an event consumer). Never a second UC block: the owner's file holds the traceability line. -->
+
+> **Owner's block:** [[owner-service] § [KEY]/UC-03](./[owner-slug].md#[key-lowercase]uc-03-[title-slug]) · Part realised here: [[KEY]/UC-03 step N / A1 / E1] · Entry points here: [`Event: [EVENT_NAME]` as SDD §7.3 names it / None]
+
+**Control flow:** [This service's steps only, each citing the part of the use case it realises.]
 
 ### Cross-service Saga (orchestrator role)
 
@@ -366,4 +391,4 @@ sequenceDiagram
   Orch->>A: compensate step 1
 ```
 
-<!-- MASTER: lld-master.md | PREV: 03-architecture.md | NEXT: 05-data-model.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 03-architecture.md | NEXT: 05-data-model.md -->

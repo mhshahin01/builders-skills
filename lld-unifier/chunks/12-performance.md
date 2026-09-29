@@ -63,4 +63,4 @@ PART OF: LLD - [Project Name]
 | Acceptance criteria | All SLO targets met under sustained + peak |
 | Cadence | Pre-release + ad-hoc on hot-path changes |
 
-<!-- MASTER: lld-master.md | PREV: 11-security.md | NEXT: 13-testing.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 11-security.md | NEXT: 13-testing.md -->

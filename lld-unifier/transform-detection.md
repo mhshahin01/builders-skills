@@ -107,7 +107,7 @@ In either case, the SDD is read in full; field mapping per `sdd-to-lld.md`.
 
 Same recognition rules as in `sdd-unifier:transform-detection.md` (BRDs follow the brd-unifier convention).
 
-A BRD is an *optional* secondary input — the SDD is the primary source for from-sdd direction. If a BRD is also linked, it's used to fill purpose, scope, and glossary sections that the SDD might paraphrase.
+A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location; an older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things: the IDs its use-case trace cites (use case headings in 05 and 06x, screen IDs in 11 and the use cases' UI/UX sections, `MK-NN` and Figma links in 14 Mockup coverage, test cases in 16; `sdd-to-lld.md` § Use-case traceability), and supplementary purpose, scope, and glossary content that the SDD might paraphrase.
 
 ### SoW / Statement of Work
 
@@ -123,7 +123,8 @@ Same as in sdd-unifier — SoW is **not** a direct input to lld-unifier. If the 
 2. Dispatch `code-documentation:docs-architect` agent with Phase 1 findings + this skill's section schema. Request per-service narratives, sequence stories, design-pattern rationale.
 3. Template-fit the synthesised output into the chunks.
 4. Apply confidence weighting per `confidence-rules.md` — structural high, semantic medium, etc.
-5. Index every flag in `15-open-questions.md`.
+5. With an SDD given for cross-reference: match entry points and routes to SDD §7.3 and the BRD screens (`code-extraction.md` § Tracing to BRD use cases). Without one, there is no use-case trace, and no workflow is numbered as a use case.
+6. Index every flag in `15-open-questions.md`.
 
 See `code-extraction.md` for the full from-code workflow.
 
@@ -132,10 +133,11 @@ See `code-extraction.md` for the full from-code workflow.
 ## What "from-sdd" actually means
 
 1. Read the SDD chunks (or combined file) per `sdd-to-lld.md`.
-2. If a BRD is linked, read it for supplementary purpose / scope / glossary content.
+2. Read the BRD(s) the SDD names: the use case, screen, mockup, and test case IDs the trace cites, plus supplementary purpose / scope / glossary content.
 3. Apply CLAUDE.md pattern rules per `pattern-rules.md` aggressively.
-4. For sections the SDD + CLAUDE.md cannot together fill (SLOs, threat notes, peak scenario multipliers): emit `> TODO: <best-guess> — verify`.
-5. Index every flag in `15-open-questions.md`.
+4. Trace every BRD use case per `sdd-to-lld.md` § Use-case traceability.
+5. For sections the SDD + CLAUDE.md cannot together fill (SLOs, threat notes, peak scenario multipliers): emit `> TODO: <best-guess> — verify`.
+6. Index every flag in `15-open-questions.md`.
 
 See `sdd-to-lld.md` for the full mapping table.
 
@@ -150,6 +152,7 @@ See `sdd-to-lld.md` for the full mapping table.
    - Differ → emit reconciled content + `⚠ drift` marker + `> Drift note: SDD says X, code does Y.`
    - Code-only → emit code content + `🆕 code-only` marker.
    - SDD-only → emit SDD content + `⛔ sdd-only` marker.
+   - The use-case trace follows SDD §7.3 and the BRD; code that disagrees is marked per `hybrid-drift.md` § Use-case trace drift.
 4. Write the unified LLD to disk.
 5. Index every drift marker in `15-open-questions.md`.
 
@@ -171,7 +174,8 @@ Treat as targeted regeneration:
 
 Treat as targeted add:
 
-- In CHUNKS shape: add a new `04-implementation/<service-slug>.md`; update `lld-master.md` index; cross-check `05-data-model.md`, `06-api-contracts.md`, `07-event-contracts.md` for new tables/endpoints/topics.
+- In CHUNKS shape: add a new `04-implementation/<service-slug>.md`; update the `[project-slug]-lld-master.md` index; cross-check `05-data-model.md`, `06-api-contracts.md`, `07-event-contracts.md` for new tables/endpoints/topics.
+- Trace the use cases the new service owns (SDD §7.3): their 04 workflow blocks, 14 §17.3 routes, 13 §16.8 specs, and 16 §19.9 index rows. Update the Scope of this LLD's row in the SDD's Child LLDs table.
 - Bump version.
 
 ### Source is in a non-English language

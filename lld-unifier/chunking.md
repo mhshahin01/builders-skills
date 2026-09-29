@@ -21,30 +21,32 @@ The chunk skeletons are embedded in this skill folder under `chunks/` — they a
 
 | # | Filename | Embedded skeleton | Content (template sections) | Typical size |
 |---|---|---|---|---|
-| — | `lld-master.md` | `chunks/lld-master.md` | Master index — links to all chunks; reading order tables; cross-doc nav. Regenerated per project. | Small |
-| 00 | `00-metadata.md` | `chunks/00-metadata.md` | Title block, mode, version, status, author, reviewers, approvers, date, related BRD/SDD, source code path, Changes Log, confidence flag summary. | Small |
+| — | `[project-slug]-lld-master.md` | `chunks/lld-master.md` | Master index — links to all chunks; reading order tables; cross-doc nav; the Related SDD line sdd-unifier finds this LLD by. Regenerated per project. | Small |
+| 00 | `00-metadata.md` | `chunks/00-metadata.md` | Title block, mode, version, status, author, reviewers, approvers, date, Related BRD(s) (each with its key from the SDD's Source BRDs register), Related SDD (its master), source code path, Changes Log, confidence flag summary. | Small |
 | 01 | `01-purpose-and-scope.md` | `chunks/01-purpose-and-scope.md` | §1 Purpose, §2 Scope, §3 Assumptions, §4 Glossary. | Small |
 | 02 | `02-context.md` | `chunks/02-context.md` | §5 Context — bounded context, upstream / downstream, cross-service dependency diagram, shared conventions. | Small |
 | 03 | `03-architecture.md` | `chunks/03-architecture.md` | §6 Architecture overview — component topology (Mermaid), deployment topology, runtime stack, architectural style as operationalised. | Medium |
-| 04 | `04-implementation/<service>.md` | `chunks/04-implementation-template.md` | §7 Per-service implementation. **One chunk per service** (the load-bearing split). Contains: responsibility, class & interface map, method pseudocode, design patterns applied, DI graph, transaction boundaries, error handling, use-case workflows. | Large each |
+| 04 | `04-implementation/<service>.md` | `chunks/04-implementation-template.md` | §7 Per-service implementation. **One chunk per service** (the load-bearing split). Contains: responsibility, class & interface map, method pseudocode, design patterns applied, DI graph, transaction boundaries, error handling, use-case workflows (one `### KEY/UC-NN: Title` block with its traceability line per owned use case). | Large each |
 | 05 | `05-data-model.md` | `chunks/05-data-model.md` | §8 Data model — ERD, tables, indexes, multi-tenancy strategy, Flyway plan, retention, encryption. | Medium |
 | 06 | `06-api-contracts.md` | `chunks/06-api-contracts.md` | §9 API contracts — endpoint inventory, request/response, auth, pagination, OpenAPI snippets. | Medium |
 | 07 | `07-event-contracts.md` | `chunks/07-event-contracts.md` | §10 Event contracts — Kafka topic inventory, schemas, producer/consumer specs, DLQ strategy. | Medium |
 | 08 | `08-state-and-rules.md` | `chunks/08-state-and-rules.md` | §11 State machines, cross-service business rules, algorithm pseudocode. | Small–Medium |
-| 09 | `09-cross-cutting.md` | `chunks/09-cross-cutting.md` | §12 Cross-cutting — auth/tenant, idempotency, Resilience4j defaults, outbox, saga, RFC 9457 errors, logging, tracing, config, health. | Medium |
+| 09 | `09-cross-cutting.md` | `chunks/09-cross-cutting.md` | §12 Cross-cutting — auth/tenant, idempotency, Resilience4j defaults, outbox, saga, RFC 9457 errors, logging, tracing (with the `use_case` attribute), config, health. | Medium |
 | 10 | `10-operations.md` | `chunks/10-operations.md` | §13 Operations — config, health, RED metrics, logs, tracing, dashboards, alerts, runbook procedures, on-call. | Medium |
 | 11 | `11-security.md` | `chunks/11-security.md` | §14 Security — data classification, PII inventory, secrets, auth decisions, threat notes, compliance. | Small–Medium |
 | 12 | `12-performance.md` | `chunks/12-performance.md` | §15 Performance — SLOs, caching, hot-path indexes, bulkheads, peak scenarios, load test. | Small–Medium |
-| 13 | `13-testing.md` | `chunks/13-testing.md` | §16 Testing — pyramid, unit, integration (Testcontainers), contract, e2e (Playwright), data strategy, CI gates. | Small |
-| 14 | `14-frontend.md` | `chunks/14-frontend.md` | §17 Frontend (CONDITIONAL — Angular module/component tree, signals/store, PrimeNG, i18n, RTL, a11y). | Small–Medium |
+| 13 | `13-testing.md` | `chunks/13-testing.md` | §16 Testing — pyramid, unit, integration (Testcontainers), contract, e2e (Playwright), data strategy, CI gates, e2e spec traceability (specs tagged with use case and test case IDs). | Small |
+| 14 | `14-frontend.md` | `chunks/14-frontend.md` | §17 Frontend (CONDITIONAL — Angular module/component tree, signals/store, routing with each route's BRD screen and use cases, PrimeNG, i18n, RTL, a11y). | Small–Medium |
 | 15 | `15-open-questions.md` | `chunks/15-open-questions.md` | §18 Open questions, drift index, confidence flag index, decisions pending. | Small (grows with iteration) |
-| 16 | `16-references.md` | `chunks/16-references.md` | §19 References — source documents, ADRs, OpenAPI, event schemas, runbooks, threat model, externals. | Small |
+| 16 | `16-references.md` | `chunks/16-references.md` | §19 References — source documents (with the upstream state the use-case trace was built from), ADRs, OpenAPI, event schemas, runbooks, threat model, externals, and the use-case traceability index (§19.9, the production-bug entry point). | Small–Medium |
 | 17 | `17-specs.md` | `chunks/17-specs.md` | **Specs** (§20) — constitution-grade summary (Mission, Tech Stack, Roadmap, Project Type), **owned by this skill**, authored AFTER the LLD body. Synthesised from the source SDD (Mission ← SDD §1, Tech Stack ← SDD §6 verbatim with version pins, Roadmap ← SDD §13 + BRD UC ownership) plus the Project Type from intake. Direct input for speckit `/constitution`. Legacy chains carried it at the SDD (`15-specs.md`) or BRD (`12-specs.md`) — consume those as input, author this as canonical. | Small |
 | 18 | `18-open-items-and-clarifications.md` | `chunks/18-open-items-and-clarifications.md` | **Open Items & Clarifications** — output of the post-generation cleared-context reviewer pass. Implementation-level gaps, missing edge cases, pattern misapplications, error path concerns. Each item carries options. Generated *after* the body by an independent reviewer. Complements (does not replace) chunk 15, which is the author-generated index of inline `> Confirm:` / `> TODO:` flags. | Small–Medium |
 
 Total typical chunk count: **19 + N services - 1 (if no UI)** ≈ **20–24 for a typical 3-service system with UI**.
 
-`lld-master.md` is the master index pointing at the chunks. Regenerate it per project.
+`[project-slug]-lld-master.md` (skeleton: `chunks/lld-master.md`) is the master index pointing at the chunks. Regenerate it per project.
+
+**Use-case traceability (from-sdd and hybrid).** Every BRD ID keeps the key from the SDD's Source BRDs register, so use cases from different BRDs never collide. Each active use case gets one workflow block in its owner's `04-implementation/<service>.md`; 14 §17.3 maps routes to its screens, 13 §16.8 tags e2e specs with its test cases, and 09 §12.8 names it at runtime (`use_case`). The index in 16 §19.9 is a consolidated view: it reads each column from its home and states nothing its homes do not state. SKILL.md step 6a checks it in both directions, together with every link and anchor (`sdd-to-lld.md` § Use-case traceability).
 
 ---
 
@@ -68,7 +70,7 @@ In CHUNKS shape, each service gets its own file inside the `04-implementation/` 
 - Filename: `<service-slug>.md` (kebab-case derived from service name).
 - The file `chunks/04-implementation-template.md` is the **template** for any service spec — copy its structure when adding a new service.
 
-**Order:** services are listed alphabetically by slug in `lld-master.md`. The order does not imply hierarchy.
+**Order:** services are listed alphabetically by slug in `[project-slug]-lld-master.md`. The order does not imply hierarchy.
 
 **Cross-service sagas:** the saga narrative lives in the orchestrator service's file. Other participating services have a brief cross-reference (`> Participates in saga SAGA-NN — see 04-implementation/<orchestrator>.md`) plus their own step detail.
 
@@ -156,3 +158,4 @@ When the user asks to update a specific chunk or service:
 - "Regenerate the data model" → rewrite `05-data-model.md` only; bump the LLD version.
 - "Update the wallet-core service" → rewrite `04-implementation/wallet-core.md` only; bump the LLD version; cross-check `08-state-and-rules.md` for related state-machine changes.
 - "Re-run from-code on the now-built service Y" → re-dispatch agents on Y; rewrite `04-implementation/Y.md`; remove the `> TODO: not yet built` placeholder from any other place where Y was referenced.
+- "Refresh the trace", or an upstream change (BRD chunk 16 written, screens or mockups changed, SDD §7.3 changed, a new BRD or BRD version) → rewrite only what `sdd-to-lld.md` § Use-case traceability › Refresh triggers names (the 04 lines, 14 § 17.3, 13 § 16.8, 16 § 19.1 and § 19.9); rerun SKILL.md step 6a; bump the LLD version.

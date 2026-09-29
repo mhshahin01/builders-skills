@@ -10,9 +10,11 @@
 | Author(s) | [Names] |
 | Reviewers | [Names] |
 | Approvers | [Names] |
-| Related BRD | [path or `Not applicable`] |
-| Related SDD | [path or `Not applicable`] |
+| Related BRD(s) | [One per source BRD, with its key from the SDD's Source BRDs register: `[KEY]` [[brd-slug]-brd-master.md](./brd-[brd-slug]/[brd-slug]-brd-master.md); or `Not applicable`] |
+| Related SDD | [[sdd-slug]-sdd-master.md](./sdd-[sdd-slug]/[sdd-slug]-sdd-master.md) [or `Not applicable`] |
 | Source Code Path | [path or `Not applicable`] |
+
+> **Production bug?** Start at [§19.9 Use-Case Traceability Index](#199-use-case-traceability-index).
 
 ---
 
@@ -114,10 +116,15 @@ graph TB
 
 ## 7.1 [Service Name 1]
 
+> **Owns use cases (SDD 09):** [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]), [[KEY]/UC-02](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-02-[title-slug]) [or: None - what it serves / Not applicable - no source BRD]
+>
+> **Participates in:** [KEY]/UC-03 (owner: [service]) [or: None]
+
 ### Responsibility
 
 ### Class & Interface Map
 - Controllers, Services, ServiceImpls, Repositories, Domain types (records), Method signatures
+- Every entry point a use-case traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (§12.8). Platform endpoints carry none.
 
 ### Method Pseudocode (non-trivial)
 
@@ -132,7 +139,63 @@ For each applied pattern: name, triggering CLAUDE.md rule, roles, rationale, Mer
 RFC 9457 mapping per exception.
 
 ### Use-Case Workflows
-Per use case: control flow, sequence diagram (Mermaid), idempotency points, outbox emission, retry/timeout.
+One subsection per active use case this service owns (SDD §7.3 Owner), headed with the SDD's BRD key and the BRD's ID and title exactly. A merged or removed use case gets no block. Each workflow has: the traceability line, control flow, sequence diagram (Mermaid), idempotency points, outbox emission points, retry/timeout choices.
+
+<!--
+TRACEABILITY LINE (required, directly under the heading; rules: sdd-to-lld.md § Use-case traceability). Fields in this order, read from their homes, never restated further:
+  BRD: the use case link (BRD heading anchor, built from the real heading). SDD: the §7.3 link, the same in every block.
+  Owner and Entry points: exactly as SDD §7.3 writes them (method + path, or Schedule: / Event: triggers, with the service named when it is not the owner).
+  UAT/BAT: every non-retired BRD chunk 16 case whose Related UC names this use case, one by one, each linked to its feature-area heading; "Pending (BRD 16 not written)" while chunk 16 is locked; "None - BRD coverage gap" when chunk 16 has none.
+  Screens: from §17.3, the screen ID (else the MK-NN, linked to 14-todo.md#mockup-coverage) and each route that starts the use case; "Not applicable - no UI" when §17 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
+Every BRD ID carries the key from the SDD's Source BRDs register. Paths start with ./ (this file sits next to the BRD and SDD folders); links to workflow blocks are same-file anchors.
+No source BRD, or pure from-code: heading "#### Workflow: [Flow name]" and the line "> **Traceability:** Not applicable - no source BRD" (or "- no source SDD"). Never a made-up UC ID.
+-->
+
+#### [KEY]/UC-01: [Use case title, exactly as the BRD writes it]
+
+> **Traceability:** BRD [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) · SDD [§7.3](./sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) · Owner: [service-name] · Entry points: `[METHOD] /v1/[path]` · UAT/BAT: [[KEY]/TC-[AREA]-01](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]), [[KEY]/TC-[AREA]-02](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) · Screens: [[KEY]/SCR-NN](./brd-[brd-slug]/11-summary-and-uiux.md#[screens-heading-slug]) via `/[route]`
+
+**Trigger:** [The entry point above and its handler, e.g. `FooController.create` with `@UseCase("[KEY]/UC-01")` / Kafka listener / Scheduled task]
+
+**Control flow:**
+
+```text
+1. [Step] ([KEY]/UC-01 step 1)
+2. [Step] ([KEY]/UC-01 step 3)
+3. [Step: outbox emission point, emits foo.created]
+4. [Idempotency check: ...]
+5. [Step] ([KEY]/UC-01 E1: the exception flow this branch realises)
+```
+
+**Sequence diagram:**
+
+```mermaid
+sequenceDiagram
+  participant Client
+  participant Controller as FooController
+  participant Service as FooServiceImpl
+  Note over Client,Controller: [KEY]/UC-01 step 1
+  Client->>Controller: POST /v1/foo (Idempotency-Key: K)
+  Controller->>Service: create(cmd, K)
+  Service-->>Controller: FooResponse
+  Controller-->>Client: 201 Created
+```
+
+**Idempotency points / Outbox emission points / Retry and timeout policy:** [As in `chunks/04-implementation-template.md` § 7.8]
+
+**Error handling:** [Validation → 400 + FooValidationException; [KEY]/UC-01 E1 → 409 + FooConflictException; DB failure → 500 + retry-after header]
+
+#### [KEY]/UC-02: [Use case title, exactly as the BRD writes it]
+
+<!-- Repeat the structure, traceability line included, for each active use case this service owns. -->
+
+#### Participates in [KEY]/UC-03: [Use case title, exactly as the BRD writes it]
+
+<!-- Only when this service realises part of a use case another service owns (a saga step, an event consumer). Never a second UC block: the owner's block holds the traceability line. -->
+
+> **Owner's block:** [[owner-service] § [KEY]/UC-03](#[key-lowercase]uc-03-[title-slug]) · Part realised here: [[KEY]/UC-03 step N / A1 / E1] · Entry points here: [`Event: [EVENT_NAME]` as SDD §7.3 names it / None]
+
+**Control flow:** [This service's steps only, each citing the part of the use case it realises.]
 
 ## 7.2 [Service Name 2]
 
@@ -208,7 +271,28 @@ erDiagram
 
 ## 12.7 Logging
 
+| Concern | Choice |
+|---------|--------|
+| Mandatory fields | `ts`, `level`, `service`, `traceId`, `spanId`, `tenantId` (never PII), `event`, `attrs` |
+| Use-case field | `use_case`: the keyed BRD use case ID(s) of the entry point handling the request (`REFUNDS/UC-04`), from the log MDC (§12.8). Absent on platform endpoints. |
+| Level for tenant context | DEBUG (never INFO per CLAUDE.md) |
+| Level for `use_case` | Any level, INFO included: a use case ID is not tenant data or PII |
+
 ## 12.8 Tracing
+
+### Use-case attribute
+
+<!-- Derive-from-SDD with a brd-unifier BRD only (sdd-to-lld.md § Use-case traceability). With no source BRD, write "Not applicable - no source BRD." Flag the convention "> Confirm:" unless SDD §11.4 Observability or a 13x Observability section already settles it. -->
+
+| Concern | Choice | Source |
+|---------|--------|--------|
+| Attribute | `use_case` on the server or consumer span of every entry point SDD §7.3 lists for an in-scope use case, and the same key in the log MDC | [LLD convention / SDD §11.4] |
+| Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`); comma-separated when §7.3 lists the entry point under several use cases | SDD §7.3 |
+| Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
+| Not set | Platform endpoints (health, actuator, sign-in) | LLD convention |
+| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (§17.3) | LLD convention |
+
+> Confirm: `use_case` is an LLD convention; the SDD does not settle a use case attribute (drop this flag when SDD §11.4 or a 13x Observability section names one).
 
 ## 12.9 Configuration
 
@@ -224,7 +308,11 @@ erDiagram
 
 ## 13.4 Logs
 
+> **Triage by use case:** filter logs on `use_case = "[KEY]/UC-NN"` to see every request of one use case; the use case's row in §19.9 leads to its workflow, BRD use case, and test cases.
+
 ## 13.5 Tracing
+
+- Entry-point spans (controller, listener, scheduled job) of a BRD use case carry `use_case` (§12.8), so a trace search by use case finds every request of it.
 
 ## 13.6 Dashboards
 
@@ -266,6 +354,10 @@ erDiagram
 
 ## 16.1 Test Pyramid
 
+| Tier | Tooling | Scope | Speed target |
+|------|---------|-------|--------------|
+| End-to-end | Playwright (frontend) + REST harness (backend) | One BRD use case across services, tagged per §16.8 | < 60s each |
+
 ## 16.2 Unit Conventions (JUnit 5 + Mockito)
 
 ## 16.3 Integration Conventions (Testcontainers)
@@ -274,9 +366,29 @@ erDiagram
 
 ## 16.5 Frontend Tests (if applicable)
 
+- End-to-end: Playwright; one spec per BRD use case, named and tagged per §16.8 (with no source BRD: one spec per critical user journey).
+
 ## 16.6 Test Data Strategy
 
 ## 16.7 CI Gates
+
+## 16.8 E2E Spec Traceability
+
+<!--
+Derive-from-SDD with a brd-unifier BRD (sdd-to-lld.md § Use-case traceability). With no source BRD, write "Not applicable - no source BRD."
+The home of spec -> use case and spec -> test case. One row per e2e spec: one spec per in-scope BRD use case, named from its key and BRD title.
+Use cases and test cases carry the key from the SDD's Source BRDs register and link to their BRD headings (test cases to the chunk 16 feature-area heading that holds them), listed one by one, never as a range.
+While BRD chunk 16 is not written (its delivery gate is shut): "Pending (BRD 16 not written)" in the test case column; specs carry use case tags only.
+The Not automated line lists every non-retired chunk 16 case of an in-scope use case that no spec covers, with its reason. "None" when every case is automated.
+-->
+
+> **Convention:** one spec per BRD use case, named `e2e/[key-lowercase]-uc-NN-[title-slug].spec.ts`. Every test carries its keyed use case and test case IDs as tags: Playwright `test('[TC name]', { tag: ['@[KEY]/UC-NN', '@[KEY]/TC-[AREA]-NN'] }, async ({ page }) => { ... })`; a backend REST harness (JUnit 5) uses `@Tag("[KEY]/UC-NN")` and `@Tag("[KEY]/TC-[AREA]-NN")`. To re-run a failing UAT case or a production regression: `npx playwright test --grep "@[KEY]/TC-[AREA]-NN"`, or the JUnit Platform tag filter (the `groups` parameter of Maven Surefire or Failsafe).
+
+| Spec | Use cases (BRD) | UAT/BAT test cases (BRD) | Parts covered | Runner |
+|------|-----------------|--------------------------|---------------|--------|
+| `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` | [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [[KEY]/TC-[AREA]-01](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) [or: Pending (BRD 16 not written)] | [step 1-5, A1, E1] | Playwright |
+
+**Not automated:** [[KEY]/TC-NFR-02](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-nfr-acceptance-[ids-slug]) ([reason]) [or: None]
 
 # 17. Frontend
 
@@ -287,6 +399,32 @@ erDiagram
 ## 17.2 State Management Boundaries
 
 ## 17.3 Routing
+
+<!--
+Every route has a row (sdd-to-lld.md § Use-case traceability). This table is the home of route -> screen; a screen's use cases are read from the BRD, never guessed from the route.
+  Screen (BRD): the screen ID the route implements, as the BRD defines it (chunk 11 or a use case's UI/UX section), linked to the heading it is defined under; else the MK-NN from BRD chunk 14 Mockup coverage, linked to 14-todo.md#mockup-coverage; else "None - platform page" (sign-in, not found, the shell).
+  Use cases (BRD): the use cases the BRD gives that screen, linked to their BRD headings; "None - platform page" for platform pages.
+Every BRD ID carries the key from the SDD's Source BRDs register. Every active use case with a screen the actor sees has at least one route; a use case with neither a screen ID nor an MK-NN gets "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN".
+Route paths and components are this LLD's design choice (from-sdd: "> Confirm:"). With no source BRD, the two BRD columns read "Not applicable - no source BRD".
+-->
+
+| Route | Component | Screen (BRD) | Use cases (BRD) | Guards | Lazy-loaded? |
+|-------|-----------|--------------|-----------------|--------|--------------|
+| `/foo` | `FooListComponent` | [[KEY]/SCR-01](./brd-[brd-slug]/11-summary-and-uiux.md#[screens-heading-slug]) | [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | `authGuard` | Yes (`loadComponent`) |
+| `/foo/:id` | `FooDetailComponent` | [[KEY]/MK-02](./brd-[brd-slug]/14-todo.md#mockup-coverage) | [[KEY]/UC-02](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-02-[title-slug]) | `authGuard`, `tenantGuard` | Yes |
+| `/login` | `LoginComponent` | None - platform page | None - platform page | - | Yes |
+
+**Use-case context at runtime.** Every route that implements a BRD screen carries it in its route data, so a frontend error report names the screen and the use case:
+
+```ts
+{
+  path: 'foo/:id',
+  loadComponent: () => import('./foo-detail.component').then(m => m.FooDetailComponent),
+  data: { screen: '[KEY]/MK-02', useCases: ['[KEY]/UC-02'] },
+}
+```
+
+The global `ErrorHandler` and the frontend telemetry read the data of the deepest active route and attach `screen` and `use_case` to every error report and RUM span (§12.8). Platform pages carry no such data.
 
 ## 17.4 PrimeNG Components Used
 
@@ -316,6 +454,17 @@ erDiagram
 
 ## 19.1 Source Documents (BRD, SDD, code repo)
 
+<!-- One row per source BRD, keyed as in the SDD's Source BRDs register. The use-case trace rows record the upstream state the trace was built from, so a later run can see what changed (sdd-to-lld.md § Use-case traceability). -->
+
+| Document | Path / URL | Version / state | Notes |
+|----------|------------|-----------------|-------|
+| Related BRD ([KEY]) | [[brd-slug]-brd-master.md](./brd-[brd-slug]/[brd-slug]-brd-master.md) | [version] | Key from the SDD's Source BRDs register |
+| Related SDD | [[sdd-slug]-sdd-master.md](./sdd-[sdd-slug]/[sdd-slug]-sdd-master.md) | [version] | |
+| SDD §7.3 Use Case Traceability | [03-users-and-use-cases.md § 7.3](./sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) | SDD v[X.X] | Owners and entry points of the traced use cases |
+| [KEY] UAT/BAT test cases (BRD chunk 16) | [16-uat-bat-test-cases.md](./brd-[brd-slug]/16-uat-bat-test-cases.md) [or `Not written`] | [Up to date / Provisional (TD-NN) / Stale / Pending (BRD 16 not written)] | Test case IDs and their `Related UC` |
+| [KEY] Mockup coverage (BRD chunk 14) | [14-todo.md § Mockup coverage](./brd-[brd-slug]/14-todo.md#mockup-coverage) | [as of BRD v[X.X]] | `MK-NN` and Figma links only |
+| Source code repo | [URL] | [commit / branch] | (from-code / hybrid) |
+
 ## 19.2 Architectural Decision Records
 
 ## 19.3 OpenAPI Specifications
@@ -329,6 +478,29 @@ erDiagram
 ## 19.7 External References
 
 ## 19.8 Related LLDs
+
+## 19.9 Use-Case Traceability Index
+
+<!--
+The production-bug entry point: a consolidated view, never a home (sdd-to-lld.md § Use-case traceability). One row per SDD §7.3 row, in the same order and BRD groups (repeat §7.3's group rows), merged and removed use cases included. Each column is read from its home and never states a mapping its home does not state:
+  Use case (BRD), Title, Status: SDD §7.3 (the BRD's ID and title, with the SDD's key).
+  SDD §7.3: the §7.3 heading link.
+  LLD workflow: the #### [KEY]/UC-NN heading in the owner's §7 block (a same-file anchor), labelled with the owner; "Not in this LLD - owner: [service]" when the owner is out of scope (linked to its LLD when the SDD's Child LLDs table names one).
+  Screens (BRD), Routes (LLD): §17.3; "Not applicable - no UI" when §17 is omitted.
+  UAT/BAT test cases (BRD): BRD chunk 16, one by one, never a range; "Pending (BRD 16 not written)" while it is locked.
+  E2E specs (LLD): §16.8.
+Merged and removed rows show "-" in every mapping column. Checked both ways: every §7.3 row has a row here, and every cell here equals its home.
+With no source BRD, write "Not applicable - no source BRD."
+-->
+
+> **Start here for a production bug.** Take the `use_case` and `screen` from the error report, log line, or span (§12.7-12.8), or search this table for the route, screen, or test case. The row links to the workflow block, the BRD use case, the SDD §7.3 row, the test cases, and the spec.
+
+| Use case (BRD) | Title | SDD §7.3 | LLD workflow | Screens (BRD) | Routes (LLD) | UAT/BAT test cases (BRD) | E2E specs (LLD) | Status |
+|----------------|-------|----------|--------------|---------------|--------------|--------------------------|-----------------|--------|
+| **[[BRD project name] v[X.X]](./brd-[brd-slug]/[brd-slug]-brd-master.md) ([KEY])** | | | | | | | | |
+| [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [Title, as in the BRD] | [§7.3](./sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) | [[service-a]](#[key-lowercase]uc-01-[title-slug]) | [[KEY]/SCR-01](./brd-[brd-slug]/11-summary-and-uiux.md#[screens-heading-slug]) | `/foo` | [[KEY]/TC-[AREA]-01](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) | `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` | Active |
+| [[KEY]/UC-02](./brd-[brd-slug]/05-user-journeys-overview.md#use-case-summary) | [Title] | [§7.3](./sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) | - | - | - | - | - | [Merged into UC-01 / Removed] |
+| [[KEY]/UC-03](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-03-[title-slug]) | [Title] | [§7.3](./sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) | Not in this LLD - owner: [service-z] ([LLD](./lld-[other-slug]/[other-slug]-lld-master.md)) | - | - | [[KEY]/TC-[AREA]-03](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) | - | Active |
 
 ---
 
@@ -354,7 +526,7 @@ Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body
 
 | Phase | Scope (one line) | Services / UC IDs |
 |-------|------------------|-------------------|
-| P1 - [Label] | [Scope] | [services; UC IDs] |
+| P1 - [Label] | [Scope] | [services; keyed UC IDs as SDD §7.3 writes them, e.g. [KEY]/UC-01, [KEY]/UC-02] |
 
 ## 20.4 Project Type
 
@@ -365,7 +537,7 @@ Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body
 # 21. Open Items & Clarifications
 
 <!--
-Output of the post-generation cleared-context reviewer pass. Captures implementation-level gaps, missing edge cases, pattern misapplications, error path concerns, contract drift vs the SDD's Centralized Event Hub (§14) and User Roles catalogue (§16), and Specs-body mismatches. Each item carries options.
+Output of the post-generation cleared-context reviewer pass. Captures implementation-level gaps, missing edge cases, pattern misapplications, error path concerns, contract drift vs the SDD's Centralized Event Hub (§14) and User Roles catalogue (§16), Specs-body mismatches, and use-case traceability gaps. Each item carries options.
 This section complements (does not replace) §18, which is the author-generated index of inline `> Confirm:` and `> TODO:` flags. §21 captures the external reviewer's adversarial findings.
 -->
 
@@ -375,7 +547,7 @@ This section complements (does not replace) §18, which is the author-generated 
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Service name + sub-section, or "global". |
-| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift / Contract drift (vs SDD §14/§16) / Specs-body mismatch / Duplication (SDD content restated instead of referenced). |
+| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift / Contract drift (vs SDD §14/§16) / Specs-body mismatch / Duplication (SDD content restated instead of referenced) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour no BRD use case covers; never a new UC). |
 | **Concern** | One paragraph. What was missed and why it matters. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommendation** | REQUIRED. The reviewer's suggested option — always pick one, even for close calls. |
@@ -387,7 +559,7 @@ This section complements (does not replace) §18, which is the author-generated 
 ### OI-01: [Short title]
 
 - **Where:** [Service / sub-section, or "global"]
-- **Type:** [Implementation gap | Missing edge case | Pattern misapplication | Error path | Concurrency hazard | Transaction boundary | Idempotency gap | Multi-tenancy leak | Test gap | Drift | Duplication]
+- **Type:** [Implementation gap | Missing edge case | Pattern misapplication | Error path | Concurrency hazard | Transaction boundary | Idempotency gap | Multi-tenancy leak | Test gap | Drift | Duplication | Traceability gap | Missing scenario]
 - **Concern:** [One paragraph.]
 - **Options:**
   - **A.** [Option A] — [one-line tradeoff].

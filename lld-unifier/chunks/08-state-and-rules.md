@@ -79,4 +79,4 @@ stateDiagram-v2
 
 **Complexity:** [Big-O]
 
-<!-- MASTER: lld-master.md | PREV: 07-event-contracts.md | NEXT: 09-cross-cutting.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 07-event-contracts.md | NEXT: 09-cross-cutting.md -->

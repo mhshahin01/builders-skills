@@ -21,7 +21,7 @@ The skill always asks for the direction at the start of any invocation. The shap
 
 ```
 lld-[project-slug]/
-├── lld-master.md                    # Master index (regenerated per project)
+├── [project-slug]-lld-master.md     # Master index (regenerated per project)
 ├── 00-metadata.md
 ├── 01-purpose-and-scope.md
 ├── 02-context.md
@@ -44,7 +44,7 @@ lld-[project-slug]/
 └── 16-references.md
 ```
 
-`lld-master.md` is the master index. Regenerate it per project so it links to that project's chunks specifically.
+`[project-slug]-lld-master.md` (skeleton: `chunks/lld-master.md`) is the master index pointing at the chunks. Regenerate it per project so it links to that project's chunks specifically.
 
 **Each chunk starts with** the self-describing HTML comment block:
 
@@ -108,6 +108,8 @@ See `code-extraction.md` for the agent dispatch templates and `agent-orchestrati
 
 **Confidence weighting:** structural claims default to high confidence; semantic claims default to medium unless cross-validated. See `confidence-rules.md`.
 
+**Use-case trace:** only when an SDD is given for cross-reference. Entry points and routes are matched to its §7.3 and the BRD screens (`code-extraction.md` § Tracing to BRD use cases). Without an SDD, workflows are headed `### Workflow: [name]` and no use case ID is made up.
+
 **When to use:** an existing codebase needs an LLD for documentation, audit, onboarding, or as input to a refactor.
 
 ### FROM-SDD (forward design, greenfield)
@@ -115,6 +117,8 @@ See `code-extraction.md` for the agent dispatch templates and `agent-orchestrati
 The user points the skill at an SDD (chunked folder or combined file), optionally also a BRD. The skill applies the field mapping in `sdd-to-lld.md` and the CLAUDE.md design rules in `pattern-rules.md`.
 
 **Pattern aggressiveness:** every CLAUDE.md rule that applies is applied with explicit attribution and rationale (per `pattern-rules.md`).
+
+**Use-case trace:** every BRD use case in scope is traced from SDD §7.3, with its BRD key, to its workflow block, routes and screens, test cases, e2e specs, and `use_case` attribute (`sdd-to-lld.md` § Use-case traceability).
 
 **When to use:** greenfield project before any code exists; the LLD is the build target.
 
@@ -125,6 +129,8 @@ Both inputs available *and* the code is complete. The skill:
 1. Runs FROM-SDD pass internally → "designed" view per section.
 2. Runs FROM-CODE pass internally → "built" view per section.
 3. Section-by-section diff → unified LLD with inline drift markers (`⚠ drift`, `🆕 code-only`, `⛔ sdd-only`).
+
+The use-case trace follows SDD §7.3 and the BRD; code that contradicts them is marked as drift (`hybrid-drift.md` § Use-case trace drift).
 
 See `hybrid-drift.md` for the diff rules.
 

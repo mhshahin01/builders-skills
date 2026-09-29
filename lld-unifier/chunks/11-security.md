@@ -73,4 +73,4 @@ PART OF: LLD - [Project Name]
 
 > `> Confirm: compliance applicability per project — verify with legal/compliance`
 
-<!-- MASTER: lld-master.md | PREV: 10-operations.md | NEXT: 12-performance.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 10-operations.md | NEXT: 12-performance.md -->

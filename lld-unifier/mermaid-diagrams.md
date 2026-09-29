@@ -43,6 +43,7 @@ sequenceDiagram
 - Use named participants (`participant X as Long Name`) when shorter aliases improve readability.
 - Annotate alt-paths for error scenarios.
 - Keep diagrams scoped — no diagram should exceed ~30 lines. If it does, split into multiple smaller diagrams (e.g., happy path + error path).
+- Use case IDs inside a diagram are plain keyed IDs, in a quoted label where the syntax needs one (`UC04(("REFUNDS/UC-04"))`, `Note over Client,Controller: REFUNDS/UC-04 step 1`), never links. The links live in the text around the diagram (`sdd-to-lld.md` § Use-case traceability).
 
 ---
 

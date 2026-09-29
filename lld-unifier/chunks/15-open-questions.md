@@ -70,4 +70,4 @@ PART OF: LLD - [Project Name]
 
 > **Convention:** these counts are updated whenever a chunk is regenerated.
 
-<!-- MASTER: lld-master.md | PREV: 14-frontend.md (or 13-testing.md if no UI) | NEXT: 16-references.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 14-frontend.md (or 13-testing.md if no UI) | NEXT: 16-references.md -->

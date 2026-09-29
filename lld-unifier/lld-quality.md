@@ -109,6 +109,7 @@ Each workflow is where the LLD earns its keep for the implementer.
 
 **Good workflow:**
 
+- Opens with its traceability line (§ Use-case traceability below) when the SDD derives from a BRD.
 - Names the trigger (REST endpoint / event consumer / schedule).
 - Lists pre- and post-conditions.
 - Step-by-step control flow with explicit numbered steps.
@@ -125,6 +126,35 @@ Each workflow is where the LLD earns its keep for the implementer.
 - Idempotency mentioned but no key shown.
 
 **Test:** Can the AI implementer write the integration test for this workflow from this section alone? If not, rewrite.
+
+---
+
+## Use-case traceability (04 lines, 14 § 17.3, 13 § 16.8, 16 § 19.9)
+
+Traceability is only useful if a reader can follow it both ways without searching. Rules: `sdd-to-lld.md` § Use-case traceability.
+
+**Test:** take a production error report that names `use_case = REFUNDS/UC-04` and `screen = REFUNDS/SCR-04`, or a failing UAT case `REFUNDS/TC-DEC-03`. From its row in 16 § 19.9, one click opens the workflow block; from the block's traceability line, one click each opens the BRD use case heading, SDD §7.3, and each test case's feature area; 13 § 16.8 names the spec to re-run (`--grep "@REFUNDS/TC-DEC-03"`). Then go the other way: pick any route in 14 § 17.3; its screen and use cases match the BRD, and the use case's block names that route.
+
+**Good line:**
+
+```markdown
+### REFUNDS/UC-04: Approve / Reject Refund
+
+> **Traceability:** BRD [REFUNDS/UC-04](../../brd-refunds-portal/06b-use-cases-branch-manager.md#uc-04-approve--reject-refund) · SDD [§7.3](../../sdd-refunds-portal/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) · Owner: refund-service · Entry points: `POST /v1/refunds/{refundId}/decision` · UAT/BAT: [REFUNDS/TC-DEC-01](../../brd-refunds-portal/16-uat-bat-test-cases.md#2-refund-decisions-uc-04-scr-04), [REFUNDS/TC-DEC-02](../../brd-refunds-portal/16-uat-bat-test-cases.md#2-refund-decisions-uc-04-scr-04) · Screens: [REFUNDS/SCR-04](../../brd-refunds-portal/11-summary-and-uiux.md#screens) via `/manager/refunds/:refundId`
+```
+
+**Bad:**
+
+- `UC-04 | refund-service`: no links, nothing to click and nothing to check against.
+- An ID without its key (`UC-04` when the SDD's Source BRDs register keys it `REFUNDS`): two BRDs can each have a UC-04.
+- An anchor built from a guessed title (`#uc-04-approve-reject-refund` when the heading is `UC-04: Approve / Reject Refund`, whose anchor is `#uc-04-approve--reject-refund`). It looks right and lands nowhere.
+- A path counted from the wrong folder (`../brd-...` from a `04-implementation/` file, which needs `../../brd-...`).
+- `REFUNDS/TC-DEC-01..04`: a search for `REFUNDS/TC-DEC-03` finds nothing.
+- A `UC-12` made up for a platform flow such as key rotation: the LLD cites BRD use cases, it never adds one.
+- A screen guessed from the route, or a route's use cases guessed from its path, instead of read from the BRD.
+- A restated Main Flow: the workflow block cites the BRD steps it realises (`REFUNDS/UC-04 step 3`) and writes only the technical realisation.
+- Entry points restated with request bodies or status codes: the line cites method and path; the contract stays in chunk 06 and the SDD.
+- An index that lists only some §7.3 rows, or a cell that disagrees with its home.
 
 ---
 

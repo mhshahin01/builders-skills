@@ -68,6 +68,12 @@ prompt: |
       - SQL queries lacking `tenant_id` predicate on shared-schema tables.
       - Logging statements at INFO level that include `tenant_id` or PII.
 
+  14. **Frontend routes** (when a UI exists): per route, the path, component, guards, lazy loading, and its route `data` (note any `screen` and `useCases` keys).
+
+  15. **E2E specs**: per e2e spec file, its tests and their tags (Playwright `tag` details and `@`-tokens in titles; JUnit 5 `@Tag`).
+
+  16. **Use-case markers**: `@UseCase(...)` annotations, `use_case` MDC keys or span attributes, and any other place the code names a use case ID.
+
   Output format: Markdown with one section per ask above, file:line citations everywhere. NO narrative beyond what's needed to make the structural facts readable. The downstream agent will narrate.
 
   Cap your report at ~3000 lines; if the codebase is larger than that, focus on the load-bearing services and note in the conclusion which services were elided.
@@ -101,6 +107,10 @@ prompt: |
 
   <paste the relevant chunks/04-implementation-template.md, 02-context.md, 03-architecture.md>
 
+  ## SDD §7.3 USE CASE TRACEABILITY (only when an SDD was given)
+
+  <paste the SDD §7.3 table; otherwise write "No SDD: head every workflow `### Workflow: [name]`">
+
   ## YOUR TASK
 
   Produce the following content blocks. Tag each block with `<!-- target: <chunk>:<section> -->`.
@@ -130,6 +140,7 @@ prompt: |
 
   4. **Use-case workflow narratives** (one per entry point or workflow)
      Target: `04-implementation/<service>.md` § 7.8 Use-Case Workflows
+     Heading: `### KEY/UC-NN: Title` ONLY when the entry point matches an SDD §7.3 entry point (method + normalized path; the SDD §7.3 table is pasted below when an SDD was given), using the SDD's key and the BRD's ID and title exactly. Otherwise `### Workflow: [name]`. Never number a workflow as a use case.
      For each entry point from Phase 1 § 1, write:
      - Trigger.
      - Pre-conditions and post-conditions.
@@ -195,12 +206,13 @@ Markdown with `<!-- target: ... -->` tags. The skill walks the output, splits by
 
 Once both agents have returned, the skill:
 
-1. **Validates Phase 1 output structure** — checks that all 13 sections of the discovery report are present. If any are missing, re-dispatches with a follow-up prompt.
+1. **Validates Phase 1 output structure** — checks that all 16 sections of the discovery report are present (sections 14-16 may read "None found"). If any are missing, re-dispatches with a follow-up prompt.
 2. **Validates Phase 2 output tags** — every block has a `<!-- target: ... -->` tag. Untagged blocks are dropped with a warning.
 3. **Routes Phase 2 blocks into chunks** — splits by tag, walks the chunk files, inserts content at the matching `## section` heading.
 4. **Applies confidence flags** — per `confidence-rules.md`. If Phase 2 already flagged a block, carry the flag. If Phase 2 missed flagging a low-confidence block, the skill applies its own based on the source-of-evidence heuristics.
-5. **Generates `15-open-questions.md`** — walks all chunks, greps for `> Confirm:` and `> TODO:` markers, indexes them.
-6. **Surfaces handoff summary.**
+5. **Traces to BRD use cases** when an SDD was given: matches entry points, routes, specs, and use-case markers per `code-extraction.md` § Tracing to BRD use cases, then runs SKILL.md step 6a.
+6. **Generates `15-open-questions.md`** — walks all chunks, greps for `> Confirm:` and `> TODO:` markers, indexes them.
+7. **Surfaces handoff summary.**
 
 ---
 

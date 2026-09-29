@@ -83,4 +83,4 @@ graph TB
 - **Outbox pattern:** mandatory for every state-changing event. Implementation per `09-cross-cutting.md` § Outbox.
 - **Saga choreography vs orchestration:** [default per CLAUDE.md — choreography unless flow is complex; orchestrator-owning service named per case].
 
-<!-- MASTER: lld-master.md | PREV: 02-context.md | NEXT: 04-implementation/<service>.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 02-context.md | NEXT: 04-implementation/<service>.md -->

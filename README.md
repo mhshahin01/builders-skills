@@ -136,6 +136,8 @@ Chunk 18 holds the Open Items and Clarifications from the reviewer pass. Chunk 1
 - Orchestrates two specialist agents: `feature-dev:code-explorer` for structural discovery and `code-documentation:docs-architect` for narrative synthesis (`agent-orchestration.md`).
 - Owns the Specs section (Mission, Tech Stack, Roadmap, Project Type), synthesised after the LLD body as the direct input for SpecKit `/constitution`. Legacy Specs in an SDD or BRD are read as input only.
 - Confidence and pattern rules (`confidence-rules.md`, `pattern-rules.md`) govern how inferred facts are marked and which patterns apply.
+- Each LLD derived from an SDD registers itself in that SDD's Child LLDs table (chunk 00 § Document Lineage). Its master, `[project-slug]-lld-master.md`, links back to the SDD master.
+- Traces every BRD use case from the SDD's §7.3 (from-sdd and hybrid): each use case keeps its BRD key (`[REFUNDS/UC-04](...)`) and gets one workflow block that links its BRD heading, SDD §7.3, UAT/BAT test cases, and the screens and routes that start it. E2e specs carry the same IDs as tags, entry points carry a `use_case` span and log attribute, and chunk 16 §19.9 indexes it all for production-bug triage.
 
 **Feeds into:** implementation, including SpecKit-driven and Claude Code-assisted builds.
 

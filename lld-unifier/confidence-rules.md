@@ -85,6 +85,9 @@ Example:
 | Business rule narrative | Low | Test exists asserting the rule → upgrade to Medium; ADR or doc cites the rule → upgrade to High |
 | SLO targets | Low | (none — rarely in code) |
 | Threat notes | Low | Comments mention threat reasoning → upgrade to Medium |
+| Entry point → use case (SDD given), method + normalized path match to §7.3 | High | (none) |
+| Entry point with no §7.3 match, not a platform endpoint (SDD given) | Medium (`> Confirm:`) | (none; an open question, never a new UC) |
+| Route → BRD screen (SDD given) | High via route `data.screen`; Medium (`> Confirm:`) by name only | (none) |
 
 **Override rule:** if a claim is supported by a passing unit/integration test that exercises it, upgrade by one tier. Tests are stronger evidence than source code structure for *why* something is the way it is.
 
@@ -108,6 +111,13 @@ Example:
 | Threat notes | Low | (almost never in SDD) |
 | Peak scenario multipliers | Low | SDD §14.3 lists them → upgrade to High |
 | Runbook procedures (concrete commands) | Low | (commands depend on real cluster names which the SDD rarely pins) |
+| Use case IDs, titles, owners, entry points (read from SDD §7.3 and the BRD) | High | (none: cited, never inferred) |
+| Test case IDs and their use cases (read from BRD chunk 16) | High | (none) |
+| Screen IDs and `MK-NN` and their use cases (read from the BRD) | High | (none) |
+| Route paths, and which screen each route implements | Medium | Existing code or an SDD frontend section pins them → upgrade to High |
+| `use_case` attribute convention | Medium | SDD §11.4 or a `13x` Observability section names it → upgrade to High |
+| Owner and entry points from an older SDD with no §7.3 (inferred from 09 and `13x`) | Medium | (none; suggest upgrading the SDD) |
+| A use case with neither a screen ID nor an `MK-NN` in the BRD | Medium (`> Confirm:`) | BRD adds a screen ID → upgrade to High |
 
 ---
 
@@ -157,3 +167,5 @@ The summary table in § 18.5 (counts per section) is updated on each regeneratio
 | Best-guess from variable names / branches | content + `> TODO: <best-guess> — verify` |
 | Best-guess for SLO / threat / peak scenario | content + `> TODO: <best-guess> — verify` |
 | Section neither code nor SDD covers | section heading + `> TODO: not derivable from inputs — please specify` |
+| Use case, test case, or screen ID the BRD / SDD states | cited with its key and link (no flag) |
+| Upstream piece missing (BRD chunk 16 not written, no screen ID) | the gap text (`Pending (BRD 16 not written)`, `MK-NN`, or `> Confirm:`) per `sdd-to-lld.md` § Use-case traceability › Upstream gaps; never a made-up ID |

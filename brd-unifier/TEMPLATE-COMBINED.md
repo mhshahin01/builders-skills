@@ -463,7 +463,7 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 ## How to use this plan
 
-<!-- The six rules from chunks/15-implementation.md. -->
+<!-- Copy the numbered rules from chunks/15-implementation.md. -->
 
 ## Use-case coverage
 
@@ -487,7 +487,7 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 ### TASK-01: [Title - a capability, in business terms]
 
-<!-- Task block exactly as in chunks/15-implementation.md: header table (Objective, Scope, Type, Wave, Source use cases, Source requirements, Dependencies, Can run in parallel with, Status basis), Expected deliverables, Completion criteria, Assumptions / open questions / blockers. Repeat per task, in execution order. -->
+<!-- Task block exactly as in chunks/15-implementation.md: header table (Objective, Scope, Type, Wave, Source use cases, Source requirements, Dependencies, Can run in parallel with, Status basis, Delivery status), Expected deliverables, Completion criteria, Assumptions / open questions / blockers. Repeat per task, in execution order. -->
 
 ---
 
@@ -499,19 +499,25 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 **Scope note:** [Default execution scope. Define every scope tag used in a TC Name. Name the cases that need another team's cooperation.]
 
-<!-- Sections exactly as in chunks/16-uat-bat-test-cases.md: How to use this document; Test environment and data prerequisites; one numbered section per feature area with the nine-column table; Cross-Cutting UI/UX Standards; NFR Acceptance; Traceability Matrix; Provisional and blocked scenarios; Coverage gaps; Execution summary; Exit criteria (BAT sign-off). -->
+<!-- Sections exactly as in chunks/16-uat-bat-test-cases.md: How to use this document; Test environment and data prerequisites; one numbered section per feature area with the ten-column table; Cross-Cutting UI/UX Standards; NFR Acceptance; Traceability Matrix; Task acceptance; Provisional and blocked scenarios; Coverage gaps; Execution summary; Exit criteria (BAT sign-off). -->
 
 ## 1. [Feature area] ([UC-NN, screen IDs, NFR-NN])
 
-| TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Testing Result | Testing Comment |
-|-------|---------|----------------|------------|------------------|-----------|--------------|----------------|-----------------|
-| TC-XXX-01 | [Short name] | Verify [...] | [Concrete example] | [Observable outcome] | UC-NN (AC-1) | TASK-NN | | |
+| TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
+|-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|
+| TC-XXX-01 | [Short name] | Verify [...] | [Concrete example] | [Observable outcome] | UC-NN (AC-1) | TASK-NN | TASK-NN | | |
 
 ## Traceability Matrix
 
 | BRD Reference | Covered By |
 |---------------|-----------|
 | UC-01 [Use case title] | TC-XXX-01..NN |
+
+## Task acceptance
+
+| Task | Wave | Required cases |
+|------|------|----------------|
+| TASK-01 [Title] | 1 | TC-XXX-01..NN |
 
 ## Provisional and blocked scenarios
 
@@ -520,7 +526,7 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 ## Coverage gaps
 
-**Checked:** [n] Main Flows, [n] alternate flows, [n] exception flows, [n] acceptance criteria, [n] numeric or time-based rules, [n] NFRs, [n] flowchart branches. **Without a case:** [n].
+**Checked:** [n] Main Flows, [n] alternate flows, [n] exception flows, [n] acceptance criteria, [n] numeric or time-based rules, [n] NFRs, [n] flowchart branches, [n] tasks. **Without a case:** [n].
 
 | BRD Reference | Gap | Reason | To-do item / action |
 |---------------|-----|--------|---------------------|

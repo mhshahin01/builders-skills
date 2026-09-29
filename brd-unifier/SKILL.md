@@ -285,7 +285,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - Chain handoff check: UC IDs, persona names, and integration IDs are stable and internally consistent (downstream `sdd-unifier` references them by ID); no content restated across chunks.
 - To-do summary: the five steps with their status (none reported `Complete` without evidence); open `TD-NN` by priority; consistency findings by disposition, including the mechanical corrections that were applied; open items raised after the acceptance loop and not yet reviewed.
 - **Delivery gate: `Shut` or `Open`.** When shut, say plainly that `15-implementation.md`, `16-uat-bat-test-cases.md`, and `17-for-ppt.md` were not generated, list the conditions (G1-G5) that are not met with what is open behind each, and state that `Deferred` items count as open and that there is no override.
-- When 15-17 were written in this run: task count, waves, and dependency problems; test-case total with provisional scenarios and coverage gaps; slide count and video count (every storyboard verified at 30 seconds); any new `TD-NN` raised while writing them.
+- When 15-17 were written in this run: task count, waves, and dependency problems; test-case total with provisional scenarios and coverage gaps (including any task without a required case); slide count and video count (every storyboard verified at 30 seconds); any new `TD-NN` raised while writing them.
 - The recommended next action for the product manager: the first incomplete to-do step (normally: decide the P1 open items, then run `/grill-me` with the prepared prompt). State plainly that the use-case diagrams and flowcharts wait for to-do steps 1-3, and the mockups wait for the same steps; the two run in parallel.
 - One-line offer: "Want me to switch to the other mode?" / "Want me to merge the chunks?" / "Want me to re-chunk this combined file?"
 
@@ -299,6 +299,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 | "update the todo", or decisions handed back from a grill-me session | Apply confirmed decisions through the step 8 mechanics, rerun the consistency check, and refresh `14-todo.md` (statuses, evidence, Delivery gate block). Every ID stays stable. |
 | "generate / refresh the implementation plan", "the test cases", "the ppt or video brief", "the delivery chunks" | Step 8c (gated): verify G1-G5 first. Gate shut means nothing is written and the user gets the list of what is open. |
 | "run step 5", "add the use-case diagrams", "add the flowcharts" | Step 8b (gated). |
+| "TASK-NN is ready for test", test results handed back, "is TASK-NN done?" | Record delivery progress. It is tracking, not a refresh, so it needs no gate check. Set `Ready for test` only on the delivery team's confirmation, fill Testing Result and Testing Comment from the testers, and set `Accepted` only when every required case of the task passes (`delivery-chunks.md` § Chunk 15). |
 | "continue", "next part", "part 2", "part 3" (a part is `Pending` in `[project-slug]-brd-master.md`) | Resume with the next pending part, in order (`parts-mode.md`). Read every chunk already written first. |
 | "redo part N" | Follow `parts-mode.md` § Resuming (redo a completed part). Decisions taken since are kept, not lost. |
 | "just finish it", "do the rest in one go" | Switch to `whole` for the remaining parts; no more checkpoints. |
@@ -318,7 +319,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - `mermaid-diagrams.md` — inline Mermaid conventions for every diagram the template implies (including the gated use-case diagram and flowchart notation), plus the Miro-on-demand flow.
 - `use-case-quality.md` — what makes a substantive use case vs a thin one, the flowchart quality bar, and the matrix consistency rules.
 - `writing-style.md`: the plain-language style for everything the skill writes: the rules, the word list, before/after examples, and the mandatory plain-language pass. Read before writing any chunk.
-- `delivery-chunks.md`: the rulebook for chunks 14-17: the delivery gate (G1-G5) that locks 15-17, the to-do steps and their evidence rule, the consistency check, task derivation and dependency ordering, the UAT/BAT format and coverage rules, the presentation and video rules, the gated diagram step, refresh and re-lock rules, special cases (COMBINED mode, legacy BRDs), and the verification list. Read at steps 8a, 8b, and 8c, and on any refresh.
+- `delivery-chunks.md`: the rulebook for chunks 14-17: the delivery gate (G1-G5) that locks 15-17, the to-do steps and their evidence rule, the consistency check, task derivation, dependency ordering, and the two task milestones (`Ready for test`, `Accepted`), the UAT/BAT format, per-case readiness, and coverage rules, the presentation and video rules, the gated diagram step, refresh and re-lock rules, special cases (COMBINED mode, legacy BRDs), and the verification list. Read at steps 8a, 8b, and 8c, and on any refresh.
 - `chunks/14-todo.md`, `chunks/15-implementation.md`, `chunks/16-uat-bat-test-cases.md`, `chunks/17-for-ppt.md`: the delivery chunk skeletons (used in both modes).
 
 ---
@@ -357,6 +358,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - Never opens the delivery gate on status words alone: conditions G1-G5 are verified against the files, and the product manager's confirmation covers to-do steps 3 and 4 only.
 - Never invents requirements, decisions, acceptance criteria, expected test results, dependencies, or flow behaviour in a delivery chunk or a diagram. Gaps become to-do items, the affected content is labelled `Provisional (TD-NN)`, and the next chunk waits.
 - Never presents a circular dependency, a missing prerequisite, or a blocked task as part of a valid implementation sequence.
+- Never marks a task `Ready for test` without the delivery team's confirmation, or `Accepted` (complete) before every one of its required cases passes. Never makes a test case wait for the rest of its section or for a whole wave: each case runs once the tasks and prerequisites in its `Needs` cell are ready.
 - Never resolves a business ambiguity found by the consistency check silently; only confirmed or purely mechanical corrections are applied, and each is logged.
 - Never merges `14-todo.md` or `17-for-ppt.md` into the merged or combined BRD.
 - Never merges `decision-log.md` into the merged or combined BRD, and never leaves decision-process narration ("resolved on <date>", option letters, delegation or progress notes) in the content chunks: the chunks state the settled rule, the register tells the story.

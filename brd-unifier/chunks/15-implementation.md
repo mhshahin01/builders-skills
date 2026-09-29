@@ -24,11 +24,14 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 ## How to use this plan
 
 1. Read [[project-slug]-brd-master.md](./[project-slug]-brd-master.md), then the use cases a task cites, before starting the task.
-2. Work wave by wave. Start a task only when every task in its **Dependencies** is complete.
+2. Work wave by wave. A task can start once every task in its **Dependencies** has reached `Ready for test`. Their acceptance is not a start condition. A team may choose to wait for that acceptance, except when a required case of the dependency lists this task in its Needs cell (chunk 16): that wait would never end.
 3. Tasks listed together in a wave can run in parallel.
-4. A task is complete when every completion criterion holds and the test cases in [16-uat-bat-test-cases.md](./16-uat-bat-test-cases.md) whose Related Task names it pass.
-5. A `Provisional (TD-NN)` task may be started, but the part named by its to-do item is not final. A `Blocked` task, and any task that waits for it, must not be started.
-6. If the BRD and this plan disagree, the BRD wins. Report the difference; do not resolve it silently.
+4. Record each task's progress in its **Delivery status**: `Not started`, `In progress`, `Ready for test`, then `Accepted`.
+   - `Ready for test` (implemented): the delivery team confirms that every expected deliverable is built and ready for testing. Record the date and who confirmed it.
+   - `Accepted` (complete): every required case of the task passes. The required cases are the test cases in [16-uat-bat-test-cases.md](./16-uat-bat-test-cases.md) whose Related Task names the task (see its Task acceptance table). Record the date.
+5. A task is complete only when it is `Accepted`. Testing does not wait for a wave or a section to finish: each test case runs as soon as the tasks and prerequisites in its Needs cell are ready.
+6. A `Provisional (TD-NN)` task may be started, but the part named by its to-do item is not final. A `Blocked` task, and any task that waits for it, must not be started.
+7. If the BRD and this plan disagree, the BRD wins. Report the difference; do not resolve it silently.
 
 ## Use-case coverage
 
@@ -76,6 +79,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 | **Dependencies** | [None / TASK-NN, TASK-NN] |
 | **Can run in parallel with** | [TASK-02] |
 | **Status basis** | [Confirmed / Provisional (TD-NN) / Blocked (DP-NN, TD-NN) / Blocked (waits for TASK-NN)] |
+| **Delivery status** | Not started |
 
 **Expected deliverables**
 
@@ -87,6 +91,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 - [ ] [UC-01 AC-1: short label]
 - [ ] [UC-01 AC-2: short label]
 - [ ] [UC-01 E1 handled as documented]
+- [ ] [07 matrix: roles marked - are refused on this task's screens]
 - [ ] [NFR-04 business measure observed]
 
 **Assumptions, open questions, blockers**

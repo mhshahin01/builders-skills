@@ -115,4 +115,4 @@ erDiagram
 | Key management | [KMS / Vault — rotation policy] |
 | PII columns | [List + masking rule for non-prod] |
 
-<!-- MASTER: lld-master.md | PREV: 04-implementation/<service>.md | NEXT: 06-api-contracts.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 04-implementation/<service>.md | NEXT: 06-api-contracts.md -->

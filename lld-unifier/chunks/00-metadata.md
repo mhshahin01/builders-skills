@@ -18,8 +18,8 @@ PART OF: LLD - [Project Name]
 | **Author(s)** | [Names] |
 | **Reviewers** | [Names] |
 | **Approvers** | [Names] |
-| **Related BRD** | [path or link, or `Not applicable`] |
-| **Related SDD** | [path or link, or `Not applicable`] |
+| **Related BRD(s)** | [One per source BRD, with its key from the SDD's Source BRDs register: `[KEY]` [[brd-slug]-brd-master.md](../brd-[brd-slug]/[brd-slug]-brd-master.md); or `Not applicable`] |
+| **Related SDD** | [[sdd-slug]-sdd-master.md](../sdd-[sdd-slug]/[sdd-slug]-sdd-master.md) [or `Not applicable`] |
 | **Source Code Path** (from-code / hybrid) | [path, or `Not applicable`] |
 
 ---
@@ -53,4 +53,4 @@ PART OF: LLD - [Project Name]
 | `🆕 code-only` (hybrid only) | [N] | Present in code, not in SDD. |
 | `⛔ sdd-only` (hybrid only) | [N] | In SDD, not yet built. |
 
-<!-- MASTER: lld-master.md | NEXT: 01-purpose-and-scope.md -->
+<!-- MASTER: [project-slug]-lld-master.md | NEXT: 01-purpose-and-scope.md -->

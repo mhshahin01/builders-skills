@@ -36,6 +36,9 @@ See `confidence-rules.md` for the structural-vs-semantic weighting.
 10. **Resilience4j / circuit-breaker config** — `@CircuitBreaker`, `@Retry`, `@Bulkhead`, `@TimeLimiter` annotations. Per call, the configured policy.
 11. **Observability hooks** — `@Timed`, `@Counted`, custom Micrometer registrations. List with metric name + labels.
 12. **Multi-tenancy enforcement points** — Hibernate filters (`@Filter`), row-level-security policy clauses, query helpers that inject `tenant_id`. Document the enforcement mechanism.
+13. **Frontend routes** (when a UI exists): every route, with its path, component, guards, lazy loading, and route `data` (look for `screen` and `useCases` keys).
+14. **E2E specs**: every e2e spec file, with its tests and their tags (Playwright `tag` details and `@`-tokens in titles; JUnit 5 `@Tag`).
+15. **Use-case markers**: `@UseCase(...)` annotations, `use_case` MDC keys or span attributes, and any other place the code names a use case ID.
 
 **Output format expected from the agent:** structured Markdown with one section per ask above, file:line citations everywhere, no narrative.
 
@@ -55,7 +58,7 @@ See `confidence-rules.md` for the structural-vs-semantic weighting.
 1. **Per-service responsibility** — one paragraph describing each service's bounded context, derived from its entry points + DB tables + topics produced.
 2. **Method-level pseudocode for non-trivial methods** — the agent should identify which methods are non-trivial (multi-step, has branching beyond null-check, touches multiple aggregates) and produce pseudocode. Skip plain CRUD.
 3. **Design pattern rationale** — for each structural pattern detected by Phase 1, write the rationale (why this pattern was used here, what it solves) referencing the triggering CLAUDE.md rule. If the pattern is *named* (file/class names suggest it) but not *applied* (the structure doesn't match), do NOT document it.
-4. **Use-case workflow narratives** — per use case (entry-point method), describe the control flow step by step, identify idempotency points, identify outbox emission points, identify retry/timeout choices.
+4. **Use-case workflow narratives** — per entry point (or group of entry points serving one flow), describe the control flow step by step, identify idempotency points, identify outbox emission points, identify retry/timeout choices. Head each one `### KEY/UC-NN: Title` only when § Tracing to BRD use cases matched it to an SDD §7.3 use case; otherwise `### Workflow: [name]`. Never number a workflow as a use case.
 5. **Cross-service saga narratives** — if multi-service flows are detected (orchestrator + N participants), describe the saga steps + compensation per step.
 6. **Sequence diagram authoring** — per use case, generate a Mermaid `sequenceDiagram` with participants (Client, Controller, Service, DB, Outbox, Kafka, downstream system).
 7. **Class diagram authoring (per design pattern)** — for each design pattern, generate a Mermaid `classDiagram` showing roles.
@@ -83,6 +86,19 @@ For sections the agents cannot fill from code alone:
 
 ---
 
+## Tracing to BRD use cases (only with an SDD)
+
+Code carries no BRD use case IDs of its own, so a pure from-code LLD has no use-case trace: every trace slot reads `Not applicable - no source SDD`, and workflows are headed `### Workflow: [name]`. When an SDD path is given for cross-reference (and in hybrid), match the code to SDD §7.3 and the BRD, then apply `sdd-to-lld.md` § Use-case traceability to what matched.
+
+1. **Entry points.** Match each discovered entry point to a §7.3 Entry points cell by HTTP method and normalized path: combine class-level and method-level mappings, then compare segment by segment, treating any `{param}` as equal to any other `{param}` (parameter names are ignored). Event listeners match `Event: [EVENT_NAME]` by event name, and scheduled jobs match `Schedule: [name]` by name. A match gives the use case(s) and the owner; it is high confidence (both sides are stated facts).
+2. **Unmatched entry points.** A platform endpoint (health, actuator, sign-in, admin tooling) carries no use case. Any other unmatched endpoint gets `> Confirm: [METHOD] [path] matches no SDD §7.3 entry point; platform endpoint, or behaviour no BRD use case covers?` It is an open question, never a new UC.
+3. **Unmatched §7.3 entry points.** An active in-scope use case whose entry point the code does not have: from-code notes it in chunk 15 (`> Confirm:`); hybrid marks it `⛔ sdd-only` (`hybrid-drift.md` § Use-case trace drift).
+4. **Routes to screens.** A route whose `data.screen` names a BRD screen ID or `MK-NN` maps to it (high confidence). Otherwise match by name against the BRD's screen names (medium confidence, `> Confirm:`). A route with no match is a platform page or gets `> Confirm: no BRD screen for route [path]`. The route's use cases are then read from the BRD for that screen, never taken from the code alone.
+5. **Specs.** Existing tags that name BRD IDs fill 13 § 16.8. A tag naming an ID the BRD does not have gets `> Confirm:` (hybrid: `⚠ drift`).
+6. **Existing use-case markers.** An `@UseCase` value, `use_case` MDC key, or route `data.useCases` that disagrees with §7.3 or the BRD is `> Confirm:` (hybrid: `⚠ drift`), and the LLD cites the upstream value. A missing marker is a `> Confirm:` in every direction: the code has not adopted the LLD convention yet.
+
+---
+
 ## Confidence weighting in from-code mode
 
 Per `confidence-rules.md`:
@@ -99,6 +115,10 @@ Per `confidence-rules.md`:
 | Cross-service saga step ordering | Medium | `> Confirm: saga step ordering inferred from event flow + listener registrations` |
 | Idempotency point identification | High if `Idempotency-Key` header is checked; Medium if inferred from natural-key dedup table | varies |
 | Business rule narrative | Low | `> TODO: business rule narrative inferred from variable names + branches — verify` |
+| Entry point → use case, by method + normalized path match to SDD §7.3 | High | None |
+| Entry point with no §7.3 match (not a platform endpoint) | Medium | `> Confirm: matches no SDD §7.3 entry point` |
+| Route → screen, by route `data.screen` | High | None |
+| Route → screen, by name only | Medium | `> Confirm: route matched to BRD screen by name` |
 
 **Override rule:** if the agent finds a unit/integration test that exercises a claim (e.g., a test verifying a Strategy resolver picks `EnterprisePricingStrategy` for `Tier.ENTERPRISE`), upgrade the confidence by one tier. A test that proves a claim *is* the claim's source-of-truth.
 
@@ -110,9 +130,10 @@ Per `confidence-rules.md`:
 2. **Phase 1: Discovery.** Dispatch `feature-dev:code-explorer` with the brief (above). Wait for output.
 3. **Phase 2: Synthesis.** Dispatch `code-documentation:docs-architect` with Phase 1 output + section schema + rules. Wait for output.
 4. **Template fit.** Walk the chunks; fill content from Phase 1 + Phase 2; apply confidence flags.
-5. **Index flags** in `15-open-questions.md`.
-6. **Write output** per chosen shape.
-7. **Surface handoff summary**: file paths, services discovered, patterns detected, confidence flag counts.
+5. **Trace to BRD use cases** when an SDD is given (§ Tracing to BRD use cases), then SKILL.md step 6a.
+6. **Index flags** in `15-open-questions.md`.
+7. **Write output** per chosen shape.
+8. **Surface handoff summary**: file paths, services discovered, patterns detected, confidence flag counts, and the use-case traceability line when an SDD was given.
 
 ---
 

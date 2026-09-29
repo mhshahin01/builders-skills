@@ -112,4 +112,4 @@ post:
     '409': { description: Idempotency conflict, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Problem' } } } }
 ```
 
-<!-- MASTER: lld-master.md | PREV: 05-data-model.md | NEXT: 07-event-contracts.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 05-data-model.md | NEXT: 07-event-contracts.md -->

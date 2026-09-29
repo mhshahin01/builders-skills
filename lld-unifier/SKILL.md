@@ -5,7 +5,9 @@ description: >-
   when asked to create, draft, write, build, or unify an LLD, low-level design, implementation
   design, detailed design, or service design. Three modes, always asked first: from-sdd (design
   before code exists), from-code (reverse-engineer an LLD from a codebase), and hybrid (compare an
-  SDD with the code and mark drift). Also owns the Specs section (Mission, Tech Stack, Roadmap,
+  SDD with the code and mark drift). Traces every BRD use case from the SDD's §7.3 to its
+  workflow, routes and screens, UAT/BAT test cases, e2e specs, and runtime use_case attribute,
+  with keyed IDs (REFUNDS/UC-04). Also owns the Specs section (Mission, Tech Stack, Roadmap,
   Project Type) used as input for speckit /constitution. Arguments: [chunks|combined], default
   chunks. Output is Markdown only.
 ---
@@ -88,6 +90,7 @@ If the user has already implied a shape ("give me the full LLD as one file" → 
 11. **Chunks are semantic, not size-based.** Never split by line count.
 12. **Flag gaps explicitly.** Where the input doesn't cover something the template requires, use `> Confirm:` (medium-confidence inference) or `> TODO: <best-guess> — verify` (low-confidence inference). Never paper over gaps with plausible-sounding invention.
 13. **One fact, one home (no duplication).** The LLD references the SDD, never restates it: design-level content is cited by link (reference + delta — full rules in `sdd-to-lld.md` § One fact, one home). Contract *names* (topics, events, roles, permission tokens) match the SDD character-for-character; contract *bodies* (payload schemas, role catalogues, SLO targets) are referenced, with only the implementation delta added. Restated content is a review defect (OI Type: Duplication).
+14. **Every BRD use case is traced end to end** (from-sdd and hybrid, and from-code when an SDD is given, whenever the SDD derives from brd-unifier BRDs). Each active use case in scope gets one `### KEY/UC-NN: Title` workflow block in its owner's file, with a traceability line citing its BRD heading, SDD §7.3, owner and entry points, UAT/BAT test cases, and the screens and routes that start it. Routes map to BRD screen IDs, e2e specs are tagged with use case and test case IDs, entry points carry a `use_case` span and log attribute, and `16-references.md` § 19.9 consolidates it all for production-bug triage. Every BRD ID carries the key from the SDD's Source BRDs register. IDs belong to their document: never created, renumbered, or re-titled. Rules: `sdd-to-lld.md` § Use-case traceability.
 
 ---
 
@@ -141,6 +144,15 @@ See `sdd-to-lld.md` § Specs ownership & synthesis for the complete rules.
 
 If no SDD is reachable (pure from-code), Tech Stack comes from the actual dependency manifests and Project Type is Brownfield.
 
+### 3b. Resolve the use-case trace inputs (from-sdd, hybrid; from-code with an SDD)
+
+No new question unless something is missing. Per `sdd-to-lld.md` § Use-case traceability › Upstream documents:
+
+- **SDD finished?** If its master shows a part `Pending` or `In progress`, or §7.3 still reads `Pending (part 2)`, stop and name the missing part.
+- **BRDs and keys.** Read the SDD's § Document Lineage: each source BRD, its key, and its location. No register (an older SDD): plain IDs, flagged, and an SDD upgrade suggested in the handoff. No BRD at all (§7.3 reads `Not applicable - no source BRD.`): the trace is not applicable.
+- **BRD delivery state.** Chunk 16 `Up to date`, `Provisional`, `Stale`, or not written (`Pending (BRD 16 not written)`); chunk 14 Mockup coverage for the screens with no screen ID.
+- **Scope.** The §13 services this LLD covers; their §7.3 rows are this LLD's use cases.
+
 ### 4. Plan internally
 
 Enumerate which chunks (or sections, in combined shape) will exist, which workflows will be documented, which services will get their own `04-implementation/<service>.md` chunk, which CLAUDE.md defaults apply, and which sections need confidence flags. The canonical chunk list is in `chunking.md`.
@@ -149,8 +161,8 @@ Enumerate which chunks (or sections, in combined shape) will exist, which workfl
 
 For from-code or hybrid direction:
 
-- **Phase 1 — Discovery:** dispatch `feature-dev:code-explorer` agent. Brief it with the target path and a request for: entry points, call graph, dependencies, data tables touched, Kafka topics produced/consumed, structural pattern detection (interface + multiple implementations + context class), and cross-cutting hooks (interceptors/aspects/filters/guards). Capture findings as structured notes with file:line citations.
-- **Phase 2 — Synthesis:** dispatch `code-documentation:docs-architect` agent. Brief it with the Phase 1 findings + this skill's section schema. Request per-service narratives, sequence stories, design-pattern rationale (why this pattern, what it solves here), and workflow descriptions.
+- **Phase 1 — Discovery:** dispatch `feature-dev:code-explorer` agent. Brief it with the target path and a request for: entry points, call graph, dependencies, data tables touched, Kafka topics produced/consumed, structural pattern detection (interface + multiple implementations + context class), cross-cutting hooks (interceptors/aspects/filters/guards), frontend routes with their route data, e2e specs with their tags, and existing use-case markers. Capture findings as structured notes with file:line citations.
+- **Phase 2 — Synthesis:** dispatch `code-documentation:docs-architect` agent. Brief it with the Phase 1 findings + this skill's section schema (+ SDD §7.3 when an SDD is given). Request per-service narratives, sequence stories, design-pattern rationale (why this pattern, what it solves here), and workflow descriptions, headed `### KEY/UC-NN: Title` only for entry points matched to §7.3 and `### Workflow: [name]` otherwise.
 
 See `agent-orchestration.md` for the dispatch templates and confidence-weighting rules.
 
@@ -161,7 +173,7 @@ For from-sdd direction: skip Phase 1 + 2. Read the SDD chunks and apply the fiel
 **CHUNKS shape (default):**
 
 - Use `chunks/*.md` as the section skeleton.
-- Write output to `./lld-[project-slug]/`.
+- Write output to `./lld-[project-slug]/`, with the master index at `./lld-[project-slug]/[project-slug]-lld-master.md` (from `chunks/lld-master.md`).
 - Each chunk starts with the self-describing comment block (see `chunking.md`).
 - For chunk 04, produce one file per service: `04-implementation/[service-slug].md`. Cross-service sagas live with the orchestrator service's file.
 
@@ -176,10 +188,12 @@ For from-sdd direction: skip Phase 1 + 2. Read the SDD chunks and apply the fiel
 - Structural claims (call graph, schema, topic names) default to high confidence.
 - Semantic claims (business rule narrative, pattern rationale) default to medium confidence unless cross-validated.
 - Every applied pattern annotated per `pattern-rules.md`.
+- No use case ID is ever made up. With an SDD given, each entry point and route is matched to SDD §7.3 and the BRD screens (`code-extraction.md` § Tracing to BRD use cases); unmatched ones get `> Confirm:`. Without an SDD, workflows are headed `### Workflow: [name]` and the trace reads `Not applicable - no source SDD`.
 
 **FROM-SDD direction:**
 
-- Read the SDD chunks (and BRD if linked) per `sdd-to-lld.md`.
+- Read the SDD chunks, and through the SDD the BRD parts the trace cites, per `sdd-to-lld.md`.
+- Trace every BRD use case per `sdd-to-lld.md` § Use-case traceability: the workflow blocks and their traceability lines, 14 § 17.3 routes, 13 § 16.8 specs, the `use_case` attribute, and the 16 § 19.9 index.
 - Apply CLAUDE.md defaults aggressively (constructor injection, records DTOs, idempotency on money writes, outbox for state changes, sagas for cross-service, Resilience4j, multi-tenant indexes, RFC 9457 errors, OpenAPI versioning, Flyway migrations, etc.).
 - Each pattern annotated with triggering CLAUDE.md rule + service-specific rationale + Mermaid class diagram + pseudocode skeleton.
 - Sections that the SDD and CLAUDE.md cannot together fill (SLOs, threat notes, peak scenario multipliers) → `> TODO: <best-guess> — verify`.
@@ -194,6 +208,7 @@ For from-sdd direction: skip Phase 1 + 2. Read the SDD chunks and apply the fiel
   - Code-only → `🆕 code-only` marker.
   - SDD-only → `⛔ sdd-only` marker.
 - Emit single unified LLD (no separate `designed/` / `built/` folders).
+- Use-case trace drift (a §7.3 entry point not built, code tagging a different use case, route data that disagrees with the BRD screen, spec tags naming unknown IDs) per `hybrid-drift.md` § Use-case trace drift.
 - `15-open-questions.md` indexes every drift marker with location + severity.
 
 **PARTIAL CODE + SDD:**
@@ -202,6 +217,15 @@ For from-sdd direction: skip Phase 1 + 2. Read the SDD chunks and apply the fiel
 - Run from-code pass on existing services.
 - Missing services → `> TODO: not yet built (SDD-described — see SDD §17.X)` placeholder in `04-implementation/<service>.md`.
 - Note the partial-code choice in `15-open-questions.md`.
+
+### 6a. Reconcile the use-case trace (from-sdd, hybrid; from-code with an SDD)
+
+After the body, before the Specs chunk. Skip when the trace is not applicable (step 3b).
+
+1. Run the checks in `sdd-to-lld.md` § Use-case traceability › Checks: one keyed workflow block per active in-scope use case; each traceability line equal to SDD §7.3, BRD chunk 16, and 14 § 17.3; every route with a screen and use cases; the index equal to §7.3 row for row, both ways; spec tags naming real IDs; `@UseCase` on every traced entry point; every link resolving (file and anchor); every BRD ID keyed.
+2. Fix what is mechanical (a wrong anchor, a missing key, a cell that disagrees with its home); flag the rest (`> Confirm:` / `> TODO:`). Never resolve an upstream disagreement in the LLD.
+3. Record the upstream state in 16 § 19.1.
+4. When the SDD has a Child LLDs table, add or update this LLD's row (`sdd-to-lld.md` § Use-case traceability › SDD lineage). This is the only write outside the LLD folder.
 
 ### 6b. Synthesise the Specs chunk (mandatory, AFTER the body is complete)
 
@@ -230,10 +254,11 @@ Chunk 15 (Open Questions) and chunk 18 (Open Items & Clarifications) coexist:
 1. Use the `Agent` tool with `subagent_type: comprehensive-review:full-review` (preferred, broad review surface) or `general-purpose`. Subagent starts with no conversation memory.
 2. Pass the subagent:
    - Absolute paths to all generated LLD chunks (or the combined file), **including chunk 15** (so the reviewer can see what the author already flagged and avoid duplicating) **and chunk 17 Specs**.
-   - Path to the source SDD (including its §14 Centralized Event Hub — the contract registry the LLD's event contracts must match verbatim) for cross-validation.
+   - Path to the source SDD (including its §14 Centralized Event Hub, the contract registry the LLD's event contracts must match verbatim, and its §7.3 Use Case Traceability) for cross-validation.
+   - Paths to the source BRD(s), when the SDD has them: the use case chunks (05, 06x), chunk 11, chunk 14 (Mockup coverage), and chunk 16 (UAT/BAT test cases).
    - Path to this skill's templates.
    - Path to CLAUDE.md so the reviewer can spot pattern misapplication and rule violations.
-   - The brief: identify implementation-level gaps, missing edge cases, pattern misapplications, untested error paths, concurrency hazards, transaction boundary issues, idempotency gaps, multi-tenancy leaks, test gaps, contract drift (LLD event contracts vs SDD §14; LLD authZ vs SDD §16), and Specs-body mismatches (Mission vs SDD §1, Tech Stack vs LLD §6.3, Roadmap services that don't exist). For hybrid mode, also flag drift between the from-sdd and from-code views that wasn't already captured. For each finding, propose 2-3 concrete options with one-line tradeoffs, a **Recommendation** (always pick one, even for close calls), and a **Why** (REQUIRED: the reason that option wins — the CLAUDE.md rule, SDD contract, code fact, or risk avoided, plus the tradeoff accepted; never empty). Output goes into the chunk/section using the schema in `chunks/18-open-items-and-clarifications.md`.
+   - The brief: identify implementation-level gaps, missing edge cases, pattern misapplications, untested error paths, concurrency hazards, transaction boundary issues, idempotency gaps, multi-tenancy leaks, test gaps, contract drift (LLD event contracts vs SDD §14; LLD authZ vs SDD §16), Specs-body mismatches (Mission vs SDD §1, Tech Stack vs LLD §6.3, Roadmap services that don't exist), and use-case traceability gaps (an in-scope §7.3 use case with no workflow block or with two; a block whose ID or title differs from the BRD or lacks its key; a traceability line whose owner, entry points, or test cases disagree with SDD §7.3 or BRD chunk 16; a route with no screen or use case cell; a screen whose use cases differ from the BRD; a test case with no e2e spec and no reason; a traced entry point without `@UseCase`; a link whose file or anchor does not resolve; an ID its document does not have; behaviour no BRD use case covers, Type `Missing scenario`). For hybrid mode, also flag drift between the from-sdd and from-code views that wasn't already captured. For each finding, propose 2-3 concrete options with one-line tradeoffs, a **Recommendation** (always pick one, even for close calls), and a **Why** (REQUIRED: the reason that option wins — the CLAUDE.md rule, SDD contract, code fact, or risk avoided, plus the tradeoff accepted; never empty). Output goes into the chunk/section using the schema in `chunks/18-open-items-and-clarifications.md`.
    - Constraint: External findings only. Do not duplicate items already in chunk 15.
 3. The subagent writes directly to `18-open-items-and-clarifications.md` (chunks shape) or the `# 21. Open Items & Clarifications` section (combined shape).
 4. Verify coverage: at minimum one OI per major implementation risk surface (per service: error handling, transactions, idempotency, multi-tenancy, observability hooks, test coverage). Zero OIs typically means a confirmatory review — re-dispatch with stronger adversarial framing.
@@ -242,11 +267,11 @@ Chunk 15 (Open Questions) and chunk 18 (Open Items & Clarifications) coexist:
 
 > You are an independent adversarial reviewer for a Low-Level Design Document. You have no memory of how this document was authored. Your job is to find what is missing, ambiguous, or risky in the implementation specification — not to confirm what is present.
 >
-> Read these files: [LLD paths, including chunk 15]. Cross-reference: [SDD paths, including the SDD Specs chunk if present]. Honour the rules in [CLAUDE.md path].
+> Read these files: [LLD paths, including chunk 15]. Cross-reference: [SDD paths, including §7.3 and the SDD Specs chunk if present] and [BRD paths: use case chunks, 11, 14, 16]. Honour the rules in [CLAUDE.md path].
 >
 > Skip anything already flagged in chunk 15 (`> Confirm:` / `> TODO:` items). Your job is to find what the author *did not* flag.
 >
-> For each implementation gap, missing edge case, pattern misapplication, error path issue, concurrency hazard, transaction boundary problem, idempotency gap, multi-tenancy leak, test gap, contract drift vs the SDD's Centralized Event Hub (§14) or User Roles catalogue (§16), or Specs-body mismatch, write an OI entry following the schema in [chunks/18-open-items-and-clarifications.md path]. Each entry must include: Where (service / sub-section), Type, Concern (one paragraph), Options (at least 2 with tradeoffs), Recommendation (always pick one), **Why (the reason that option wins — evidence + tradeoff accepted; never empty)**, Status: Open.
+> For each implementation gap, missing edge case, pattern misapplication, error path issue, concurrency hazard, transaction boundary problem, idempotency gap, multi-tenancy leak, test gap, contract drift vs the SDD's Centralized Event Hub (§14) or User Roles catalogue (§16), Specs-body mismatch, traceability gap (a use case, route, test case, spec, or entry point the trace misses or gets wrong, against SDD §7.3 and the BRD; a link that does not resolve; a BRD ID without its key), or missing scenario (behaviour no BRD use case covers; never a new UC), write an OI entry following the schema in [chunks/18-open-items-and-clarifications.md path]. Each entry must include: Where (service / sub-section), Type, Concern (one paragraph), Options (at least 2 with tradeoffs), Recommendation (always pick one), **Why (the reason that option wins — evidence + tradeoff accepted; never empty)**, Status: Open.
 >
 > Cover at minimum (per service): error envelope completeness vs RFC 9457, transaction propagation correctness, idempotency on money/wallet/external-side-effect operations, multi-tenancy filtering on every query, outbox correctness for state-changing events, saga compensation paths, retry/backoff correctness with Resilience4j, observability instrumentation completeness, contract/integration/e2e test coverage, OpenAPI/event-schema versioning, and duplication (SDD content restated instead of referenced with an implementation delta — one fact, one home). For hybrid mode also flag undocumented drift.
 >
@@ -264,7 +289,8 @@ After writing the body, the Specs chunk, and the Open Items chunk, surface to th
 - Count of `> Confirm:` and `> TODO:` flags, indexed in `15-open-questions.md` (author-flagged).
 - Count of Open Items (OI-NN) in `18-open-items-and-clarifications.md` (reviewer-flagged).
 - Specs chunk status (`17-specs.md`): Mission ✓ / Tech Stack ✓ / Roadmap ✓ / Project Type ✓ (or flag any that fell back to placeholders; note if a legacy SDD/BRD Specs was consumed as input).
-- Chain handoff check: every `../sdd-[slug]/...` reference resolves; topic/event/role names match SDD §14/§16 character-for-character; SDD content is referenced + implementation delta, never restated.
+- Use-case traceability (when the trace applies), one line per source BRD: active use cases in scope and how many have a workflow block, merged or removed ones, routes mapped to a screen vs platform pages, test cases cited (automated / not automated / `Pending (BRD 16 not written)`), and the flags (`MK-NN` fallbacks, missing screens, BRD chunk 16 `Stale`); then the link count and whether all resolve, and the SDD Child LLDs row written or updated. Example: `REFUNDS v1.0: 4 active (4 traced), 1 merged; 5 routes (4 screens, 1 platform); 9 TCs (8 automated, 1 not) | LOYALTY v1.0: 2 active (2 traced); TCs Pending (BRD 16 not written) | 71 links, all resolve; Child LLDs row added`. An older SDD (no Source BRDs register or no §7.3) is named here, with the suggestion to upgrade it through sdd-unifier.
+- Chain handoff check: every `../sdd-[sdd-slug]/...` reference resolves; topic/event/role names match SDD §14/§16 character-for-character; SDD content is referenced + implementation delta, never restated; every BRD ID carries a key from the SDD's Source BRDs register.
 - One-line offer: "Want me to switch shape?" / "Want me to merge?" / "Want me to fill in section X now that you have decisions?" / "Want me to re-run from-code now that the missing services are scaffolded?"
 
 ### 9. Cross-shape conversion (on explicit request)
@@ -275,6 +301,8 @@ After writing the body, the Specs chunk, and the Open Items chunk, surface to th
 | "split into chunks", "re-chunk this" (when a combined file exists) | Slice by template section per `chunks/*.md` skeleton. Keep the original combined file. |
 | "regenerate chunk N", "update section X", "fill in service Y" | Targeted regeneration, leaving the rest untouched. Bump the Changes Log. |
 | "re-run from-code" (after partial → full) | Re-dispatch agents on the now-complete code; re-fit; bump version. |
+| "refresh the trace", or an upstream change (BRD chunk 16 written, screens or mockups changed, SDD §7.3 changed, a new BRD or BRD version) | Targeted regeneration per `sdd-to-lld.md` § Use-case traceability › Refresh triggers, then step 6a; bump version. |
+| Any run on an LLD whose master is still `lld-master.md` (written before the `[project-slug]-lld-master.md` name) | Rename it to `[project-slug]-lld-master.md`, update the chunk footers and this LLD's Child LLDs row in the SDD, and name the rename in the handoff. |
 
 ---
 
@@ -282,11 +310,11 @@ After writing the body, the Specs chunk, and the Open Items chunk, surface to th
 
 - `TEMPLATE-COMBINED.md` — the single-file template. Read at the start of any COMBINED-shape generation.
 - `chunks/*.md` — the per-chunk template skeletons. Read at the start of any CHUNKS-shape generation.
-- `chunks/lld-master.md` — the master index template; regenerate per project.
+- `chunks/lld-master.md` — the master index template; written per project as `[project-slug]-lld-master.md`.
 - `chunking.md` — canonical chunk map, naming convention, merge rules, per-service split.
 - `modes.md` — chunks vs combined behavioural details.
 - `transform-detection.md` — rules for asking the direction question and resolving partial-code cases.
-- `sdd-to-lld.md` — explicit SDD→LLD field mapping + Specs ownership & synthesis rules (read in from-sdd direction).
+- `sdd-to-lld.md` — explicit SDD→LLD field mapping, the use-case traceability rules (keys, links, anchors, homes, gaps, checks, Child LLDs row, refresh), and Specs ownership & synthesis rules (read in from-sdd and hybrid, and in from-code when an SDD is given).
 - `code-extraction.md` — how to drive `code-explorer` + `docs-architect` to populate the LLD (read in from-code direction).
 - `hybrid-drift.md` — two-pass orchestration + section-by-section diff rules (read in hybrid direction).
 - `pattern-rules.md` — CLAUDE.md design rules → triggering conditions for from-sdd; pattern-detection heuristics for from-code.
@@ -301,12 +329,14 @@ After writing the body, the Specs chunk, and the Open Items chunk, surface to th
 
 - **Project slug**: kebab-case, lowercased, derived from project name.
 - **Chunked output folder**: `./lld-[project-slug]/`.
+- **Master index**: `./lld-[project-slug]/[project-slug]-lld-master.md`. Its Related SDD line links to the SDD master.
 - **Per-service implementation files**: `./lld-[project-slug]/04-implementation/[service-slug].md` — one per service. The folder is created even if there is only one service.
 - **Chunked filenames**: `NN-short-title.md` (two-digit prefix). See `chunking.md`.
 - **Combined output filename**: `LLD-[ProjectName]-v[X.X].md` (PascalCase project name).
 - **Merged-from-chunks filename**: `LLD-[ProjectName]-v[X.X]-MERGED.md`.
 - **Encoding**: UTF-8, LF line endings.
 - **Tables**: pipe-table format, no hard line wrap.
+- **Use case links**: `[KEY/UC-NN](<relative path from this file to the BRD file holding the heading>#<anchor of that heading>)`, e.g. `[REFUNDS/UC-04](../../brd-refunds-portal/06b-use-cases-branch-manager.md#uc-04-approve--reject-refund)` from a `04-implementation/` file. Parts follow the link: `step 5`, `A1`, `E1`, `BR-2`, `AC-3`. Test cases, screens, and `MK-NN` follow the same keyed form. Rules: `sdd-to-lld.md` § Use-case traceability.
 
 ---
 
@@ -315,6 +345,8 @@ After writing the body, the Specs chunk, and the Open Items chunk, surface to th
 - Never emits `.docx`, `.pdf`, `.xlsx`, or any non-Markdown output unless the user explicitly asks.
 - Never silently picks a direction (from-code / from-sdd / hybrid). Always asks per step 2.
 - Never invents class names, method signatures, table columns, topic names, or version pins to fill a section. Missing detail → confidence flag.
+- Never creates, renumbers, or re-titles a use case, test case, screen ID, or `MK-NN`: they belong to the BRD. Behaviour no BRD use case covers is an open question, not a new UC.
+- Never writes into the SDD, except this LLD's own row in the SDD's Child LLDs table.
 - Never produces a "here's a summary, let me know if you want the full version" preview. Generates the actual deliverable.
 - Never silently drops template sections. Empty sections keep their heading and write `Not applicable for this service.` (with a flag if surprising).
 - Never modifies the embedded templates (`TEMPLATE-COMBINED.md` or `chunks/*.md`) during a generation run — they are read-only references.

@@ -53,16 +53,16 @@ Used by speckit /constitution AND by pattern-rules.md for stack-appropriate patt
 <!--
 Phases derived from the SDD's §13 Services Decomposition and the BRD use cases each service owns. Each phase is a coherent, deployable slice of capability the team can ship and stakeholders can review.
 3-6 phases is typical. More than 8 means the slicing is too fine; fewer than 2 means it is too coarse.
-Each phase: short label + one-line scope + the services / BRD UC IDs it covers.
+Each phase: short label + one-line scope + the services / BRD UC IDs it covers. UC IDs are written as SDD §7.3 writes them, with their BRD key (plain text, no links).
 From-code direction (no SDD): write "Not applicable - reverse-engineered LLD."
 Used by speckit /constitution to set ordering expectations and by execution agents to plan delivery sequences.
 -->
 
 | Phase | Scope (one line) | Services / UC IDs |
 |-------|------------------|-------------------|
-| P1 - [Foundation label] | [What this phase delivers] | [service-a; UC-01, UC-02] |
-| P2 - [Phase 2 label] | [What this phase delivers] | [service-b; UC-03, UC-04] |
-| P3 - [Phase 3 label] | [What this phase delivers] | [service-c; UC-05, UC-06] |
+| P1 - [Foundation label] | [What this phase delivers] | [service-a; [KEY]/UC-01, [KEY]/UC-02] |
+| P2 - [Phase 2 label] | [What this phase delivers] | [service-b; [KEY]/UC-03, [KEY]/UC-04] |
+| P3 - [Phase 3 label] | [What this phase delivers] | [service-c; [KEY]/UC-05, [KEY]/UC-06] |
 
 ---
 
@@ -81,4 +81,4 @@ Pick exactly one. Recorded at SDD intake (SDD §1) or asked at LLD intake if abs
 
 **LLD direction taken:** [from-sdd | from-code | hybrid]
 
-<!-- MASTER: lld-master.md | PREV: 16-references.md | NEXT: 18-open-items-and-clarifications.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 16-references.md | NEXT: 18-open-items-and-clarifications.md -->

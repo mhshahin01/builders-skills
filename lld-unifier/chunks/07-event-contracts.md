@@ -89,4 +89,4 @@ PART OF: LLD - [Project Name]
 - **Replay tool:** [name + repo path].
 - **Alerting:** any DLQ row triggers a warning; >10 rows in 1h triggers a page.
 
-<!-- MASTER: lld-master.md | PREV: 06-api-contracts.md | NEXT: 08-state-and-rules.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 06-api-contracts.md | NEXT: 08-state-and-rules.md -->

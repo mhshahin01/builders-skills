@@ -51,4 +51,4 @@ PART OF: LLD - [Project Name]
 
 > **Convention:** carry SDD glossary verbatim; add LLD-specific implementation terms (pattern names, class-suffix conventions, transaction-policy names) as new rows.
 
-<!-- MASTER: lld-master.md | PREV: 00-metadata.md | NEXT: 02-context.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 00-metadata.md | NEXT: 02-context.md -->

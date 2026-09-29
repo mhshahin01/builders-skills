@@ -41,10 +41,31 @@ NOTE: This chunk is OMITTED when the LLD scope has no UI surface. Do not stub it
 
 ## 17.3 Routing
 
-| Route | Component | Guards | Lazy-loaded? |
-|-------|-----------|--------|--------------|
-| `/foo` | `FooListComponent` | `authGuard` | Yes (`loadComponent`) |
-| `/foo/:id` | `FooDetailComponent` | `authGuard`, `tenantGuard` | Yes |
+<!--
+Every route has a row (sdd-to-lld.md § Use-case traceability). This table is the home of route -> screen; a screen's use cases are read from the BRD, never guessed from the route.
+  Screen (BRD): the screen ID the route implements, as the BRD defines it (chunk 11 or a use case's UI/UX section), linked to the heading it is defined under; else the MK-NN from BRD chunk 14 Mockup coverage, linked to 14-todo.md#mockup-coverage; else "None - platform page" (sign-in, not found, the shell).
+  Use cases (BRD): the use cases the BRD gives that screen, linked to their BRD headings; "None - platform page" for platform pages.
+Every BRD ID carries the key from the SDD's Source BRDs register. Every active use case with a screen the actor sees has at least one route; a use case with neither a screen ID nor an MK-NN gets "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN".
+Route paths and components are this LLD's design choice (from-sdd: "> Confirm:"). With no source BRD, the two BRD columns read "Not applicable - no source BRD".
+-->
+
+| Route | Component | Screen (BRD) | Use cases (BRD) | Guards | Lazy-loaded? |
+|-------|-----------|--------------|-----------------|--------|--------------|
+| `/foo` | `FooListComponent` | [[KEY]/SCR-01](../brd-[brd-slug]/11-summary-and-uiux.md#[screens-heading-slug]) | [[KEY]/UC-01](../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | `authGuard` | Yes (`loadComponent`) |
+| `/foo/:id` | `FooDetailComponent` | [[KEY]/MK-02](../brd-[brd-slug]/14-todo.md#mockup-coverage) | [[KEY]/UC-02](../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-02-[title-slug]) | `authGuard`, `tenantGuard` | Yes |
+| `/login` | `LoginComponent` | None - platform page | None - platform page | - | Yes |
+
+**Use-case context at runtime.** Every route that implements a BRD screen carries it in its route data, so a frontend error report names the screen and the use case:
+
+```ts
+{
+  path: 'foo/:id',
+  loadComponent: () => import('./foo-detail.component').then(m => m.FooDetailComponent),
+  data: { screen: '[KEY]/MK-02', useCases: ['[KEY]/UC-02'] },
+}
+```
+
+The global `ErrorHandler` and the frontend telemetry read the data of the deepest active route and attach `screen` and `use_case` to every error report and RUM span (`09-cross-cutting.md` § 12.8). Platform pages carry no such data.
 
 ## 17.4 PrimeNG Components Used
 
@@ -92,4 +113,4 @@ NOTE: This chunk is OMITTED when the LLD scope has no UI surface. Do not stub it
 - Logic in services / stores, not templates.
 - Strict TypeScript everywhere.
 
-<!-- MASTER: lld-master.md | PREV: 13-testing.md | NEXT: 15-open-questions.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 13-testing.md | NEXT: 15-open-questions.md -->

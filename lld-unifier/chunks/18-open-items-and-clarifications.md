@@ -24,7 +24,7 @@ RELATIONSHIP_TO_15: chunk 15 indexes the author's own `> Confirm:` and `> TODO:`
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Service name + sub-section (e.g., `wallet-core / Method Pseudocode`), or "global" if cross-cutting. |
-| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift (hybrid-mode only) / Duplication (SDD content restated instead of referenced). |
+| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift (hybrid-mode only) / Duplication (SDD content restated instead of referenced) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour the design needs that no BRD use case covers; never a new UC). |
 | **Concern** | One paragraph. What was missed and why it matters for code correctness or production reliability. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommendation** | REQUIRED. The reviewer's suggested option — always pick one, even for close calls (state that it is a close call in the Why). |
@@ -38,7 +38,7 @@ RELATIONSHIP_TO_15: chunk 15 indexes the author's own `> Confirm:` and `> TODO:`
 ### OI-01: [Short title]
 
 - **Where:** [Service / sub-section, or "global"]
-- **Type:** [Implementation gap | Missing edge case | Pattern misapplication | Error path | Concurrency hazard | Transaction boundary | Idempotency gap | Multi-tenancy leak | Test gap | Drift | Duplication]
+- **Type:** [Implementation gap | Missing edge case | Pattern misapplication | Error path | Concurrency hazard | Transaction boundary | Idempotency gap | Multi-tenancy leak | Test gap | Drift | Duplication | Traceability gap | Missing scenario]
 - **Concern:** [One paragraph.]
 - **Options:**
   - **A.** [Option A] — [one-line tradeoff].
@@ -85,4 +85,4 @@ RELATIONSHIP_TO_15: chunk 15 indexes the author's own `> Confirm:` and `> TODO:`
 - [Note 1]
 - [Note 2]
 
-<!-- MASTER: lld-master.md | PREV: 17-specs.md | NEXT: none -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 17-specs.md | NEXT: none -->

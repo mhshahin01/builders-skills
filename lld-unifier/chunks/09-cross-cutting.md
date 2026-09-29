@@ -85,7 +85,9 @@ PART OF: LLD - [Project Name]
 |---------|--------|
 | Format | JSON (structured) |
 | Mandatory fields | `ts`, `level`, `service`, `traceId`, `spanId`, `tenantId` (never PII), `event`, `attrs` |
+| Use-case field | `use_case`: the keyed BRD use case ID(s) of the entry point handling the request (`REFUNDS/UC-04`), from the log MDC (§ 12.8). Absent on platform endpoints. |
 | Level for tenant context | DEBUG (never INFO per CLAUDE.md) |
+| Level for `use_case` | Any level, INFO included: a use case ID is not tenant data or PII |
 | Aggregation | [Loki / Elasticsearch / other] |
 | Hot retention | 30 days |
 | Cold retention | 1 year |
@@ -96,6 +98,20 @@ PART OF: LLD - [Project Name]
 - **Backend:** [Tempo / Jaeger / other].
 - **Sampling:** 100% in dev/sit, 10% probabilistic in prod (override with `traceparent` header for forced trace).
 - **Context propagation:** W3C Trace Context (`traceparent`, `tracestate` headers).
+
+### Use-case attribute
+
+<!-- Derive-from-SDD with a brd-unifier BRD only (sdd-to-lld.md § Use-case traceability). With no source BRD, write "Not applicable - no source BRD." Flag the convention "> Confirm:" unless SDD §11.4 Observability or a 13x Observability section already settles it. -->
+
+| Concern | Choice | Source |
+|---------|--------|--------|
+| Attribute | `use_case` on the server or consumer span of every entry point SDD §7.3 lists for an in-scope use case, and the same key in the log MDC | [LLD convention / SDD §11.4] |
+| Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`); comma-separated when §7.3 lists the entry point under several use cases | SDD §7.3 |
+| Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
+| Not set | Platform endpoints (health, actuator, sign-in) | LLD convention |
+| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (`14-frontend.md` § 17.3) | LLD convention |
+
+> Confirm: `use_case` is an LLD convention; the SDD does not settle a use case attribute (drop this flag when SDD §11.4 or a 13x Observability section names one).
 
 ## 12.9 Configuration
 
@@ -108,4 +124,4 @@ PART OF: LLD - [Project Name]
 - **Liveness:** `/actuator/health/liveness` — fast in-process check (no DB).
 - **Readiness:** `/actuator/health/readiness` — checks DB connectivity, Kafka cluster reachable, schema migrations complete.
 
-<!-- MASTER: lld-master.md | PREV: 08-state-and-rules.md | NEXT: 10-operations.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 08-state-and-rules.md | NEXT: 10-operations.md -->

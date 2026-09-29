@@ -103,7 +103,7 @@ This is where most drift will surface.
 Subsection-level drift inside a per-service file:
 - Class & Interface Map: emit code as live state; flag classes the SDD doesn't reference (`🆕`); flag SDD-described classes that aren't built (`⛔`).
 - Design Patterns Applied: critical drift surface. SDD says Strategy, code uses if/else chain → `⚠ drift` with both views.
-- Use-Case Workflows: similar drift surface for missing/extra steps.
+- Use-Case Workflows: similar drift surface for missing/extra steps, plus the use-case trace (§ Use-case trace drift below). The traceability line always cites the SDD and BRD values; a drift marker on the field shows what the code does.
 
 ### `05-data-model.md`
 
@@ -150,11 +150,13 @@ Subsection-level drift inside a per-service file:
 
 - Test pyramid: emit code as live state.
 - Coverage: emit code measurements (if available) vs SDD-stated targets.
+- § 16.8 E2E Spec Traceability: the specs and tags found in code, checked against the BRD (§ Use-case trace drift).
 
 ### `14-frontend.md` (if applicable)
 
 - Component tree: emit code as live state.
 - Pattern drift: emit per-component diffs.
+- § 17.3 Routing: the routes found in code, each mapped to its BRD screen (§ Use-case trace drift).
 
 ### `15-open-questions.md`
 
@@ -165,10 +167,30 @@ This is the **drift index** — every drift marker placed elsewhere has a row he
 | `04-implementation/wallet-core.md § 7.4 Pattern: Outbox` | `⚠ drift` | HIGH | SDD requires outbox; code does direct Kafka publish in same method as DB write. Reconcile by introducing outbox table + publisher. |
 | `04-implementation/wallet-core.md § 7.2` | `🆕 code-only` | LOW | Class `LegacyAdapter` exists in code but not in SDD. Investigate origin. |
 | `04-implementation/notification-dispatcher.md` | `⛔ sdd-only` | MEDIUM | Service in SDD §13.1 not yet built. |
+| `04-implementation/refund-service.md § REFUNDS/UC-04` | `⚠ drift` | MEDIUM | `@UseCase("REFUNDS/UC-03")` on `POST /v1/refunds/{refundId}/decision`, which SDD §7.3 lists under REFUNDS/UC-04. Fix the annotation. |
 
 ### `16-references.md`
 
 - Carry SDD references; add code-derived references (repo URL, commit SHA at time of analysis).
+- § 19.9 index: one row per SDD §7.3 row as usual; a row whose trace has drift names the marker in the affected cell.
+
+---
+
+## Use-case trace drift
+
+The trace follows `sdd-to-lld.md` § Use-case traceability. SDD §7.3 and the BRD stay the reference: the LLD cites their values, and each place where the code disagrees is marked. Entry points and routes are matched per `code-extraction.md` § Tracing to BRD use cases.
+
+| Situation | Marker | Default severity |
+|---|---|---|
+| A §7.3 entry point of an active in-scope use case has no code endpoint, listener, or job | `⛔ sdd-only` on the Entry points field | MEDIUM |
+| A user-facing code endpoint matches no §7.3 entry point and is not a platform endpoint | `🆕 code-only` + `> Drift note: behaviour no BRD use case covers? Open question, never a new UC.` | MEDIUM |
+| Code names a different use case for an entry point than §7.3 (`@UseCase`, MDC key) | `⚠ drift` | MEDIUM |
+| A route's `data.screen` or `data.useCases` disagrees with the BRD screen and its use cases | `⚠ drift` | LOW |
+| An active use case with a screen the actor sees has no route in code | `⛔ sdd-only` on its § 17.3 row | MEDIUM |
+| A spec tag names a use case or test case the BRD does not have | `⚠ drift` | LOW |
+| A traced entry point with no `@UseCase` (or equivalent), or a route to a BRD screen with no route data | `> Confirm:` only, not drift: the code has not adopted the LLD convention yet | - |
+
+A wrong value contradicts SDD §7.3 or the BRD, so it is drift. A missing one is an LLD convention not yet in the code, so it is a flag.
 
 ---
 
@@ -177,8 +199,8 @@ This is the **drift index** — every drift marker placed elsewhere has a row he
 | Severity | Examples |
 |----------|----------|
 | **HIGH** | Missing outbox pattern, missing idempotency on money endpoints, PII handling drift, multi-tenancy enforcement gap, RFC 9457 error model not implemented, SDD-mandated saga not implemented in cross-service flow. |
-| **MEDIUM** | Different design pattern than SDD specified (but functionally equivalent), missing Resilience4j config on a downstream call, additional un-described Kafka topic, test coverage gap. |
-| **LOW** | Naming difference, additional helper class without business meaning, documentation gap, ordering of fields in DTOs. |
+| **MEDIUM** | Different design pattern than SDD specified (but functionally equivalent), missing Resilience4j config on a downstream call, additional un-described Kafka topic, test coverage gap, a use case's entry point not built or tagged with the wrong use case. |
+| **LOW** | Naming difference, additional helper class without business meaning, documentation gap, ordering of fields in DTOs, route data or spec tags out of step with the BRD. |
 
 The severity is recorded in `15-open-questions.md` § 18.1. The skill computes a default severity per drift type; the reviewer can edit.
 

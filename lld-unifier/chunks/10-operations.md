@@ -52,6 +52,8 @@ PART OF: LLD - [Project Name]
 |---------|---------------------|---------------|----------------|
 | `[service-a]` | [estimate] | 30 days | 1 year |
 
+> **Triage by use case:** filter logs on `use_case = "[KEY]/UC-NN"` to see every request of one use case; the use case's row in `16-references.md` § 19.9 leads to its workflow, BRD use case, and test cases.
+
 ## 13.5 Tracing
 
 > See `09-cross-cutting.md` § 12.8. Per-service span naming convention:
@@ -60,6 +62,7 @@ PART OF: LLD - [Project Name]
 - Service spans: `<class>.<method>` (e.g. `FooServiceImpl.create`).
 - Repository spans: `<repo>.<method>` (e.g. `FooRepository.save`).
 - Outbox publisher spans: `OutboxPublisher.poll`.
+- Entry-point spans (controller, listener, scheduled job) of a BRD use case carry `use_case` (§ 12.8), so a trace search by use case finds every request of it.
 
 ## 13.6 Dashboards
 
@@ -119,4 +122,4 @@ PART OF: LLD - [Project Name]
 - **Escalation policy:** [link].
 - **Communication channel:** `#incidents-[project]` in [Slack / Teams].
 
-<!-- MASTER: lld-master.md | PREV: 09-cross-cutting.md | NEXT: 11-security.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 09-cross-cutting.md | NEXT: 11-security.md -->

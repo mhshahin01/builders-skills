@@ -56,4 +56,4 @@ graph LR
 - **Time zone:** UTC for all timestamps (CLAUDE.md default).
 - **ID strategy:** UUIDv7 generated at the service layer (CLAUDE.md default).
 
-<!-- MASTER: lld-master.md | PREV: 01-purpose-and-scope.md | NEXT: 03-architecture.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 01-purpose-and-scope.md | NEXT: 03-architecture.md -->

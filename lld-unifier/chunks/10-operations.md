@@ -53,7 +53,7 @@ PART OF: LLD - [Project Name]
 |---------|---------------------|---------------|----------------|
 | `[service-a]` | [estimate] | 30 days | 1 year |
 
-> **Triage by use case:** filter logs on `use_case = "[KEY]/UC-NN"` to see every request of one use case; the use case's row in `16-references.md` § 19.9 leads to its workflow, BRD use case, and test cases.
+> **Triage by use case:** filter logs on `use_case` matching the whole token `(^|,)[KEY]/UC-NN(,|$)` to see every request of one use case (equality misses entry points shared by several use cases; `09-cross-cutting.md` § 12.8); the use case's row in `16-references.md` § 19.9 leads to its workflow, BRD use case, and test cases.
 
 ## 13.5 Tracing
 

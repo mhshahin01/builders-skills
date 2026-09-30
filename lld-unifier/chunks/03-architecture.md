@@ -49,9 +49,9 @@ graph TB
 |---------|--------|--------------------|
 | Container | Docker (one image per service) | CLAUDE.md default |
 | Orchestrator | Kubernetes (Helm chart per service) | CLAUDE.md default |
-| Namespace strategy | [Per-environment / Per-tenant / Hybrid] | [SDD §17 if applicable] |
+| Namespace strategy | [Per-environment / Per-tenant / Hybrid] | [SDD §11.3 / §19 if applicable] |
 | Service mesh / Ingress | [Istio / Linkerd / NGINX Ingress / API Gateway alone] | [SDD §6 if applicable] |
-| Replicas (per service, baseline) | [N min / M max] | [SDD §14 if applicable] |
+| Replicas (per service, baseline) | [N min / M max] | [SDD §17.X Deployment Strategy if applicable] |
 | Deployment strategy | [Rolling / Blue-Green / Canary] | [Per-service overrides in `04-implementation/<svc>.md`] |
 
 ## 6.3 Runtime Stack

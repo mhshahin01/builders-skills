@@ -33,6 +33,8 @@ PART OF: LLD - [Project Name]
 
 ## 9.2 Request / Response Shapes
 
+> **Source:** from an SDD, each endpoint links its SDD §15 `API-NN` contract and adds only the implementation delta (DTO records, validation, mapping, client and resilience config); the contract body stays in the SDD (`sdd-to-lld.md` § One fact, one home). Write the full shape below only from code with no SDD, or for an endpoint the SDD does not define (flagged `> Confirm:`; hybrid: `🆕 code-only`).
+
 ### `POST /v1/foo`
 
 **Request body:**

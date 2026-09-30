@@ -63,7 +63,7 @@ Common cases:
 Emit SDD-derived content + `⛔ sdd-only` marker + `> Drift note: in SDD, not yet built. Schedule or defer?`
 
 Common cases:
-- A service the SDD lists in §13.1 but the codebase has no module for.
+- A service the SDD lists in §13 but the codebase has no module for.
 - An event topic the SDD describes but no producer code exists for.
 - An API endpoint the SDD lists but the controller doesn't have it.
 
@@ -98,7 +98,7 @@ This is where most drift will surface.
 - Per-service file is generated only if the service exists in either source.
 - If service exists in both: full hybrid content with subsection-level drift.
 - If only in code: full code-derived content with `🆕 code-only` at the top.
-- If only in SDD: stub with full SDD-derived class skeleton + `⛔ sdd-only` at the top.
+- If only in SDD (the service has no code at all): the placeholder from `transform-detection.md` § Partial-code resolution, with `⛔ sdd-only` at the top. No class skeleton: code that does not exist is not designed here (run from-sdd for that). An SDD-only endpoint or event inside a built service is drift, marked in that service's file.
 
 Subsection-level drift inside a per-service file:
 - Class & Interface Map: emit code as live state; flag classes the SDD doesn't reference (`🆕`); flag SDD-described classes that aren't built (`⛔`).
@@ -166,7 +166,7 @@ This is the **drift index** — every drift marker placed elsewhere has a row he
 |----------|--------|----------|------------|
 | `04-implementation/wallet-core.md § 7.4 Pattern: Outbox` | `⚠ drift` | HIGH | SDD requires outbox; code does direct Kafka publish in same method as DB write (a dual-write, not an outbox). Reconcile by writing an outbox row in the aggregate's transaction and publishing it from a separate publisher. |
 | `04-implementation/wallet-core.md § 7.2` | `🆕 code-only` | LOW | Class `LegacyAdapter` exists in code but not in SDD. Investigate origin. |
-| `04-implementation/notification-dispatcher.md` | `⛔ sdd-only` | MEDIUM | Service in SDD §13.1 not yet built. |
+| `04-implementation/notification-dispatcher.md` | `⛔ sdd-only` | MEDIUM | Service in SDD §13 not yet built. |
 | `04-implementation/refund-service.md § REFUNDS/UC-04` | `⚠ drift` | MEDIUM | `@UseCase("REFUNDS/UC-03")` on `POST /v1/refunds/{refundId}/decision`, which SDD §7.3 lists under REFUNDS/UC-04. Fix the annotation. |
 
 ### `16-references.md`
@@ -185,6 +185,7 @@ The trace follows `sdd-to-lld.md` § Use-case traceability. SDD §7.3 and the BR
 | A §7.3 entry point of an active in-scope use case has no code endpoint, listener, or job | `⛔ sdd-only` on the Entry points field | MEDIUM |
 | A user-facing code endpoint matches no §7.3 entry point and is not a platform endpoint | `🆕 code-only` + `> Drift note: behaviour no BRD use case covers? Open question, never a new UC.` | MEDIUM |
 | Code names a different use case for an entry point than §7.3 (`@UseCase`, MDC key) | `⚠ drift` | MEDIUM |
+| A code entry point matches a §7.3 entry point on method and path (or event / schedule) but sits in a different service than §7.3 names | `⚠ drift` on the Entry points field | MEDIUM |
 | A route's `data.screen` or `data.useCases` disagrees with the BRD screen and its use cases | `⚠ drift` | LOW |
 | An active use case with a screen the actor sees has no route in code | `⛔ sdd-only` on its § 17.3 row | MEDIUM |
 | A spec tag names a use case or test case the BRD does not have | `⚠ drift` | LOW |

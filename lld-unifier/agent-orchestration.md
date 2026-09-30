@@ -124,7 +124,7 @@ prompt: |
      Target: `04-implementation/<service>.md` § 7.3 Method Pseudocode
      - Identify methods that are NON-TRIVIAL: multi-step, branches beyond null-check, touches multiple aggregates, performs idempotency check, emits outbox row.
      - For each, write step-by-step pseudocode.
-     - Cite the source file:line at the top of the pseudocode block.
+     - Cite the source file:line at the top of the pseudocode block. The citation is provenance only: the block keeps its `> Confirm:` unless `confidence-rules.md` allows an upgrade.
      - Skip methods that are plain CRUD (single repo call + map to DTO) — those are obvious from the signature.
 
   3. **Design-pattern subsections** (per detected pattern)
@@ -136,11 +136,11 @@ prompt: |
      - Mermaid `classDiagram` showing the pattern structure.
      - Pseudocode skeleton of the key method(s).
      - Confidence flag if Phase 1 marked the detection as medium/low confidence.
-     - Outbox: document the publisher (roles, skeleton, delivery rules) from the code as it is. If the code marks a row processed without a successful broker acknowledgement, keep that visible and point to the Phase 1 anti-pattern; never substitute the template's publisher text.
+     - Outbox: document the publisher (roles, skeleton, delivery rules) from the code as it is. If the code marks a row processed without a successful broker acknowledgement, keep that visible and point to the Phase 1 anti-pattern (a `⚠ policy` finding); never substitute the template's publisher text.
 
   4. **Use-case workflow narratives** (one per entry point or workflow)
      Target: `04-implementation/<service>.md` § 7.8 Use-Case Workflows
-     Heading: `### KEY/UC-NN: Title` ONLY when the entry point matches an SDD §7.3 entry point (method + normalized path; the SDD §7.3 table is pasted below when an SDD was given), using the SDD's key and the BRD's ID and title exactly. Otherwise `### Workflow: [name]`. Never number a workflow as a use case.
+     Heading: `### KEY/UC-NN: Title` ONLY when the entry point matches an SDD §7.3 entry point (same service, then method + normalized path, or event or schedule name; the SDD §7.3 table is pasted below when an SDD was given), using the SDD's key and the BRD's ID and title exactly. Otherwise `### Workflow: [name]`, with a `> Confirm:` when it matches in everything but the service. Never number a workflow as a use case.
      For each entry point from Phase 1 § 1, write:
      - Trigger.
      - Pre-conditions and post-conditions.
@@ -210,7 +210,7 @@ Once both agents have returned, the skill:
 2. **Validates Phase 2 output tags** — every block has a `<!-- target: ... -->` tag. Untagged blocks are dropped with a warning.
 3. **Routes Phase 2 blocks into chunks** — splits by tag, walks the chunk files, inserts content at the matching `## section` heading.
 4. **Applies confidence flags** — per `confidence-rules.md`. If Phase 2 already flagged a block, carry the flag. If Phase 2 missed flagging a low-confidence block, the skill applies its own based on the source-of-evidence heuristics.
-5. **Traces to BRD use cases** when an SDD was given: matches entry points, routes, specs, and use-case markers per `code-extraction.md` § Tracing to BRD use cases, then runs SKILL.md step 6a.
+5. **Traces to BRD use cases** when an SDD was given: matches entry points, routes, specs, and use-case markers per `code-extraction.md` § Tracing to BRD use cases, then runs SKILL.md step 6a, and registers in the SDD per step 6c.
 6. **Generates `15-open-questions.md`** — walks all chunks, greps for `> Confirm:` and `> TODO:` markers, indexes them.
 7. **Surfaces handoff summary.**
 

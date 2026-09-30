@@ -8,17 +8,19 @@ PART OF: LLD - [Project Name]
 
 # 15. Performance
 
-> **Convention:** SLOs and load targets carry over from SDD §14. This chunk operationalises them — what cache strategy, what indexes, what query plans, what bulkhead sizes meet the targets.
+> **Convention:** SLOs and load targets carry over from SDD §18. This chunk operationalises them: what cache strategy, what indexes, what query plans, what bulkhead sizes meet the targets.
 
 ## 15.1 SLOs (per service)
 
-| Service | Endpoint / Operation | Sustained RPS | Peak RPS | p50 | p95 | p99 |
-|---------|----------------------|---------------|----------|-----|-----|-----|
-| `[service-a]` | `POST /v1/foo` | [N] | [N] | [Nms] | [Nms] | [Nms] |
-| `[service-a]` | `GET /v1/foo/{id}` | [N] | [N] | [Nms] | [Nms] | [Nms] |
-| `[service-a]` | `foo.lifecycle.created` consumer | [N msgs/s] | [N msgs/s] | N/A | [Nms end-to-end] | [Nms] |
+| Service | Endpoint / Operation | Sustained RPS | Peak RPS | p50 | p95 | p99 | Source |
+|---------|----------------------|---------------|----------|-----|-----|-----|--------|
+| `[service-a]` | `POST /v1/foo` | [N] | [N] | [Nms] | [Nms] | [Nms] | [SDD §18.2](../sdd-[sdd-slug]/14-performance-and-capacity.md#182-throughput-targets-per-service) |
+| `[service-a]` | `GET /v1/foo/{id}` | [N] | [N] | [Nms] | [Nms] | [Nms] | [SDD §18.2](../sdd-[sdd-slug]/14-performance-and-capacity.md#182-throughput-targets-per-service) |
+| `[service-a]` | `foo.lifecycle.created` consumer | [N msgs/s] | [N msgs/s] | N/A | [Nms end-to-end] | [Nms] | LLD target (SDD §18.2 pins none) |
 
-> `> Confirm: SLO targets — verify with SDD §14.2 Throughput Targets`
+> **Source:** each row links the SDD §18.2 row it derives from. A target the SDD does not pin reads `LLD target` and falls under the `> Confirm:` below.
+
+> `> Confirm: SLO targets — verify with SDD §18.2 Throughput Targets`
 
 ## 15.2 Caching Strategy
 
@@ -51,7 +53,7 @@ PART OF: LLD - [Project Name]
 |----------|---------|------------|----------|------------|
 | [Scenario] | [Trigger] | [Nx baseline] | [N min/h] | [Autoscale / Throttle / Queue / Degrade] |
 
-> `> TODO: peak scenarios — verify with SDD §14.3`
+> `> TODO: peak scenarios — verify with SDD §18.3`
 
 ## 15.6 Load-Test Strategy
 

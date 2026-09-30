@@ -133,7 +133,7 @@ Each workflow is where the LLD earns its keep for the implementer.
 
 Traceability is only useful if a reader can follow it both ways without searching. Rules: `sdd-to-lld.md` § Use-case traceability.
 
-**Test:** take a production error report that names `use_case = REFUNDS/UC-04` and `screen = REFUNDS/SCR-04`, or a failing UAT case `REFUNDS/TC-DEC-03`. From its row in 16 § 19.9, one click opens the workflow block; from the block's traceability line, one click each opens the BRD use case heading, SDD §7.3, and each test case's feature area; 13 § 16.8 names the spec to re-run (`--grep "@REFUNDS/TC-DEC-03"`). Then go the other way: pick any route in 14 § 17.3; its screen and use cases match the BRD, and the use case's block names that route.
+**Test:** take a production error report whose `use_case` holds `REFUNDS/UC-04` and whose `screen` is `REFUNDS/SCR-04`, or a failing UAT case `REFUNDS/TC-DEC-03`. From its row in 16 § 19.9, one click opens the workflow block; from the block's traceability line, one click each opens the BRD use case heading, SDD §7.3, and each test case's feature area; 13 § 16.8 names the spec to re-run (`--grep "@REFUNDS/TC-DEC-03"`). Then go the other way: pick any route in 14 § 17.3; its screen and use cases match the BRD, and the use case's block names that route.
 
 **Good line:**
 

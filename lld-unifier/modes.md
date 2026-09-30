@@ -41,7 +41,9 @@ lld-[project-slug]/
 ├── 13-testing.md
 ├── 14-frontend.md                   # CONDITIONAL — only if UI exists
 ├── 15-open-questions.md
-└── 16-references.md
+├── 16-references.md
+├── 17-specs.md
+└── 18-open-items-and-clarifications.md
 ```
 
 `[project-slug]-lld-master.md` (skeleton: `chunks/lld-master.md`) is the master index pointing at the chunks. Regenerate it per project so it links to that project's chunks specifically.
@@ -74,7 +76,7 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 
 **Skeleton source:** `TEMPLATE-COMBINED.md`.
 
-**Structure follows the template top-to-bottom** (sections 1–19 per `TEMPLATE-COMBINED.md`).
+**Structure follows the template top-to-bottom** (sections 1–21 per `TEMPLATE-COMBINED.md`).
 
 **No chunk comment blocks** in combined shape — the file is a single artefact.
 
@@ -152,7 +154,7 @@ The user points the skill at an SDD covering full scope, but only some services 
 
 |  | FROM-CODE | FROM-SDD | HYBRID | PARTIAL |
 |---|---|---|---|---|
-| **CHUNKS** | Reverse-engineer 17-chunk LLD from code. | Forward-design 17-chunk LLD from SDD. | Two-pass + unified 17-chunk LLD with drift markers. | From-code on existing services; TODO placeholders for the rest. |
+| **CHUNKS** | Reverse-engineer 19-chunk LLD from code. | Forward-design 19-chunk LLD from SDD. | Two-pass + unified 19-chunk LLD with drift markers. | From-code on existing services; TODO placeholders for the rest. |
 | **COMBINED** | Reverse-engineer single-file LLD. | Forward-design single-file LLD. | Two-pass + unified single-file LLD with inline drift markers. | Same as chunks but in one file. |
 
 See `transform-detection.md` for how the skill prompts for direction and resolves ambiguity.

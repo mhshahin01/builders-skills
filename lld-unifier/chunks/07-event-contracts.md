@@ -28,6 +28,8 @@ PART OF: LLD - [Project Name]
 
 ## 10.2 Event Schemas
 
+> **Source:** from an SDD, each event links its SDD §14.9 payload contract and adds only the implementation delta (record class, serializer, registry subject); names match SDD §14 verbatim and the payload stays in the SDD (`sdd-to-lld.md` § One fact, one home). Write the full schema below only from code with no SDD, or for an event the SDD does not define (flagged `> Confirm:`; hybrid: `🆕 code-only`).
+
 ### `foo.lifecycle.created`
 
 ```json

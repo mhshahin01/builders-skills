@@ -66,7 +66,7 @@ PART OF: LLD - [Project Name]
 
 | Regulation | Applicability | Approach |
 |------------|---------------|----------|
-| GDPR | [Yes / No / Per-tenant] | Lawful basis: [contract]; retention windows in `08-data-model.md` § Retention; right-to-erasure flow: [procedure] |
+| GDPR | [Yes / No / Per-tenant] | Lawful basis: [contract]; retention windows in `05-data-model.md` § 8.6 Retention & Archival; right-to-erasure flow: [procedure] |
 | PCI-DSS | [Yes / No] | [Approach if applicable] |
 | ISO 27001 / SOC 2 | [Yes / No] | [Controls applicable] |
 | Local regulations | [List] | [Approach] |

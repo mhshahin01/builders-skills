@@ -112,6 +112,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | `⚠ drift` | Hybrid only: SDD intent and code reality disagree. See `> Drift note:` block. |
 | `🆕 code-only` | Hybrid only: present in code, not in SDD. |
 | `⛔ sdd-only` | Hybrid only: in SDD, not yet built. |
+| `⚠ policy` | Every mode that reads code: the code breaks a CLAUDE.md rule or a `pattern-rules.md` anti-pattern; indexed in 15 § 18.6 with the rule and severity. |
 
 All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 
@@ -175,9 +176,9 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 | sdd/04 - Architecture Style | lld/03 - Architecture | SDD names the style; LLD operationalises with concrete component topology |
 | sdd/05 - Workflows & Sequences | lld/04-implementation/[svc].md (workflows) | SDD describes the cross-service flow; LLD refines per service with idempotency, outbox, saga steps |
 | sdd/07 - Cross-Cutting Concerns | lld/09 - Cross-Cutting | SDD sets defaults; LLD applies them concretely with Resilience4j config, error codes |
-| sdd/10 - Centralized Event Hub | lld/07 - Event Contracts | SDD's contract registry (topics, events, payloads) carries verbatim into the LLD's event contracts |
+| sdd/10 - Centralized Event Hub | lld/07 - Event Contracts | Topic and event names match SDD §14 verbatim; payload contracts are referenced (§14.9), and the LLD adds the producer and consumer implementation |
 | sdd/11 - Service Integration API Contracts | lld/06 - API Contracts | SDD's `API-NN` contracts are referenced; LLD adds clients, DTO records, resilience config |
-| sdd/12 - Centralized User Roles | lld/11 - Security + lld/09 - Cross-Cutting | SDD's role/permission catalogue carries verbatim into authZ decisions and checks |
+| sdd/12 - Centralized User Roles | lld/11 - Security + lld/09 - Cross-Cutting | Role names and permission tokens match SDD §16 verbatim; the catalogue is referenced, and the LLD adds the enforcement (authZ decisions and checks) |
 | sdd/13a - Service Detailed Spec | lld/04-implementation/[svc].md | SDD defines the contract; LLD defines the implementation (classes, patterns, pseudocode) |
 | sdd/14 - Performance & Capacity | lld/12 - Performance | SDD lists targets; LLD describes the caching/index strategy that meets them |
 | sdd/16 - Operations Runbook | lld/10 - Operations | SDD describes procedures; LLD links to runbook URLs and exposes the metrics/logs they reference |

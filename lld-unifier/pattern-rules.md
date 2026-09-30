@@ -197,7 +197,7 @@ These are **discretionary** — applied only when the triggering condition is ge
 
 ## Anti-patterns to flag (FROM-CODE direction)
 
-The skill should surface these in `15-open-questions.md` as drift markers when found:
+The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-questions.md` § 18.6 Policy Findings, in every mode that reads code (from-code, hybrid, partial). It is not drift: it claims no SDD disagreement, so a from-code run with no SDD reports it the same way.
 
 | Anti-pattern | CLAUDE.md rule violated | Severity |
 |--------------|------------------------|----------|
@@ -216,7 +216,7 @@ The skill should surface these in `15-open-questions.md` as drift markers when f
 | Stack traces in error responses | "Errors are actionable; never expose stack traces or raw codes" | MEDIUM |
 | Missing health/readiness endpoint | "Every service exposes: ... health and readiness endpoints" | MEDIUM |
 
-Each anti-pattern, if detected, surfaces as a row in `15-open-questions.md` with the severity above.
+Each finding cites the rule it breaks and takes the severity above.
 
 ---
 

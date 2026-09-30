@@ -95,7 +95,7 @@ PART OF: LLD - [Project Name]
 ...
 ```
 
-Heading levels inside a chunk preserve the template's numbering (`# 7.`, `## 7.1`, etc.) so merge handling is trivial — no demotion or promotion needed.
+Heading levels inside a chunk follow the template's numbering (`# 7.`, `## 7.1`, etc.). Most chunks keep their headings when merged; the per-service files, the Specs chunk, and the Open Items chunk change level or number (§ Heading map).
 
 ---
 
@@ -120,19 +120,39 @@ Do NOT deviate to merge per-service chunks. Per-service chunks are the most-edit
 
 ---
 
+## Heading map (chunks ↔ combined)
+
+Conversion is reversible: merge applies this map, and re-chunk applies it backwards. A heading not listed keeps its level and number.
+
+| Chunks | Combined |
+|---|---|
+| `04-implementation/<service>.md`: `# 7. Per-Service Implementation - [Service Name]` | `## 7.N [Service Name]`, under one `# 7. Per-Service Implementation` |
+| In a service file: `## 7.K [Title]` (7.1 Responsibility … 7.8 Use-Case Workflows) | `### [Title]`: the number is dropped; on re-chunk, K is the title's position in the template |
+| In a service file: every `###` heading (`### Controllers`, `### Pattern: Outbox`, `### KEY/UC-NN: Title`, `### Participates in …`) | The same text one level deeper (`####`) |
+| `17-specs.md`: `# Specs`; `## 1. Mission` … `## 4. Project Type` | `# 20. Specs`; `## 20.1 Mission` … `## 20.4 Project Type` |
+| `18-open-items-and-clarifications.md`: `# Open Items & Clarifications`; `## How to read each item`; `## Open Items`; `## Resolution Log`; `## Reviewer Notes` | `# 21. Open Items & Clarifications`; `## 21.1 How to read each item`; `## 21.2 Open Items`; `## 21.3 Resolution Log`; `## 21.4 Reviewer Notes` |
+| `### OI-NN: …` | Unchanged |
+
+**Links.** Rebase every relative link from the location of the file that now holds it (`sdd-to-lld.md` § The link, rule 2): `../` from a chunk, `../../` from a service file, `./` from a combined LLD at the project root. A link between two LLD chunks becomes a same-file anchor on merge (`./refund-service.md#refundsuc-04-approve--reject-refund` → `#refundsuc-04-approve--reject-refund`) and a file link again on re-chunk. Recompute each anchor from the heading as it stands in the target file: a heading repeated across services in the combined file (`### Responsibility`) takes GitHub's `-1`, `-2`, … suffixes in document order.
+
+**Navigation.** The master index and the chunk footers (`<!-- MASTER: … | PREV: … | NEXT: … -->`) exist only in chunks: drop them on merge and rebuild them on re-chunk (master: `[project-slug]-lld-master.md`). The combined file's ToC is regenerated on merge.
+
+---
+
 ## Merge handling (chunks → combined)
 
 On merge, chunks are concatenated in numeric order: 00, 01, 02, 03, 04 (per-service: alphabetical), 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18.
 
 Steps:
 
-1. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block.
+1. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block and its footer.
 2. Concatenate with a single blank line between chunks.
-3. For chunk 04, concatenate the per-service files in alphabetical order; each becomes a `## 7.N <Service Name>` block.
-4. Renumber `## 7.N` headings sequentially after concatenation.
-5. Regenerate the section ToC in chunk 00 metadata.
-6. Write to `./LLD-[ProjectName]-v[X.X]-MERGED.md` alongside the chunks.
-7. Keep the original chunks.
+3. For chunk 04, write `# 7. Per-Service Implementation` once, then each per-service file in alphabetical order as a `## 7.N <Service Name>` block, numbered in that order, with its headings mapped per § Heading map.
+4. Map the Specs and Open Items headings to §20 and §21 (§ Heading map).
+5. Rebase links and recompute anchors (§ Heading map).
+6. Regenerate the section ToC in chunk 00 metadata.
+7. Write to `./LLD-[ProjectName]-v[X.X]-MERGED.md` at the project root, beside the `lld-[project-slug]/` folder.
+8. Keep the original chunks.
 
 ---
 
@@ -143,11 +163,12 @@ When asked to split a combined LLD into chunks:
 1. Read the combined file fully.
 2. Identify section boundaries by `# 1.`, `# 2.`, … headings.
 3. Group sections per the canonical chunk map.
-4. **Section §7 needs special handling:** identify each `## 7.N <Service Name>` block and split into a separate file `04-implementation/<service-slug>.md`.
-5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block.
-6. Heading levels stay as-is.
-7. Write each chunk file.
-8. Keep the original combined file.
+4. **Section §7 needs special handling:** split each `## 7.N <Service Name>` block into `04-implementation/<service-slug>.md` and map its headings back (§ Heading map): the block heading becomes `# 7. Per-Service Implementation - <Service Name>`, each `### [Title]` becomes `## 7.K [Title]`, and each `####` becomes `###`.
+5. Map §20 and §21 back to the Specs and Open Items chunks (§ Heading map).
+6. Rebase links and recompute anchors (§ Heading map).
+7. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append its footer; write the master `[project-slug]-lld-master.md`.
+8. Write each chunk file.
+9. Keep the original combined file.
 
 ---
 

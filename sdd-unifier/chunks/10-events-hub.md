@@ -25,7 +25,8 @@ Then answer four questions for the whole platform:
   2. Who produces and who consumes each (reconciled both ways)
   3. What each event carries (envelope + payload contract)
   4. Why and when each fires (business moment + downstream purpose)
-State what is OUT of scope: in-process domain events that never leave a service; provider webhooks (REST callbacks, not bus events); external adapter ingestion edges normalized at an anti-corruption layer before any platform event.
+State what is OUT of scope: in-process events that never leave one module or one service; provider webhooks (REST callbacks, not bus events); external adapter ingestion edges normalized at an anti-corruption layer before any platform event.
+In a modular monolith or a hybrid core, domain events between modules are IN scope: catalogue them in §14.10, apart from the integration events on the broker.
 -->
 
 [Eventing posture + the four questions + out-of-scope list.]
@@ -39,7 +40,7 @@ Include the tradeoff table for the chosen vs rejected topology.
 
 **Decision:** [One-line topology decision.]
 
-What makes it *one hub* is the shared contract surface:
+What makes it *one hub* is the shared contract surface of the integration events on the broker (in-process domain events between modules: §14.10):
 
 - **One envelope standard** (§14.3) on every event, on every topic.
 - **One messaging library / pattern:** [outbox -> relay -> broker -> inbox, per CLAUDE.md outbox mandate].
@@ -56,6 +57,8 @@ What makes it *one hub* is the shared contract surface:
 | Cost / fan-out | [Note] | [Note] |
 
 ### 14.2.1 Async Backbone (the universal per-event mechanism)
+
+<!-- Integration events on the broker only. The in-process domain events of §14.10 do not use this mechanism. -->
 
 ```mermaid
 flowchart LR
@@ -76,6 +79,8 @@ flowchart LR
     APPLY -- poison / invalid --> DLQ[(DLQ + alarm + redrive runbook)]
 ```
 
+**Summary:** [1-2 sentences: how an integration event travels from the producer's outbox to each consumer's inbox, and where a poison message goes.]
+
 ### 14.2.2 Hub Topology & Fan-Out Landscape
 
 <!-- Producer -> topic -> consumer shape of the whole platform: structural clusters, not every edge (the full matrix is 14.5). -->
@@ -88,6 +93,8 @@ flowchart LR
     T1 --> C2[Consumer service B]
     T2 --> C2
 ```
+
+**Summary:** [1-2 sentences: which producers publish to which topics, and which consumer clusters bind to them.]
 
 ## 14.3 Standard Event Envelope (every event, every topic)
 
@@ -152,7 +159,7 @@ Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "
 
 ## 14.6 Cross-Cutting Event Guarantees
 
-<!-- The invariants every edge inherits. Keep as a numbered list, e.g.: -->
+<!-- The invariants every integration-event edge on the broker inherits (the in-process domain events of §14.10 are outside them). Keep as a numbered list, e.g.: -->
 
 1. **Atomicity:** domain state + outbox row commit in one transaction; the relay publishes only after commit (no dual-writes).
 2. **Delivery:** at-least-once everywhere; consumers dedup on `(consumer, event_id)`.
@@ -178,11 +185,12 @@ Name the broad consumers (e.g., Analytics binds every domain topic; Notification
 
 <!--
 The reconciliation ledger for producer/consumer consistency. Every divergence found while consolidating the per-service Event Models lands here with a pointer - never silently reconciled. Empty section = full reconciliation achieved; state that explicitly.
+Status: `Open` until the divergence is fixed, then `Fixed in vX.X` (the values §15.5 uses). A row with no Status, or any other value, counts as `Open` and keeps the e2e gate shut (SKILL.md step 8b, E2).
 -->
 
-| # | Where (chunks) | Divergence | Resolution / flag |
-|---|---|---|---|
-| 1 | [13x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 13x on YYYY-MM-DD / flagged as OI-NN] |
+| # | Where (chunks) | Divergence | Resolution / flag | Status |
+|---|---|---|---|---|
+| 1 | [13x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 13x on YYYY-MM-DD / flagged as OI-NN] | [Open / Fixed in vX.X] |
 
 ## 14.9 Payload Contract Samples
 
@@ -221,5 +229,16 @@ Define common value objects once, then reference them.
 | Event | Catalog (§14.5) | Contract (§14.9 / registry) | Status |
 |---|---|---|---|
 | `[EVENT_NAME]` | ✓ | [§14.9.1 / registry-only] | [committed] |
+
+## 14.10 In-Process Domain Events (modular monolith / hybrid core)
+
+<!--
+Domain events that one module publishes and other modules of the same deployable handle in process (architecture-questionnaire.md § Effect on the SDD). They are not integration events: the broker delivery rules (§14.2 one-hub rules, §14.2.1, §14.6) do not apply. An event that must also leave the deployable is published through the outbox as an integration event and catalogued in §14.5. Events that never leave one module stay out of scope.
+A microservices SDD writes "Not applicable - no in-process events".
+-->
+
+| Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
+|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [after commit] | `[EventDto]`: [fields] | [Notes] |
 
 <!-- MASTER: [project-slug]-sdd-master.md | PREV: 09-services-summary.md | NEXT: 11-api-contracts.md -->

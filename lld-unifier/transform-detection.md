@@ -51,9 +51,11 @@ When the user picks `from-code` or `hybrid` and the skill detects that the code 
 2. **Runs from-code on existing services.**
 3. **For un-built services:** emits a placeholder `04-implementation/<service>.md` with content:
    ```markdown
-   > **Status:** Not yet built. SDD-described in [SDD path] §13.2.X.
+   > **Status:** Not yet built. SDD-described in [SDD path] §17.X. [Hybrid: `⛔ sdd-only`]
+   > **Owns use cases (SDD 09), not built yet:** [[KEY]/UC-NN](...), … [or: None]
    > **TODO:** when this service is scaffolded, re-run `/lld-unifier --from-code <service-path>` to populate this chunk.
    ```
+   This placeholder is the rule in every mode that reads code (from-code, hybrid, partial) whenever an expected service has no code at all; hybrid never writes a class skeleton for it. The use-case trace accepts it: the use cases it owns are listed as not built, with no invented workflow. An SDD-only endpoint or event inside a built service is not a missing service: it is drift (hybrid) or a `> Confirm:` (from-code).
 4. **Notes the partial-code choice** in `15-open-questions.md` § Decisions Pending.
 
 > **Important:** in partial mode, the SDD content for un-built services is *not* expanded into the LLD. The placeholder is the deliverable for those services. (Per agreement: if the user wants full SDD-driven content for un-built services, they should run from-sdd direction explicitly.)

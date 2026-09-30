@@ -83,6 +83,18 @@ DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or 
 
 ## Reviewer Notes
 
+<!-- Coverage record (required): one row per major risk area. Checked: what the reviewer checked. Findings: the number of open items raised, with their IDs, or "No issue found". A risk area with no issue is a valid result. An area the reviewer could not check says "Not checked" and why. -->
+
+| Risk area | Checked | Findings | Notes |
+|-----------|---------|----------|-------|
+| Scope | [What was checked, e.g., "Every In Scope item against the use cases"] | [N (OI-NN, OI-NN) / No issue found] | [Optional] |
+| Use-case exception coverage | [...] | [...] | [...] |
+| Matrix consistency | [...] | [...] | [...] |
+| NFRs | [...] | [...] | [...] |
+| Integrations | [...] | [...] | [...] |
+| Security / privacy | [...] | [...] | [...] |
+| Data lifecycle | [...] | [...] | [...] |
+
 <!--
 Optional. Free-form notes from the reviewer that did not crystallise into a numbered open item.
 Examples: patterns observed across multiple use cases, stylistic concerns, suggestions for a future revision.

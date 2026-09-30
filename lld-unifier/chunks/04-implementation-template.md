@@ -10,9 +10,9 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file
       Cross-service sagas live with the orchestrator service's file.
 -->
 
-# 7. Per-Service Implementation — [Service Name]
+# 7. Per-Service Implementation - [Service Name]
 
-> **Bounded context:** [SDD §13.X reference / inferred from code path]
+> **Bounded context:** [SDD §13 row and §17.X Boundaries / inferred from code path]
 >
 > **Source code:** [path/to/service]
 >

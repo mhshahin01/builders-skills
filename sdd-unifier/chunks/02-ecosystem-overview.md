@@ -12,7 +12,7 @@ PART OF: SDD - [Project Name]
 <!--
 Summary of the platform-wide technology stack and shared infrastructure that all services in this SDD must conform to.
 This section is the single source of truth for the implementation constitution and planned technology choices.
-SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem selection, the skill first presents the proposed ecosystem (BRD Technical Inputs verbatim > CLAUDE.md defaults > BRD-informed recommendations) for a one-shot accept-all; if not accepted, it walks the user through the items in grouped batches, highlighting the recommended option per item with the BRD evidence that drives it. Record the outcome per row in the Notes column (e.g., "BRD-mandated", "default accepted", "user override - see ADR-NN").
+SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem selection, the skill first presents the proposed ecosystem (BRD Technical Inputs verbatim > CLAUDE.md defaults > BRD-informed recommendations; in TRANSFORM, the source SDD's named technologies, versions, and topology come first, locked as `source SDD`) for a one-shot accept-all; if not accepted, it walks the user through the items in grouped batches, highlighting the recommended option per item with the BRD evidence that drives it. Record the outcome per row in the Notes column (e.g., "BRD-mandated", "source SDD", "default accepted", "user override - see ADR-NN").
 -->
 
 | Layer | Technology / Service | Version / Tier | Notes |

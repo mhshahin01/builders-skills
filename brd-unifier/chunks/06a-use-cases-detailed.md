@@ -31,7 +31,7 @@ All detailed use cases follow this structure:
 | | |
 |---|---|
 | **Primary Actor** | [Persona from chunk 04] |
-| **Supporting Actors** | [Other personas or external business parties involved, or "None"] |
+| **Supporting Actors** | [Other personas or external business parties involved, each labelled as a persona or an external party, e.g., "Persona: Branch Manager; External: Payment Gateway (08)", or "None"] |
 | **Goal** | [What the actor wants to achieve, one sentence] |
 | **Trigger** | [The business event that starts this use case] |
 

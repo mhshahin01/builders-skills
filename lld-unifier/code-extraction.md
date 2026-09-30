@@ -74,7 +74,7 @@ The skill takes Phase 1 + Phase 2 outputs and routes them into the chunks:
 
 - **Structural facts** (call graph, schema, topic names, method signatures) → routed verbatim from Phase 1, no flags (high confidence).
 - **Per-service narrative** (responsibility, business logic, pattern rationale) → routed from Phase 2 with `> Confirm:` if Phase 2 flagged the inference.
-- **Pseudocode** → routed from Phase 2 verbatim. Pseudocode is medium-confidence by default; flag with `> Confirm:` unless it directly cites file:line.
+- **Pseudocode** → routed from Phase 2 verbatim. Pseudocode is medium confidence and carries `> Confirm:`. A file:line citation records where it came from, not that it is right; the flag drops only under the upgrade rules in `confidence-rules.md` (a straight-line method of 10 lines or fewer, or a passing test that exercises it).
 - **Diagrams** → Mermaid blocks from Phase 2, embedded inline in the chunks per `mermaid-diagrams.md`.
 
 For sections the agents cannot fill from code alone:
@@ -90,7 +90,7 @@ For sections the agents cannot fill from code alone:
 
 Code carries no BRD use case IDs of its own, so a pure from-code LLD has no use-case trace: every trace slot reads `Not applicable - no source SDD`, and workflows are headed `### Workflow: [name]`. When an SDD path is given for cross-reference (and in hybrid), match the code to SDD §7.3 and the BRD, then apply `sdd-to-lld.md` § Use-case traceability to what matched.
 
-1. **Entry points.** Match each discovered entry point to a §7.3 Entry points cell by HTTP method and normalized path: combine class-level and method-level mappings, then compare segment by segment, treating any `{param}` as equal to any other `{param}` (parameter names are ignored). Event listeners match `Event: [EVENT_NAME]` by event name, and scheduled jobs match `Schedule: [name]` by name. A match gives the use case(s) and the owner; it is high confidence (both sides are stated facts).
+1. **Entry points.** Match each discovered entry point to a §7.3 Entry points cell by its service, HTTP method, and normalized path. The service is the one whose code exposes the entry point, and it must be the service §7.3 names for it: the Owner, or the service the cell names when it is not the owner. For the path, combine class-level and method-level mappings, then compare segment by segment, treating any `{param}` as equal to any other `{param}` (parameter names are ignored). Event listeners match `Event: [EVENT_NAME]` by service and event name, and scheduled jobs match `Schedule: [name]` by service and name. A full match gives the use case(s) and the owner; it is high confidence (both sides are stated facts). A match on everything but the service, or one whose exposing service cannot be determined, is medium confidence: `> Confirm: [entry point] in [service] matches [KEY/UC-NN] except for the service; §7.3 names [service]` (hybrid: `⚠ drift`).
 2. **Unmatched entry points.** A platform endpoint (health, actuator, sign-in, admin tooling) carries no use case. Any other unmatched endpoint gets `> Confirm: [METHOD] [path] matches no SDD §7.3 entry point; platform endpoint, or behaviour no BRD use case covers?` It is an open question, never a new UC.
 3. **Unmatched §7.3 entry points.** An active in-scope use case whose entry point the code does not have: from-code notes it in chunk 15 (`> Confirm:`); hybrid marks it `⛔ sdd-only` (`hybrid-drift.md` § Use-case trace drift).
 4. **Routes to screens.** A route whose `data.screen` names a BRD screen ID or `MK-NN` maps to it (high confidence). Otherwise match by name against the BRD's screen names (medium confidence, `> Confirm:`). A route with no match is a platform page or gets `> Confirm: no BRD screen for route [path]`. The route's use cases are then read from the BRD for that screen, never taken from the code alone.
@@ -115,7 +115,8 @@ Per `confidence-rules.md`:
 | Cross-service saga step ordering | Medium | `> Confirm: saga step ordering inferred from event flow + listener registrations` |
 | Idempotency point identification | High if `Idempotency-Key` header is checked; Medium if inferred from natural-key dedup table | varies |
 | Business rule narrative | Low | `> TODO: business rule narrative inferred from variable names + branches — verify` |
-| Entry point → use case, by method + normalized path match to SDD §7.3 | High | None |
+| Entry point → use case, by service + method + normalized path (or service + event / schedule) match to SDD §7.3 | High | None |
+| Entry point matching §7.3 in everything but the service, or with its service unknown | Medium | `> Confirm: matches [KEY/UC-NN] except for the service` |
 | Entry point with no §7.3 match (not a platform endpoint) | Medium | `> Confirm: matches no SDD §7.3 entry point` |
 | Route → screen, by route `data.screen` | High | None |
 | Route → screen, by name only | Medium | `> Confirm: route matched to BRD screen by name` |
@@ -130,7 +131,7 @@ Per `confidence-rules.md`:
 2. **Phase 1: Discovery.** Dispatch `feature-dev:code-explorer` with the brief (above). Wait for output.
 3. **Phase 2: Synthesis.** Dispatch `code-documentation:docs-architect` with Phase 1 output + section schema + rules. Wait for output.
 4. **Template fit.** Walk the chunks; fill content from Phase 1 + Phase 2; apply confidence flags.
-5. **Trace to BRD use cases** when an SDD is given (§ Tracing to BRD use cases), then SKILL.md step 6a.
+5. **Trace to BRD use cases** when an SDD is given (§ Tracing to BRD use cases), then SKILL.md step 6a; register in the SDD per step 6c.
 6. **Index flags** in `15-open-questions.md`.
 7. **Write output** per chosen shape.
 8. **Surface handoff summary**: file paths, services discovered, patterns detected, confidence flag counts, and the use-case traceability line when an SDD was given.

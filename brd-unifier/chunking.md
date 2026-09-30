@@ -99,7 +99,7 @@ Deviate, and note the deviation in the final handoff summary, when:
 1. **A template section is genuinely empty** (e.g., a back-office-only product has no Reporting / Analytics). Keep the chunk, but make it minimal: the heading plus "Not applicable for this release."
 2. **Definitions & Important Details spans more than one substantial domain concept** and exceeds ~600 lines. Split into `03a-definitions-[concept-1].md`, `03b-definitions-[concept-2].md`.
 3. **Persona count is very high (>6).** Group minor personas that share most use cases into one chunk (e.g., `06c-use-cases-viewers.md` covering Viewer + Auditor) and say so in the chunk title.
-4. **Use case count is very low (≤6) with one or two personas.** Collapse `05-user-journeys-overview.md` and `06a-use-cases-*.md` into one chunk, `05-user-journeys-and-use-cases.md`. Keep chunk 07 (the matrix) separate — it is always its own chunk.
+4. **Use case count is very low (≤6) with one or two personas.** Collapse `05-user-journeys-overview.md` and `06a-use-cases-*.md` into one chunk, `05-user-journeys-and-use-cases.md`, but only in a run that is `whole` from the start or on an explicit conversion (SKILL.md step 10). In `parts` (the default), chunks 05 and `06a` stay separate, because part 1 writes 05 and part 2 writes the detailed use cases. Keep chunk 07 (the matrix) separate: it is always its own chunk.
 
 Do NOT deviate because a chunk "looks too short" — short chunks are fine when the template section is short. Do NOT deviate to merge semantically distinct chunks for the sake of fewer files. Never merge the matrix (07) into another chunk.
 

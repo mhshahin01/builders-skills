@@ -96,6 +96,8 @@ BRD chunk 14 is a working artifact: the LLD reads it for `MK-NN` IDs and Figma l
 | 16 §19.1 | The upstream state the trace was built from |
 | 16 §19.9 | The use-case traceability index (the consolidated view) |
 
+Heading levels in this section are the chunked ones. A combined LLD nests each service's headings one level deeper under its `## 7.N` block, so a workflow block is `#### KEY/UC-NN: Title` there (`chunking.md` § Heading map).
+
 ### The traceability line (04 §7.8)
 
 Directly under each `### KEY/UC-NN: Title` heading (the SDD's key, then the BRD's ID and title, exactly): one line, fields in this order, separated by ` · `.
@@ -129,7 +131,7 @@ Directly under each `### KEY/UC-NN: Title` heading (the SDD's key, then the BRD'
 ### The use_case attribute (09 §12.7, §12.8)
 
 - Every entry point §7.3 lists for an in-scope use case (REST method, event listener, scheduled job) carries a project annotation, `@UseCase("REFUNDS/UC-04")`. One aspect puts `use_case` into the log MDC and onto the server or consumer span, and clears it afterwards.
-- The value is the use case ID as §7.3 writes it, with its key. An entry point §7.3 lists under several use cases carries all of them, comma-separated.
+- The value is the use case ID as §7.3 writes it, with its key. An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`); the span attribute, the log field, and frontend telemetry all use this form. Find one use case's requests by matching a whole comma-delimited token, never by equality (it misses shared entry points) or a substring (`UC-01` would match `UC-010`): `(^|,)REFUNDS/UC-04(,|$)`.
 - Platform endpoints (health, actuator, sign-in) carry none.
 - A use case ID is not tenant data or PII, so it is allowed at INFO.
 - It is an LLD convention: flag it `> Confirm:` unless SDD §11.4 Observability or the owner's `13x` Observability already settles it.
@@ -143,7 +145,7 @@ The production-bug entry point. One row per SDD §7.3 row, in the same order and
 | Use case (BRD) | §7.3 | The use case link |
 | Title | §7.3 (the BRD's title) | Exactly as written |
 | SDD §7.3 | §7.3 heading | The link |
-| LLD workflow | 04 headings | A link to the `### KEY/UC-NN` heading, labelled with the owner service. `Not in this LLD - owner: [service]` when the owner is out of scope, linked to that LLD when the SDD's Child LLDs table names one. |
+| LLD workflow | 04 headings | A link to the `### KEY/UC-NN` heading, labelled with the owner service. `Not in this LLD - owner: [service]` when the owner is out of scope, linked to that LLD when the SDD's Child LLDs table names one. `Not built yet - [service]`, linked to its placeholder, when the owner has no code yet. |
 | Screens (BRD) | 14 §17.3 | Screen IDs or `MK-NN`, linked |
 | Routes (LLD) | 14 §17.3 | Route paths |
 | UAT/BAT test cases (BRD) | BRD chunk 16 | As in the 04 line |
@@ -171,7 +173,7 @@ Flag what is missing upstream; never fill it.
 
 ### Checks (SKILL.md step 6a)
 
-1. Every active §7.3 use case in scope has exactly one `### KEY/UC-NN: Title` block, in its owner's file, with the SDD's key and the BRD's ID and title. No heading, line, route, tag, or index row cites an ID its document does not have.
+1. Every active §7.3 use case in scope has exactly one `### KEY/UC-NN: Title` block (`####` in a combined LLD), in its owner's file or §7 block, with the SDD's key and the BRD's ID and title. An owner with no code yet (a placeholder, `transform-detection.md` § Partial-code resolution) lists the use case as not built instead. No heading, line, route, tag, or index row cites an ID its document does not have.
 2. Each line's Owner and Entry points equal §7.3; its test cases equal chunk 16's `Related UC`; its Screens equal the 14 §17.3 rows that name the use case.
 3. Every 14 §17.3 route has a Screen and a Use cases cell, or `None - platform page`; each screen's use cases equal the BRD's; every active use case with a screen the actor sees has a route; every route's `data` matches its row.
 4. The index has one row per §7.3 row, in the same order and groups, and every cell equals its home, in both directions.
@@ -179,20 +181,6 @@ Flag what is missing upstream; never fill it.
 6. Every entry point named in a 04 line carries `@UseCase` with the §7.3 value.
 7. Every link resolves: the file exists at that relative path, and the anchor equals the one built from the real heading in that file.
 8. Every BRD ID, including each ID in a list, carries a key from the SDD's Source BRDs register, and its link points into that BRD's location.
-
-### SDD lineage (Child LLDs)
-
-When the SDD has § Document Lineage with a Child LLDs table (chunk 00 `## Document Lineage` > `### Child LLDs (children)`, or the same section in the cover of a combined SDD), this LLD adds its own row there on the first run, or updates that row on a later run, matched by Link. It never touches other rows, and writes nothing else into the SDD: this is the only write outside the LLD folder.
-
-| Column | Value |
-|---|---|
-| LLD | This LLD's project name |
-| Scope (§13 services) | The services this LLD covers (§2.1 In Scope) |
-| Direction | `from-sdd` or `hybrid` |
-| Version | This LLD's version |
-| Link | This LLD's `[project-slug]-lld-master.md` (or its combined file), relative to the SDD file, e.g. `[refunds-core-lld-master.md](../lld-refunds-core/refunds-core-lld-master.md)` |
-
-The row replaces `None yet`, and the handoff names the change. The LLD master's `Related SDD` line links to the SDD master: sdd-unifier finds unregistered sibling LLDs through it.
 
 ### Refresh triggers
 
@@ -204,6 +192,22 @@ The row replaces `None yet`, and the handoff names the change. The LLD master's 
 | A new BRD version, or a new BRD (a new key) | All of the above |
 
 Each refresh is a targeted regeneration: the "refresh the trace" row of the table under SKILL.md step 9, next to its "regenerate chunk N" row. Bump the LLD version and add a Changes Log row.
+
+---
+
+## SDD lineage (Child LLDs)
+
+Every LLD that reads an SDD registers in it (SKILL.md step 6c): from-sdd, hybrid, partial, and from-code when an SDD path is given, whether or not the SDD has a source BRD. When the SDD has § Document Lineage with a Child LLDs table (chunk 00 `## Document Lineage` > `### Child LLDs (children)`, or the same section in the cover of a combined SDD), this LLD adds its own row there on the first run, or updates that row on a later run, matched by Link. It never touches other rows, and writes nothing else into the SDD: this is the only write outside the LLD folder. An SDD without that table (written before it existed) gets no row; the handoff suggests upgrading it through sdd-unifier.
+
+| Column | Value |
+|---|---|
+| LLD | This LLD's project name |
+| Scope (§13 services) | The services this LLD covers (§2.1 In Scope) |
+| Direction | This run's mode: `from-sdd`, `hybrid`, `partial`, or `from-code` |
+| Version | This LLD's version |
+| Link | This LLD's `[project-slug]-lld-master.md` (or its combined file), relative to the SDD file, e.g. `[refunds-core-lld-master.md](../lld-refunds-core/refunds-core-lld-master.md)` |
+
+The row replaces `None yet`, and the handoff names the change. The LLD master's `Related SDD` line links to the SDD master: sdd-unifier finds unregistered sibling LLDs through it.
 
 ---
 
@@ -278,7 +282,7 @@ This is the authoritative mapping. Each row says: SDD source section → LLD des
 | SDD section | LLD destination | Transformation note |
 |---|---|---|
 | 00 Cover & Changelog | `00-metadata.md` | New LLD has its own version (v1.0). Add a "Related SDD" line pointing at the SDD's filename / chunk folder. New Changes Log entry: "Initial LLD draft, derived from SDD v[X.X] via lld-unifier. Mode: from-sdd." |
-| 00 § Document Lineage (Source BRDs, Child LLDs) | `00-metadata.md` Related BRD(s) + `16-references.md` § 19.1 | The Source BRDs register gives each BRD's key and location (§ Use-case traceability › IDs and keys). The Child LLDs table receives this LLD's own row, and nothing else (§ Use-case traceability › SDD lineage). |
+| 00 § Document Lineage (Source BRDs, Child LLDs) | `00-metadata.md` Related BRD(s) + `16-references.md` § 19.1 | The Source BRDs register gives each BRD's key and location (§ Use-case traceability › IDs and keys). The Child LLDs table receives this LLD's own row, and nothing else (§ SDD lineage). |
 | 01 Executive Summary | `01-purpose-and-scope.md` § 1 Purpose | Recast as **implementation-purpose** statement: what the LLD enables a developer to do (not the technical-summary framing of the SDD). |
 | 01 Scope (In/Out) | `01-purpose-and-scope.md` § 2 Scope | **Reference + delta.** Link SDD §2; state only the LLD's narrowing (which services/sub-scope this LLD covers) and implementation-level exclusions. |
 | 01 Assumptions | `01-purpose-and-scope.md` § 3 Assumptions | **Reference + delta.** Link SDD §3; list ONLY LLD-specific implementation assumptions. |
@@ -300,7 +304,7 @@ This is the authoritative mapping. Each row says: SDD source section → LLD des
 | 10 Centralized Event Hub (§14) | `07-event-contracts.md` (topic inventory + producer/consumer implementation specs) + `09-cross-cutting.md` (outbox/inbox, delivery guarantees) | **Names match; bodies are referenced.** Topic and event names must match SDD §14 character-for-character. Payload contracts are NOT restated — each event row links to its SDD §14.9 contract (or the schema registry) and the LLD adds only implementation detail: consumer group naming, serialization, DLQ config, retry/redrive policy. |
 | 11 Service Integration API Contracts (§15) | `06-api-contracts.md` (outbound and inbound integration calls) + per-service § 7.7 error mapping | **Contract names and URIs match; contract bodies are referenced.** Each SDD `API-NN` maps to the LLD endpoint and client that implement it; the LLD adds implementation detail (client class, DTO records, Resilience4j config) and never re-specifies headers, body, or error codes. An SDD contract still `TBD - external` stays a `> TODO:` in the LLD until the SDD is updated. |
 | 12 Centralized User Roles (§16) | `11-security.md` (authZ decisions) + `09-cross-cutting.md` § 12.1 (authentication and tenant resolution) + per-service § 7.7 (authorization checks) | **Names match; catalogue is referenced.** Role names and permission tokens must match SDD §16 character-for-character, but the catalogue/matrix is not restated — the LLD references SDD §16 and adds only the enforcement implementation; the implementation seed (§16.12) becomes the role/permission migration + fixture plan. |
-| 19 E2E System Design (§24, gated; may be absent until the SDD open items are cleared) | `02-context.md` § 5.4 Cross-Service Dependencies + saga narratives in `04-implementation/<orchestrator>.md` | The reconciled fan-out map and saga views orient the per-service derivation; sync one-hop edges (§22.7) become outbound API calls with resilience config. |
+| 19 E2E System Design (§24, gated; may be absent until the SDD open items are cleared) | `02-context.md` § 5.4 Cross-Service Dependencies + saga narratives in `04-implementation/<orchestrator>.md` | The reconciled fan-out map and saga views orient the per-service derivation; sync one-hop edges (§24.7) become outbound API calls with resilience config. |
 | 13a (per service) Boundaries | `04-implementation/<svc>.md` § 7.1 Responsibility | Reframe from boundary statement to responsibility statement. |
 | 13a Input | `06-api-contracts.md` (REST inbound) + `07-event-contracts.md` (event consumers) | Inbound REST and event consumers each become rows in the contracts chunks; cross-referenced from the per-service file. |
 | 13a Business Logic | `04-implementation/<svc>.md` § 7.2 Class & Interface Map + § 7.3 Method Pseudocode + § 7.4 Design Patterns Applied | The SDD's business-logic prose becomes the LLD's class/interface map and pattern application. **This is the heaviest derivation step.** |
@@ -391,9 +395,9 @@ Route paths, and which BRD screen each route implements, are the LLD's own choic
 5. **Walk the field mapping table** above, filling each LLD chunk.
 6. **Apply CLAUDE.md design rules** per `pattern-rules.md`. Every applied pattern carries the triggering rule + rationale.
 7. **Generate `04-implementation/<service>.md`** per service. This is the heaviest work.
-8. **Trace the use cases** per § Use-case traceability: the 04 lines, 14 §17.3, 13 §16.8, 16 §19.1 and §19.9, and the `use_case` attribute. Then run the checks (SKILL.md step 6a) and add this LLD's Child LLDs row to the SDD when it has that table.
+8. **Trace the use cases** per § Use-case traceability: the 04 lines, 14 §17.3, 13 §16.8, 16 §19.1 and §19.9, and the `use_case` attribute. Then run the checks (SKILL.md step 6a).
 9. **Apply confidence rules** per `confidence-rules.md`. Every inference carries `> Confirm:` (medium) or `> TODO: <best-guess> — verify` (low).
 10. **Index every flag** in `15-open-questions.md`.
 11. **Write output** per the chosen shape (chunks / combined).
-12. **Synthesise the Specs chunk** (`17-specs.md`) per § Specs ownership & synthesis above and SKILL.md step 6b.
+12. **Synthesise the Specs chunk** (`17-specs.md`) per § Specs ownership & synthesis above and SKILL.md step 6b. Then register this LLD in the SDD's Child LLDs table (§ SDD lineage; SKILL.md step 6c).
 13. **Surface a structured handoff summary**: file paths, chunk count, service count, pattern application count, confidence flag counts (high / medium / low), Specs status, and the use-case traceability line (SKILL.md step 8).

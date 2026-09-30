@@ -11,7 +11,7 @@ CONSISTENCY RULES: (1) Every UC ID from chunk 05 appears exactly once as a row. 
 
 # Users & Use Cases Matrix
 
-> **How to read.** Rows are the use cases (functions) of the system; columns are the users (personas). **Yes** = this user is allowed to perform the use case. **-** = not allowed. A numbered footnote marks conditional access (e.g., own records only, requires approval).
+> **How to read.** Rows are the use cases (functions) of the system; columns are the users (personas). **Yes** = this user is allowed to perform the use case. **-** = not allowed. A numbered footnote marks conditional access (e.g., own records only, requires approval). External business parties are not users and never appear as columns: they appear in the use cases and in chunk 08 (Integrations).
 
 | Use Case | [Persona 1] | [Persona 2] | [Persona 3] |
 |----------|:-----------:|:-----------:|:-----------:|

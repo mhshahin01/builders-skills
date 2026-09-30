@@ -49,6 +49,6 @@ PART OF: LLD - [Project Name]
 | [Term] | [Definition] | [BRD / SDD / Code / new in LLD] |
 | [Term] | [Definition] | [Source] |
 
-> **Convention:** carry SDD glossary verbatim; add LLD-specific implementation terms (pattern names, class-suffix conventions, transaction-policy names) as new rows.
+> **Convention:** from an SDD, link its glossary ([SDD §5](../sdd-[sdd-slug]/01-executive-summary-scope-risks.md#5-glossary)) instead of copying it, and add rows only for LLD-specific implementation terms (pattern names, class-suffix conventions, transaction-policy names). From code with no SDD, define every term here.
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 00-metadata.md | NEXT: 02-context.md -->

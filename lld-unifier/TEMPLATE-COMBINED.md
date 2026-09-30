@@ -51,6 +51,8 @@
 | Term | Definition | Source |
 |------|------------|--------|
 
+> **Convention:** from an SDD, link its glossary ([SDD §5](./sdd-[sdd-slug]/01-executive-summary-scope-risks.md#5-glossary)) instead of copying it, and add rows only for LLD-specific implementation terms. From code with no SDD, define every term here.
+
 # 5. Context
 
 ## 5.1 Bounded Context
@@ -91,7 +93,7 @@ graph TB
 |---------|--------|--------|
 | Container | Docker | CLAUDE.md default |
 | Orchestrator | Kubernetes (Helm) | CLAUDE.md default |
-| Replicas | [N min / M max] | [SDD §14] |
+| Replicas | [N min / M max] | [SDD §17.X Deployment Strategy] |
 
 ## 6.3 Runtime Stack
 
@@ -126,7 +128,7 @@ graph TB
 - Controllers, Services, ServiceImpls, Repositories, Domain types (records), Method signatures
 - Every entry point a use-case traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (§12.8). Platform endpoints carry none.
 
-### Method Pseudocode (non-trivial)
+### Method-Level Pseudocode (non-trivial logic only)
 
 ### Design Patterns Applied
 For each applied pattern: name, triggering CLAUDE.md rule, roles, rationale, Mermaid class diagram, pseudocode skeleton.
@@ -229,6 +231,8 @@ erDiagram
 
 ## 9.2 Request / Response Shapes
 
+> **Source:** from an SDD, each endpoint links its SDD §15 `API-NN` contract and adds only the implementation delta; the full shape is written here only from code with no SDD, or for an endpoint the SDD does not define (flagged).
+
 ## 9.3 Authentication & Authorisation
 
 ## 9.4 Pagination, Sorting, Filtering
@@ -240,6 +244,8 @@ erDiagram
 ## 10.1 Topic Inventory
 
 ## 10.2 Event Schemas
+
+> **Source:** from an SDD, each event links its SDD §14.9 payload contract and adds only the implementation delta; names match SDD §14 verbatim. The full schema is written here only from code with no SDD, or for an event the SDD does not define (flagged).
 
 ## 10.3 Producer Specs
 
@@ -287,10 +293,11 @@ erDiagram
 | Concern | Choice | Source |
 |---------|--------|--------|
 | Attribute | `use_case` on the server or consumer span of every entry point SDD §7.3 lists for an in-scope use case, and the same key in the log MDC | [LLD convention / SDD §11.4] |
-| Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`); comma-separated when §7.3 lists the entry point under several use cases | SDD §7.3 |
+| Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`). An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`) | SDD §7.3 |
+| Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (`UC-01` would match `UC-010`) | LLD convention |
 | Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
 | Not set | Platform endpoints (health, actuator, sign-in) | LLD convention |
-| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (§17.3) | LLD convention |
+| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (§17.3); `use_case` joins the route's `useCases` in the Value form | LLD convention |
 
 > Confirm: `use_case` is an LLD convention; the SDD does not settle a use case attribute (drop this flag when SDD §11.4 or a 13x Observability section names one).
 
@@ -308,7 +315,7 @@ erDiagram
 
 ## 13.4 Logs
 
-> **Triage by use case:** filter logs on `use_case = "[KEY]/UC-NN"` to see every request of one use case; the use case's row in §19.9 leads to its workflow, BRD use case, and test cases.
+> **Triage by use case:** filter logs on `use_case` matching the whole token `(^|,)[KEY]/UC-NN(,|$)` to see every request of one use case (equality misses entry points shared by several use cases; §12.8); the use case's row in §19.9 leads to its workflow, BRD use case, and test cases.
 
 ## 13.5 Tracing
 
@@ -450,6 +457,8 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 
 ## 18.5 Inference Confidence Summary
 
+## 18.6 Policy Findings (every mode that reads code)
+
 # 19. References
 
 ## 19.1 Source Documents (BRD, SDD, code repo)
@@ -485,7 +494,7 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 The production-bug entry point: a consolidated view, never a home (sdd-to-lld.md § Use-case traceability). One row per SDD §7.3 row, in the same order and BRD groups (repeat §7.3's group rows), merged and removed use cases included. Each column is read from its home and never states a mapping its home does not state:
   Use case (BRD), Title, Status: SDD §7.3 (the BRD's ID and title, with the SDD's key).
   SDD §7.3: the §7.3 heading link.
-  LLD workflow: the #### [KEY]/UC-NN heading in the owner's §7 block (a same-file anchor), labelled with the owner; "Not in this LLD - owner: [service]" when the owner is out of scope (linked to its LLD when the SDD's Child LLDs table names one).
+  LLD workflow: the #### [KEY]/UC-NN heading in the owner's §7 block (a same-file anchor), labelled with the owner; "Not in this LLD - owner: [service]" when the owner is out of scope (linked to its LLD when the SDD's Child LLDs table names one); "Not built yet - [service]", linked to its placeholder, when the owner has no code yet.
   Screens (BRD), Routes (LLD): §17.3; "Not applicable - no UI" when §17 is omitted.
   UAT/BAT test cases (BRD): BRD chunk 16, one by one, never a range; "Pending (BRD 16 not written)" while it is locked.
   E2E specs (LLD): §16.8.
@@ -559,7 +568,7 @@ This section complements (does not replace) §18, which is the author-generated 
 ### OI-01: [Short title]
 
 - **Where:** [Service / sub-section, or "global"]
-- **Type:** [Implementation gap | Missing edge case | Pattern misapplication | Error path | Concurrency hazard | Transaction boundary | Idempotency gap | Multi-tenancy leak | Test gap | Drift | Duplication | Traceability gap | Missing scenario]
+- **Type:** [Implementation gap | Missing edge case | Pattern misapplication | Error path | Concurrency hazard | Transaction boundary | Idempotency gap | Multi-tenancy leak | Test gap | Drift | Contract drift | Specs-body mismatch | Duplication | Traceability gap | Missing scenario]
 - **Concern:** [One paragraph.]
 - **Options:**
   - **A.** [Option A] — [one-line tradeoff].
@@ -577,6 +586,12 @@ This section complements (does not replace) §18, which is the author-generated 
 | [OI-XX] | [YYYY-MM-DD] | [Service / sub-section] | [Option chosen — short note] |
 
 ## 21.4 Reviewer Notes
+
+<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service. Zero findings is valid for a surface that was checked. -->
+
+| Service | Risk surface | Checked | Findings | What was checked |
+|---------|--------------|---------|----------|------------------|
+| [service-a] | [Error handling / Transactions / Idempotency / Multi-tenancy / Observability hooks / Test coverage] | [Yes / No] | [OI-NN, … or "No issue found"] | [What the reviewer read and verified] |
 
 - [Note 1]
 - [Note 2]

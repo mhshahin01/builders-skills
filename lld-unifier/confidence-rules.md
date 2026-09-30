@@ -35,7 +35,7 @@ Examples:
 - "Strategy pattern is used here for tenant-tier pricing." (Pattern detected structurally; rationale inferred from naming.)
 - "This service uses choreography saga for the order-fulfilment flow." (Inferred from event listener registrations + state transitions.)
 - "Caching tier is in-process Caffeine, sized 10k entries." (Inferred from `@Cacheable` annotation; size from `application.yml`.)
-- "GET /v1/foo p99 latency target is 100ms." (Inferred — SDD §14 didn't pin per-endpoint targets but mentioned 100ms as a service-level target.)
+- "GET /v1/foo p99 latency target is 100ms." (Inferred: SDD §18 didn't pin per-endpoint targets but mentioned 100ms as a service-level target.)
 
 **Emission:** content + `> Confirm: [reason for medium confidence — what to verify]`.
 
@@ -55,7 +55,7 @@ The claim is grounded in:
 
 Examples:
 - "Business rule: `foo.amount` cannot exceed `tenant.daily_limit`." (Inferred from a `if (amount > tenant.dailyLimit) throw new ValidationException(...)` block; the SDD didn't state the rule.)
-- "Peak scenario: month-end batch reconciliation, 5x sustained RPS for 4 hours." (No SDD §14.3 entry; best guess based on a similar service.)
+- "Peak scenario: month-end batch reconciliation, 5x sustained RPS for 4 hours." (No SDD §18.3 entry; best guess based on a similar service.)
 - "PII column: `customer_email` requires masking in non-prod." (Best guess — the SDD didn't enumerate PII columns.)
 
 **Emission:** best-guess content + `> TODO: <best-guess> — verify or replace`.
@@ -85,7 +85,8 @@ Example:
 | Business rule narrative | Low | Test exists asserting the rule → upgrade to Medium; ADR or doc cites the rule → upgrade to High |
 | SLO targets | Low | (none — rarely in code) |
 | Threat notes | Low | Comments mention threat reasoning → upgrade to Medium |
-| Entry point → use case (SDD given), method + normalized path match to §7.3 | High | (none) |
+| Entry point → use case (SDD given), same service + method + normalized path (or event / schedule) as §7.3 | High | (none) |
+| Entry point matching §7.3 in everything but the service, or with its service unknown (SDD given) | Medium (`> Confirm:`) | (none) |
 | Entry point with no §7.3 match, not a platform endpoint (SDD given) | Medium (`> Confirm:`) | (none; an open question, never a new UC) |
 | Route → BRD screen (SDD given) | High via route `data.screen`; Medium (`> Confirm:`) by name only | (none) |
 
@@ -105,11 +106,11 @@ Example:
 | Concrete API request/response shapes | Medium | SDD pins shape (rare) → upgrade to High |
 | Concrete event payload shapes | Medium | SDD pins shape (rare) → upgrade to High |
 | Concrete table column types | Medium | SDD's per-service DB Modeling pins them (rare) → upgrade to High |
-| SLO targets | High if SDD §14 pins per-endpoint targets; Medium if SDD only has service-level targets | |
+| SLO targets | High if SDD §18 pins per-endpoint targets; Medium if SDD only has service-level targets | |
 | Hot-path index choices | Medium | (rare for SDD to pin indexes) |
-| PII column inventory | Medium | SDD §11 Compliance lists them → upgrade to High |
+| PII column inventory | Medium | SDD §17.X Data Encryption lists them (PII columns) → upgrade to High |
 | Threat notes | Low | (almost never in SDD) |
-| Peak scenario multipliers | Low | SDD §14.3 lists them → upgrade to High |
+| Peak scenario multipliers | Low | SDD §18.3 lists them → upgrade to High |
 | Runbook procedures (concrete commands) | Low | (commands depend on real cluster names which the SDD rarely pins) |
 | Use case IDs, titles, owners, entry points (read from SDD §7.3 and the BRD) | High | (none: cited, never inferred) |
 | Test case IDs and their use cases (read from BRD chunk 16) | High | (none) |

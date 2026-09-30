@@ -52,5 +52,6 @@ PART OF: LLD - [Project Name]
 | `⚠ drift` (hybrid only) | [N] | SDD intent vs code reality divergences. |
 | `🆕 code-only` (hybrid only) | [N] | Present in code, not in SDD. |
 | `⛔ sdd-only` (hybrid only) | [N] | In SDD, not yet built. |
+| `⚠ policy` (every mode that reads code) | [N] | Code that breaks a CLAUDE.md rule or a `pattern-rules.md` anti-pattern, indexed in `15-open-questions.md` § 18.6. |
 
 <!-- MASTER: [project-slug]-lld-master.md | NEXT: 01-purpose-and-scope.md -->

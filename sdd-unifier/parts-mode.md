@@ -76,7 +76,7 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 
 **Part 1**
 
-- [ ] Every §6 ecosystem row has its source in Notes (`BRD-mandated`, `default`, `recommended`, `user override`); every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
+- [ ] Every §6 ecosystem row has its source in Notes (`BRD-mandated`, `source SDD`, `default`, `recommended`, `user override`); every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
 - [ ] §8.1 Architecture Style has What / Why / How at the bar of `sdd-quality.md`; the minimum ADR set is present or flagged.
 - [ ] Every actor in 03 traces to a BRD persona (derive-from-BRD) or to the source; none is invented.
 - [ ] Every service in 09 has a bounded context, owns its data, and serves at least one use case or platform concern. No entity is owned by two services.
@@ -92,8 +92,8 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 
 - [ ] Every active service row in 09 has a `13x` chunk at the bar of `sdd-quality.md`; no `13x` chunk exists without a 09 row.
 - [ ] Contract reconciliation (SKILL.md step 6a) has run: topic and event names match chunk 10 character-for-character; every consumed event has exactly one producer; consumer lists agree from both sides; every payload field a consumer relies on exists in §14.9; role names and permission tokens match chunk 12.
-- [ ] Every synchronous integration has an `API-NN` in chunk 11 with URI, headers, parameters, body, responses, error codes, security, and auth; the §15.4 coverage matrix has no uncovered row; method and URI in each `13x` List of APIs match chunk 11; external contracts are `TBD - external` with nothing invented.
-- [ ] Every divergence that could not be fixed is flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12.
+- [ ] Every synchronous integration has an `API-NN` in chunk 11: an HTTP contract with method, URI, headers, parameters, body, responses, HTTP error codes, security, and auth; an `Internal (in-process)` contract (module to module through a port) with its port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), and its permission token instead. The §15.4 coverage matrix has no uncovered row; method and URI in each `13x` List of APIs match chunk 11 (HTTP contracts only); external contracts are `TBD - external` with nothing invented.
+- [ ] Every divergence that could not be fixed is flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12 with Status `Open`, and every row in those registers has a Status (`Open` / `Fixed in vX.X`).
 - [ ] Per-service authorization notes agree with the BRD Users & Use Cases Matrix (derive-from-BRD), or the difference is flagged.
 - [ ] Derive-from-BRD: §7.3 Entry points, APIs, and Events are filled, every Owner links to its `13x` chunk, and the use-case traceability check of step 6a passes (every owned use case is cited in its owner's Business Logic; no active use case lacks an entry point, or it is flagged).
 - [ ] 09, 04, 05, and 08 match the service chunks after the back-fill.

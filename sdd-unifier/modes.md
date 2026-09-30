@@ -124,11 +124,12 @@ When the user says "merge", "consolidate", "single file", "full doc" after a chu
 1. Read all `sdd-[project-slug]/NN-*.md` files in file-sort order (00 … 09, 10, 11, 12, 13a, 13b, …, 14 … 18, then 19 if it exists).
 2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block.
 3. Concatenate with a single blank line between chunks.
-4. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first) and renumber the §17.X service blocks if out of order.
-5. Regenerate the Table of Contents in the cover section against the merged heading outline.
-6. Regenerate the Figures and Tables indices.
-7. Write to `./sdd-[project-slug]/SDD-[ProjectName]-v[X.X]-MERGED.md` (alongside the chunks). `[project-slug]-sdd-master.md` and `decision-log.md` are never merged.
-8. Keep the original chunks.
+4. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first). Keep every §17.X number as published, in chunk-letter order (13a → §17.1, 13b → §17.2, …); never renumber or close a gap left by a merged or removed service.
+5. Copy the master's **Reconciled:** and **E2E gate (chunk 19):** lines into the cover, unchanged (the gate line as **E2E gate (§24):**). A merge never reopens or refreshes the gate: a `Stale` gate stays `Stale`, and that line is the warning on §24.
+6. Regenerate the Table of Contents in the cover section against the merged heading outline.
+7. Regenerate the Figures and Tables indices.
+8. Write to `./sdd-[project-slug]/SDD-[ProjectName]-v[X.X]-MERGED.md` (alongside the chunks). `[project-slug]-sdd-master.md` and `decision-log.md` are never merged.
+9. Keep the original chunks.
 
 ### Combined → Chunks (re-chunk)
 

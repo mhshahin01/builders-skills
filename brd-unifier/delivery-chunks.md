@@ -29,7 +29,7 @@ This file is the rulebook for those four chunks. The skeletons live in `chunks/1
 
 | # | Condition | How to verify (never trust the status cell alone) |
 |---|---|---|
-| G1 | To-do step 1 is `Complete`: every `TD-NN` row is `Resolved` | No `TD-NN` row is `Open` or `Deferred`. No `OI-NN` in chunk 13 is `Open` or `Deferred` (closed means `Accepted - applied`, `Adjusted - applied`, or `Rejected`). No `[NEEDS CLARIFICATION: ...]` marker is left in chunks 00-12. |
+| G1 | To-do step 1 is `Complete`: every `TD-NN` row is `Resolved` | No `TD-NN` row is `Open` or `Deferred`. No `OI-NN` in chunk 13 is `Open` or `Deferred` (closed means `Accepted - applied`, `Adjusted - applied`, or `Rejected`). No `[NEEDS CLARIFICATION: ...]` marker is left in chunks 00-12, `proposed` markers included: a proposal blocks the gate until the user confirms or replaces it. |
 | G2 | To-do step 2 is `Complete`, and none of its findings is still waiting | A check run is recorded after the last content change to chunks 00-13 (§ Refresh triggers, Version). Every `CF-NN` has a disposition, and none is still waiting on a decision: each is `Corrected`, `No change`, or was raised as an item that is now `Resolved`. (A finding deferred for clarification lets step 2 complete, but its `TD-NN` keeps step 1, and so the gate, open.) |
 | G3 | To-do step 3 is `Complete` | The product manager confirmed the grill-me session (date recorded) and every decision from it is applied. |
 | G4 | To-do step 4 is `Complete` | Every mockup row is `Approved`, the product manager confirmed the review and a play-through of the prototype (dates recorded), and the Figma links are in the use cases' UI/UX sections. |
@@ -140,7 +140,7 @@ Consolidate into one **Open items register** (`TD-NN` rows). One row per **disti
 
 | Kind | Source |
 |---|---|
-| Open question | `OI-NN` with Status `Open` (chunk 13); every inline `[NEEDS CLARIFICATION: ...]` marker (cite chunk + section or UC ID) |
+| Open question | `OI-NN` with Status `Open` (chunk 13); every inline `[NEEDS CLARIFICATION: ...]` marker (cite chunk + section or UC ID), `proposed` markers included: a proposal (`[NEEDS CLARIFICATION: proposed ...; confirm or replace]`) is collected like any other marker, and the decision needed is to confirm or replace it |
 | Assumption to validate | Chunk 02 assumptions the source did not state as confirmed fact and whose falsity would change a use-case flow, acceptance criterion, or NFR measure; Dependencies whose Status is anything other than confirmed (pending, to be verified, confirmed for one party only). Constraints are not assumptions: leave them out. Leave out items that only concern a later phase, unless they change a use case of this release. |
 | Pending decision | `OI-NN` with Status `Deferred`; findings from step 2 awaiting a decision; a Reviewer Note in chunk 13 that asks for a decision (cite `13 / Reviewer Notes`) |
 
@@ -242,7 +242,7 @@ Implemented and complete are different states. Each task carries a **Delivery st
 | `Accepted` | Complete: the business accepts the task | Every required case of the task passes: each case in chunk 16 that names the task in `Related Task` (§ Chunk 16, Readiness and acceptance). Record the date. |
 
 - A task is complete only when it is `Accepted`. `Ready for test` is not complete.
-- A dependency is met when the task it names reaches `Ready for test`. A task can start once all its dependencies are met; their acceptance is not a start condition. A team may choose to wait for acceptance, except when one of the dependency's required cases lists the waiting task in its `Needs`: that wait would never end. Waves order the building. Acceptance follows each task's own required cases.
+- A dependency is met while the task it names is `Ready for test` or `Accepted`. A refresh that sets that task back to `In progress` makes the dependency unmet again (§ Refresh triggers, Delivery progress on a refresh). A task can start once all its dependencies are met; their acceptance is not a start condition. A team may choose to wait for acceptance, except when one of the dependency's required cases lists the waiting task in its `Needs`: that wait would never end. Waves order the building. Acceptance follows each task's own required cases.
 - Recording a Delivery status is tracking, not a refresh: it needs no gate check and changes no version (§ Refresh triggers).
 
 **Dependency problems are flagged, never sequenced** (`DP-NN` rows)
@@ -418,7 +418,10 @@ Later confirmed changes must reach the downstream outputs. IDs stay stable; stat
 
 **A `Complete` step falls back to `In progress` when its inputs change:** a new `Open` or `Deferred` TD (step 1), any content change to chunks 00-13 after the last check run (step 2), a new decision to confirm (step 3), a decision that changes a screen or a change to the constitution's Figma or responsive rules (step 4), an edit to a diagrammed use case (step 5). Because steps 4 and 5 run in parallel, a use-case change made for one reopens the affected rows of the other, and the consistency check is rerun once both are back to `Complete`.
 
-**Delivery progress on a refresh.** A refresh of 15 or 16 keeps every Delivery status and every test result, except where it changes what was tested. When a refresh changes what a case checks (its description, example, or success criteria), clear its Testing Result and Testing Comment. When that happens to a required case of an `Accepted` task, or a refresh gives that task a new required case, set the task back to `Ready for test` until the case passes.
+**Delivery progress on a refresh.** A refresh of 15 or 16 keeps every Delivery status and every test result, except where it changes what was tested or what must be built. When a refresh changes what a case checks (its description, example, or success criteria), clear its Testing Result and Testing Comment. Then compare each affected task's **Expected deliverables** and scope in chunk 15 before and after the refresh:
+
+- **Unchanged:** the delivery team's confirmation still covers the task. When a required case of an `Accepted` task changed, or the task gained a new required case, set it back to `Ready for test` until the case passes.
+- **Changed or added deliverables:** the confirmation no longer covers them. Set an `Accepted` or `Ready for test` task back to `In progress` until the delivery team confirms again that every current deliverable is built. Its dependents lose that met dependency; the refresh names any that have already started.
 
 **Version.** Only a **content change** bumps the version: a change to what chunks 00-13 say about the product. It means one minor step per run (1.0 to 1.1), one Changes Log row, and the new VERSION in chunk 00, in `[project-slug]-brd-master.md`, and in each chunk that was changed.
 
@@ -476,7 +479,7 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 - [ ] Every `06*` use case appears in the Use-case coverage table of chunk 15.
 - [ ] No task appears before its prerequisites; cycles, missing prerequisites, and blockers are in Dependency problems, not in the waves.
 - [ ] Every test case traces to a use case or NFR and to a task; Coverage gaps and Provisional scenarios are explicit; the total equals the row count.
-- [ ] Every task has a Delivery status (`Not started` when first written). None is `Ready for test` without the delivery team's confirmation, and none is `Accepted` while one of its required cases has not passed.
+- [ ] Every task has a Delivery status (`Not started` when first written). None is `Ready for test` without the delivery team's confirmation, no confirmation predates a refresh that changed the task's Expected deliverables, and none is `Accepted` while one of its required cases has not passed.
 - [ ] Every test case has a `Needs` cell that holds its Related Task. No task in `Needs` comes from a later wave than the Related Task, except in the earliest-screen case of a task with nothing of its own to see. No readiness rule is written per section or per wave.
 - [ ] Task acceptance lists every task in chunk 15, each with at least one required case, and matches the `Related Task` column.
 - [ ] Chunk 17 has both sections; every storyboard sums to 30 seconds; voiceover word counts are within budget; prompts are separate from editing instructions.

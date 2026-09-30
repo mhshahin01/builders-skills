@@ -8,10 +8,10 @@ PART OF: LLD - [Project Name]
 
 # 18. Open Questions & Flag Index
 
-> **How to use this chunk:** this is the single review surface. Every `> Confirm:`, `> TODO:`, `⚠ drift`, `🆕 code-only`, and `⛔ sdd-only` marker placed anywhere in the LLD has a row here pointing to its location. Reviewers should:
+> **How to use this chunk:** this is the single review surface. Every `> Confirm:`, `> TODO:`, `⚠ drift`, `🆕 code-only`, `⛔ sdd-only`, and `⚠ policy` marker placed anywhere in the LLD has a row here pointing to its location. Reviewers should:
 >
 > 1. Open this file first.
-> 2. Walk the tables in order — Drift first (action items), then TODO (low-confidence), then Confirm (medium-confidence).
+> 2. Walk the tables in order: Drift and Policy Findings first (action items), then TODO (low-confidence), then Confirm (medium-confidence).
 > 3. Edit the source chunk to resolve each row.
 > 4. Re-run `/lld-unifier` (with `--regenerate` if needed) to refresh this index.
 
@@ -69,5 +69,13 @@ PART OF: LLD - [Project Name]
 | 17. Frontend | [N] | [N] | [N] |
 
 > **Convention:** these counts are updated whenever a chunk is regenerated.
+
+## 18.6 Policy Findings (every mode that reads code)
+
+<!-- Code that breaks a CLAUDE.md rule or a pattern-rules.md anti-pattern (from-code, hybrid, partial). Not drift: it claims no SDD disagreement. Every row cites the rule, takes the severity from pattern-rules.md, and carries the author's recommended fix and the reason. -->
+
+| Location | Marker | Rule (source) | Finding | Severity | Recommended fix | Why | Status |
+|----------|--------|---------------|---------|----------|-----------------|-----|--------|
+| `[chunk:section]` | `⚠ policy` | [CLAUDE.md: "No dual-writes to DB and Kafka"] | [What the code does, with file:line] | [High / Medium / Low] | [Fix in code] | [Reason] | [Pending / Done] |
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 14-frontend.md (or 13-testing.md if no UI) | NEXT: 16-references.md -->

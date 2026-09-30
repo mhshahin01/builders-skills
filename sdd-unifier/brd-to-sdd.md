@@ -41,7 +41,7 @@ An SDD has one or more parent BRDs and zero or more child LLDs. Both are listed 
 |---|---|---|---|---|
 | Refunds Core | refund-service, payout-service | from-sdd | 1.0 | [refunds-core-lld-master.md](../lld-refunds-core/refunds-core-lld-master.md) |
 
-1. **Written by lld-unifier.** When lld-unifier derives an LLD from this SDD (from-sdd or hybrid), it adds its own row, or updates it on a later run, matched by the Link. That row is the only thing another skill writes into the SDD.
+1. **Written by lld-unifier.** When lld-unifier builds an LLD that reads this SDD (from-sdd, hybrid, partial, or from-code with this SDD given), with or without a source BRD, it adds its own row with that mode as Direction, or updates it on a later run, matched by the Link. That row is the only thing another skill writes into the SDD.
 2. **Checked by sdd-unifier** on every run on an existing SDD (resume, targeted update, e2e refresh, handoff): each Link resolves and each scope service is a row in §13. A sibling LLD whose **Related SDD** line links to this SDD's master, or its combined file, but that has no row, gets one. A chunked LLD is a `lld-*` folder, read through its master file (the `*lld-master.md` in that folder); a combined LLD is a sibling `LLD-*.md` file. The row's Link points at that master or combined file. A row whose LLD is gone, or whose scope names a merged or removed service, stays and gets a `[NEEDS CLARIFICATION: ...]`; it is never deleted silently.
 3. **Before any LLD exists**, the table has one row: `None yet`.
 4. **A use case reaches its LLD through its owner:** the §7.3 Owner, then the Child LLDs row whose scope names that service.

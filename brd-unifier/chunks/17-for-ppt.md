@@ -10,7 +10,7 @@ GATE: Locked until 14-todo.md is fully cleared (all five steps Complete with evi
 MERGE: Excluded. Never part of the merged or combined BRD. Not an input to sdd-unifier.
 PURPOSE: (A) a presentation-ready brief of the Statement of Work and the use cases, usable as input to a deck-generating agent; (B) a coherent series of 30-second use-case videos with storyboards and generation prompts.
 RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes a requirement. An item raised while writing this brief is labelled Provisional with its TD reference.
-DESIGN STANDARD: The project-level ui-ux-global-constitution.md when it exists (SKILL.md principle 16; sections 2 and 3 for color and typography tokens), otherwise chunk 11. See delivery-chunks.md § Chunk 17 - Design standard.
+DESIGN STANDARD: The project-level ui-ux-global-constitution.md when it exists (SKILL.md principle 16; its color and typography token sections, cited by name), otherwise chunk 11. See delivery-chunks.md § Chunk 17, Design standard.
 -->
 
 # Presentation & Video Brief
@@ -111,7 +111,7 @@ DESIGN STANDARD: The project-level ui-ux-global-constitution.md when it exists (
   - **Main interaction:** [3-4 steps, compressed from the Main Flow]
   - **Outcome:** [What the actor leaves with]
 - **Talking points:** [Why it matters; the rule or exception worth mentioning]
-- **Suggested visual:** [Approved mockup MK-NN or screen ID; the use case's flowchart (Figure N) when it has one]
+- **Suggested visual:** [Approved mockup MK-NN (with the source's screen ID when the source defined one); the use case's flowchart (Figure N) when it has one]
 - **Sources:** [06a / UC-NN](./06a-use-cases-[persona-slug].md)
 - **Why this use case:** [Selection reason]
 - **Status:** [...]

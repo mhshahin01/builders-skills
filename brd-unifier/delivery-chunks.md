@@ -80,7 +80,7 @@ In COMBINED mode, the two sections are added to the combined file only when the 
    | Recommendation | The skill's suggestion, not a decision | Prefixed `Recommendation:` |
    | Unresolved question | Open `OI-NN`, inline `[NEEDS CLARIFICATION: ...]`, open `CF-NN` | Referenced by its `TD-NN` row |
 
-4. **Status line on 15, 16, 17.** Each opens with one status: `Up to date` (written with the gate open and nothing pending), `Provisional (TD-NN)` (a gap found while writing it; only the affected task, test case, slide, or video carries the label and the TD reference), or `Stale` (the BRD or the to-do changed after it was written; locked until the gate is open again).
+4. **Status line on 15, 16, 17.** Each opens with one status: `Up to date` (written with the gate open and nothing pending), `Provisional (TD-NN)` (a gap found while writing it; only the affected task, test case, slide, or video carries the label and the TD reference), or `Stale` (a change listed in § Refresh triggers, such as a BRD content change or a new or deferred open item, came after it was written; locked until the gate is open again).
 5. **Generation is not completion.** Writing chunk 14 completes none of its steps. A checklist step is `Complete` only when its Evidence cell names what was checked, when, and by whom. The gate reads evidence, not status words.
 6. **Stable identifiers.** This is the one list; SKILL.md points here.
 
@@ -88,7 +88,7 @@ In COMBINED mode, the two sections are added to the combined file only when the 
    |---|---|---|
    | `TD-NN` | To-do register row | 14 |
    | `CF-NN` | Consistency finding | 14 |
-   | `MK-NN` | Mockup, only where chunk 11 or the use cases define no screen ID | 14 |
+   | `MK-NN` | Screen or flow, one per mockup coverage row: the BRD's screen reference. A screen ID sits next to it only where the source material defined one; the BRD never defines its own screen IDs | 14 |
    | `TASK-NN` | Implementation task | 15 |
    | `DP-NN` | Dependency problem | 15 |
    | `TC-[AREA]-NN` | Test case; `[AREA]` is a 3-letter code such as `ACC` | 16 |
@@ -171,7 +171,7 @@ Run 1 happens before the open items are resolved, so it leaves step 2 `In progre
 | C7 Use case vs acceptance criteria | A criterion that contradicts the flows or rules; an A/E flow with no criterion; a criterion testing behaviour the flows do not describe |
 | C8 Derived views | Use Case Summary (05) vs use-case headings and actors; matrix (07) vs actor fields (SKILL.md step 6a) |
 | C9 Diagrams vs narrative | Only after step 5: every diagram element traces to the narrative, and every documented branch appears |
-| C10 Delivery chunks vs body | Run once 15-17 exist: coverage, references, provisional labels |
+| C10 Delivery chunks vs body | Chunk 14 at every write (the § Verification before presenting list); 15-17 once they exist: coverage, references, provisional labels |
 
 Record every finding as a `CF-NN` row: check, affected chunks and identifiers, finding, impact, recommended correction or decision needed, disposition, rechecked. When one check finds the same problem many times (for example, forty alternate flows with no acceptance criterion), record **one** row that lists every affected identifier. When the check finds something an existing `OI-NN` already covers, point the finding at that item; do not raise a duplicate, and do not correct the text while the item is open.
 
@@ -193,12 +193,12 @@ After corrections, **recheck** and add a run row. Unresolved findings go into th
 
 ### Step 4 - Generate mockups in Figma
 
-- **The standard is the global UI/UX constitution.** Mockups are generated in Figma or, if the user names another tool, in that tool. Either way, before any mockup is generated, read the project's `ui-ux-global-constitution.md` (SKILL.md principle 16; the project's AGENTS.md may point to it; never work from memory): sections 2 and 3 (tokens), 12 (responsive), 13 (mockups and prototypes) and 14 (Figma prototypes). Its Figma rules apply in full to a Figma deliverable. For another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent (playable flow, frames per breakpoint, states as variants, tokens, labeled simulated data, dated play-through). This step never restates those rules; it points to them, so a change to the constitution changes the step. **No constitution in the project:** do not ask for one and do not block the step. The coverage rules below still apply in full (playable flow, breakpoints, states as variants, labelled simulated data, dated play-through); colors and type come from chunk 11, and step 4 records "No UI/UX constitution found; chunk 11 used".
+- **The standard is the global UI/UX constitution.** Mockups are generated in Figma or, if the user names another tool, in that tool. Either way, before any mockup is generated, read the project's `ui-ux-global-constitution.md` (SKILL.md principle 16; the project's AGENTS.md may point to it; never work from memory): its sections on color and typography tokens, responsive design, mockups and prototypes, and Figma prototypes, cited by name, never by number. Its Figma rules apply in full to a Figma deliverable. For another tool, the responsive and the mockups and prototypes sections apply and the Figma prototype rules are applied in their nearest equivalent (playable flow, frames per breakpoint, states as variants, tokens, labeled simulated data, dated play-through). This step never restates those rules; it points to them, so a change to the constitution changes the step. **No constitution in the project:** do not ask for one and do not block the step. The coverage rules below still apply in full (playable flow, breakpoints, states as variants, labelled simulated data, dated play-through); colors and type come from chunk 11, and step 4 records "No UI/UX constitution found; chunk 11 used".
 - **Write a mockup brief into step 4 of `14-todo.md`.** A ready-to-use prompt, recommended and never claimed as executed, built from the constitution's reusable generation brief: it names the BRD, the coverage table, the constitution and the sections above, and the tool. It tells the generating tool or agent to read the constitution first.
-- One coverage row per screen or flow: the use cases it serves, the requirements and decisions it must honour, the states to cover, priority, status, breakpoints delivered, playable, play-through, Figma link. Use the screen identifiers already in chunk 11 or the use cases' UI/UX sections; assign `MK-NN` only where none exist.
+- One coverage row per screen or flow, each with its own `MK-NN` (the BRD's screen reference): the use cases it serves, the requirements and decisions it must honour, the states to cover, priority, status, breakpoints delivered, playable, play-through, Figma link. When the source material defined a screen ID, name it in the Screen / flow cell next to the `MK-NN`; never invent one.
 - **Expected coverage:** every use case with an actor-facing interaction has at least one screen; every Main Flow step the actor can observe is visible on a screen; every A/E flow with a user-visible state has that state; role differences follow the matrix (07); global standards follow chunk 11 (loading, empty, and error states included).
-- **Prototype coverage (constitution section 14):** one named start frame; every Main Flow playable from it to its end with no dead ends; P1 rows have every actor-facing control wired (navigation, overlays, drawers, dialogs, tabs, filters, form validation and error paths, destructive-action confirmation); P2 rows are connected to their neighbouring frames; states are variants, not duplicate static frames.
-- **Responsive coverage (constitution section 12):** frames for mobile, tablet and desktop on P1 rows; desktop and mobile on P2 rows.
+- **Prototype coverage (the constitution's Figma prototypes section):** one named start frame; every Main Flow playable from it to its end with no dead ends; P1 rows have every actor-facing control wired (navigation, overlays, drawers, dialogs, tabs, filters, form validation and error paths, destructive-action confirmation); P2 rows are connected to their neighbouring frames; states are variants, not duplicate static frames.
+- **Responsive coverage (the constitution's responsive section):** frames for mobile, tablet and desktop on P1 rows; desktop and mobile on P2 rows.
 - **Review criteria:** each frame names its `UC-NN`; flows are walkable end to end and playable in play mode with no dead ends; states are covered; visibility matches the matrix; chunk 11 standards hold; variables and text styles map to the constitution's tokens with no raw hex in components; simulated data and demo actions are labelled; the share link has view permission and opens on the start frame; no mockup shows behaviour absent from the BRD (if one does, raise a `TD-NN`, do not absorb it).
 - **Gate.** Begin only after steps 1-3 are `Complete` with evidence (G1-G3), the same gate as step 5. Step 5 is not a precondition: steps 4 and 5 run in parallel. If asked for mockups while G1-G3 are unmet, list what is missing and stop.
 - Rows touching an unresolved item are marked `Blocked by TD-NN`.
@@ -279,7 +279,7 @@ Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh 
 **Format**
 
 - Header comment, Owner / Prepared / Baseline / Design reference line, "How to use this document", "Test environment and data prerequisites" (`P1`, `P2`, ...), numbered feature-area sections, Traceability Matrix, Task acceptance, Provisional and blocked scenarios, Coverage gaps, Execution summary, Exit criteria.
-- Section heading: `## N. [Feature area] ([UC-NN, screen IDs, NFR-NN])`. A feature area is a group of cases that share a screen or a goal. It may cover several use cases, or none (the reference has a dashboard section). Order the sections the way a tester walks the product: access first, then the main journey of chunk 05, then administration, then cross-cutting UI/UX standards, then NFR acceptance.
+- Section heading: `## N. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])`. `MK-NN` is the screen or flow row of the chunk 14 mockup coverage table; a screen ID appears only where the source material defined one. A feature area is a group of cases that share a screen or a goal. It may cover several use cases, or none (the reference has a dashboard section). Order the sections the way a tester walks the product: access first, then the main journey of chunk 05, then administration, then cross-cutting UI/UX standards, then NFR acceptance.
 - Table columns, in this order: `TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment`. `Related Task` and `Needs` are the two added columns: they tie each case to chunk 15 and say when it can run (§ Readiness and acceptance). `Testing Result` and `Testing Comment` stay empty at generation.
 - `Related UC` names the use case or NFR and, in brackets, what the case proves: `UC-04 (E1, AC-3)`, `UC-07 (BR-2)`, `NFR-03`. Several references are allowed.
 - `TC ID` = `TC-[AREA]-NN`. Normally one 3-letter code per section; a section may hold a second code for a distinct sub-area, as the reference does (`NFR` and `LOG`). `TC Description` starts with "Verify". `TC Example` is a concrete action with realistic data. The prerequisites it needs go in `Needs`, not in the example. `Success Criteria` states the observable outcome in business terms.
@@ -331,7 +331,7 @@ Two clearly separated sections, both consistent with the latest confirmed requir
 
 The project files that rule the whole generation (SKILL.md principle 16) apply here as everywhere. For the look of the deck and videos:
 
-- **Constitution found:** its sections 2 and 3 (color and typography tokens) drive the Color palette, Typography, on-screen text, and visual style. Name tokens; never restate or copy raw hex values. Do not work from memory of a constitution you have not read in this run.
+- **Constitution found:** its color and typography token sections drive the Color palette, Typography, on-screen text, and visual style. Name tokens; never restate or copy raw hex values. Do not work from memory of a constitution you have not read in this run.
 - **No constitution:** use chunk 11 (Primary Color, Language & Locale). Typography becomes `Recommendation:` and is asked in the handoff.
 
 Record what was used on the **Design standard** line of the chunk. Chunk 11 is the business baseline and the constitution the visual detail; if they conflict (for example a different primary color), do not pick one: raise a `TD-NN` and label the affected Deck settings row `Provisional (TD-NN)`.
@@ -377,7 +377,7 @@ Per video: title, audience, objective, source use-case references; a timed story
 
 | Destination | Diagram | Rule |
 |---|---|---|
-| Chunk 05, new section `## Use Case Diagrams` after the Use Case Summary | Use-case diagram(s): actors, use cases, system boundary, relationships | One overview diagram if it fits about 30 lines; otherwise one per persona in chunk-05 order. Every `UC-NN` appears in at least one diagram. |
+| Chunk 05, new section `## Use Case Diagrams` after the Use Case Summary | Use-case diagram(s): actors, use cases, system boundary, relationships | One overview diagram if it fits about 30 lines; otherwise one per persona in chunk-05 order. Every `UC-NN` appears in at least one diagram (rows marked `Merged into` or `Removed` excepted). |
 | Chunks `06*`, new sub-section `### Flowchart` directly after `### Alternate & Exception Flows` of the use case | One flowchart per qualifying use case: main flow, decision points, alternate paths, exception paths as documented | **Required** when the use case has 3 or more Main Flow steps **and** at least one decision point (an A-flow, an E-flow, or a business rule that changes the path). **Skipped** when it has fewer than 3 steps or is linear; the skip reason is recorded in the todo tracking table and nothing is added to the chunk. |
 
 Notation and syntax rules: `mermaid-diagrams.md` § Use-case diagrams and § Use-case flowcharts.
@@ -466,7 +466,7 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 
 - [ ] Chunk 14 keeps the fixed order: resolve open items -> consistency check -> grill-me -> Figma mockups -> use-case diagrams and flowcharts, with Miro optional afterwards.
 - [ ] Every step has Status, Required inputs, Expected output, Completion criteria, Evidence. No step is `Complete` without evidence. Steps 3 and 4 are not `Complete` without the product manager's confirmation.
-- [ ] Step 4 points to the constitution (sections 2, 3, 12, 13, 14) when the project has one, or records "No UI/UX constitution found; chunk 11 used", carries the mockup brief, and its coverage table has the Playable, Breakpoints delivered and Play-through columns.
+- [ ] Step 4 points to the constitution's token, responsive, mockups and prototypes, and Figma prototypes sections, by name, when the project has one, or records "No UI/UX constitution found; chunk 11 used", carries the mockup brief, and its coverage table has the Playable, Breakpoints delivered and Play-through columns.
 - [ ] Steps 4 and 5 are `Pending gate` unless G1-G3 hold, and neither is blocked by the other. No new use-case diagram or flowchart was drawn in 05 / `06*` before the gate.
 - [ ] If step 5 ran: every Mermaid block parses, agrees with its narrative, and has a Summary line and a Figures index row.
 - [ ] Every `CF-NN` has traceable references and a disposition; unresolved ones are visible as `TD-NN` / `OI-NN`.

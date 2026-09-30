@@ -17,6 +17,8 @@ Is there a source document attached, pasted, or referenced by path?
          │   ├── Yes (chunked form, target is combined)    → TRANSFORM (merge)
          │   ├── Yes, both forms match target              → TRANSFORM (refresh / regenerate)
          │   └── Yes, but stale (template evolved)         → TRANSFORM (migrate to current template)
+         ├── Source is a pre-BRD (pre-brd-unifier output: pre-brd-[slug]/ or PRE-BRD-*.md)?
+         │   → TRANSFORM (pre-BRD → BRD; see sow-transformation.md)
          ├── Source is a SoW / Statement of Work / RFP scope?
          │   → TRANSFORM (SoW → BRD; see sow-transformation.md)
          ├── Source is a different BRD format (Word doc, old template, vendor format)?
@@ -41,6 +43,16 @@ Signs:
 - Has tables for Glossary, Dependencies, Integrations, NFRs, and the Users & Use Cases Matrix.
 
 If 4+ of these match, treat as "already follows this template" and the work is reformat / regenerate / migrate.
+
+### pre-BRD (pre-brd-unifier output)
+
+Signs:
+
+- A chunked folder `pre-brd-[slug]/` with `00-pre-brd-master.md` as its index and framework chunks such as `01-concept-sheet.md` to `24-open-items-and-assumptions-log.md`. Each chunk opens with a `PRE-BRD CHUNK: NN` comment block.
+- Or a combined file `PRE-BRD-*.md` with the same frameworks as sections, in tier order.
+- Discovery content rather than requirements: canvases, market sizing, PESTLE, SWOT, RICE, MoSCoW, an Executive Summary Scoreboard, and an Investor Assessment with a `Go`, `Conditional Go`, or `No-Go` verdict.
+
+Intent: TRANSFORM. Apply `sow-transformation.md` § pre-BRD (pre-brd-unifier output) to BRD. The pre-BRD answers "is this worth building?"; the BRD takes its idea, users, scope, and priorities and states the requirements.
 
 ### SoW / Statement of Work
 
@@ -87,7 +99,7 @@ Do NOT treat as a transform target. Treat as raw context for GENERATE — extrac
 
 ## Transform and the generation option
 
-A transform from a source that needs authoring (SoW, a BRD in another format, a loose spec) uses the generation option like a fresh generation: `parts` by default in CHUNKS mode (`parts-mode.md`). Pure conversions (merge, re-chunk) and targeted updates of an existing BRD always run `whole`: there is nothing to review between parts.
+A transform from a source that needs authoring (SoW, pre-BRD, a BRD in another format, a loose spec) uses the generation option like a fresh generation: `parts` by default in CHUNKS mode (`parts-mode.md`). Pure conversions (merge, re-chunk) and targeted updates of an existing BRD always run `whole`: there is nothing to review between parts.
 
 ---
 

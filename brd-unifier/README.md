@@ -6,7 +6,7 @@ The requirements stage of the suite: it converts ideas, SoWs, and existing docum
 
 ## What
 
-`brd-unifier` generates, transforms, or reformats a Business Requirements Document (BRD or BRD-HLD) into the user's standardised template. It can build a fresh BRD from a SoW, project brief, product spec, RFP scope, conversation, or topic seed, and it can re-shape an existing document (an old-format BRD, a flat scope doc, a single-file BRD that needs chunking, or a chunked BRD that needs combining) into the template.
+`brd-unifier` generates, transforms, or reformats a Business Requirements Document (BRD or BRD-HLD) into the user's standardised template. It can build a fresh BRD from a SoW, project brief, product spec, RFP scope, conversation, or topic seed, and it can re-shape an existing document (a pre-BRD from `pre-brd-unifier`, an old-format BRD, a flat scope doc, a single-file BRD that needs chunking, or a chunked BRD that needs combining) into the template.
 
 The BRD is business language only: the WHAT, never the HOW. No technology names, protocols, or implementation terminology in the body. Technical mandates found in source material are parked verbatim in Appendix § Technical Inputs for the SDD, and the technical design itself belongs to `sdd-unifier`.
 
@@ -68,7 +68,8 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 ### Outputs
 
 - Chunked: `./brd-[project-slug]/` with `NN-short-title.md` chunks (`06a`, `06b`, ... per persona), `[project-slug]-brd-master.md` with its Generation Progress table, and `decision-log.md`, the companion decision register.
-- Combined: `./BRD-[ProjectName]-v[X.X].md`, with `14-todo.md` and `17-for-ppt.md` kept as separate files in `./brd-[project-slug]/`.
+- Combined: `./BRD-[ProjectName]-v[X.X].md`, with `14-todo.md`, `17-for-ppt.md`, and `decision-log.md` kept as separate files in `./brd-[project-slug]/`.
+- Merged (on request): `./brd-[project-slug]/BRD-[ProjectName]-v[X.X]-MERGED.md`, next to the chunks, which are kept.
 - Delivery chunks, once the gate opens: `15-implementation.md`, `16-uat-bat-test-cases.md`, `17-for-ppt.md` (in combined mode, 15 and 16 are appended as the last two sections).
 - Markdown only, UTF-8, pipe tables, no hard line wrap. No `.docx` or `.pdf` unless explicitly requested.
 
@@ -78,7 +79,7 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 | ---- | -------- |
 | `TEMPLATE-COMBINED.md` | The single-file template, read at the start of any combined-mode generation |
 | `chunks/*.md` | The per-chunk template skeletons, read at the start of any chunks-mode generation |
-| `chunking.md` | Canonical chunk map, naming convention, merge rules |
+| `chunking.md` | Canonical chunk map, naming convention, heading map, merge and re-chunk rules |
 | `modes.md` | Chunks vs combined behavioural details |
 | `parts-mode.md` | The three parts, the checkpoint stop, exit checklists, back-fill, progress record, resuming |
 | `transform-detection.md` | Rules for deciding generate vs transform |

@@ -201,7 +201,7 @@ Core capabilities:
 
 ## Use Case Summary
 
-<!-- Every use case, one row each. UC numbering is sequential across the whole BRD. Group rows per persona. -->
+<!-- Every use case, one row each. UC numbering is sequential across the whole BRD. A use case that disappears keeps its row, and its Description cell starts with `Merged into UC-NN.` or `Removed: [reason].` (use-case-quality.md § UC numbering and IDs). Group rows per persona. -->
 
 | UC ID | Use Case | Primary Actor | Description |
 |-------|----------|---------------|-------------|
@@ -307,6 +307,12 @@ All detailed use cases follow this structure:
 
 ¹ [Condition, e.g., "Own region only."]
 
+## Notes
+
+<!-- Optional. Access rules that do not fit a footnote: role hierarchies, delegation, approval chains - in business terms. -->
+
+- [Note 1, or remove this section if empty.]
+
 ---
 
 # Integrations
@@ -342,7 +348,8 @@ All detailed use cases follow this structure:
 | NFR-01 | Availability | [e.g., The service is available around the clock; customers are never blocked from paying] | [e.g., No more than X minutes of disruption per month] |
 | NFR-02 | Scalability | [e.g., Growth to X tenants / Y customers over Z years without degraded experience] | [e.g., Seasonal peaks of N times normal traffic handled without slowdown] |
 | NFR-03 | Performance | [e.g., Screens respond immediately; reports are ready within moments] | [e.g., Everyday actions complete within N seconds] |
-| NFR-04 | Security & Privacy | [e.g., Customer data visible only to authorised users] | [e.g., Access outside the Users & Use Cases Matrix is impossible] |
+| NFR-04 | Security & Privacy | [e.g., Customer data is visible only to authorised users; regulatory data stays in-country] | [e.g., Access outside the Users & Use Cases Matrix is impossible] |
+| NFR-05 | Usability | [e.g., A new operator completes core tasks without training] | [e.g., Task X completed unaided by a first-time user] |
 
 > The technical realisation of each NFR is defined in the SDD, not here.
 
@@ -400,7 +407,7 @@ All detailed use cases follow this structure:
 # Open Items & Clarifications
 
 <!--
-Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every item carries a Recommended Answer - a concrete, ready-to-apply resolution. After this section is written, the skill walks the user through each item for acceptance; accepted answers are reflected into the body and logged in the Resolution Log.
+Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every item carries a Recommended Answer - a concrete, ready-to-apply resolution. After this section is written, the skill walks the user through each item for acceptance; accepted answers are reflected into the body; every decided item (applied, deferred, or rejected) is logged in the Resolution Log.
 This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay inline. This section is the reviewer's external findings.
 -->
 
@@ -475,7 +482,7 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 ## How to use this plan
 
-<!-- Copy the numbered rules from chunks/15-implementation.md. -->
+<!-- Copy the numbered rules from chunks/15-implementation.md with the COMBINED mode adaptations: rule 1 reads this file's Use Case Summary and the use cases a task cites (there is no master index), and chunk 16 is the UAT/BAT Test Cases section below, cited in plain text. -->
 
 ## Use-case coverage
 
@@ -511,9 +518,9 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 **Scope note:** [Default execution scope. Define every scope tag used in a TC Name. Name the cases that need another team's cooperation.]
 
-<!-- Sections exactly as in chunks/16-uat-bat-test-cases.md: How to use this document; Test environment and data prerequisites; one numbered section per feature area with the ten-column table; Cross-Cutting UI/UX Standards; NFR Acceptance; Traceability Matrix; Task acceptance; Provisional and blocked scenarios; Coverage gaps; Execution summary; Exit criteria (BAT sign-off). -->
+<!-- Sections exactly as in chunks/16-uat-bat-test-cases.md (chunk 15 cited as the Implementation Plan section above, in plain text): How to use this document; Test environment and data prerequisites; one numbered section per feature area with the ten-column table; Cross-Cutting UI/UX Standards; NFR Acceptance; Traceability Matrix; Task acceptance; Provisional and blocked scenarios; Coverage gaps; Execution summary; Exit criteria (BAT sign-off). -->
 
-## 1. [Feature area] ([UC-NN, screen IDs, NFR-NN])
+## 1. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])
 
 | TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
 |-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|

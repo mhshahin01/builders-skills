@@ -45,7 +45,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 
 ---
 
-## 1. [Feature area] ([UC-NN, screen IDs, NFR-NN])
+## 1. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])
 
 | TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
 |-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|

@@ -91,7 +91,7 @@ The key goal is a smooth implementation: the LLD and implementers must read ONE 
 4. **Chunk 12 is the role/permission registry.** Role names and permission tokens in per-service authorization notes and in chunk 11's internal contracts (HTTP and in-process) must match its catalogue verbatim; external contracts carry the provider's scheme instead (chunk 11 §15.1).
 5. **Chunk 11 is the API contract registry.** Every synchronous integration has an `API-NN` there; method and URI in every `13x` List of APIs match it verbatim; headers, body, responses, and error codes live only there. External contracts stay `TBD - external` until the user supplies the provider documentation, never invented.
 6. **Chunk 19 consolidates, never invents, and comes last.** Counts, names, and edges in the e2e chunk must trace to chunks 09/10/11/12/13x, and it is written only once chunk 18 is cleared (SKILL.md step 8b).
-7. **Divergences are flagged, never silently reconciled.** Unresolvable mismatches land in chunk 10 §14.8 (events), chunk 11 §15.5 (APIs), or chunk 12 §16.12 (roles) with a pointer, and the reviewer pass (chunk 18) treats any remaining mismatch as a Contract mismatch OI.
+7. **Divergences are flagged, never silently reconciled.** Unresolvable mismatches land in chunk 10 §14.8 (events), chunk 11 §15.5 (APIs), or chunk 12 §16.12 (roles) with a pointer and Status `Open` (`Fixed in vX.X` once fixed; a row without a Status counts as `Open`), and the reviewer pass (chunk 18) treats any remaining mismatch as a Contract mismatch OI.
 
 Generation order that makes this cheap: draft the per-service Event Models and List of APIs → consolidate into chunk 10 → back-propagate fixes into the `13x` chunks → chunk 12 (roles) → chunk 11 (API contracts) → §7.3 Entry points, APIs, and Events (derive-from-BRD) → reconcile (SKILL.md step 6a) → review (chunk 18) → chunk 19 last, behind the e2e gate.
 
@@ -127,7 +127,7 @@ Deviate, and note the deviation in the final handoff summary, when:
 
 1. **A template section is genuinely empty** for this project (e.g., a backend-only system has no Frontend Stack row in Ecosystem Overview, or a single-service system has no §13 decomposition table). Keep the section, write `Not applicable for this release.`
 2. **Workflow / sequence chunk explodes.** If §8.4 + §8.5 together exceed ~600 lines, split: `05a-workflows.md` and `05b-sequences.md`.
-3. **The event hub explodes.** If the catalog + payload contracts together exceed ~800 lines, split into `10-events-hub.md` (§14.1–14.8: topology, envelope, topic registry, catalog, guarantees, doctrines, consistency notes) and `10-events-hub-contracts.md` (§14.9 payload contracts + coverage matrix). Both sort before `13a-…`. Note the split in the handoff summary.
+3. **The event hub explodes.** If the catalog + payload contracts together exceed ~800 lines, split into `10-events-hub.md` (§14.1–14.8: topology, envelope, topic registry, catalog, guarantees, doctrines, consistency notes) and `10-events-hub-contracts.md` (§14.9 payload contracts + coverage matrix, then §14.10 in-process domain events). Both sort before `13a-…`. Note the split in the handoff summary.
 4. **A single service is so complex it warrants splitting.** Rare, but if one service's detailed spec exceeds ~800 lines (large state machines, many APIs, many events), split into `13a1-service-foo-data.md` and `13a2-service-foo-events.md`. Note in the handoff summary.
 5. **Operations Runbook becomes a living artefact.** If the runbook is under heavy active iteration during incidents, split: `16a-runbook-procedures.md` and `16b-runbook-diagnostics.md`.
 6. **A purely synchronous system** (no eventing at all — rare under the EDA default) keeps chunk 10 with its heading and writes `Not applicable for this release; the platform has no asynchronous backbone.` plus the ADR that justified deviating from the EDA default.
@@ -158,8 +158,9 @@ Steps:
 4. Regenerate the Table of Contents in chunk 00 against the merged heading outline.
 5. Regenerate the Figures and Tables indices.
 6. Check the §17.X service blocks follow chunk-letter order (13a → §17.1, 13b → §17.2, …). Keep the letter-to-number mapping; do not close gaps left by merged or removed services.
-7. Write to `SDD-[ProjectName]-v[X.X]-MERGED.md` alongside the chunks.
-8. Never include `[project-slug]-sdd-master.md` or `decision-log.md` in the merged file.
+7. Copy the master's **Reconciled:** and **E2E gate (chunk 19):** lines into the cover of the merged file, unchanged (the gate line as **E2E gate (§24):**). A conversion never reopens or refreshes the gate: a `Stale` gate stays `Stale`, and that line is the warning on §24.
+8. Write to `SDD-[ProjectName]-v[X.X]-MERGED.md` alongside the chunks.
+9. Never include `[project-slug]-sdd-master.md` or `decision-log.md` in the merged file.
 
 Original chunks are kept.
 

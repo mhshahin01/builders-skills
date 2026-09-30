@@ -99,6 +99,6 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 - Applying a decision updates the chunk text as plain design in present tense ("Wallet events are published through the transactional outbox") and removes the inline marker. The chunk never keeps a "resolved on [date]" stamp, an option letter, or a progress note.
 - Compact traceability references to stable IDs (OI-NN, ADR-NN, UC-NN, AP-NN) inside design text and table cells are allowed in the chunks; storytelling is not.
-- The §6 Notes column keeps each row's source label (`BRD-mandated`, `default`, `recommended`, `user override`). That label is current-state provenance, not narrative, and stays in the chunk.
+- The §6 Notes column keeps each row's source label (`BRD-mandated`, `source SDD`, `default`, `recommended`, `user override`). That label is current-state provenance, not narrative, and stays in the chunk.
 - Chunk 18 keeps each item's current status line and its Resolution Log row. The narrative behind an accepted item moves here.
 - `[project-slug]-sdd-master.md` keeps the generation progress and links this register; it does not duplicate the Q&A records.

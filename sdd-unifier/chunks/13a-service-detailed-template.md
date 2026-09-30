@@ -92,6 +92,8 @@ erDiagram
   }
 ```
 
+**Summary:** [1-2 sentences: the entities this service owns and how they relate.]
+
 #### Tables Design
 
 | Table | Column | Type | Constraints | Notes |

@@ -5,7 +5,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 DEPENDS_ON: 02 (ecosystem: IAM, gateway), 05 (sequences), 07 (§11.6 security defaults), 08 (§12 integrations), 09 (services), 12 (roles and permission tokens), 13a+ (per-service API lists)
 PART OF: SDD - [Project Name]
-PURPOSE: The API contract registry for every synchronous integration: service-to-service calls, outbound calls from a service to an external system, and inbound calls from an external system into a service (callbacks, webhooks). Each contract states the URI, headers, body, responses, error codes, security, and auth, so both sides implement the same contract with zero drift.
+PURPOSE: The API contract registry for every synchronous integration: service-to-service calls, module-to-module port calls in a modular monolith or hybrid core, outbound calls from a service to an external system, and inbound calls from an external system into a service (callbacks, webhooks). Each HTTP contract states the URI, headers, body, responses, error codes, security, and auth, and each in-process port contract its port interface, operation, DTOs, raised errors, and permission token, so both sides implement the same contract with zero drift.
 CONTRACT_RULE: This chunk is canonical for integration API contracts. Each per-service chunk (13x) lists the endpoint in its "List of APIs" with the API ID and links here; it never restates the headers, body, or error codes. Event contracts stay in chunk 10; roles and permission tokens stay in chunk 12 and are referenced here verbatim.
 EXTERNAL_RULE: A contract whose other side is an external system is `TBD - external` until the user supplies the provider's API documentation. Provider-owned fields (URI, headers, body, responses, error codes, auth scheme) are written as `TBD` with the marker `**[TBD - EXTERNAL: ...]**`, never invented. Our-side policy (timeout, retries, circuit breaker, fallback, where credentials are stored) comes from §12 and is filled.
 -->
@@ -34,7 +34,7 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 | Content type | `application/json`; errors as `application/problem+json` | - |
 | Date and time | ISO-8601, UTC | §6 ecosystem rules |
 | IDs | UUIDv7 | §6 ecosystem rules |
-| Error model | RFC 9457 Problem Details with an `errorCode` extension (standard codes in the table below) | Platform doctrine (RFC 9457) |
+| Error model | RFC 9457 Problem Details with an `errorCode` extension (standard codes in the table below); an Internal (in-process) contract raises typed errors carrying the same `errorCode` | Platform doctrine (RFC 9457) |
 | Resilience | Timeouts, retries with exponential backoff and jitter, circuit breaker, and bulkhead per downstream; values per contract, from §12 for external systems | Platform doctrine; §12 for external systems |
 | Sync chain depth | At most one synchronous hop between services; a deeper chain is a design defect, flagged in §15.5 | §9 principles, platform doctrine |
 
@@ -63,7 +63,7 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 
 ### Standard error codes
 
-<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. -->
+<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. The HTTP status column applies only when a call crosses HTTP. -->
 
 | HTTP status | `errorCode` | Meaning | Retryable | Consumer action |
 |-------------|-------------|---------|-----------|-----------------|
@@ -82,12 +82,13 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
+<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
 | API-01 | [Operation] | [Service] | [Service] | Internal | `[METHOD] /v1/[path]` | [13x § Integrations] | [[KEY/UC-NN](BRD link) / -] | Defined |
 | API-02 | [Operation] | [Service] | [External system] | External outbound | TBD | [INT-NN] | [[KEY/UC-NN](BRD link) / -] | TBD - external |
+| API-03 | [Operation] | [Module] | [Module] | Internal (in-process) | `[ProviderPort].[operation]` | [13x § Integrations] | [[KEY/UC-NN](BRD link) / -] | Defined |
 
 ---
 
@@ -192,6 +193,40 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 | Timeout, retries, circuit breaker | [From §12 INT-NN] |
 | Fallback when unavailable | [From §12 INT-NN] |
 | Source document | TBD (link the provider's API documentation once supplied) |
+
+---
+
+### API-03: [Operation name] ([Consumer module] -> [Provider module])
+
+- **Type:** Internal (in-process)
+- **Purpose:** [One sentence; link the use case ([KEY/UC-NN](BRD link)) and the module Integrations row.]
+- **Status:** Defined
+
+<!-- Modular monolith or hybrid core: a module-to-module call through a port (architecture-questionnaire.md § Effect on the SDD). It never crosses HTTP, so it has no method, URI, headers, or HTTP status; SKILL.md step 6a checks the fields below instead. -->
+
+**Port and authorization**
+
+| Aspect | Value |
+|--------|-------|
+| Port interface | `[ProviderPort]` |
+| Operation | `[operation]` |
+| Request DTO | `[RequestDto]` |
+| Response DTO | `[ResponseDto]` |
+| Authorization | [Permission token from §16, verbatim, checked at the port] |
+| Tenant context | [Per §15.1; carried in the call context] |
+
+**DTO fields**
+
+| DTO | Field | Type | Required | Constraints | Description |
+|-----|-------|------|----------|-------------|-------------|
+| `[RequestDto]` | [field] | [string] | [Yes] | [e.g., max 64, enum] | [Description] |
+| `[ResponseDto]` | [field] | [string] | [Yes] | - | [Description] |
+
+**Errors raised** (typed errors carrying the §15.1 `errorCode`; list only the errors this operation raises and its domain codes; no HTTP status)
+
+| Error | `errorCode` | When | Retryable | Consumer action |
+|-------|-------------|------|-----------|-----------------|
+| `[DomainError]` | [DOMAIN_CODE] | [Condition] | [No] | [Action] |
 
 <!-- Repeat a contract block for each API-NN. External inbound contracts (callbacks, webhooks) follow the same TBD rule for provider-owned fields; our side (endpoint path, signature verification, idempotency, replay protection) is defined when the provider's scheme is known. They carry no §16 permission token (§15.1 Authorization by contract type). -->
 

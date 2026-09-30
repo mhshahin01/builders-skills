@@ -57,6 +57,8 @@ flowchart TB
   PLATFORM --> EXT2[(External provider 2)]
 ```
 
+**Summary:** [1-2 sentences: who uses the platform, through which edge, and which external providers it depends on.]
+
 ## 24.3 Layered High-Level Architecture
 
 ```mermaid
@@ -82,6 +84,8 @@ flowchart TB
   S1 & S2 -.publish/consume.-> BR
 ```
 
+**Summary:** [1-2 sentences: the layers and the load-bearing connections between them.]
+
 ## 24.4 The Universal Per-Event Mechanism (async backbone)
 
 <!-- Owned by §14.2.1 (chunk 10) - referenced, never restated here. One prose sentence + the pointer. -->
@@ -90,7 +94,7 @@ Every event on every topic flows through the one universal mechanism — outbox 
 
 ## 24.5 Producer → Topic → Consumer Fan-Out (the event map)
 
-<!-- One sub-section per delivery phase. Each: a Mermaid flowchart of producer -> topic -> consumers for that phase's services. Edge labels name the load-bearing events. The exhaustive matrix stays in §14.5; this is the navigable visual. -->
+<!-- One sub-section per delivery phase. Each: a Mermaid flowchart of producer -> topic -> consumers for that phase's services. Edge labels name the load-bearing events. The exhaustive matrix stays in §14.5; this is the navigable visual. A modular monolith or hybrid core shows its in-process domain events (§14.10) as separately labelled module-to-module edges (label `in-process: [EventName]`), never as topics. -->
 
 ### 24.5.1 Phase 1 Core
 
@@ -101,6 +105,8 @@ flowchart LR
   T1 -->|EVENT_B| C2[Consumer 2]
 ```
 
+**Summary:** [1-2 sentences: which phase 1 producers publish to which topics, and who consumes the load-bearing events.]
+
 ### 24.5.2 Phase 2+ Domains
 
 ```mermaid
@@ -108,6 +114,8 @@ flowchart LR
   S3[Service 3] --> T3[[topic-3]]
   T3 --> C4[Consumer 4]
 ```
+
+**Summary:** [1-2 sentences: which phase 2+ producers publish to which topics, and who consumes them.]
 
 ### 24.5.3 Universal Subscribers (breadth rules)
 
@@ -123,7 +131,7 @@ flowchart LR
 
 ## 24.7 Synchronous REST Edges (one-hop rule)
 
-<!-- The whole-system view of every service-to-service synchronous call. The contracts themselves (URI, headers, body, error codes, auth) live in §15 (chunk 11) and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. -->
+<!-- The whole-system view of every service-to-service synchronous call. The contracts themselves (URI, headers, body, error codes, auth) live in §15 (chunk 11) and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. A modular monolith or hybrid core lists its `Internal (in-process)` port calls as separately labelled edges (`in-process` after the callee), never as HTTP edges. -->
 
 | # | Caller → Callee | API ID (§15) | Purpose | Why synchronous |
 |---|---|---|---|---|
@@ -149,6 +157,8 @@ sequenceDiagram
     O->>A: compensate
   end
 ```
+
+**Summary:** [1-2 sentences: the saga's happy path and how a failure is compensated.]
 
 ## 24.9 Normative References
 

@@ -29,7 +29,7 @@
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD derived from this SDD (from-sdd or hybrid) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md) whose Related SDD line links to this file are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md) whose Related SDD line links to this file are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
 
 | LLD | Scope (§13 services) | Direction | Version | Link |
 |-----|----------------------|-----------|---------|------|
@@ -169,7 +169,7 @@ Owner: who will own the mitigation and the monitoring of the risk.
 <!--
 Summary of the platform-wide technology stack and shared infrastructure that all services in this SDD must conform to.
 This section is the single source of truth for the implementation constitution and planned technology choices.
-SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem selection, the skill first presents the proposed ecosystem (BRD Technical Inputs verbatim > CLAUDE.md defaults > BRD-informed recommendations) for a one-shot accept-all; if not accepted, it walks the user through the items in grouped batches, highlighting the recommended option per item with the BRD evidence that drives it. Record the outcome per row in the Notes column (e.g., "BRD-mandated", "default accepted", "user override - see ADR-NN").
+SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem selection, the skill first presents the proposed ecosystem (BRD Technical Inputs verbatim > CLAUDE.md defaults > BRD-informed recommendations; in TRANSFORM, the source SDD's named technologies, versions, and topology come first, locked as `source SDD`) for a one-shot accept-all; if not accepted, it walks the user through the items in grouped batches, highlighting the recommended option per item with the BRD evidence that drives it. Record the outcome per row in the Notes column (e.g., "BRD-mandated", "source SDD", "default accepted", "user override - see ADR-NN").
 -->
 
 | Layer | Technology / Service | Version / Tier | Notes |
@@ -564,7 +564,8 @@ Then answer four questions for the whole platform:
   2. Who produces and who consumes each (reconciled both ways)
   3. What each event carries (envelope + payload contract)
   4. Why and when each fires (business moment + downstream purpose)
-State what is OUT of scope: in-process domain events that never leave a service; provider webhooks (REST callbacks, not bus events); external adapter ingestion edges normalized at an anti-corruption layer before any platform event.
+State what is OUT of scope: in-process events that never leave one module or one service; provider webhooks (REST callbacks, not bus events); external adapter ingestion edges normalized at an anti-corruption layer before any platform event.
+In a modular monolith or a hybrid core, domain events between modules are IN scope: catalogue them in §14.10, apart from the integration events on the broker.
 -->
 
 [Eventing posture + the four questions + out-of-scope list.]
@@ -578,7 +579,7 @@ Include the tradeoff table for the chosen vs rejected topology.
 
 **Decision:** [One-line topology decision.]
 
-What makes it *one hub* is the shared contract surface:
+What makes it *one hub* is the shared contract surface of the integration events on the broker (in-process domain events between modules: §14.10):
 
 - **One envelope standard** (§14.3) on every event, on every topic.
 - **One messaging library / pattern:** [outbox -> relay -> broker -> inbox, per CLAUDE.md outbox mandate].
@@ -595,6 +596,8 @@ What makes it *one hub* is the shared contract surface:
 | Cost / fan-out | [Note] | [Note] |
 
 ### 14.2.1 Async Backbone (the universal per-event mechanism)
+
+<!-- Integration events on the broker only. The in-process domain events of §14.10 do not use this mechanism. -->
 
 ```mermaid
 flowchart LR
@@ -615,6 +618,8 @@ flowchart LR
     APPLY -- poison / invalid --> DLQ[(DLQ + alarm + redrive runbook)]
 ```
 
+**Summary:** [1-2 sentences: how an integration event travels from the producer's outbox to each consumer's inbox, and where a poison message goes.]
+
 ### 14.2.2 Hub Topology & Fan-Out Landscape
 
 <!-- Producer -> topic -> consumer shape of the whole platform: structural clusters, not every edge (the full matrix is 14.5). -->
@@ -627,6 +632,8 @@ flowchart LR
     T1 --> C2[Consumer service B]
     T2 --> C2
 ```
+
+**Summary:** [1-2 sentences: which producers publish to which topics, and which consumer clusters bind to them.]
 
 ## 14.3 Standard Event Envelope (every event, every topic)
 
@@ -691,7 +698,7 @@ Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "
 
 ## 14.6 Cross-Cutting Event Guarantees
 
-<!-- The invariants every edge inherits. Keep as a numbered list, e.g.: -->
+<!-- The invariants every integration-event edge on the broker inherits (the in-process domain events of §14.10 are outside them). Keep as a numbered list, e.g.: -->
 
 1. **Atomicity:** domain state + outbox row commit in one transaction; the relay publishes only after commit (no dual-writes).
 2. **Delivery:** at-least-once everywhere; consumers dedup on `(consumer, event_id)`.
@@ -717,11 +724,12 @@ Name the broad consumers (e.g., Analytics binds every domain topic; Notification
 
 <!--
 The reconciliation ledger for producer/consumer consistency. Every divergence found while consolidating the per-service Event Models lands here with a pointer - never silently reconciled. Empty section = full reconciliation achieved; state that explicitly.
+Status: `Open` until the divergence is fixed, then `Fixed in vX.X` (the values §15.5 uses). A row with no Status, or any other value, counts as `Open` and keeps the e2e gate shut (SKILL.md step 8b, E2).
 -->
 
-| # | Where (chunks) | Divergence | Resolution / flag |
-|---|---|---|---|
-| 1 | [13x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 13x on YYYY-MM-DD / flagged as OI-NN] |
+| # | Where (chunks) | Divergence | Resolution / flag | Status |
+|---|---|---|---|---|
+| 1 | [13x vs this chunk] | [e.g., consumer under-listed / payload field mismatch / topic name drift] | [Fixed in 13x on YYYY-MM-DD / flagged as OI-NN] | [Open / Fixed in vX.X] |
 
 ## 14.9 Payload Contract Samples
 
@@ -761,6 +769,17 @@ Define common value objects once, then reference them.
 |---|---|---|---|
 | `[EVENT_NAME]` | ✓ | [§14.9.1 / registry-only] | [committed] |
 
+## 14.10 In-Process Domain Events (modular monolith / hybrid core)
+
+<!--
+Domain events that one module publishes and other modules of the same deployable handle in process (architecture-questionnaire.md § Effect on the SDD). They are not integration events: the broker delivery rules (§14.2 one-hub rules, §14.2.1, §14.6) do not apply. An event that must also leave the deployable is published through the outbox as an integration event and catalogued in §14.5. Events that never leave one module stay out of scope.
+A microservices SDD writes "Not applicable - no in-process events".
+-->
+
+| Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
+|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [after commit] | `[EventDto]`: [fields] | [Notes] |
+
 
 ---
 
@@ -792,7 +811,7 @@ Define common value objects once, then reference them.
 | Content type | `application/json`; errors as `application/problem+json` | - |
 | Date and time | ISO-8601, UTC | §6 ecosystem rules |
 | IDs | UUIDv7 | §6 ecosystem rules |
-| Error model | RFC 9457 Problem Details with an `errorCode` extension (standard codes in the table below) | Platform doctrine (RFC 9457) |
+| Error model | RFC 9457 Problem Details with an `errorCode` extension (standard codes in the table below); an Internal (in-process) contract raises typed errors carrying the same `errorCode` | Platform doctrine (RFC 9457) |
 | Resilience | Timeouts, retries with exponential backoff and jitter, circuit breaker, and bulkhead per downstream; values per contract, from §12 for external systems | Platform doctrine; §12 for external systems |
 | Sync chain depth | At most one synchronous hop between services; a deeper chain is a design defect, flagged in §15.5 | §9 principles, platform doctrine |
 
@@ -821,7 +840,7 @@ Define common value objects once, then reference them.
 
 ### Standard error codes
 
-<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. -->
+<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. The HTTP status column applies only when a call crosses HTTP. -->
 
 | HTTP status | `errorCode` | Meaning | Retryable | Consumer action |
 |-------------|-------------|---------|-----------|-----------------|
@@ -840,12 +859,13 @@ Define common value objects once, then reference them.
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
+<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
 | API-01 | [Operation] | [Service] | [Service] | Internal | `[METHOD] /v1/[path]` | [13x § Integrations] | [[KEY/UC-NN](BRD link) / -] | Defined |
 | API-02 | [Operation] | [Service] | [External system] | External outbound | TBD | [INT-NN] | [[KEY/UC-NN](BRD link) / -] | TBD - external |
+| API-03 | [Operation] | [Module] | [Module] | Internal (in-process) | `[ProviderPort].[operation]` | [13x § Integrations] | [[KEY/UC-NN](BRD link) / -] | Defined |
 
 ---
 
@@ -950,6 +970,40 @@ Define common value objects once, then reference them.
 | Timeout, retries, circuit breaker | [From §12 INT-NN] |
 | Fallback when unavailable | [From §12 INT-NN] |
 | Source document | TBD (link the provider's API documentation once supplied) |
+
+---
+
+### API-03: [Operation name] ([Consumer module] -> [Provider module])
+
+- **Type:** Internal (in-process)
+- **Purpose:** [One sentence; link the use case ([KEY/UC-NN](BRD link)) and the module Integrations row.]
+- **Status:** Defined
+
+<!-- Modular monolith or hybrid core: a module-to-module call through a port (architecture-questionnaire.md § Effect on the SDD). It never crosses HTTP, so it has no method, URI, headers, or HTTP status; SKILL.md step 6a checks the fields below instead. -->
+
+**Port and authorization**
+
+| Aspect | Value |
+|--------|-------|
+| Port interface | `[ProviderPort]` |
+| Operation | `[operation]` |
+| Request DTO | `[RequestDto]` |
+| Response DTO | `[ResponseDto]` |
+| Authorization | [Permission token from §16, verbatim, checked at the port] |
+| Tenant context | [Per §15.1; carried in the call context] |
+
+**DTO fields**
+
+| DTO | Field | Type | Required | Constraints | Description |
+|-----|-------|------|----------|-------------|-------------|
+| `[RequestDto]` | [field] | [string] | [Yes] | [e.g., max 64, enum] | [Description] |
+| `[ResponseDto]` | [field] | [string] | [Yes] | - | [Description] |
+
+**Errors raised** (typed errors carrying the §15.1 `errorCode`; list only the errors this operation raises and its domain codes; no HTTP status)
+
+| Error | `errorCode` | When | Retryable | Consumer action |
+|-------|-------------|------|-----------|-----------------|
+| `[DomainError]` | [DOMAIN_CODE] | [Condition] | [No] | [Action] |
 
 <!-- Repeat a contract block for each API-NN. External inbound contracts (callbacks, webhooks) follow the same TBD rule for provider-owned fields; our side (endpoint path, signature verification, idempotency, replay protection) is defined when the provider's scheme is known. They carry no §16 permission token (§15.1 Authorization by contract type). -->
 
@@ -1086,6 +1140,8 @@ flowchart TD
   UT2 --> SR2[Sub-role 2]
 ```
 
+**Summary:** [1-2 sentences: the user types and the roles and sub-roles each one breaks into.]
+
 ### 16.9.2 Grant / Invitation Authority (who may create whom)
 
 ```mermaid
@@ -1094,6 +1150,8 @@ flowchart LR
   ADMIN -->|invites| R1[Role 1]
   R1 -->|invites| SR1[Sub-role 1]
 ```
+
+**Summary:** [1-2 sentences: who provisions or invites whom, from the platform operator down.]
 
 ### 16.9.3 Per-Request Authorization (how a role yields a decision)
 
@@ -1110,6 +1168,8 @@ sequenceDiagram
   AZ-->>SVC: allow / deny
   SVC-->>C: response / 403
 ```
+
+**Summary:** [1-2 sentences: where the edge gate and the permission check run, and what the caller gets on a deny.]
 
 ## 16.10 Traceability
 
@@ -1143,9 +1203,11 @@ sequenceDiagram
 
 ### 16.12.3 Drift & Reconciliation Register
 
-| # | Where | Divergence | Resolution / flag |
-|---|---|---|---|
-| 1 | [BRD matrix vs 13x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] |
+<!-- Status: `Open` until the divergence is fixed, then `Fixed in vX.X` (the values §15.5 uses). A row with no Status, or any other value, counts as `Open` and keeps the e2e gate shut (SKILL.md step 8b, E2). -->
+
+| # | Where | Divergence | Resolution / flag | Status |
+|---|---|---|---|---|
+| 1 | [BRD matrix vs 13x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] | [Open / Fixed in vX.X] |
 
 
 ---
@@ -1238,6 +1300,8 @@ erDiagram
     uuid entity_b_id FK
   }
 ```
+
+**Summary:** [1-2 sentences: the entities this service owns and how they relate.]
 
 #### Tables Design
 
@@ -1678,7 +1742,12 @@ sequenceDiagram
 
 ## Reviewer Notes
 
-<!-- Optional. Free-form notes that did not crystallise into a numbered open item. -->
+<!-- Coverage record first (required): one row per risk surface in the review brief (SKILL.md step 7), each either "checked: N findings (OI IDs)" or "checked: no issue found", with what was checked. A zero-finding review is valid. Then optional free-form notes that did not crystallise into a numbered open item. -->
+
+| Risk surface | Checked | Findings | Notes |
+|---|---|---|---|
+| [Architecture style] | [What was checked, e.g., ADR-01 against the BRD drivers, §8.1, §13 boundaries] | [N findings (OI-NN, OI-NN)] | [Notes] |
+| [Observability] | [What was checked] | [No issue found] | [Notes] |
 
 - [Note 1]
 - [Note 2]
@@ -1738,6 +1807,8 @@ flowchart TB
   PLATFORM --> EXT2[(External provider 2)]
 ```
 
+**Summary:** [1-2 sentences: who uses the platform, through which edge, and which external providers it depends on.]
+
 ## 24.3 Layered High-Level Architecture
 
 ```mermaid
@@ -1763,6 +1834,8 @@ flowchart TB
   S1 & S2 -.publish/consume.-> BR
 ```
 
+**Summary:** [1-2 sentences: the layers and the load-bearing connections between them.]
+
 ## 24.4 The Universal Per-Event Mechanism (async backbone)
 
 <!-- Owned by §14.2.1 - referenced, never restated here. One prose sentence + the pointer. -->
@@ -1771,7 +1844,7 @@ Every event on every topic flows through the one universal mechanism — outbox 
 
 ## 24.5 Producer → Topic → Consumer Fan-Out (the event map)
 
-<!-- One sub-section per delivery phase. Each: a Mermaid flowchart of producer -> topic -> consumers for that phase's services. Edge labels name the load-bearing events. The exhaustive matrix stays in §14.5; this is the navigable visual. -->
+<!-- One sub-section per delivery phase. Each: a Mermaid flowchart of producer -> topic -> consumers for that phase's services. Edge labels name the load-bearing events. The exhaustive matrix stays in §14.5; this is the navigable visual. A modular monolith or hybrid core shows its in-process domain events (§14.10) as separately labelled module-to-module edges (label `in-process: [EventName]`), never as topics. -->
 
 ### 24.5.1 Phase 1 Core
 
@@ -1782,6 +1855,8 @@ flowchart LR
   T1 -->|EVENT_B| C2[Consumer 2]
 ```
 
+**Summary:** [1-2 sentences: which phase 1 producers publish to which topics, and who consumes the load-bearing events.]
+
 ### 24.5.2 Phase 2+ Domains
 
 ```mermaid
@@ -1789,6 +1864,8 @@ flowchart LR
   S3[Service 3] --> T3[[topic-3]]
   T3 --> C4[Consumer 4]
 ```
+
+**Summary:** [1-2 sentences: which phase 2+ producers publish to which topics, and who consumes them.]
 
 ### 24.5.3 Universal Subscribers (breadth rules)
 
@@ -1804,7 +1881,7 @@ flowchart LR
 
 ## 24.7 Synchronous REST Edges (one-hop rule)
 
-<!-- The whole-system view of every service-to-service synchronous call. The contracts themselves (URI, headers, body, error codes, auth) live in §15 and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. -->
+<!-- The whole-system view of every service-to-service synchronous call. The contracts themselves (URI, headers, body, error codes, auth) live in §15 and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. A modular monolith or hybrid core lists its `Internal (in-process)` port calls as separately labelled edges (`in-process` after the callee), never as HTTP edges. -->
 
 | # | Caller → Callee | API ID (§15) | Purpose | Why synchronous |
 |---|---|---|---|---|
@@ -1830,6 +1907,8 @@ sequenceDiagram
     O->>A: compensate
   end
 ```
+
+**Summary:** [1-2 sentences: the saga's happy path and how a failure is compensated.]
 
 ## 24.9 Normative References
 

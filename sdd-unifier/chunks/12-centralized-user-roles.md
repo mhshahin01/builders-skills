@@ -103,6 +103,8 @@ flowchart TD
   UT2 --> SR2[Sub-role 2]
 ```
 
+**Summary:** [1-2 sentences: the user types and the roles and sub-roles each one breaks into.]
+
 ### 16.9.2 Grant / Invitation Authority (who may create whom)
 
 ```mermaid
@@ -111,6 +113,8 @@ flowchart LR
   ADMIN -->|invites| R1[Role 1]
   R1 -->|invites| SR1[Sub-role 1]
 ```
+
+**Summary:** [1-2 sentences: who provisions or invites whom, from the platform operator down.]
 
 ### 16.9.3 Per-Request Authorization (how a role yields a decision)
 
@@ -127,6 +131,8 @@ sequenceDiagram
   AZ-->>SVC: allow / deny
   SVC-->>C: response / 403
 ```
+
+**Summary:** [1-2 sentences: where the edge gate and the permission check run, and what the caller gets on a deny.]
 
 ## 16.10 Traceability
 
@@ -160,8 +166,10 @@ sequenceDiagram
 
 ### 16.12.3 Drift & Reconciliation Register
 
-| # | Where | Divergence | Resolution / flag |
-|---|---|---|---|
-| 1 | [BRD matrix vs 13x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] |
+<!-- Status: `Open` until the divergence is fixed, then `Fixed in vX.X` (the values §15.5 uses). A row with no Status, or any other value, counts as `Open` and keeps the e2e gate shut (SKILL.md step 8b, E2). -->
+
+| # | Where | Divergence | Resolution / flag | Status |
+|---|---|---|---|---|
+| 1 | [BRD matrix vs 13x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] | [Open / Fixed in vX.X] |
 
 <!-- MASTER: [project-slug]-sdd-master.md | PREV: 11-api-contracts.md | NEXT: 13a-service-detailed-template.md -->

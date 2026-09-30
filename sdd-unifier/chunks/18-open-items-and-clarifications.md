@@ -82,7 +82,12 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 
 ## Reviewer Notes
 
-<!-- Optional. Free-form notes that did not crystallise into a numbered open item. -->
+<!-- Coverage record first (required): one row per risk surface in the review brief (SKILL.md step 7), each either "checked: N findings (OI IDs)" or "checked: no issue found", with what was checked. A zero-finding review is valid. Then optional free-form notes that did not crystallise into a numbered open item. -->
+
+| Risk surface | Checked | Findings | Notes |
+|---|---|---|---|
+| [Architecture style] | [What was checked, e.g., ADR-01 against the BRD drivers, §8.1, §13 boundaries] | [N findings (OI-NN, OI-NN)] | [Notes] |
+| [Observability] | [What was checked] | [No issue found] | [Notes] |
 
 - [Note 1]
 - [Note 2]

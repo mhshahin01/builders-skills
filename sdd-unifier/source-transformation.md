@@ -14,7 +14,7 @@ For deciding **which** intent to use (transform vs derive vs generate), see `tra
 2. **Classify each source paragraph into a target template section.**
 3. **Paraphrase, don't copy.** Source docs are often vendor-facing; the SDD is team-facing.
 4. **Flag gaps immediately.** Every gap → `**[NEEDS CLARIFICATION: ...]**` marker.
-5. **Preserve commitments verbatim.** Numbers, dates, version pins, named technologies, named systems.
+5. **Preserve commitments verbatim.** Numbers, dates, version pins, named technologies, named systems. Replacing a named technology in §6 is a recorded design change (SKILL.md step 3c), never part of the transformation.
 
 ---
 

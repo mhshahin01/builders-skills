@@ -27,7 +27,7 @@ The most-skimmed section in any SDD, and the one most often filled with platitud
 
 **Good:** Connects to specific business and technical objectives.
 
-> Example: "Kafka-first because (a) the BRD's NFR-04 requires graceful handling of payment-gateway downtime without losing transactions, satisfied by event sourcing + retry; (b) the system is multi-tenant with high write volume, where per-tenant ordering by key (Kafka partition) is a natural fit; (c) the platform standard per CLAUDE.md."
+> Example: "Kafka-first because (a) REFUNDS/NFR-04 requires graceful handling of payment-gateway downtime without losing transactions, satisfied by event sourcing + retry; (b) the system is multi-tenant with high write volume, where per-tenant ordering by key (Kafka partition) is a natural fit; (c) the platform standard per CLAUDE.md."
 
 **Bad:** "Modern best practice." "Industry standard." Anything that doesn't tie back to a specific BRD objective or NFR.
 
@@ -91,10 +91,10 @@ Each service spec's Business Logic is where the SDD earns its keep.
 
 ### Bad Business Logic
 
-- One paragraph that paraphrases the FR's `How`. (The SDD's Business Logic should add design specificity, not restate the FR.)
+- One paragraph that paraphrases the use case's Main Flow. (The SDD's Business Logic should add design specificity, not restate the use case.)
 - A bulleted list with three items each starting "The service shall..."
 - Lacks a state machine for a service that's clearly stateful (any service named *-management, *-workflow, *-lifecycle).
-- "See FR-NN in BRD." (The SDD must stand alone for the engineering team. Cite the FR, but don't outsource your section.)
+- "See REFUNDS/UC-04 in the BRD." (The SDD must stand alone for the engineering team. Cite the use case, keyed and linked, but don't outsource your section.)
 
 **Test:** Can a developer scaffold this service's controller layer and core domain types from this section alone? If not, rewrite.
 
@@ -178,7 +178,7 @@ Restart wallet-core service (single replica)
 
 The platform catalogues are only useful if they are **reconciled** — a catalogue that drifts from the per-service chunks is worse than none, because implementers will trust it.
 
-**Test (event hub):** pick any event in a §17.X consumed table. Is it in the §14.5 catalog with the same name, on the same topic, published by exactly one service, with every payload field the consumer relies on present in §14.9? Pick any producer's published table: does its consumer list equal the union of the consumers' consumed tables? If either check fails and the divergence is not flagged in §14.8 with Status `Open`, the chunk is below the bar.
+**Test (event hub):** pick any event in a §17.X consumed table. Is it in the §14.5 catalog with the same name, on the same topic, published by exactly one service, with every payload field the consumer relies on present in §14.9? Pick any producer's published table: does its consumer list equal the union of the consumers' consumed tables? In a modular monolith or hybrid core, pick any event in a module's in-process table: does it match §14.10 by name, publisher module, listener modules, and DTO fields, from both sides? If any check fails and the divergence is not flagged in §14.8 with Status `Open`, the chunk is below the bar.
 
 **Test (roles):** pick any permission token in a §17.X authorization note — is it in the §16.11 grid with the same spelling and the same role set? Does every capability row trace to a BRD UC or an ADR (§16.10)?
 

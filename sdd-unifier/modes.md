@@ -26,10 +26,10 @@ sdd-[project-slug]/
 ├── 09-services-summary.md
 ├── 10-events-hub.md                # centralized event hub: catalog + payload contracts
 ├── 11-api-contracts.md             # service integration API contracts (external ones TBD)
+├── 12-centralized-user-roles.md    # platform-wide roles & authorities
 ├── 13a-service-[svc-1-slug].md     # one chunk per service
 ├── 13b-service-[svc-2-slug].md
 ├── 13c-service-[svc-N-slug].md
-├── 12-centralized-user-roles.md    # platform-wide roles & authorities
 ├── 14-performance-and-capacity.md
 ├── 15-environments.md
 ├── 16-operations-runbook.md
@@ -52,7 +52,7 @@ CHUNK: 04
 TITLE: Architecture Style & Diagrams
 PROJECT: [Project Name]
 VERSION: [X.X]
-PART OF: SDD — [Project Name]
+PART OF: SDD - [Project Name]
 -->
 ```
 
@@ -122,7 +122,7 @@ The two modes are reversible.
 When the user says "merge", "consolidate", "single file", "full doc" after a chunks-mode generation:
 
 1. Read all `sdd-[project-slug]/NN-*.md` files in file-sort order (00 … 09, 10, 11, 12, 13a, 13b, …, 14 … 18, then 19 if it exists).
-2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block.
+2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block and its `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
 3. Concatenate with a single blank line between chunks.
 4. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first). Keep every §17.X number as published, in chunk-letter order (13a → §17.1, 13b → §17.2, …); never renumber or close a gap left by a merged or removed service.
 5. Copy the master's **Reconciled:** and **E2E gate (chunk 19):** lines into the cover, unchanged (the gate line as **E2E gate (§24):**). A merge never reopens or refreshes the gate: a `Stale` gate stays `Stale`, and that line is the warning on §24.
@@ -139,8 +139,8 @@ When the user says "split into chunks", "chunk this SDD", "re-chunk this":
 2. Identify section boundaries by `# `, `## ` headings matching the template structure.
 3. Group sections per the canonical chunk map (see `chunking.md`).
 4. For section 17 (Detailed Service Specs), each `## 17.X` block becomes its own chunk file (`13a-service-*.md`).
-5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block.
-6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed).
+5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
+6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed). Links are rebased: a link to a BRD or LLD (`./brd-…`, `./BRD-…`, `./lld-…`, `./LLD-…`) gains `../`, and an in-file anchor (`#171-…`, `#841-…`) becomes a link to the chunk that now holds that heading (`./13a-service-[slug].md#171-…`).
 7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index, which takes over the cover's Reconciled and E2E gate lines).
 8. Keep the original combined file.
 

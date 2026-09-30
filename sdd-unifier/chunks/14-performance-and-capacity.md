@@ -39,4 +39,4 @@ PART OF: SDD - [Project Name]
 - **Cadence:** [Cadence]
 - **Reporting:** [Where results live]
 
-<!-- MASTER: [project-slug]-sdd-master.md | PREV: 13a-service-detailed-template.md | NEXT: 15-environments.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: [last 13x chunk, e.g. 13c-service-[slug].md] | NEXT: 15-environments.md -->

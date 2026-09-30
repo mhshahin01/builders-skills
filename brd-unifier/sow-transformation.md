@@ -70,13 +70,13 @@ The third row is the substantive work — see "Use case extraction" below.
 Rules:
 
 1. **One UC per distinct user goal**, not one UC per paragraph. A source paragraph may contain 3 capabilities; they become 3 use cases. A capability with no identifiable actor is a red flag — identify who triggers it or flag `[NEEDS CLARIFICATION: which user performs this?]`.
-2. **Assign every UC to a persona.** The persona owns it in its detailed chunk (`06a`, `06b`, …) and gets a `Yes` in the Users & Use Cases Matrix. If the source doesn't say who, infer from role references and mark inferred, or flag.
-3. **For each UC**, populate all blocks per the template:
+2. **Assign every UC to a persona.** The persona owns it in its detailed chunk (`06a`, `06b`, …) and gets a `Yes` in the Users & Use Cases Matrix. If the source doesn't say who, write the persona its role references point to as a proposal (`**[NEEDS CLARIFICATION: proposed <persona> as Primary Actor; confirm or replace]**`), or flag it when nothing points to one.
+3. **For each UC**, populate all blocks per the template. Expanding what the source itself states into detailed steps stays unmarked. Any behaviour the source does not state (an inferred persona, rule, step, or exception flow) is written as a proposal with the clarification marker, `**[NEEDS CLARIFICATION: proposed <behaviour>; confirm or replace]**`, so the to-do collects it for the user to decide. Example: "Users can request refunds" becomes detailed request steps with no marker, but a refund window, an approval path, or a failure rule the source does not state is a proposal. Per block:
    - **Actor & Goal** — primary/supporting actors, one-sentence goal, business trigger.
-   - **Why** — if the source gives rationale, paraphrase it. If not, derive from Business Objectives and say so, or flag `[NEEDS CLARIFICATION: business value of UC-NN]`.
-   - **Main Flow** — expand the source's bullets into detailed numbered steps alternating actor action and system response, in business terms. Where vague, either infer from domain knowledge (and mark inferred in `Business Rules & Constraints`) or flag gaps.
-   - **Alternate & Exception Flows** — branches and failures as the user experiences them. Sources rarely state these; derive the obvious ones and flag the rest.
-   - **Business Rules & Constraints** — rules, limits, eligibility conditions specific to this UC.
+   - **Why** - if the source gives rationale, paraphrase it. If not, write the value it serves, taken from the Business Objectives, as a proposal, or flag `[NEEDS CLARIFICATION: business value of UC-NN]`.
+   - **Main Flow** - expand the source's bullets into detailed numbered steps alternating actor action and system response, in business terms. A step that adds behaviour the source does not state is a proposal; where the source is too vague to propose a step, flag the gap.
+   - **Alternate & Exception Flows** - branches and failures as the user experiences them. Carry across the ones the source states. Sources rarely state these: write each other branch or failure as a proposal, and flag the ones you cannot propose.
+   - **Business Rules & Constraints** - rules, limits, eligibility conditions specific to this UC. A rule or limit the source does not state is a proposal.
    - **Acceptance Criteria** — testable conditions ("Given X, when Y, then Z").
    - **Future Enhancements** — usually not in the source; write `- None identified at this time.` unless the source hints at future waves.
    - **UI/UX** — Figma link, wireframe reference, or pending note.
@@ -214,7 +214,7 @@ Only the system-behaviour scope of the RFP transfers.
 Before declaring the transformation done, verify:
 
 - [ ] Every UC has all required sub-sections (`Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX`).
-- [ ] Every UC is assigned to a persona; the Users & Use Cases Matrix covers every persona × every UC and matches the UC actor fields both ways.
+- [ ] Every UC is assigned to a persona; the Users & Use Cases Matrix covers every persona × every UC and matches each UC's persona actors both ways (external parties are never columns).
 - [ ] No technical language in the body — technology names, protocols, and technical targets from the source sit verbatim in Appendix § Technical Inputs for the SDD.
 - [ ] NFRs and Integrations read as business statements (the what); no mechanism or technical target rows remain.
 - [ ] The Glossary covers every acronym used in the BRD (business terms only).

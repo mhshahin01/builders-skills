@@ -211,7 +211,7 @@ Core capabilities:
 | **[Persona 2]** | | | |
 | UC-03 | [Short Title] | [Persona 2] | [Summary] |
 
-<!-- USE CASE DIAGRAMS SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-3 are confirmed complete, add a "## Use Case Diagrams" section at this position: actors, use cases, system boundary, and documented relationships as inline Mermaid plus the Summary line. Structure: chunks/05-user-journeys-overview.md. Notation: mermaid-diagrams.md § Use-case diagrams. -->
+<!-- USE CASE DIAGRAMS SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-3 are confirmed complete, add a "## Use Case Diagrams" section at this position: actors, use cases, system boundary, and documented relationships as inline Mermaid plus the Summary line. Every persona association matches the use-case actor fields and the Users & Use Cases Matrix, and every external-party association matches the Supporting Actors and the Integrations section, never the matrix. Structure: chunks/05-user-journeys-overview.md. Notation: mermaid-diagrams.md § Use-case diagrams. -->
 
 ## Detailed Use Cases
 
@@ -239,7 +239,7 @@ All detailed use cases follow this structure:
 | | |
 |---|---|
 | **Primary Actor** | [Persona] |
-| **Supporting Actors** | [Other personas or external business parties involved, or "None"] |
+| **Supporting Actors** | [Other personas or external business parties involved, each labelled as a persona or an external party, e.g., "Persona: Branch Manager; External: Payment Gateway (Integrations)", or "None"] |
 | **Goal** | [What the actor wants to achieve, one sentence] |
 | **Trigger** | [The business event that starts this use case] |
 
@@ -297,7 +297,7 @@ All detailed use cases follow this structure:
 
 <!-- One consolidated view of who is allowed to do what. Every persona is a column; every use case is a row. Derived from the Actor fields of the detailed use cases - it must never contradict them. Conditional access gets a numbered footnote, never a bare "Yes". -->
 
-> **How to read.** Rows are the use cases (functions) of the system; columns are the users (personas). **Yes** = this user is allowed to perform the use case. **-** = not allowed. A numbered footnote marks conditional access.
+> **How to read.** Rows are the use cases (functions) of the system; columns are the users (personas). **Yes** = this user is allowed to perform the use case. **-** = not allowed. A numbered footnote marks conditional access. External business parties are not users and never appear as columns: they appear in the use cases and in the Integrations section.
 
 | Use Case | [Persona 1] | [Persona 2] | [Persona 3] |
 |----------|:-----------:|:-----------:|:-----------:|
@@ -360,11 +360,11 @@ All detailed use cases follow this structure:
 
 <!-- Global UI/UX standards that apply across all pages, from the user's point of view. -->
 
-- **Primary Color**: [Primary Color Hex].
+- **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once). Never an invented value.]
 - **Data Tables**: [Sorting, pagination: default 20 rows/page, export (csv & excel), filtering standards]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
-- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum, following the breakpoints and behaviour in the global UI/UX constitution (section 12).
+- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum. [With a UI/UX constitution only, add: "It follows the breakpoints and behaviour in the [section name] section of the global UI/UX constitution." Without one, the first sentence stands alone.]
 - **Language & Locale**: [Supported languages; date/number/currency formats per audience. Add right-to-left support only when a right-to-left language such as Arabic is in scope; omit it for English-only products.]
 - [Other global UX rules]
 
@@ -440,6 +440,18 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 | [OI-XX] | [YYYY-MM-DD] | [Section / UC ID] | [Accepted recommendation / Adjusted: short note / Deferred / Rejected] |
 
 ## Reviewer Notes
+
+<!-- Coverage record (required): one row per major risk area. Checked: what the reviewer checked. Findings: the number of open items raised, with their IDs, or "No issue found". A risk area with no issue is a valid result. An area the reviewer could not check says "Not checked" and why. -->
+
+| Risk area | Checked | Findings | Notes |
+|-----------|---------|----------|-------|
+| Scope | [What was checked, e.g., "Every In Scope item against the use cases"] | [N (OI-NN, OI-NN) / No issue found] | [Optional] |
+| Use-case exception coverage | [...] | [...] | [...] |
+| Matrix consistency | [...] | [...] | [...] |
+| NFRs | [...] | [...] | [...] |
+| Integrations | [...] | [...] | [...] |
+| Security / privacy | [...] | [...] | [...] |
+| Data lifecycle | [...] | [...] | [...] |
 
 <!-- Optional. Free-form notes that did not crystallise into a numbered open item. -->
 

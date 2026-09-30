@@ -92,7 +92,7 @@ flowchart LR
 **Rules:**
 
 - Every `UC-NN` of the BRD appears in at least one diagram (rows marked `Merged into` or `Removed` excepted). One overview diagram if it fits about 30 lines; otherwise one per persona, in chunk-05 persona order.
-- Every association matches the use case's Primary / Supporting Actor fields and the matrix (07). A mismatch is a consistency finding, not a drawing choice.
+- Every persona association matches the use case's Primary / Supporting Actor fields and the matrix (07). Every external-party association matches the use case's Supporting Actors and chunk 08 (Integrations), never the matrix: external parties are not matrix columns. A mismatch is a consistency finding, not a drawing choice.
 - Draw `include` / `extend` **only where a narrative documents it** (a Main Flow step or Precondition invokes another use case; an alternate or exception flow hands over to one). Never infer a relationship. Label every relationship edge.
 
 ---

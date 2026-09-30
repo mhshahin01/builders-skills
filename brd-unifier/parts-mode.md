@@ -28,6 +28,8 @@ Chunks 15, 16, and 17 are outside both options. They stay locked behind the deli
 
 The order is fixed: 1, then 2, then 3. A part is never skipped, and a later part is never started before the earlier one is complete. Intake (SKILL.md step 3) happens once, before part 1.
 
+Chunks 05 and `06a` are never collapsed into one file in `parts`, even for a small BRD (`chunking.md` § When to deviate, rule 4): part 1 writes 05, and part 2 writes the detailed use cases.
+
 ---
 
 ## What every part does

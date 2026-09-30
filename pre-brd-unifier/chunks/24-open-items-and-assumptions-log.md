@@ -25,7 +25,7 @@ GENERATED_BY: pre-brd-unifier post-generation reviewer (cleared-context subagent
 | **Concern** | One paragraph. What is shaky or missing, and why it matters for the go/no-go decision. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | REQUIRED. The reviewer's concrete proposed resolution, ready to apply to the framework chunk(s) (the exact figure + source, row, or wording that would close the item). |
-| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives — the evidence behind it (source quality, cross-check result, framework logic) and the tradeoff being accepted. Never empty, never "best option". |
+| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives - the evidence behind it (source quality, cross-check result, framework logic) and the tradeoff being accepted. Never empty, never "best option". |
 | **Status** | Open / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. |
 
 ---
@@ -38,8 +38,8 @@ GENERATED_BY: pre-brd-unifier post-generation reviewer (cleared-context subagent
 - **Type:** [Unsourced figure | Figure inconsistency | Coverage gap | Cross-tier incoherence | Weak verdict logic | Ambiguity | Risk]
 - **Concern:** [One paragraph.]
 - **Options:**
-  - **A.** [Option A] — [one-line tradeoff].
-  - **B.** [Option B] — [one-line tradeoff].
+  - **A.** [Option A] - [one-line tradeoff].
+  - **B.** [Option B] - [one-line tradeoff].
 - **Recommended Answer:** [Option letter + the concrete resolution, e.g., "Option A - replace the 07 SAM figure with the bottom-up estimate ($412M) and cite [source]; update 22's Market signal accordingly."]
 - **Why:** [The reason this option wins, e.g., "The bottom-up figure is built from sourced unit counts while the top-down one extrapolates a 2019 report; keeping the smaller, defensible number survives investor diligence at the cost of a less exciting headline."]
 - **Status:** Open

@@ -102,7 +102,7 @@ Example:
 | Pattern application driven by CLAUDE.md hard rule (Outbox, Idempotency on money, RFC 9457) | High | (none — CLAUDE.md hard rules are unconditional) |
 | Pattern application driven by CLAUDE.md guideline (Strategy, Factory, Mediator) | Medium | SDD prose explicitly names the pattern → upgrade to High |
 | Concrete class names per CLAUDE.md naming conventions | Medium | (none — names are conventions, not facts) |
-| Method-level pseudocode | Medium | SDD's `Business Logic → How` block is detailed enough to dictate the algorithm → upgrade to High |
+| Method-level pseudocode | Medium | SDD `13x` Business Logic is detailed enough to dictate the algorithm → upgrade to High |
 | Concrete API request/response shapes | Medium | SDD pins shape (rare) → upgrade to High |
 | Concrete event payload shapes | Medium | SDD pins shape (rare) → upgrade to High |
 | Concrete table column types | Medium | SDD's per-service DB Modeling pins them (rare) → upgrade to High |
@@ -114,11 +114,11 @@ Example:
 | Runbook procedures (concrete commands) | Low | (commands depend on real cluster names which the SDD rarely pins) |
 | Use case IDs, titles, owners, entry points (read from SDD §7.3 and the BRD) | High | (none: cited, never inferred) |
 | Test case IDs and their use cases (read from BRD chunk 16) | High | (none) |
-| Screen IDs and `MK-NN` and their use cases (read from the BRD) | High | (none) |
+| `MK-NN` rows (and any screen ID the BRD text carries) and their use cases (read from the BRD) | High | (none) |
 | Route paths, and which screen each route implements | Medium | Existing code or an SDD frontend section pins them → upgrade to High |
 | `use_case` attribute convention | Medium | SDD §11.4 or a `13x` Observability section names it → upgrade to High |
 | Owner and entry points from an older SDD with no §7.3 (inferred from 09 and `13x`) | Medium | (none; suggest upgrading the SDD) |
-| A use case with neither a screen ID nor an `MK-NN` in the BRD | Medium (`> Confirm:`) | BRD adds a screen ID → upgrade to High |
+| A use case with neither a screen ID nor an `MK-NN` in the BRD | Medium (`> Confirm:`) | BRD chunk 14 adds its `MK-NN` row → upgrade to High |
 
 ---
 
@@ -149,6 +149,7 @@ Every flag emitted anywhere in the LLD MUST appear as a row in `15-open-question
 - Drift markers → § 18.1 Drift Markers.
 - `> TODO: <best-guess> — verify` → § 18.2 Low-Confidence Inferences.
 - `> Confirm:` → § 18.3 Medium-Confidence Inferences.
+- `⚠ policy` → § 18.6 Policy Findings.
 
 When a chunk is regenerated, the index is regenerated too. The skill enforces this by walking each chunk and grepping for the flag patterns, then emitting the index file.
 
@@ -168,5 +169,5 @@ The summary table in § 18.5 (counts per section) is updated on each regeneratio
 | Best-guess from variable names / branches | content + `> TODO: <best-guess> — verify` |
 | Best-guess for SLO / threat / peak scenario | content + `> TODO: <best-guess> — verify` |
 | Section neither code nor SDD covers | section heading + `> TODO: not derivable from inputs — please specify` |
-| Use case, test case, or screen ID the BRD / SDD states | cited with its key and link (no flag) |
-| Upstream piece missing (BRD chunk 16 not written, no screen ID) | the gap text (`Pending (BRD 16 not written)`, `MK-NN`, or `> Confirm:`) per `sdd-to-lld.md` § Use-case traceability › Upstream gaps; never a made-up ID |
+| Use case, test case, `MK-NN`, or screen ID the BRD / SDD states | cited with its key and link (no flag) |
+| Upstream piece missing (BRD chunk 16 not written, no `MK-NN` row for a screen) | the gap text (`Pending (BRD 16 not written)` or `> Confirm:`) per `sdd-to-lld.md` § Use-case traceability › Upstream gaps; never a made-up ID |

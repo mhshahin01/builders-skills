@@ -6,11 +6,11 @@ VERSION: [X.X]
 PART OF: LLD - [Project Name]
 -->
 
-# Low-Level Design Document — [Project Name]
+# Low-Level Design Document - [Project Name]
 
 | Field | Value |
 |-------|-------|
-| **Document Title** | Low-Level Design — [Project Name] |
+| **Document Title** | Low-Level Design - [Project Name] |
 | **Version** | [X.X] |
 | **Status** | [Draft / In Review / Approved] |
 | **Mode** | [from-code / from-sdd / hybrid / partial] |
@@ -28,10 +28,10 @@ PART OF: LLD - [Project Name]
 
 > **How to read this LLD given its mode:**
 >
-> - **`from-code`** — every section was reverse-engineered from existing source. Structural claims (class names, schemas, topics) are high-confidence; semantic claims (rationale, intent) are medium-confidence unless cross-validated.
-> - **`from-sdd`** — every section was forward-designed from the SDD (and CLAUDE.md defaults). Treat as a build target for the implementer. Patterns are proposals annotated with their triggering CLAUDE.md rule.
-> - **`hybrid`** — sections are unified across SDD intent and code reality. Drift markers (`⚠`, `🆕`, `⛔`) call out divergences. See `15-open-questions.md` for the drift index.
-> - **`partial`** — code exists for some services; others are SDD-described placeholders.
+> - **`from-code`** - every section was reverse-engineered from existing source. Structural claims (class names, schemas, topics) are high-confidence; semantic claims (rationale, intent) are medium-confidence unless cross-validated.
+> - **`from-sdd`** - every section was forward-designed from the SDD (and CLAUDE.md defaults). Treat as a build target for the implementer. Patterns are proposals annotated with their triggering CLAUDE.md rule.
+> - **`hybrid`** - sections are unified across SDD intent and code reality. Drift markers (`⚠`, `🆕`, `⛔`) call out divergences. See `15-open-questions.md` for the drift index.
+> - **`partial`** - code exists for some services; others are SDD-described placeholders.
 
 ---
 
@@ -48,7 +48,7 @@ PART OF: LLD - [Project Name]
 | Flag Type | Count | Notes |
 |-----------|-------|-------|
 | `> Confirm:` (medium confidence) | [N] | See `15-open-questions.md` for index. |
-| `> TODO: <best-guess> — verify` (low confidence) | [N] | See `15-open-questions.md` for index. |
+| `> TODO: <best-guess> - verify` (low confidence) | [N] | See `15-open-questions.md` for index. |
 | `⚠ drift` (hybrid only) | [N] | SDD intent vs code reality divergences. |
 | `🆕 code-only` (hybrid only) | [N] | Present in code, not in SDD. |
 | `⛔ sdd-only` (hybrid only) | [N] | In SDD, not yet built. |

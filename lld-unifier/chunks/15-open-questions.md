@@ -13,7 +13,7 @@ PART OF: LLD - [Project Name]
 > 1. Open this file first.
 > 2. Walk the tables in order: Drift and Policy Findings first (action items), then TODO (low-confidence), then Confirm (medium-confidence).
 > 3. Edit the source chunk to resolve each row.
-> 4. Re-run `/lld-unifier` (with `--regenerate` if needed) to refresh this index.
+> 4. Ask lld-unifier to regenerate the changed chunks (SKILL.md step 9); this index is regenerated with them.
 
 ---
 

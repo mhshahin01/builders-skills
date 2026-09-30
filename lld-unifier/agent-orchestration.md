@@ -1,6 +1,6 @@
 # Agent Orchestration — code-explorer + docs-architect
 
-This file gives the dispatch templates for the two specialist agents the skill orchestrates in FROM-CODE and HYBRID directions.
+This file gives the dispatch templates for the two specialist agents the skill orchestrates in FROM-CODE and HYBRID directions. It is the single home of their asks; `code-extraction.md` points here.
 
 The skill itself does **not** read source code. It dispatches agents that do, then template-fits their output.
 
@@ -38,9 +38,9 @@ prompt: |
 
   5. **Database schema (per service)** — Flyway migrations enumerated (`src/main/resources/db/migration`). Per migration: version, purpose, tables created/altered. Per table: columns with types and constraints; indexes (with WHERE clauses if partial); FK relationships.
 
-  6. **Kafka topology** — per service: topics produced (look for `KafkaTemplate.send`, outbox writes), topics consumed (look for `@KafkaListener`). Per topic: name, key strategy, partition count if discoverable, schema reference if found.
+  6. **Kafka topology** — per service: topics produced (look for `KafkaTemplate.send`, outbox writes), topics consumed (look for `@KafkaListener`). Per topic: name, key strategy, partition count if discoverable, schema reference if found. In a modular monolith, also list the in-process domain events per module: publishers (`ApplicationEventPublisher.publishEvent`, domain event registration) and listeners (`@EventListener`, `@TransactionalEventListener` with its phase), with the event type and its DTO.
 
-  7. **REST contracts (per service)** — per controller method: HTTP method, path (combining class-level `@RequestMapping` + method-level), request body type, response body type, status codes, auth (`@PreAuthorize` expression), idempotency-key handling (`@RequestHeader("Idempotency-Key")` presence).
+  7. **REST contracts (per service)** — per controller method: HTTP method, path (combining class-level `@RequestMapping` + method-level), request body type, response body type, status codes, auth (`@PreAuthorize` expression), idempotency-key handling (`@RequestHeader("Idempotency-Key")` presence). In a modular monolith, also list the in-process ports between modules: the port interface and its operations, the calling module, the implementing adapter, and the permission check at the port.
 
   8. **Cross-cutting hooks** — interceptors (`HandlerInterceptor`), aspects (`@Around`), filters (servlet filters), guards (Spring Security `@Configuration`). Per hook: scope (which paths/methods), purpose (auth / tenant / logging / rate-limiting / audit).
 
@@ -51,7 +51,7 @@ prompt: |
      - **Mediator candidate:** single class injected by multiple peers, delegating cross-peer communication.
      - **Saga orchestrator candidate:** service class with explicit step methods + compensating step methods.
      - **Outbox candidate:** only when (a) the outbox row is inserted in the same database transaction as the aggregate write (check propagation: `REQUIRES_NEW` or an after-commit hook breaks this), and (b) a separate publisher (scheduled poller, or CDC relay on the outbox table) publishes committed rows. Also report whether the publisher marks a row processed only after a successful broker acknowledgement. A `KafkaTemplate.send` beside a repository write is not an Outbox candidate, inside the transaction or after commit; list it under § 13.
-     For each detection: name the pattern, list the participating classes with file:line, and rate confidence (high if structurally clean, medium if heuristic-based).
+     For each detection: name the pattern, list the participating classes with file:line, and rate confidence (medium by default; high only when a test exercises the pattern, cited with file:line).
 
   10. **Resilience4j config (per call)** — `@CircuitBreaker`, `@Retry`, `@Bulkhead`, `@TimeLimiter` annotations or programmatic `CircuitBreakerRegistry` usage. Per call: which downstream provider, which policies applied, threshold values.
 
@@ -67,6 +67,14 @@ prompt: |
       - Missing `Idempotency-Key` on write endpoints whose path mentions money/wallet/notify/payment/charge/transfer.
       - SQL queries lacking `tenant_id` predicate on shared-schema tables.
       - Logging statements at INFO level that include `tenant_id` or PII.
+      - DTO classes (`*Dto`, `*Request`, `*Response`) that are not records.
+      - Synchronous service-to-service REST chains more than one hop deep.
+      - Distributed 2PC / `XA` transactions.
+      - A service reading or writing another service's schema.
+      - Schema migrations that are not additive.
+      - Stack traces in error responses.
+      - A service with no health or readiness endpoint.
+      - A shared-schema index without `tenant_id` as its leading column.
 
   14. **Frontend routes** (when a UI exists): per route, the path, component, guards, lazy loading, and its route `data` (note any `screen` and `useCases` keys).
 
@@ -121,7 +129,7 @@ prompt: |
      - Tone: factual, not aspirational. Lead with what the service IS, not what it should be.
 
   2. **Method-level pseudocode** (per non-trivial method)
-     Target: `04-implementation/<service>.md` § 7.3 Method Pseudocode
+     Target: `04-implementation/<service>.md` § 7.3 Method-Level Pseudocode
      - Identify methods that are NON-TRIVIAL: multi-step, branches beyond null-check, touches multiple aggregates, performs idempotency check, emits outbox row.
      - For each, write step-by-step pseudocode.
      - Cite the source file:line at the top of the pseudocode block. The citation is provenance only: the block keeps its `> Confirm:` unless `confidence-rules.md` allows an upgrade.
@@ -136,6 +144,7 @@ prompt: |
      - Mermaid `classDiagram` showing the pattern structure.
      - Pseudocode skeleton of the key method(s).
      - Confidence flag if Phase 1 marked the detection as medium/low confidence.
+     - Document a pattern only when its structure is present: if file or class names suggest a pattern the structure does not match, do NOT document it.
      - Outbox: document the publisher (roles, skeleton, delivery rules) from the code as it is. If the code marks a row processed without a successful broker acknowledgement, keep that visible and point to the Phase 1 anti-pattern (a `⚠ policy` finding); never substitute the template's publisher text.
 
   4. **Use-case workflow narratives** (one per entry point or workflow)
@@ -211,8 +220,8 @@ Once both agents have returned, the skill:
 3. **Routes Phase 2 blocks into chunks** — splits by tag, walks the chunk files, inserts content at the matching `## section` heading.
 4. **Applies confidence flags** — per `confidence-rules.md`. If Phase 2 already flagged a block, carry the flag. If Phase 2 missed flagging a low-confidence block, the skill applies its own based on the source-of-evidence heuristics.
 5. **Traces to BRD use cases** when an SDD was given: matches entry points, routes, specs, and use-case markers per `code-extraction.md` § Tracing to BRD use cases, then runs SKILL.md step 6a, and registers in the SDD per step 6c.
-6. **Generates `15-open-questions.md`** — walks all chunks, greps for `> Confirm:` and `> TODO:` markers, indexes them.
-7. **Surfaces handoff summary.**
+6. **Generates `15-open-questions.md`** — walks all chunks, greps for `> Confirm:`, `> TODO:`, and `⚠ policy` markers (hybrid: also `⚠ drift`, `🆕 code-only`, `⛔ sdd-only`), and indexes each in its § 18.x table.
+7. **Runs SKILL.md steps 6b (Specs) and 7 (cleared-context review)**, then surfaces the handoff summary.
 
 ---
 

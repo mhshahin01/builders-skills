@@ -18,9 +18,9 @@ PART OF: LLD - [Project Name]
 | `[service-a]` | `GET /v1/foo/{id}` | [N] | [N] | [Nms] | [Nms] | [Nms] | [SDD §18.2](../sdd-[sdd-slug]/14-performance-and-capacity.md#182-throughput-targets-per-service) |
 | `[service-a]` | `foo.lifecycle.created` consumer | [N msgs/s] | [N msgs/s] | N/A | [Nms end-to-end] | [Nms] | LLD target (SDD §18.2 pins none) |
 
-> **Source:** each row links the SDD §18.2 row it derives from. A target the SDD does not pin reads `LLD target` and falls under the `> Confirm:` below.
+> **Source:** each row links the SDD §18.2 row it derives from. A target the SDD does not pin reads `LLD target` and carries a `> TODO:` best-guess flag (`confidence-rules.md`); rows inferred from a service-level SDD target fall under the `> Confirm:` below.
 
-> `> Confirm: SLO targets — verify with SDD §18.2 Throughput Targets`
+> `> Confirm: SLO targets - verify with SDD §18.2 Throughput Targets`
 
 ## 15.2 Caching Strategy
 
@@ -53,7 +53,7 @@ PART OF: LLD - [Project Name]
 |----------|---------|------------|----------|------------|
 | [Scenario] | [Trigger] | [Nx baseline] | [N min/h] | [Autoscale / Throttle / Queue / Degrade] |
 
-> `> TODO: peak scenarios — verify with SDD §18.3`
+> `> TODO: peak scenarios - verify with SDD §18.3`
 
 ## 15.6 Load-Test Strategy
 

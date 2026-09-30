@@ -23,9 +23,9 @@ PART OF: LLD - [Project Name]
 
 | Service | Table | Column | Classification | Encryption | Masking in non-prod |
 |---------|-------|--------|----------------|------------|---------------------|
-| `[service-a]` | `[table]` | `[column]` | PII | [pgcrypto / column-level / disk-level only] | [Yes / No — strategy] |
+| `[service-a]` | `[table]` | `[column]` | PII | [pgcrypto / column-level / disk-level only] | [Yes / No - strategy] |
 
-> `> Confirm: PII inventory is complete — verify with security review`
+> `> Confirm: PII inventory is complete - verify with security review`
 
 ## 14.3 Secrets Management
 
@@ -40,12 +40,12 @@ PART OF: LLD - [Project Name]
 
 ## 14.4 Authentication / Authorisation Decisions
 
-> Inherits SDD §11.6 Security defaults. Per-service authorisation rules live in each service's `04-implementation/<service>.md` § Auth section.
+> Inherits SDD §11.6 Security defaults. Per-service authorisation rules live in each service's `04-implementation/<service>.md` § 7.2 `### Authorization` (each entry point's SDD §16 permission token and enforcement point).
 
 | Concern | Decision |
 |---------|----------|
 | Public-facing endpoints | None / [list] |
-| Service-to-service | mTLS only — no JWT validation internally |
+| Service-to-service | Per SDD §15.1: the caller sends its client-credentials token (`Authorization: Bearer`) and the provider (its filter or a sidecar) checks the contract's SDD §16 permission token; mTLS stays as the transport. In-process port calls check the token at the port (04 § 7.2 Authorization, Kind Port). |
 | Cross-tenant queries | Forbidden at application layer; enforced via Hibernate filter / RLS / query helper |
 | Admin endpoints | Separate scope `admin:*`, gated to `[role]` |
 
@@ -60,7 +60,7 @@ PART OF: LLD - [Project Name]
 | SQL injection via dynamic filter | Use parameterised queries / RSQL parser with allow-list | All services |
 | Idempotency-key reuse across tenants | Dedup tuple is `(tenant_id, key)`, not `key` alone | All services |
 
-> `> TODO: full threat model — verify or replace with link to threat model doc`
+> `> TODO: full threat model - verify or replace with link to threat model doc`
 
 ## 14.6 Compliance
 
@@ -71,6 +71,6 @@ PART OF: LLD - [Project Name]
 | ISO 27001 / SOC 2 | [Yes / No] | [Controls applicable] |
 | Local regulations | [List] | [Approach] |
 
-> `> Confirm: compliance applicability per project — verify with legal/compliance`
+> `> Confirm: compliance applicability per project - verify with legal/compliance`
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 10-operations.md | NEXT: 12-performance.md -->

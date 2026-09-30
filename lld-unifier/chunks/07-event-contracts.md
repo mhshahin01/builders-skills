@@ -9,11 +9,11 @@ PART OF: LLD - [Project Name]
 
 # 10. Event Contracts
 
-> **Broker:** Kafka (CLAUDE.md default for on-prem).
+> **Broker:** [SDD §6 Event Broker / Streaming row] (CLAUDE.md default, Kafka on-prem, only when SDD §6 is silent). § 10.1-10.5 cover integration events on the broker; a modular monolith with none writes `Not applicable - no broker` there, and its in-process domain events are in § 10.6.
 >
-> **Schema registry:** [Confluent / Apicurio / other] — additive changes only (CLAUDE.md: backward compatibility on Kafka schemas).
+> **Schema registry:** [Confluent / Apicurio / other] - additive changes only (CLAUDE.md: backward compatibility on Kafka schemas).
 >
-> **Serialisation:** [Avro / JSON Schema] — pick one and apply uniformly.
+> **Serialisation:** [Avro / JSON Schema] - pick one and apply uniformly.
 
 ## 10.1 Topic Inventory
 
@@ -24,7 +24,7 @@ PART OF: LLD - [Project Name]
 | `foo.lifecycle.deleted` | `[service-a]` | `[service-b], [service-c]` | aggregate ID | 12 | 7 days | delete |
 | `<context>.<entity>.dlq` | (failed consumers) | DLQ replay tool | original key | 3 | 30 days | delete |
 
-> **Naming convention (CLAUDE.md spirit):** `<context>.<entity>.<event-type>`. Lowercase, dot-separated.
+> **Naming convention:** from an SDD, topic and event names are SDD §14.4 and §14.5 verbatim. From code with no SDD, the names the code uses; a new topic follows `<context>.<entity>.<event-type>` (CLAUDE.md spirit), lowercase, dot-separated.
 
 ## 10.2 Event Schemas
 
@@ -64,7 +64,7 @@ PART OF: LLD - [Project Name]
 }
 ```
 
-> **Convention:** every event includes `eventId`, `eventType`, `eventVersion`, `occurredAt`, `tenantId`, `aggregateId`, and a `metadata` block with at least `correlationId` and `causationId`.
+> **Convention:** from an SDD, every event carries the SDD §14.3 envelope, field names verbatim, referenced and not restated. From code with no SDD, document the envelope the code uses; it carries an event id, event type, schema version, occurrence time, tenant key, aggregate id, and correlation and causation ids.
 
 ## 10.3 Producer Specs (per topic)
 
@@ -73,7 +73,7 @@ PART OF: LLD - [Project Name]
 | `foo.lifecycle.created` | `[service-a]` | Yes (mandatory per CLAUDE.md) | `all` | 5 | snappy |
 | `foo.lifecycle.updated` | `[service-a]` | Yes | `all` | 5 | snappy |
 
-> **Outbox is mandatory** for all state-changing events (CLAUDE.md). The producing service writes each event to its outbox table in the same transaction as the state change; a separate publisher sends it to Kafka and marks it processed only after the broker acknowledges (`acks=all`). Delivery is at-least-once. See `09-cross-cutting.md` § 12.4 and `04-implementation/<service>.md` § Pattern: Outbox.
+> **Outbox is mandatory** for all state-changing integration events (CLAUDE.md); the in-process domain events of § 10.6 do not use it. The producing service writes each event to its outbox table in the same transaction as the state change; a separate publisher sends it to Kafka and marks it processed only after the broker acknowledges (`acks=all`). Delivery is at-least-once. See `09-cross-cutting.md` § 12.4 and `04-implementation/<service>.md` § Pattern: Outbox.
 
 ## 10.4 Consumer Specs (per topic)
 
@@ -90,5 +90,18 @@ PART OF: LLD - [Project Name]
 - **Retention:** 30 days.
 - **Replay tool:** [name + repo path].
 - **Alerting:** any DLQ row triggers a warning; >10 rows in 1h triggers a page.
+
+## 10.6 In-Process Domain Events (SDD §14.10)
+
+<!--
+Modular monolith or hybrid core only: one row per SDD §14.10 event, published by one module and handled in process by others. A microservices SDD writes "Not applicable - no in-process events".
+These events never touch the broker: no topic, consumer group, DLQ, or outbox. An event that must also leave the deployable is an integration event in § 10.1 (SDD §14.5).
+-->
+
+| Event | Publisher module | Listener modules | Transaction phase | Payload (DTO) | When |
+|-------|------------------|------------------|-------------------|---------------|------|
+| [`[EventName]`](../sdd-[sdd-slug]/10-events-hub.md#1410-in-process-domain-events-modular-monolith--hybrid-core) | `[module-a]` | `[module-b], [module-c]` | [after commit] | `[EventDto]` | [The state change that raises it, as §14.10 writes it] |
+
+> **Convention:** names, phase, DTO, and When match SDD §14.10 verbatim; the LLD adds only the publishing call and the listener classes in each module's 04 file (in the Spring stack, `ApplicationEventPublisher` and `@TransactionalEventListener` with the listed phase).
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 06-api-contracts.md | NEXT: 08-state-and-rules.md -->

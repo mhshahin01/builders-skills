@@ -196,5 +196,5 @@ When two LLDs reference the same diagram (e.g., a system-level architecture diag
 - Referencing LLD: link to the owning LLD's chunk by relative path; do NOT duplicate the Mermaid.
 
 ```markdown
-> See `../wallet-management/lld/03-architecture.md` § 6.1 Component Topology for the system-wide diagram.
+> See `../lld-wallet-management/03-architecture.md` § 6.1 Component Topology for the system-wide diagram.
 ```

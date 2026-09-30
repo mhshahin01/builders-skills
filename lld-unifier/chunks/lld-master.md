@@ -17,7 +17,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 >
 > **Project Type:** [Greenfield | Brownfield] (recorded in [17-specs.md](./17-specs.md) § 4; resolved from the SDD at intake)
 >
-> **Tech Stack snapshot:** [Backend / Frontend / Mobile / Data / Messaging — canonical copy in [17-specs.md](./17-specs.md) § 2, consolidated from SDD `02-ecosystem-overview.md`]
+> **Tech Stack snapshot:** [Backend / Frontend / Mobile / Data / Messaging - canonical copy in [17-specs.md](./17-specs.md) § 2, consolidated from SDD `02-ecosystem-overview.md`]
 >
 > **Related SDD:** See [../sdd-[sdd-slug]/[sdd-slug]-sdd-master.md](../sdd-[sdd-slug]/[sdd-slug]-sdd-master.md) (if applicable).
 >
@@ -25,7 +25,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 >
 > **Production bug?** Start at the [Use-Case Traceability Index](./16-references.md#199-use-case-traceability-index): from a use case, route, screen, or failing test case to the workflow, the SDD §7.3 row, the BRD use case, its UAT/BAT cases, and its e2e spec.
 >
-> **Specs:** [17-specs.md](./17-specs.md) — owned by this LLD (Mission, Tech Stack, Roadmap, Project Type), synthesised from the SDD after the body; the direct input for speckit `/constitution`. (Legacy chains carried a Specs at `../sdd-[sdd-slug]/15-specs.md` or `../brd-[brd-slug]/12-specs.md` — consumed as input if present.)
+> **Specs:** [17-specs.md](./17-specs.md) - owned by this LLD (Mission, Tech Stack, Roadmap, Project Type), synthesised from the SDD after the body; the direct input for speckit `/constitution`. (Legacy chains carried a Specs at `../sdd-[sdd-slug]/15-specs.md` or `../brd-[brd-slug]/12-specs.md` - consumed as input if present.)
 
 ---
 
@@ -62,7 +62,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | Sub-Section | Description |
 |-------------|-------------|
 | Responsibility | Service's bounded context in one paragraph |
-| Class & Interface Map | Classes, interfaces, method signatures |
+| Class & Interface Map | Classes, interfaces, method signatures, ports and adapters (modular monolith), authorization per entry point |
 | Method Pseudocode | Method-level pseudocode for non-trivial logic |
 | Design Patterns Applied | Per-pattern: name, triggering CLAUDE.md rule, roles, rationale, Mermaid class diagram, pseudocode skeleton |
 | Dependency Injection Graph | Constructor wiring, bean composition |
@@ -75,8 +75,8 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | Section | Chunk |
 |---------|-------|
 | 8. Data Model (ERD, tables, indexes, tenant strategy, Flyway plan) | [05-data-model.md](./05-data-model.md) |
-| 9. API Contracts (REST endpoints, idempotency, auth, OpenAPI refs) | [06-api-contracts.md](./06-api-contracts.md) |
-| 10. Event Contracts (Kafka topics, schemas, outbox, DLQ) | [07-event-contracts.md](./07-event-contracts.md) |
+| 9. API Contracts (REST endpoints, idempotency, auth, OpenAPI refs, in-process port contracts) | [06-api-contracts.md](./06-api-contracts.md) |
+| 10. Event Contracts (broker topics, schemas, outbox, DLQ, in-process domain events) | [07-event-contracts.md](./07-event-contracts.md) |
 | 11. State Machines & Business Rules | [08-state-and-rules.md](./08-state-and-rules.md) |
 
 ## Platform Concerns
@@ -88,7 +88,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | 14. Security (data classification, PII, secrets, threat notes) | [11-security.md](./11-security.md) |
 | 15. Performance (SLOs, throughput, caching, load tests) | [12-performance.md](./12-performance.md) |
 | 16. Testing (unit, integration Testcontainers, contract, e2e Playwright) | [13-testing.md](./13-testing.md) |
-| 17. Frontend (conditional — present only when UI exists) | [14-frontend.md](./14-frontend.md) |
+| 17. Frontend (conditional - present only when UI exists) | [14-frontend.md](./14-frontend.md) |
 
 ## Audit & Reference
 
@@ -97,7 +97,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | 18. Open Questions / Drift Index / Confidence Flags | [15-open-questions.md](./15-open-questions.md) |
 | 19. References (BRD/SDD links, ADRs, runbooks) | [16-references.md](./16-references.md) |
 | 19.9 Use-Case Traceability Index (production-bug entry point) | [16-references.md § 19.9](./16-references.md#199-use-case-traceability-index) |
-| 20. Specs (Mission, Tech Stack, Roadmap, Project Type — speckit `/constitution` input) | [17-specs.md](./17-specs.md) |
+| 20. Specs (Mission, Tech Stack, Roadmap, Project Type - speckit `/constitution` input) | [17-specs.md](./17-specs.md) |
 | 21. Open Items & Clarifications (reviewer output) | [18-open-items-and-clarifications.md](./18-open-items-and-clarifications.md) |
 
 ---
@@ -107,7 +107,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | Marker | Meaning |
 |--------|---------|
 | `> Confirm:` | Medium-confidence inference. Reviewer should verify but content is usable. |
-| `> TODO: <best-guess> — verify` | Low-confidence inference. Reviewer must verify or replace. |
+| `> TODO: <best-guess> - verify` | Low-confidence inference. Reviewer must verify or replace. |
 | `✅` (implicit, no marker) | Aligned: from-code and from-sdd match (hybrid mode only). |
 | `⚠ drift` | Hybrid only: SDD intent and code reality disagree. See `> Drift note:` block. |
 | `🆕 code-only` | Hybrid only: present in code, not in SDD. |
@@ -132,8 +132,8 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 |   +-- [service-2-slug].md
 |   +-- ...
 +-- 05-data-model.md ........................... ERD, tables, indexes, tenant strategy
-+-- 06-api-contracts.md ........................ REST endpoints, idempotency
-+-- 07-event-contracts.md ...................... Kafka topics, schemas, outbox
++-- 06-api-contracts.md ........................ REST endpoints, idempotency, in-process ports
++-- 07-event-contracts.md ...................... broker topics, schemas, outbox, in-process events
 +-- 08-state-and-rules.md ...................... state machines, business rules
 +-- 09-cross-cutting.md ........................ auth, tenant, retry, circuit breaker
 +-- 10-operations.md ........................... config, metrics, logs, tracing
@@ -169,15 +169,15 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 | Upstream chunk | Related LLD Chunk | Relationship |
 |----------------|-------------------|--------------|
 | brd/05 + 06x - Use cases | lld/04-implementation/[svc].md (`[KEY]/UC-NN` blocks) + lld/16 § 19.9 | The BRD owns the use case IDs and titles; the LLD cites them, keyed, with links to their headings |
-| brd/11, 06x UI/UX, 14 Mockup coverage - Screens | lld/14 § 17.3 | The BRD owns screen IDs (or `MK-NN`) and the use cases each serves; the LLD maps routes to them |
+| brd/14 Mockup coverage (and any screen ID the BRD text carries) - Screens | lld/14 § 17.3 | The BRD owns the `MK-NN` rows (one per screen or flow) and the use cases each serves; the LLD maps routes to them |
 | brd/16 - UAT/BAT Test Cases | lld/13 § 16.8 + the 04 traceability lines | The BRD owns the test cases; the LLD tags e2e specs with them |
 | sdd/00 - Document Lineage | lld/00 + lld/16 § 19.1 | SDD lists the source BRDs and their keys; the LLD registers itself in its Child LLDs table |
 | sdd/03 - §7.3 Use Case Traceability | lld/04-implementation/[svc].md (traceability lines) + lld/16 § 19.9 | SDD traces each use case to its owner and entry points; LLD carries the trace to workflows, routes, tests, and spans |
 | sdd/04 - Architecture Style | lld/03 - Architecture | SDD names the style; LLD operationalises with concrete component topology |
 | sdd/05 - Workflows & Sequences | lld/04-implementation/[svc].md (workflows) | SDD describes the cross-service flow; LLD refines per service with idempotency, outbox, saga steps |
 | sdd/07 - Cross-Cutting Concerns | lld/09 - Cross-Cutting | SDD sets defaults; LLD applies them concretely with Resilience4j config, error codes |
-| sdd/10 - Centralized Event Hub | lld/07 - Event Contracts | Topic and event names match SDD §14 verbatim; payload contracts are referenced (§14.9), and the LLD adds the producer and consumer implementation |
-| sdd/11 - Service Integration API Contracts | lld/06 - API Contracts | SDD's `API-NN` contracts are referenced; LLD adds clients, DTO records, resilience config |
+| sdd/10 - Centralized Event Hub | lld/07 - Event Contracts | Topic and event names match SDD §14 verbatim; payload contracts are referenced (§14.9), and the LLD adds the producer and consumer implementation; §14.10 in-process domain events go to lld/07 § 10.6 |
+| sdd/11 - Service Integration API Contracts | lld/06 - API Contracts | SDD's `API-NN` contracts are referenced; for HTTP contracts the LLD adds clients, DTO records, and resilience config (§ 9.1), for `Internal (in-process)` ones the port and its adapter (§ 9.6) |
 | sdd/12 - Centralized User Roles | lld/11 - Security + lld/09 - Cross-Cutting | Role names and permission tokens match SDD §16 verbatim; the catalogue is referenced, and the LLD adds the enforcement (authZ decisions and checks) |
 | sdd/13a - Service Detailed Spec | lld/04-implementation/[svc].md | SDD defines the contract; LLD defines the implementation (classes, patterns, pseudocode) |
 | sdd/14 - Performance & Capacity | lld/12 - Performance | SDD lists targets; LLD describes the caching/index strategy that meets them |

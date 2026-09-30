@@ -37,7 +37,7 @@ erDiagram
 
 ## 8.2 Tables (per service)
 
-### Service: `[service-a]` — schema `app_[service_a]`
+### Service: `[service-a]` - schema `app_[service_a]`
 
 | Table | Column | Type | Constraints | Notes |
 |-------|--------|------|-------------|-------|
@@ -61,7 +61,7 @@ erDiagram
 | `idempotency_record` | `cached_response` | `jsonb` | NULL | Set on COMPLETED |
 | `idempotency_record` | `created_at` | `timestamptz` | NOT NULL | TTL 24h via partial cleanup |
 
-### Service: `[service-b]` — schema `app_[service_b]`
+### Service: `[service-b]` - schema `app_[service_b]`
 
 <!-- Repeat per service. -->
 
@@ -83,7 +83,7 @@ erDiagram
 | `[service-a]` | [Schema-per-tenant / Shared with tenant_id] | [Reasoning] |
 | `[service-b]` | [Schema-per-tenant / Shared with tenant_id] | [Reasoning] |
 
-**Tenant filter enforcement:** [Hibernate filter / row-level security policy / query helper — pick one and apply uniformly]
+**Tenant filter enforcement:** [Hibernate filter / row-level security policy / query helper - pick one and apply uniformly]
 
 **Cross-tenant queries:** forbidden at the application layer (CLAUDE.md). [Enforced via X.]
 
@@ -112,7 +112,7 @@ erDiagram
 |---------|----------|
 | At rest | [pgcrypto column-level for PII / TDE / disk-level only] |
 | In transit | TLS 1.2+ between services and DB |
-| Key management | [KMS / Vault — rotation policy] |
+| Key management | [KMS / Vault - rotation policy] |
 | PII columns | [List + masking rule for non-prod] |
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 04-implementation/<service>.md | NEXT: 06-api-contracts.md -->

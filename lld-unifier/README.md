@@ -1,6 +1,6 @@
 # LLD Unifier
 
-The detailed-design stage of the suite: authors, transforms, or unifies a Low-Level Design (LLD) per service into the user's standard template (stage 4, Detailed design). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
+The detailed-design stage of the suite: authors, transforms, or unifies a Low-Level Design (LLD) for the services of an SDD (by default all of them, one `04-implementation/` file per service, or per module in a modular monolith) into the user's standard template (stage 4, Detailed design). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
 
 ---
 
@@ -18,7 +18,7 @@ Output is Markdown only, in one of two shapes: `chunks` (the default, one `.md` 
 
 The skill also owns the Specs chunk (chunk 17: Mission, Tech Stack, Roadmap, Project Type), synthesised after the body as constitution-grade input for SpecKit `/constitution`.
 
-When the SDD derives from brd-unifier BRDs, the LLD carries the SDD's use-case trace down to the code. Each use case gets one `### KEY/UC-NN: Title` workflow block in its owner's file, with a traceability line that links the BRD use case, SDD §7.3, the owner and entry points, the UAT/BAT test cases, and the screens and routes that start it. Routes map to BRD screen IDs, e2e specs are tagged with use case and test case IDs, entry points carry a `use_case` span and log attribute, and the use-case traceability index (chunk 16 §19.9) ties it together. The LLD also registers itself in the SDD's Child LLDs table.
+When the SDD derives from brd-unifier BRDs, the LLD carries the SDD's use-case trace down to the code. Each use case gets one `### KEY/UC-NN: Title` workflow block in its owner's file, with a traceability line that links the BRD use case, SDD §7.3, the owner and entry points, the UAT/BAT test cases, and the screens and routes that start it. Routes map to the BRD's screens (their chunk 14 `MK-NN`, or a screen ID the BRD text carries), e2e specs are tagged with use case and test case IDs, entry points carry a `use_case` span and log attribute, and the use-case traceability index (chunk 16 §19.9) ties it together. Separately, every run that reads an SDD registers the LLD in the SDD's Child LLDs table, with or without a source BRD.
 
 ## Why
 
@@ -28,7 +28,7 @@ A design doc an implementer cannot code from is a dead document. This skill exis
 - **Drift is a feature, not a flaw.** In hybrid mode, divergences between SDD intent and code reality are marked inline (`drift`, `code-only`, `sdd-only` markers with a drift note) instead of being silently reconciled.
 - **Design patterns are first-class.** Every applied pattern carries its name, the triggering CLAUDE.md rule, the roles classes and methods play, a one-line rationale, a Mermaid class diagram, and a pseudocode skeleton.
 - **Confidence is tiered, not binary.** High-confidence inference emits clean, medium emits with a `> Confirm:` flag, low emits with a `> TODO:` flag plus best-guess content. Nothing is invented to paper over a gap, and nothing is blocked from emitting.
-- **One fact, one home.** The LLD references the SDD, never restates it. Contract names (topics, events, roles, permission tokens) match the SDD character-for-character; contract bodies are cited with only the implementation delta added.
+- **One fact, one home.** The LLD references the SDD, never restates it. Contract names (topics, events, `API-NN` contracts and their URIs, roles, permission tokens) match the SDD character-for-character; contract bodies are cited with only the implementation delta added.
 - **A production bug leads back to its requirement.** From a page, route, error report, or failing UAT case, a reader reaches the use case, its LLD workflow, its SDD §7.3 row, its BRD heading, its test cases, and its mockup in a few clicks. Every BRD ID carries its BRD's key (`REFUNDS/UC-04`), so two BRDs' `UC-04` never collide. The trace rests on one workflow block per use case, routes mapped to BRD screens, UAT/BAT cases cited one by one, e2e specs tagged with the same IDs, a `use_case` attribute on every traced entry point, the §19.9 index, and the LLD's own row in the SDD's Child LLDs table. IDs stay with the document that owns them.
 - **A second pair of eyes with no memory.** Every generation ends with a cleared-context reviewer subagent whose job is to find what the author did not flag (edge cases, error paths, concurrency hazards, multi-tenancy leaks), written to the Open Items chunk.
 
@@ -52,15 +52,15 @@ Invocation prefix depends on the agent: `/lld-unifier chunks` in Claude Code, `$
 ### The workflow
 
 1. **Resolve output shape.** Chunks is the default; a single question confirms it unless the user already implied a shape.
-2. **Resolve direction.** Always asked: from-code, from-sdd, or hybrid, with partial-code handling (missing services get a `> TODO: not yet built` placeholder).
-3. **Intake.** At most three questions: project name, source material, direction confirmation. Plus the Specs inputs (Project Type, Tech Stack) are resolved now because they steer generation.
+2. **Resolve direction.** Always asked: from-code, from-sdd, or hybrid, with partial-code handling (missing services get the not-yet-built placeholder that lists the use cases they own).
+3. **Intake.** At most three questions: project name, source material, direction confirmation. Plus the Specs inputs (Project Type, Tech Stack) are resolved now because they steer generation. On an existing LLD, a newer SDD version is detected (step 3c): the changed SDD chunks are named and a targeted refresh is offered, never applied silently.
 4. **Plan internally.** Enumerate chunks, workflows, per-service files, applicable CLAUDE.md defaults, and sections needing confidence flags.
 5. **Dispatch agents (from-code and hybrid only).** Phase 1: `code-explorer` maps entry points, call graph, dependencies, topics, and patterns with file:line citations. Phase 2: `docs-architect` turns findings into per-service narratives and pattern rationale. The from-sdd direction skips this and reads the SDD directly.
-6. **Generate.** Fit content to the chunk skeletons (or the combined template), per the direction's rules: from-code weighting, from-sdd mapping plus aggressive CLAUDE.md defaults, or hybrid's section-by-section diff with drift markers. Then reconcile the use-case trace against SDD §7.3 and the BRD (every link and anchor checked), and add this LLD's row to the SDD's Child LLDs table.
-7. **Synthesise the Specs chunk.** Mandatory, after the body: Mission, Tech Stack with version pins, Roadmap in 3 to 6 delivery phases, Project Type. Written in constitution voice for SpecKit `/constitution`.
-8. **Post-generation review.** A cleared-context reviewer subagent (no conversation memory) hunts for unflagged gaps and writes the Open Items and Clarifications chunk, each item with options, a recommendation, and a Why. Zero findings triggers a re-dispatch with stronger adversarial framing.
-9. **Present.** A summary covering shape, direction, services covered, diagram counts, drift marker counts, confidence flag counts, Open Item counts, Specs status, the use-case traceability line per source BRD, and the chain handoff check (every SDD reference resolves, contract names match character-for-character, every BRD ID is keyed).
-10. **Cross-shape conversion (on request).** Merge chunks to a `-MERGED.md` file, split a combined file into chunks, regenerate a single chunk or service, or re-run from-code once missing services are built.
+6. **Generate.** Fit content to the chunk skeletons (or the combined template), per the direction's rules: from-code weighting, from-sdd mapping plus aggressive CLAUDE.md defaults, or hybrid's section-by-section diff with drift markers. Then reconcile the use-case trace against SDD §7.3 and the BRD (every link and anchor checked).
+7. **Synthesise the Specs chunk.** Mandatory, after the body: Mission, Tech Stack with version pins, Roadmap in 3 to 6 delivery phases, Project Type. Written in constitution voice for SpecKit `/constitution`. Then add this LLD's row to the SDD's Child LLDs table (step 6c).
+8. **Post-generation review.** A cleared-context reviewer subagent (no conversation memory) hunts for unflagged gaps and writes the Open Items and Clarifications chunk, each item with options, a recommendation, and a Why. It records a coverage row per service and risk surface; zero findings is valid for a checked surface, and the reviewer is re-dispatched only when a surface is unchecked or a finding lacks evidence.
+9. **Present.** A summary covering shape, direction, services covered, diagram counts, drift marker counts, `⚠ policy` finding counts by severity, confidence flag counts, Open Item counts, Specs status, the use-case traceability line per source BRD, the parent SDD's Child LLDs row, and the chain handoff check (every SDD reference resolves, contract names match character-for-character, every BRD ID is keyed).
+10. **Cross-shape conversion (on request).** Merge chunks to a `-MERGED.md` file, split a combined file into chunks, regenerate a single chunk or service, refresh after a new SDD version, or re-run from-code once missing services are built.
 
 ### Outputs
 
@@ -69,7 +69,7 @@ Invocation prefix depends on the agent: `/lld-unifier chunks` in Claude Code, `$
 - `16-references.md` § 19.9: the use-case traceability index, the entry point for production-bug triage.
 - One row in the SDD's Child LLDs table (the only write outside the LLD folder).
 - `17-specs.md`: the Specs chunk (Mission, Tech Stack, Roadmap, Project Type) consumed verbatim by SpecKit `/constitution`.
-- `15-open-questions.md`: the author-generated index of every inline `> Confirm:` and `> TODO:` flag, plus the hybrid drift index.
+- `15-open-questions.md`: the author-generated index of every inline `> Confirm:` and `> TODO:` flag, plus the hybrid drift index and the `⚠ policy` findings (§ 18.6).
 - `18-open-items-and-clarifications.md`: the reviewer-generated findings, each with options, a recommendation, and a Why.
 
 ### Reference files

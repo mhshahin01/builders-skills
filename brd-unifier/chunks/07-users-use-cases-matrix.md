@@ -6,7 +6,7 @@ VERSION: [X.X]
 DEPENDS_ON: 04, 05, 06a
 PART OF: BRD - [Project Name]
 PURPOSE: One consolidated view of who is allowed to do what. Every persona from chunk 04 is a column; every use case from chunks 05/06 is a row. The matrix is derived from the Actor fields of the detailed use cases - it must never contradict them.
-CONSISTENCY RULES: (1) Every UC ID from chunk 05 appears exactly once as a row. (2) Every persona from chunk 04 appears exactly once as a column. (3) A "Yes" cell must match the UC's Primary or Supporting Actor; a persona listed as an actor in a UC must have "Yes" here. (4) Conditional access gets a numbered footnote, never a bare "Yes".
+CONSISTENCY RULES: (1) Every UC ID from chunk 05 appears exactly once as a row, except rows marked Merged into UC-NN or Removed, which are left out. (2) Every persona from chunk 04 appears exactly once as a column. (3) A "Yes" cell must match the UC's Primary or Supporting Actor; a persona listed as an actor in a UC must have "Yes" here. (4) Conditional access gets a numbered footnote, never a bare "Yes".
 -->
 
 # Users & Use Cases Matrix
@@ -27,4 +27,4 @@ CONSISTENCY RULES: (1) Every UC ID from chunk 05 appears exactly once as a row. 
 
 - [Note 1, or remove this section if empty.]
 
-<!-- MASTER: [project-slug]-brd-master.md | PREV: 06a-use-cases-detailed.md | NEXT: 08-integrations.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 06a-use-cases-[persona-slug].md | NEXT: 08-integrations.md -->

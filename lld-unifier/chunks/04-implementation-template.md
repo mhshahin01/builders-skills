@@ -14,6 +14,8 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file
 
 > **Bounded context:** [SDD §13 row and §17.X Boundaries / inferred from code path]
 >
+> **Type:** [service / module] (SDD §13 Type; a module is one part of a modular monolith's single deployable)
+>
 > **Source code:** [path/to/service]
 >
 > **Owns use cases (SDD 09):** [[KEY]/UC-01](../../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]), [[KEY]/UC-02](../../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-02-[title-slug]) [or: None - what it serves / Not applicable - no source BRD]
@@ -32,13 +34,13 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file
 
 ## 7.2 Class & Interface Map
 
-> **Convention:** list the load-bearing classes only — controllers, services, service implementations, repositories, mappers, key domain types. Skip DTOs that are obvious from controller signatures.
+> **Convention:** list the load-bearing classes only - controllers, services, service implementations, repositories, mappers, key domain types. Skip DTOs that are obvious from controller signatures.
 
 ### Controllers
 
 | Class | Endpoints | Notes |
 |-------|-----------|-------|
-| `[FooController]` | `[GET /v1/foo/{id}, POST /v1/foo, ...]` | [Auth scope, idempotency rules] |
+| `[FooController]` | `[GET /v1/foo/{id}, POST /v1/foo, ...]` | [Permission token (SDD §16), idempotency rules] |
 
 > **Convention:** every entry point a § 7.8 traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (`09-cross-cutting.md` § 12.8). Platform endpoints carry none.
 
@@ -80,7 +82,26 @@ public interface FooService {
 }
 ```
 
-> **Convention:** records are used for all DTOs (CLAUDE.md default). Constructor injection only — no `@Autowired` on fields.
+> **Convention:** records are used for all DTOs (CLAUDE.md default). Constructor injection only - no `@Autowired` on fields.
+
+### Ports and Adapters (in-process contracts)
+
+| Port interface | Operation | API ID (§15) | Role here | Adapter class |
+|----------------|-----------|--------------|-----------|---------------|
+| `[ProviderPort]` | `[operation]` | API-NN | [Provider / Caller] | `[ProviderPortAdapter]` (provider side only) |
+
+> **Convention:** modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process)` contract this module provides or calls; the contract itself is in `06-api-contracts.md` § 9.6. The classes that publish or listen to in-process domain events (`07-event-contracts.md` § 10.6) go in the Service Implementations table, naming the event. A microservices SDD writes "Not applicable - no in-process contracts".
+
+### Authorization
+
+| Entry point | Kind | Permission token (SDD §16, verbatim) | Enforcement point |
+|-------------|------|--------------------------------------|-------------------|
+| `[POST /v1/foo]` | REST | `[foo:write]` | `@PreAuthorize` on `FooController.create` |
+| `[FooEventListener.onFooCreated]` | Listener | `[token, or None - system consumer]` | [Listener guard, or None] |
+| `[FooCleanupJob.run]` | Job | `[token, or None - system job]` | [Job runner check, or None] |
+| `[FooPort.reserve]` | Port | `[token]` | At the port, in its adapter (SDD §15.1) |
+
+> **Convention:** one row per entry point of this service (REST method, event listener, scheduled job, in-process port). Tokens are the SDD §16 permission tokens, verbatim; the role catalogue stays in the SDD (`sdd-to-lld.md` § One fact, one home). On an internal HTTP entry point the provider's filter or sidecar checks the caller's client-credentials token against the token (SDD §15.1). From code with no SDD: the scopes the code checks.
 
 ---
 
@@ -104,13 +125,13 @@ public interface FooService {
 8. Return FooResponse.
 ```
 
-> **Confidence:** [High — confirmed in code at [file:line] / Medium — inferred from FR-NN / Low — best-guess from sequence flow]
+> **Confidence:** [Medium with `> Confirm:` by default, citing its source ([file:line] or SDD §17.X Business Logic) / High only under a `confidence-rules.md` upgrade (a straight-line method of 10 lines or fewer, a passing test that exercises it, or an SDD Business Logic block that dictates the algorithm) / Low with `> TODO:`, best guess from the sequence flow]
 
 ---
 
 ## 7.4 Design Patterns Applied
 
-> **Convention:** every applied pattern carries name, triggering CLAUDE.md rule, roles, rationale specific to this service, Mermaid class diagram, and pseudocode skeleton. Patterns inferred from code (from-code) include `> Confirm:` if pattern detection used semantic heuristics; patterns proposed (from-sdd) carry the rule attribution explicitly.
+> **Convention:** every applied pattern carries name, triggering CLAUDE.md rule, roles, rationale specific to this service, Mermaid class diagram, and pseudocode skeleton. Patterns inferred from code (from-code) include `> Confirm:` unless a test exercises the pattern (`confidence-rules.md`); patterns proposed (from-sdd) carry the rule attribution explicitly.
 
 ### Pattern: Outbox
 
@@ -184,7 +205,7 @@ void poll() {
 |------|-------------------|
 | Strategy interface | `PricingStrategy` |
 | Concrete strategies | `BasicPricingStrategy`, `ProPricingStrategy`, `EnterprisePricingStrategy` |
-| Context | `PricingService` — selects strategy by tenant tier |
+| Context | `PricingService` - selects strategy by tenant tier |
 
 **Class diagram:**
 
@@ -221,7 +242,7 @@ class PricingService {
 
 <!-- Repeat one Pattern subsection per pattern applied: Factory Method, Mediator, Chain of Responsibility, Saga, Template Method, Facade, Composition over inheritance, etc. Always include the four parts: triggering rule, rationale, roles, Mermaid + pseudocode. -->
 
-> **Note:** for from-sdd mode, every pattern triggered by a CLAUDE.md rule MUST be applied here (not just suggested). For from-code mode, only patterns *actually* present in code are documented; inferred-but-uncertain pattern detections are flagged with `> Confirm: pattern detected via [heuristic]`.
+> **Note:** for from-sdd mode, every pattern triggered by a CLAUDE.md rule MUST be applied here (not just suggested). For from-code mode, only patterns *actually* present in code are documented; pattern detections are flagged with `> Confirm: pattern detected via [heuristic]` unless a test exercises the pattern.
 
 ---
 
@@ -251,18 +272,18 @@ graph TB
 | `[FooServiceImpl.create]` | `REQUIRED` | `READ_COMMITTED` | rollback on `ServiceException`, no rollback on `IdempotencyHitException` |
 | `[FooServiceImpl.update]` | `REQUIRED` | `REPEATABLE_READ` | rollback on `ServiceException`, no rollback on `OptimisticLockException` (caller-handled retry) |
 
-> **Convention:** outbox row insert lives inside the same transaction as the aggregate write. No `@Transactional(propagation = REQUIRES_NEW)` for outbox writes — the whole point of the pattern is one-tx commit.
+> **Convention:** outbox row insert lives inside the same transaction as the aggregate write. No `@Transactional(propagation = REQUIRES_NEW)` for outbox writes - the whole point of the pattern is one-tx commit.
 
 ---
 
 ## 7.7 Error Handling
 
-| Exception | RFC 9457 type | HTTP Status | When thrown | Caller action |
-|-----------|---------------|-------------|-------------|---------------|
-| `FooNotFoundException` | `https://errors.example.com/foo/not-found` | 404 | Foo with given ID does not exist for this tenant | None (terminal) |
-| `FooValidationException` | `https://errors.example.com/foo/validation` | 400 | Bean Validation or domain rule failed | Fix payload, retry |
-| `IdempotencyConflictException` | `https://errors.example.com/idempotency/conflict` | 409 | Same idempotency key in-flight on a different request | Wait + retry, OR use a new key |
-| `FooConcurrencyException` | `https://errors.example.com/foo/concurrency` | 409 | Optimistic lock failure | Re-fetch and retry |
+| Exception | RFC 9457 type | `errorCode` (SDD §15.1) | HTTP Status | When thrown | Caller action |
+|-----------|---------------|-------------------------|-------------|-------------|---------------|
+| `FooNotFoundException` | `https://errors.example.com/foo/not-found` | `NOT_FOUND` | 404 | Foo with given ID does not exist for this tenant | None (terminal) |
+| `FooValidationException` | `https://errors.example.com/foo/validation` | `VALIDATION_FAILED` | 400 | Bean Validation or domain rule failed | Fix payload, retry |
+| `IdempotencyConflictException` | `https://errors.example.com/idempotency/conflict` | `CONFLICT` | 409 | Same idempotency key in-flight on a different request | Wait + retry, OR use a new key |
+| `FooConcurrencyException` | `https://errors.example.com/foo/concurrency` | `CONFLICT` | 409 | Optimistic lock failure | Re-fetch and retry |
 
 > **Convention:** all exceptions extend `ServiceException` (CLAUDE.md base class). Global `@RestControllerAdvice` translates to `ProblemDetails` (RFC 9457). Error envelope schema in `09-cross-cutting.md` § Error Model.
 
@@ -277,14 +298,14 @@ TRACEABILITY LINE (required, directly under the heading; rules: sdd-to-lld.md §
   BRD: the use case link (BRD heading anchor, built from the real heading). SDD: the §7.3 link, the same in every block.
   Owner and Entry points: exactly as SDD §7.3 writes them (method + path, or Schedule: / Event: triggers, with the service named when it is not the owner).
   UAT/BAT: every non-retired BRD chunk 16 case whose Related UC names this use case, one by one, each linked to its feature-area heading; "Pending (BRD 16 not written)" while chunk 16 is locked; "None - BRD coverage gap" when chunk 16 has none.
-  Screens: from 14-frontend.md § 17.3, the screen ID (else the MK-NN, linked to 14-todo.md#mockup-coverage) and each route that starts the use case; "Not applicable - no UI" when chunk 14 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
+  Screens: from 14-frontend.md § 17.3, the MK-NN (linked to 14-todo.md#mockup-coverage; or the screen ID, where the BRD text carries one) and each route that starts the use case; "Not applicable - no UI" when chunk 14 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
 Every BRD ID carries the key from the SDD's Source BRDs register. Paths are relative to this file (../../ reaches the sibling BRD and SDD folders).
 No source BRD, or pure from-code: heading "### Workflow: [Flow name]" and the line "> **Traceability:** Not applicable - no source BRD" (or "- no source SDD"). Never a made-up UC ID.
 -->
 
 ### [KEY]/UC-01: [Use case title, exactly as the BRD writes it]
 
-> **Traceability:** BRD [[KEY]/UC-01](../../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) · SDD [§7.3](../../sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) · Owner: [service-name] · Entry points: `[METHOD] /v1/[path]` · UAT/BAT: [[KEY]/TC-[AREA]-01](../../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]), [[KEY]/TC-[AREA]-02](../../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) · Screens: [[KEY]/SCR-NN](../../brd-[brd-slug]/11-summary-and-uiux.md#[screens-heading-slug]) via `/[route]`
+> **Traceability:** BRD [[KEY]/UC-01](../../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) · SDD [§7.3](../../sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) · Owner: [service-name] · Entry points: `[METHOD] /v1/[path]` · UAT/BAT: [[KEY]/TC-[AREA]-01](../../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]), [[KEY]/TC-[AREA]-02](../../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) · Screens: [[KEY]/MK-NN](../../brd-[brd-slug]/14-todo.md#mockup-coverage) via `/[route]`
 
 **Trigger:** [The entry point above and its handler, e.g. `FooController.create` with `@UseCase("[KEY]/UC-01")` / Kafka listener / Scheduled task]
 
@@ -297,7 +318,7 @@ No source BRD, or pure from-code: heading "### Workflow: [Flow name]" and the li
 ```text
 1. [Step] ([KEY]/UC-01 step 1)
 2. [Step] ([KEY]/UC-01 step 3)
-3. [Step — outbox emission point: emits foo.created]
+3. [Step - outbox emission point: emits foo.created]
 4. [Step]
 5. [Idempotency check: ...]
 6. [Step] ([KEY]/UC-01 E1: the exception flow this branch realises)

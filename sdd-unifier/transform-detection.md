@@ -40,7 +40,7 @@ This is the high-value path. Recognise it by:
 
 - Path is a folder ending in `brd-*` (the brd-unifier output convention).
 - Contains files with names like `00-cover-and-changelog.md`, `01-executive-summary-and-context.md`, `02-glossary-assumptions-facts.md`, `03-definitions-and-domain-concepts.md`, `04-scope-and-personas.md`, `05-user-journeys-overview.md`, `06a-use-cases-*.md`, `07-users-use-cases-matrix.md`, `08-integrations.md`, etc. (Legacy BRDs: `05-fr-overview.md`, `06a-fr-*.md`, `07-integrations.md`.)
-- Each file starts with `<!-- CHUNK: NN ... PART OF: BRD — ... -->`.
+- Each file starts with `<!-- CHUNK: NN ... PART OF: BRD - ... -->`.
 
 If 4+ of these match, it's a brd-unifier chunked output.
 
@@ -127,7 +127,7 @@ Derive is a **structured partial fill** — the BRD has some content the SDD nee
    - "API style" → `[NEEDS CLARIFICATION: REST, gRPC, or GraphQL for <service>? The architecture questionnaire leaves it open.]`
    - "Multi-Tenancy default" → `[NEEDS CLARIFICATION: shared schema with tenant_id, schema-per-tenant, or DB-per-tenant? CLAUDE.md default is schema-per-tenant for high-volume services, shared-schema with tenant_id for low-volume. Confirm or override per service.]`
    - "Per-service Throughput Targets" → `[NEEDS CLARIFICATION: sustained RPS, peak RPS, p50/p95/p99 latency targets per service. Not derivable from the BRD's NFRs alone — needs architect input.]`
-4. Apply CLAUDE.md defaults where they fit (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka, Keycloak, Angular 17+ standalone). The architecture style comes from the architecture questionnaire (SKILL.md step 3b, `architecture-questionnaire.md`), which always runs for this intent. Note in the Ecosystem Overview that these are defaults and can be overridden.
+4. Apply CLAUDE.md defaults where they fit (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka on-prem or SNS+SQS on AWS, Keycloak, Angular 17+ standalone). The architecture style comes from the architecture questionnaire (SKILL.md step 3b, `architecture-questionnaire.md`), which always runs for this intent. Note in the Ecosystem Overview that these are defaults and can be overridden.
 5. The output is intentionally an architect-ready skeleton, not a finished SDD.
 
 See `brd-to-sdd.md` for the full mapping table.
@@ -148,8 +148,8 @@ Treat as TRANSFORM with targeted regeneration:
 
 Treat as TARGETED ADD:
 
-- In CHUNKS mode: add a new `13x-service-[slug].md` chunk (next free letter) and update the §13 Services Decomposition table in chunk 09, and wire the service into the §14 event catalog (chunk 10) if it publishes or consumes events.
-- In COMBINED mode: insert a new `## 17.X` block in section 17 and update the §13 table (and the §14 event catalog if the service publishes or consumes events).
+- In CHUNKS mode: add a new `13x-service-[slug].md` chunk (next free letter) and update the §13 Services Decomposition table in chunk 09, wire the service into the §14 event catalog (chunk 10) if it publishes or consumes events, give each of its synchronous integrations an `API-NN` in §15 (chunk 11) and its roles and permission tokens in §16 (chunk 12), then rerun SKILL.md step 6a and mark chunk 19 `Stale` if it exists.
+- In COMBINED mode: insert a new `## 17.X` block in section 17 and update §13, §14, §15, and §16 the same way, rerun SKILL.md step 6a, and set the cover's E2E gate line to `Stale` if §24 exists.
 - Bump the version in the Changes Log.
 
 ### Source is in a non-English language

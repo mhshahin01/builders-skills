@@ -11,7 +11,7 @@ PART OF: SDD - [Project Name]
 
 <!--
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
-(see "Services" below) and the override must be justified there.
+(§17.X, chunks 13x) and the override must be justified there.
 -->
 
 ## 11.1 DB Modeling (Default)

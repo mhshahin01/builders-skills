@@ -44,7 +44,7 @@ Inside part 2, keep the contract generation order from SKILL.md step 6: draft th
    - The §8.5 sequences in 05 take the event names from chunk 10 and the API IDs from chunk 11 on their messages and calls.
    - Derive-from-BRD: §7.3 in 03 gets its Entry points, APIs, and Events columns in part 2 (after chunk 11, before step 6a), and each Owner becomes a link to its `13x` chunk. A service renamed, split, or merged updates 09 `Use cases (BRD)` and the §7.3 Owner cells in the same pass.
    - Figures index and Tables index in chunk 00.
-4. **Keep IDs stable.** Once the user has seen an ID, it is never renumbered and never reused: service chunk letters (`13a`, `13b`, ...), BRD keys, ADR-NN, AP-NN, API-NN, risk IDs, topic names, event names, role names, permission tokens, and OI-NN. A service added in part 2 takes the next free chunk letter and is appended to 09. A service merged away keeps its 09 row, marked `Merged into [service]`, and gets no chunk; a removed one keeps its row, marked `Removed: [reason]`. The §17.X number follows the chunk letter (`13c` is §17.3) even when an earlier letter has no chunk; the gap is expected. A renamed event or topic is a contract change: update chunk 10 and every `13x` chunk in the same pass, and add a Changes Log note if the old name was already shown to the user.
+4. **Keep IDs stable.** Once the user has seen an ID, it is never renumbered and never reused: service chunk letters (`13a`, `13b`, ...), BRD keys, ADR-NN, AP-NN, API-NN, INT-NN, risk IDs, topic names, event names, role names, permission tokens, and OI-NN. A service added in part 2 takes the next free chunk letter and is appended to 09. A service merged away keeps its 09 row, marked `Merged into [service]`, and gets no chunk; a removed one keeps its row, marked `Removed: [reason]`. The §17.X number follows the chunk letter (`13c` is §17.3) even when an earlier letter has no chunk; the gap is expected. A renamed event or topic is a contract change: update chunk 10 and every `13x` chunk in the same pass, and add a Changes Log note if the old name was already shown to the user.
 5. **Run the part's exit checklist** (below). Fix what fails; flag what cannot be fixed with `[NEEDS CLARIFICATION: ...]`.
 6. **Update the progress record** (below).
 7. **Present the part summary and STOP** (parts 1 and 2). Part 3 goes on as § End of part 3 says.
@@ -54,7 +54,7 @@ Inside part 2, keep the contract generation order from SKILL.md step 6: draft th
 Show a short part summary:
 
 - The files written, and the chunks of earlier parts that were changed by the back-fill, with the reason.
-- Counts: services, ADRs, Mermaid figures, `[NEEDS CLARIFICATION: ...]` markers in this part. Derive-from-BRD: the source BRDs with their keys (part 1: say the keys are now fixed), the cross-BRD conflicts found, and per BRD the use cases with an owner vs flagged in §7.3. In part 2 also: topics, events, roles, API contracts (internal `Defined` vs `TBD - external`), and the number of contract divergences flagged.
+- Counts: services, ADRs, Mermaid figures, `[NEEDS CLARIFICATION: ...]` markers in this part. Derive-from-BRD: the source BRDs with their keys (part 1: say the keys are now fixed), the cross-BRD conflicts found, and per BRD the use cases with an owner vs flagged in §7.3. In part 2 also: topics, events, roles, API contracts (`Defined`, `TBD - external`, `Flagged`), and the number of contract divergences flagged.
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 
@@ -76,12 +76,12 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 
 **Part 1**
 
-- [ ] Every §6 ecosystem row has its source in Notes (`BRD-mandated`, `source SDD`, `default`, `recommended`, `user override`); every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
+- [ ] Every §6 ecosystem row has its source in Notes (`BRD-mandated`, `source SDD`, `questionnaire`, `default`, `recommended`, `user override`); every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
 - [ ] §8.1 Architecture Style has What / Why / How at the bar of `sdd-quality.md`; the minimum ADR set is present or flagged.
 - [ ] Every actor in 03 traces to a BRD persona (derive-from-BRD) or to the source; none is invented.
 - [ ] Every service in 09 has a bounded context, owns its data, and serves at least one use case or platform concern. No entity is owned by two services.
 - [ ] Derive-from-BRD: chunk 00 § Document Lineage lists every source BRD with its key, version, and link, and Child LLDs reads `None yet` (or the LLDs found); every BRD reference in 00-09 carries its key; with two or more BRDs, every cross-BRD conflict is asked, recorded as an ADR, or flagged (`brd-to-sdd.md` § Source BRDs and lineage).
-- [ ] Derive-from-BRD: every use case of every source BRD has its §7.3 row in 03, under its BRD's group (title and status as the BRD states them); every active one has exactly one owner in 09 `Use cases (BRD)`, or a `[NEEDS CLARIFICATION: ...]` in its Owner cell; every §8.4 and §8.5 diagram has its `**Use cases:**` line; every UC link resolves (file and anchor).
+- [ ] Derive-from-BRD: every use case of every source BRD has its §7.3 row in 03, under its BRD's group (title as the BRD states it, status derived from its Description marker); every active one has exactly one owner in 09 `Use cases (BRD)`, or a `[NEEDS CLARIFICATION: ...]` in its Owner cell; every §8.4 and §8.5 diagram has its `**Use cases:**` line; every UC link resolves (file and anchor).
 - [ ] Every integration in 08 names the service that owns it, or is flagged.
 - [ ] Brownfield only: the §1 Existing System Context sub-section exists and 07 marks each concern inherit / override / new.
 - [ ] The Glossary covers every term and acronym used in 00-09.
@@ -92,6 +92,7 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 
 - [ ] Every active service row in 09 has a `13x` chunk at the bar of `sdd-quality.md`; no `13x` chunk exists without a 09 row.
 - [ ] Contract reconciliation (SKILL.md step 6a) has run: topic and event names match chunk 10 character-for-character; every consumed event has exactly one producer; consumer lists agree from both sides; every payload field a consumer relies on exists in §14.9; role names and permission tokens match chunk 12.
+- [ ] Modular monolith or hybrid core: every in-process domain event a module publishes or handles matches §14.10 by name, publisher module, listener modules, and DTO fields, from both sides.
 - [ ] Every synchronous integration has an `API-NN` in chunk 11: an HTTP contract with method, URI, headers, parameters, body, responses, HTTP error codes, security, and auth; an `Internal (in-process)` contract (module to module through a port) with its port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), and its permission token instead. The §15.4 coverage matrix has no uncovered row; method and URI in each `13x` List of APIs match chunk 11 (HTTP contracts only); external contracts are `TBD - external` with nothing invented.
 - [ ] Every divergence that could not be fixed is flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12 with Status `Open`, and every row in those registers has a Status (`Open` / `Fixed in vX.X`).
 - [ ] Per-service authorization notes agree with the BRD Users & Use Cases Matrix (derive-from-BRD), or the difference is flagged.
@@ -132,7 +133,7 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 ```
 
 - Write the **Source** line in part 1: the path of every source file (every source BRD's master or combined file), or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
-- Status is `Pending`, `In progress ([last step done])`, or `Complete`. Parts 2 and 3 have several steps, so record each one as it finishes. Part 2: `13x written`, `10 written`, `12 written`, `11 written`, `reconciled`. Part 3: `14-17 written`, `18 written`, `acceptance loop done`, `19 written` or `19 Locked (gate shut)`. Part 3 becomes `Complete` when the gate check has run: chunk 19 is then either written or `Locked`, and a later request refreshes it through SKILL.md step 8b.
+- Status is `Pending`, `In progress ([last step done])`, or `Complete`. Parts 2 and 3 have several steps, so record each one as it finishes. Part 2: `13x written`, `10 written`, `12 written`, `11 written`, `7.3 filled` (derive-from-BRD), `reconciled`. Part 3: `14-17 written`, `18 written`, `acceptance loop done`, `19 written` or `19 Locked (gate shut)`. Part 3 becomes `Complete` when the gate check has run: chunk 19 is then either written or `Locked`, and a later request refreshes it through SKILL.md step 8b.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
 - Chunk 00 shows `**Status:** Draft - part N of 3` until part 3 is complete, then `Draft`.
 - During the first build, the version does not change between parts. The Changes Log keeps one "Initial draft" row, dated when part 3 completes; the acceptance loop in part 3 then adds its own row as usual (SKILL.md step 8).

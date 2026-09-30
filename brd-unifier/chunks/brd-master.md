@@ -4,7 +4,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: BRD - [Project Name]
 PURPOSE: Navigation graph for AI agents and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
-VERSIONING: All chunks share the BRD version number. When any chunk is updated, bump the BRD version in this master and in the updated chunk(s).
+VERSIONING: All chunks share the BRD version number. A content change to chunks 00-13 bumps the BRD version in this master, in chunk 00, and in each changed chunk; status, link, and delivery-tracking updates bump nothing (delivery-chunks.md § Refresh triggers, Version).
 MAINTENANCE: When adding or removing chunks, update the tables below, the dependency graph, and the reading-order table.
 PARTS: In parts generation this file is written in part 1 and updated at the end of every part. A chunk that is not written yet is listed as plain text followed by "Pending (part N)"; it becomes a link when it is written.
 DELIVERY CHUNKS: 14-17 are derived from the BRD body (00-13) and never add requirements. 14 is written at the end of every generation (part 3 in parts generation). 15, 16, and 17 are locked until every action item in 14 is closed (Deferred counts as open; no override). 14 and 17 are never part of the merged / combined BRD.
@@ -23,7 +23,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 **Generation:** [parts | whole]
 **Source:** [path of every source file (SoW, old BRD, notes), or "conversation"]
 
-<!-- Parts generation only. Keep the table after part 3 completes: it is the record of how the BRD was built. In a whole run, keep only the line above. -->
+<!-- Parts generation only. Keep the table after part 3 completes: it is the record of how the BRD was built. In a whole run, keep only the two lines above. -->
 
 | Part | Chunks | Status | Completed |
 |------|--------|--------|-----------|
@@ -75,7 +75,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 | Summarized Workflow | [05-user-journeys-overview.md](./05-user-journeys-overview.md) |
 | Use Case Summary Table | [05-user-journeys-overview.md](./05-user-journeys-overview.md) |
 | Use Case Diagrams (added at to-do step 5; absent until then) | [05-user-journeys-overview.md](./05-user-journeys-overview.md) |
-| Detailed Use Cases (per persona; Actor/Goal/Why/Main Flow/Alt Flows/Rules/Acceptance/Future/UI; a Flowchart for branching use cases is added at to-do step 5) | [06a-use-cases-detailed.md](./06a-use-cases-detailed.md) |
+| Detailed Use Cases (per persona; Actor/Goal/Why/Preconditions/Main Flow/Alt Flows/Rules/Acceptance/Future/UI; a Flowchart for branching use cases is added at to-do step 5) | [06a-use-cases-[persona-slug].md](./06a-use-cases-[persona-slug].md) |
 | Users & Use Cases Matrix (who may do what) | [07-users-use-cases-matrix.md](./07-users-use-cases-matrix.md) |
 
 <!-- When a real BRD has multiple personas, add rows here:
@@ -144,7 +144,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 +-- 03-definitions-and-domain-concepts.md .... deep domain models
 +-- 04-scope-and-personas.md .... boundaries & actors
 +-- 05-user-journeys-overview.md .... journeys & use case summary
-|   +-- 06a-use-cases-detailed.md .... detailed use cases per persona
+|   +-- 06a-use-cases-[persona-slug].md .... detailed use cases per persona
 |   +-- [06b, 06c, ...] .... additional persona chunks
 +-- 07-users-use-cases-matrix.md .... who is allowed to do what
 +-- 08-integrations.md .... business integrations (what, not how)

@@ -39,7 +39,7 @@ Each service follows the exact same structure for predictability and grep-abilit
 
 ### Business Logic
 
-<!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (chunk 09 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2", "AC-1" (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
+<!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (chunk 09 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2: [short label]", "AC-3: customer is notified". BR-n and AC-n are positions in the BRD lists, so each always carries its short label (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
 
 [Description of the core logic.]
 
@@ -146,11 +146,11 @@ erDiagram
 
 #### List of APIs (Swagger-friendly)
 
-<!-- Endpoints called by another service or an external system carry their API ID and link to §15 (chunk 11), which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. -->
+<!-- Endpoints called by another service or an external system carry their API ID and link to §15 (chunk 11), which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. Permission token (§16): the token the endpoint checks, verbatim from §16; an endpoint that only an external system calls (callback, webhook) writes "-" (§15.1 Authorization by contract type). -->
 
-| Method | Path | Summary | Request Body | Response | Auth Scope | API ID (§15) |
-|--------|------|---------|--------------|----------|------------|--------------|
-| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[scope]` | [API-NN / -] |
+| Method | Path | Summary | Request Body | Response | Permission token (§16) | API ID (§15) |
+|--------|------|---------|--------------|----------|------------------------|--------------|
+| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[service].[resource].[action]` | [API-NN / -] |
 
 ### Event-Driven Architecture (If Applicable)
 
@@ -172,7 +172,17 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 |------------|---------------------------|-------|------------------------|------------------------|
 | `[EVENT_NAME]` | [Producer service] | `[topic - verbatim from §14.4]` | [Projection update / state transition / trigger] | [Inbox dedup key, aggregate_version handling] |
 
+**In-process domain events (modules only):**
+
+<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match chunk 10 §14.10 except When, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable". -->
+
+| Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
+|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [after commit] | `[EventDto]`: [fields] | [Notes] |
+
 #### Messaging Infra
+
+<!-- Integration events on the broker only. A module with no integration events writes "Not applicable - no integration events". -->
 
 - **Broker:** [Broker]
 - **Schema registry:** [Registry / approach]
@@ -182,6 +192,8 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 - **DLQ strategy:** [DLQ + replay]
 
 ### Constraints
+
+<!-- Authorization notes: the roles allowed for each owned use case, with their §16 permission tokens verbatim; each endpoint's token is in the List of APIs Permission token (§16) column. -->
 
 - [Constraint 1]
 - [Constraint 2]

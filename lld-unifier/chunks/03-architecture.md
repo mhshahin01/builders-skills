@@ -1,6 +1,6 @@
 <!--
 CHUNK: 03
-TITLE: Architecture Overview — Components & Deployment
+TITLE: Architecture Overview - Components & Deployment
 PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: LLD - [Project Name]
@@ -25,9 +25,9 @@ graph TB
   end
 
   subgraph "Data Tier"
-    DB_A[(PostgreSQL — Service A schema)]
-    DB_B[(PostgreSQL — Service B schema)]
-    DB_C[(PostgreSQL — Service C schema)]
+    DB_A[(PostgreSQL - Service A schema)]
+    DB_B[(PostgreSQL - Service B schema)]
+    DB_C[(PostgreSQL - Service C schema)]
     KAFKA[(Kafka)]
   end
 
@@ -47,40 +47,40 @@ graph TB
 
 | Concern | Choice | Source / Rationale |
 |---------|--------|--------------------|
-| Container | Docker (one image per service) | CLAUDE.md default |
-| Orchestrator | Kubernetes (Helm chart per service) | CLAUDE.md default |
+| Container | Docker (one image per deployable: each service, or the single deployable of a modular monolith) | CLAUDE.md default; SDD §8.1 style |
+| Orchestrator | Kubernetes (Helm chart per deployable) | CLAUDE.md default |
 | Namespace strategy | [Per-environment / Per-tenant / Hybrid] | [SDD §11.3 / §19 if applicable] |
 | Service mesh / Ingress | [Istio / Linkerd / NGINX Ingress / API Gateway alone] | [SDD §6 if applicable] |
-| Replicas (per service, baseline) | [N min / M max] | [SDD §17.X Deployment Strategy if applicable] |
+| Replicas (per deployable, baseline) | [N min / M max] | [SDD §17.X Deployment Strategy if applicable] |
 | Deployment strategy | [Rolling / Blue-Green / Canary] | [Per-service overrides in `04-implementation/<svc>.md`] |
 
 ## 6.3 Runtime Stack
 
 | Layer | Technology | Version | Source |
 |-------|-----------|---------|--------|
-| Language | Java | 21 | CLAUDE.md default |
-| Framework | Spring Boot | 3.5+ | CLAUDE.md default |
+| Language | Java | 21 | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
+| Framework | Spring Boot | 3.5+ | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
 | Build | [Maven / Gradle] | [version] | [Source] |
-| Database | PostgreSQL | 17+ | CLAUDE.md default |
-| Message Broker | Kafka | [version] | CLAUDE.md default (on-prem) |
+| Database | PostgreSQL | 17+ | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
+| Message Broker | Kafka | [version] | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
 | Cache | [Redis / Caffeine / None] | [version] | [Source] |
-| Auth | Keycloak | [version] | CLAUDE.md default (on-prem) |
-| Migrations | Flyway | [version] | CLAUDE.md default |
+| Auth | Keycloak | [version] | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
+| Migrations | Flyway | [version] | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
 | Observability | [Prometheus + Grafana + Loki + Tempo / other] | [version] | [Source] |
-| Frontend (if applicable) | Angular | 17+ | CLAUDE.md default |
+| Frontend (if applicable) | Angular | 17+ | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
 
-> **Convention:** any value flagged `> Confirm:` here means the SDD/code did not pin it; the row uses CLAUDE.md default but should be verified.
+> **Convention:** each Source cell links the SDD §6 row it derives from (no SDD: the dependency manifest); a value that disagrees with SDD §6 is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3). A CLAUDE.md default fills only a row neither pins, flagged `> Confirm:`.
 
-## 6.4 Architectural Style — As Operationalised
+## 6.4 Architectural Style - As Operationalised
 
 > **Inherits from:** SDD §8.1 Architecture Style.
 >
-> **What this section adds:** the concrete operationalisation. Where the SDD says "event-driven microservices", this section names the topics, the consumer-group conventions, the schema-registry choice, the outbox-table convention.
+> **What this section adds:** the concrete operationalisation. Where the SDD says "event-driven microservices", this section names the topics, the consumer-group conventions, the schema-registry choice, the outbox-table convention. Where it says "modular monolith" (its ADR-01), this section names the module boundaries, the ports, and the in-process events.
 
-- **Service boundary rule:** one service = one bounded context = one private PostgreSQL schema. No cross-schema reads.
-- **Inter-service async:** Kafka topics named `<context>.<entity>.<event>`. JSON Schema in [registry] (or Avro in [registry]).
-- **Inter-service sync:** [allowed for / forbidden — per CLAUDE.md "no service-to-service chained REST calls more than one hop deep"].
-- **Outbox pattern:** mandatory for every state-changing event. Implementation per `09-cross-cutting.md` § Outbox.
-- **Saga choreography vs orchestration:** [default per CLAUDE.md — choreography unless flow is complex; orchestrator-owning service named per case].
+- **Service boundary rule:** one service (or module) = one bounded context = one private PostgreSQL schema. No cross-schema reads.
+- **Inter-service async:** Topics named as SDD §14.4 names them (from code with no SDD: as the code names them). JSON Schema in [registry] (or Avro in [registry]). Module-to-module events of a modular monolith are in-process (`07-event-contracts.md` § 10.6), not topics.
+- **Inter-service sync:** [allowed for / forbidden - per CLAUDE.md "no service-to-service chained REST calls more than one hop deep"]. Module-to-module calls of a modular monolith go through ports (`06-api-contracts.md` § 9.6), never HTTP.
+- **Outbox pattern:** mandatory for every state-changing integration event (not for § 10.6 in-process events). Implementation per `09-cross-cutting.md` § Outbox.
+- **Saga choreography vs orchestration:** [default per CLAUDE.md - choreography unless flow is complex; orchestrator-owning service named per case].
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 02-context.md | NEXT: 04-implementation/<service>.md -->

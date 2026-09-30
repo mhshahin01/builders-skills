@@ -7,7 +7,7 @@ DEPENDS_ON: 05, 07, 08, 09
 RECONCILES_WITH: every per-service chunk (13a, 13b, ...) - Event Model + Messaging Infra sub-sections
 PART OF: SDD - [Project Name]
 PURPOSE: Single cross-service catalog of every platform event - name, producer, consumers, envelope, payload contract, business what/when/why - plus the centralized event-hub topology. Consolidates what is otherwise distributed across the per-service Event Models.
-CONSISTENCY_RULE: This chunk is the platform contract registry. Topic names, event names, envelope fields, and payload contracts here MUST match the per-service chunks character-for-character. Consumer lists are reconciled from BOTH sides (each producer's published table AND each consumer's consumed table). Where a per-service spec and this catalog disagree, the per-service spec is authoritative for its own published events and the divergence is flagged in the Consistency Notes section - never silently reconciled.
+CONSISTENCY_RULE: This chunk is the platform contract registry. Topic names, event names, envelope fields, and payload contracts here MUST match the per-service chunks character-for-character. Consumer lists are reconciled from BOTH sides (each producer's published table AND each consumer's consumed table). Where a per-service spec and this catalog disagree, the divergence is flagged in the Consistency Notes section (§14.8) and fixed on the wrong side, never silently reconciled; a name the user has already seen keeps its registry spelling (SKILL.md principle 14).
 -->
 
 # 14. Centralized Event Hub (Platform Event Catalog & Payload Contracts)
@@ -137,19 +137,19 @@ flowchart LR
 Grouped by producing service / topic - one sub-section per producer, in §13 decomposition order.
 Status legend: committed = wired in its phase; candidate = name fixed, no consumer wired until the contract ratifies; Analytics-only = no named domain consumer.
 Consumer reconciliation: consumer lists are reconciled from BOTH the producer's published table AND every consumer's consumed table. Where a producer under-lists, show the broader real set and footnote it.
-Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "when" cites it as a link with the step, e.g. "[REFUNDS/UC-04](BRD link) step 6". §7.3 reads its Events column from these citations. An event with another trigger (schedule, external callback, another event) names that trigger instead.
+Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "when" cites it as a link with the step, e.g. "[REFUNDS/UC-04](BRD link) step 6". §7.3 reads its Events column from these citations and from the §14.10 When column. An event with another trigger (schedule, external callback, another event) names that trigger instead.
 -->
 
 **Status legend:** `committed` / `candidate` / `Analytics-only` / `Pn` = phase.
 
-### 14.5.1 [Producer Service] — `[topic-name]` ([key family]; [phase])
+### 14.5.1 [Producer Service] - `[topic-name]` ([key family]; [phase])
 
 | Event | Consumers | Payload (beyond envelope) | Business: what · when · why | Status |
 |---|---|---|---|---|
 | `[EVENT_NAME]` | [Consumer services] | `[fields beyond the envelope]` | [What fact] · [when it fires: [KEY/UC-NN](BRD link) step N, or the other trigger] · [why downstream cares] | [committed] |
 | `[EVENT_NAME]` | [Consumer services] | `[fields]` | [what · when · why] | [candidate] |
 
-### 14.5.2 [Producer Service] — `[topic-name]` ([key family]; [phase])
+### 14.5.2 [Producer Service] - `[topic-name]` ([key family]; [phase])
 
 | Event | Consumers | Payload (beyond envelope) | Business: what · when · why | Status |
 |---|---|---|---|---|
@@ -163,7 +163,7 @@ Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "
 
 1. **Atomicity:** domain state + outbox row commit in one transaction; the relay publishes only after commit (no dual-writes).
 2. **Delivery:** at-least-once everywhere; consumers dedup on `(consumer, event_id)`.
-3. **Ordering:** per-aggregate via `aggregate_version` (last-writer-wins for projections; validated transitions for state machines) — not broker ordering.
+3. **Ordering:** per-aggregate via `aggregate_version` (last-writer-wins for projections; validated transitions for state machines) - not broker ordering.
 4. **Poison handling:** invalid transitions and undeserializable messages dead-letter with alarm + redrive runbook; never silently dropped.
 5. **Schema evolution:** additive-only, registry-enforced; breaking change = new event name.
 6. **Replay:** archive -> consumer queue, never archive -> topic.
@@ -211,7 +211,7 @@ Define common value objects once, then reference them.
 | `Money` | `amount decimal(19,4)`, `currency string(ISO-4217)` | [events] |
 | `[ValueObject]` | [fields] | [events] |
 
-### 14.9.1 `[EVENT_NAME]` — [status]
+### 14.9.1 `[EVENT_NAME]` - [status]
 
 **Producer:** [service] · **Topic:** `[topic-name]` · **Key family:** [family]
 
@@ -234,11 +234,12 @@ Define common value objects once, then reference them.
 
 <!--
 Domain events that one module publishes and other modules of the same deployable handle in process (architecture-questionnaire.md § Effect on the SDD). They are not integration events: the broker delivery rules (§14.2 one-hub rules, §14.2.1, §14.6) do not apply. An event that must also leave the deployable is published through the outbox as an integration event and catalogued in §14.5. Events that never leave one module stay out of scope.
+When (derive-from-BRD): the use case step that fires the event, cited like the §14.5 "when": a keyed link plus the part, e.g. "[REFUNDS/UC-04](BRD link) step 5", or "None - platform" when no use case step fires it. This registry is the only home of the When; §7.3 reads its Events column from here and from §14.5.
 A microservices SDD writes "Not applicable - no in-process events".
 -->
 
-| Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
-|---|---|---|---|---|---|
-| `[EventName]` | [Module] | [Modules] | [after commit] | `[EventDto]`: [fields] | [Notes] |
+| Event | Publisher module | Listener modules | When | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
+|---|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [[KEY/UC-NN](BRD link) step N / None - platform] | [after commit] | `[EventDto]`: [fields] | [Notes] |
 
 <!-- MASTER: [project-slug]-sdd-master.md | PREV: 09-services-summary.md | NEXT: 11-api-contracts.md -->

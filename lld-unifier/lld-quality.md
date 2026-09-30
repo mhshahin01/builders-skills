@@ -85,7 +85,7 @@ We use outbox pattern. See CLAUDE.md.
 
 Apply unconditionally if conditions match:
 
-1. Outbox (if service emits state-change events).
+1. Outbox (if service emits state-change integration events; the in-process domain events of a modular monolith, `07-event-contracts.md` § 10.6, use none).
 2. Idempotency (if service exposes write endpoints touching money / wallet / notifications / external providers).
 3. RFC 9457 error model (always for REST services).
 4. Saga (if service participates in cross-service business transactions).
@@ -133,14 +133,14 @@ Each workflow is where the LLD earns its keep for the implementer.
 
 Traceability is only useful if a reader can follow it both ways without searching. Rules: `sdd-to-lld.md` § Use-case traceability.
 
-**Test:** take a production error report whose `use_case` holds `REFUNDS/UC-04` and whose `screen` is `REFUNDS/SCR-04`, or a failing UAT case `REFUNDS/TC-DEC-03`. From its row in 16 § 19.9, one click opens the workflow block; from the block's traceability line, one click each opens the BRD use case heading, SDD §7.3, and each test case's feature area; 13 § 16.8 names the spec to re-run (`--grep "@REFUNDS/TC-DEC-03"`). Then go the other way: pick any route in 14 § 17.3; its screen and use cases match the BRD, and the use case's block names that route.
+**Test:** take a production error report whose `use_case` holds `REFUNDS/UC-04` and whose `screen` is `REFUNDS/MK-02`, or a failing UAT case `REFUNDS/TC-DEC-03`. From its row in 16 § 19.9, one click opens the workflow block; from the block's traceability line, one click each opens the BRD use case heading, SDD §7.3, and each test case's feature area; 13 § 16.8 names the spec to re-run (`--grep "@REFUNDS/TC-DEC-03"`). Then go the other way: pick any route in 14 § 17.3; its screen and use cases match the BRD, and the use case's block names that route.
 
 **Good line:**
 
 ```markdown
 ### REFUNDS/UC-04: Approve / Reject Refund
 
-> **Traceability:** BRD [REFUNDS/UC-04](../../brd-refunds-portal/06b-use-cases-branch-manager.md#uc-04-approve--reject-refund) · SDD [§7.3](../../sdd-refunds-portal/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) · Owner: refund-service · Entry points: `POST /v1/refunds/{refundId}/decision` · UAT/BAT: [REFUNDS/TC-DEC-01](../../brd-refunds-portal/16-uat-bat-test-cases.md#2-refund-decisions-uc-04-scr-04), [REFUNDS/TC-DEC-02](../../brd-refunds-portal/16-uat-bat-test-cases.md#2-refund-decisions-uc-04-scr-04) · Screens: [REFUNDS/SCR-04](../../brd-refunds-portal/11-summary-and-uiux.md#screens) via `/manager/refunds/:refundId`
+> **Traceability:** BRD [REFUNDS/UC-04](../../brd-refunds-portal/06b-use-cases-branch-manager.md#uc-04-approve--reject-refund) · SDD [§7.3](../../sdd-refunds-portal/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) · Owner: refund-service · Entry points: `POST /v1/refunds/{refundId}/decision` · UAT/BAT: [REFUNDS/TC-DEC-01](../../brd-refunds-portal/16-uat-bat-test-cases.md#2-refund-decisions-uc-04-mk-02), [REFUNDS/TC-DEC-02](../../brd-refunds-portal/16-uat-bat-test-cases.md#2-refund-decisions-uc-04-mk-02) · Screens: [REFUNDS/MK-02](../../brd-refunds-portal/14-todo.md#mockup-coverage) via `/manager/refunds/:refundId`
 ```
 
 **Bad:**
@@ -171,7 +171,7 @@ Every row should have a concrete value, not a wave-of-the-hand.
 | `status` | int | HTTP status code |
 | `detail` | string | Specific to this occurrence |
 | `instance` | string | Path that produced the error |
-| `code` (extension) | string | Internal error code (`<context>-<error>` e.g., `wallet-not-found`) |
+| `errorCode` (extension) | string | SDD §15.1 standard or domain code, verbatim (e.g., `NOT_FOUND`, `WALLET_NOT_FOUND`) |
 | `traceId` (extension) | string | OpenTelemetry trace ID |
 | `errors` (extension) | array | Validation: per-field errors with `field`, `code`, `message` |
 

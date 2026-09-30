@@ -1,6 +1,6 @@
 # Chunking Strategy
 
-The CHUNKS mode produces multiple `.md` files, one per logical template-section grouping. This file defines what a chunk is, the canonical chunk map, when to deviate, and how merge handling works.
+The CHUNKS mode produces multiple `.md` files, one per logical template-section grouping. This file defines what a chunk is, the canonical chunk map, when to deviate, the heading map between chunks and the combined file, and how merge and re-chunk work.
 
 The chunk skeletons are embedded in this skill folder under `chunks/` — they are the authoritative source for section structure inside each chunk.
 
@@ -27,7 +27,7 @@ Use this as the default. Numbering is stable — `08-` is always "Integrations" 
 | 00 | `00-cover-and-changelog.md` | `chunks/00-cover-and-changelog.md` | Title block (name, version, author, date, status), Changes Log, Table of Contents placeholder, Figures index, Tables index. | Small |
 | 01 | `01-executive-summary-and-context.md` | `chunks/01-executive-summary-and-context.md` | Executive Summary, Background and Context / Problem Statement, Business Objectives. | Small–Medium |
 | 02 | `02-glossary-assumptions-facts.md` | `chunks/02-glossary-assumptions-facts.md` | Glossary (business terms only), Assumptions / Constraints, Facts, Challenges (incl. challenge evidence table), Dependencies. | Medium |
-| 03 | `03-definitions-and-domain-concepts.md` | `chunks/03-definitions-and-domain-concepts.md` | Definitions & Important Details — the domain deep-dive, in business terms. Often the longest chunk; if >600 lines, split into `03a-`, `03b-`. | Medium–Large |
+| 03 | `03-definitions-and-domain-concepts.md` | `chunks/03-definitions-and-domain-concepts.md` | Definitions & Important Details — the domain deep-dive, in business terms. Often the longest chunk; split into `03a-`, `03b-` only under deviation rule 2 below. | Medium–Large |
 | 04 | `04-scope-and-personas.md` | `chunks/04-scope-and-personas.md` | Project Scope (narrative + In Scope / Out of Scope), Personas / Actors. Every persona becomes a matrix column and a use-case chunk. | Small |
 | 05 | `05-user-journeys-overview.md` | `chunks/05-user-journeys-overview.md` | User Journeys (one narrative per persona), Summarized Workflow (inline Mermaid), Use Case Summary table. **No detailed UC blocks here.** A `Use Case Diagrams` section is added later, at checklist step 5 (gated; see `delivery-chunks.md`). | Medium |
 | 06a, 06b, … | `06a-use-cases-[persona-slug].md` | `chunks/06a-use-cases-detailed.md` | Detailed use-case blocks, grouped **per persona** — one chunk per persona, in chunk-05 order. UC IDs sequential across the whole BRD. A `Flowchart` sub-section is added later to branching use cases, at checklist step 5 (gated). | Medium–Large each |
@@ -78,6 +78,7 @@ CHUNK: 06a
 TITLE: Detailed Use Cases - Tenant Admin
 PROJECT: Wallet Management Service
 VERSION: 1.0
+DEPENDS_ON: 04, 05
 PART OF: BRD - Wallet Management Service
 -->
 
@@ -88,7 +89,7 @@ PART OF: BRD - Wallet Management Service
 
 Delivery chunks (14-17) add two keys to this block: `TYPE: Delivery chunk` and `MERGE: Included | Excluded`. The merge step reads `MERGE:` to decide whether the chunk is concatenated.
 
-After the comment, the chunk's top-level heading begins at `#`. Sub-sections use `##`, `###`. Heading levels are scoped per chunk. The merge step does not demote headings — each chunk's `#` becomes a distinct major section of the merged doc.
+After the comment, the chunk's top-level heading begins at `#`. Sub-sections use `##`, `###`. Each heading keeps the level and text it has in the combined file, except in the detailed use cases (`06*`) and the chunk 16 title: see § Heading map (chunks and combined).
 
 ---
 
@@ -119,15 +120,43 @@ Do NOT deviate because a chunk "looks too short" — short chunks are fine when 
 
 ---
 
+## Heading map (chunks and combined)
+
+Every section keeps its heading level and text in both layouts: `# Glossary` is `# Glossary` in chunk 02 and in the combined file. Merge and re-chunk copy these headings as they are. There are two exceptions.
+
+**1. The detailed use cases sit two levels higher in their chunks.**
+
+| Element | Combined file | Chunk `06a`, `06b`, ... |
+|---|---|---|
+| Section title and intro | `## Detailed Use Cases`, written once, followed by the structure list ("All detailed use cases follow this structure: ...") | The chunk title `# Detailed Use Cases - [Persona]`, followed by the same structure list, in every chunk |
+| Persona group | `### Use Cases - [Persona]` | The chunk itself |
+| Use case | `#### UC-NN: [Title]` | `## UC-NN: [Title]` |
+| Use-case sub-section (Why, Preconditions, Main Flow, Alternate & Exception Flows, Flowchart, Business Rules & Constraints, Acceptance Criteria, Future Enhancements, UI/UX) | `##### [Sub-section]` | `### [Sub-section]` |
+
+- **Merge.** After chunk 05, write `## Detailed Use Cases` and the structure list once. Then, for each `06*` chunk in order, replace its title and structure list with `### Use Cases - [Persona]` and demote every other heading by two levels.
+- **Re-chunk.** Split the combined `## Detailed Use Cases` section at each `### Use Cases - [Persona]` heading: one `06*` chunk per persona, in order. In each chunk, restore the title `# Detailed Use Cases - [Persona]` and the structure list, and promote every other heading by two levels.
+- **Collapsed layout** (deviation rule 4). `05-user-journeys-and-use-cases.md` holds the detailed use cases at their combined levels, so nothing moves.
+
+**2. The chunk 16 title carries the project name.** It is `# [Project Name] - UAT/BAT Test Cases` in the chunk and in a merged file, and `# UAT/BAT Test Cases` in a combined file. Merge keeps the chunk title; re-chunk puts the project name back.
+
+**Links and anchors.** An anchor comes from the heading text, not its level, so each use case keeps its anchor in both layouts (for example `#uc-04-approve-a-refund`). Links between chunk files change with the layout:
+
+- On merge, a link from one merged chunk to another becomes a same-file anchor: `./06a-use-cases-branch-manager.md#uc-04-approve-a-refund` becomes `#uc-04-approve-a-refund`. A link to a whole chunk points at the anchor of its first heading.
+- On re-chunk, these anchors become file links again.
+- Links to files that are never merged (`14-todo.md`, `17-for-ppt.md`, `decision-log.md`) stay file links in both directions.
+
+---
+
 ## Merge handling (chunks → combined)
 
 On merge, chunks are concatenated in numeric order (00, 01, 02, 03, 03a, 03b, 04, 05, 06a, 06b, …, 07, 08, 09, 10, 11, 12, 13, then 15 and 16 when they exist). **Chunks 14 (`14-todo.md`) and 17 (`17-for-ppt.md`) are never merged**: skip every chunk whose header says `MERGE: Excluded`. They stay as separate files next to the merged BRD, and links to them keep working because the merged file lives in the same folder. The companion register `decision-log.md` is never merged either: it is decision history, not requirement text, and stays as a separate linked file. The merge step:
 
 1. Strips the `<!-- CHUNK: ... -->` comment from each chunk, and its `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer comment.
-2. Concatenates with a single blank line between chunks (no extra `---` separators unless the template calls for one).
-3. Regenerates the Table of Contents in chunk 00 against the merged heading outline.
-4. Regenerates the Figures and Tables indices if they exist.
-5. Writes to `BRD-[ProjectName]-v[X.X]-MERGED.md` alongside the chunks.
+2. Applies § Heading map (chunks and combined): the `06*` chunks become `### Use Cases - [Persona]` groups under one `## Detailed Use Cases` section, with every other heading demoted by two levels, and links between merged chunks become same-file anchors. All other headings are copied as they are.
+3. Concatenates with a single blank line between chunks (no extra `---` separators unless the template calls for one).
+4. Regenerates the Table of Contents in chunk 00 against the merged heading outline.
+5. Regenerates the Figures and Tables indices if they exist.
+6. Writes to `BRD-[ProjectName]-v[X.X]-MERGED.md` alongside the chunks.
 
 Original chunks are kept — the merged file is a consolidated view.
 
@@ -138,12 +167,13 @@ Original chunks are kept — the merged file is a consolidated view.
 When asked to split a combined BRD into chunks:
 
 1. Read the combined file fully.
-2. Identify section boundaries by `# ` and `## ` headings matching the canonical template order.
+2. Identify section boundaries by the `# ` headings, in the canonical template order. Split the `## Detailed Use Cases` section at each `### Use Cases - [Persona]` heading: one `06*` chunk per persona, in order.
 3. Group sections per the chunk map above.
 4. For each output chunk:
-   a. Prepend the `<!-- CHUNK: NN ... -->` comment block.
-   b. Promote the first matching `## ` heading to `# ` (since chunks are scoped to a single major section).
-   c. Adjust deeper heading levels accordingly (was `###` in combined → becomes `##` in chunk).
+   a. Prepend the chunk header from its skeleton (`<!-- CHUNK: NN ... -->`, with the keys in § Chunk header).
+   b. Apply § Heading map (chunks and combined). Headings keep their level and text, except that each `06*` chunk gets back its title and structure list and promotes every other heading by two levels, and chunk 16 gets back its project-name title. Same-file anchors that point at another chunk become file links again.
+   c. Append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
 5. Write each chunk to `./brd-[slug]/NN-*.md`. The combined file's `# Implementation Plan` and `# UAT/BAT Test Cases` sections become chunks 15 and 16.
-6. `14-todo.md` and `17-for-ppt.md` already exist as files in `./brd-[slug]/` (combined mode writes them there). Keep them, and repoint their BRD links from the combined file to the new chunk files.
-7. Keep the original combined file.
+6. Write `[project-slug]-brd-master.md` from `chunks/brd-master.md`, linking the new chunk files (`**Generation:** whole`; the **Source** line names the combined file).
+7. `14-todo.md` and `17-for-ppt.md` already exist as files in `./brd-[slug]/` (combined mode writes them there). Keep them, and repoint their BRD links from the combined file to the new chunk files.
+8. Keep the original combined file.

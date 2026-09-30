@@ -6,7 +6,7 @@ VERSION: [X.X]
 DEPENDS_ON: 02 (ecosystem: IAM, gateway), 05 (sequences), 07 (§11.6 security defaults), 08 (§12 integrations), 09 (services), 12 (roles and permission tokens), 13a+ (per-service API lists)
 PART OF: SDD - [Project Name]
 PURPOSE: The API contract registry for every synchronous integration: service-to-service calls, module-to-module port calls in a modular monolith or hybrid core, outbound calls from a service to an external system, and inbound calls from an external system into a service (callbacks, webhooks). Each HTTP contract states the URI, headers, body, responses, error codes, security, and auth, and each in-process port contract its port interface, operation, DTOs, raised errors, and permission token, so both sides implement the same contract with zero drift.
-CONTRACT_RULE: This chunk is canonical for integration API contracts. Each per-service chunk (13x) lists the endpoint in its "List of APIs" with the API ID and links here; it never restates the headers, body, or error codes. Event contracts stay in chunk 10; roles and permission tokens stay in chunk 12 and are referenced here verbatim.
+CONTRACT_RULE: This chunk is canonical for integration API contracts. Each per-service chunk (13x) lists an HTTP endpoint in its "List of APIs", or an in-process port call in its Integrations table, with the API ID and a link here; it never restates the headers, body, or error codes. Event contracts stay in chunk 10; roles and permission tokens stay in chunk 12 and are referenced here verbatim.
 EXTERNAL_RULE: A contract whose other side is an external system is `TBD - external` until the user supplies the provider's API documentation. Provider-owned fields (URI, headers, body, responses, error codes, auth scheme) are written as `TBD` with the marker `**[TBD - EXTERNAL: ...]**`, never invented. Our-side policy (timeout, retries, circuit breaker, fallback, where credentials are stored) comes from §12 and is filled.
 -->
 
@@ -246,7 +246,7 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 
 ## 15.5 Consistency Notes & Drift Register
 
-<!-- Divergences between this chunk and chunks 08, 13x (List of APIs), or 12 (permission tokens), and any synchronous chain deeper than one hop. Fixed divergences are not listed; open ones stay here until resolved. -->
+<!-- Divergences between this chunk and chunks 08, 13x (List of APIs), or 12 (permission tokens), and any synchronous chain deeper than one hop. A divergence fixed during reconciliation is not listed; a listed row keeps Status `Open` until it is fixed, then `Fixed in vX.X` (SKILL.md step 6a). -->
 
 | # | Where | Divergence | Status |
 |---|-------|------------|--------|

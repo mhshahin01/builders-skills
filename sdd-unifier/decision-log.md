@@ -13,7 +13,7 @@
 
 **Relationship with ADRs (one fact, one home).** An ADR in chunk 06 §10 is design content: it states the decision, its context, its rationale, and its consequences in present tense, and it stays in the SDD. The register never restates an ADR. When a decision produced an ADR, the register entry records only the process (the question, the options offered, who chose, when, what it supersedes) and links the ADR as its `Rule home:`. The rationale then lives in the ADR only. When no ADR was needed, the rationale is written in the register entry.
 
-**What never goes here.** Current-state design (those are the chunks), ADR text (chunk 06), open review items and their statuses (chunk 18), contract divergence flags still open (chunk 10 §14.8, chunk 12 §16.12), and the generation progress (`[project-slug]-sdd-master.md`, or the cover lines of a combined SDD). The register records decisions and process; the chunks state the outcome.
+**What never goes here.** Current-state design (those are the chunks), ADR text (chunk 06), open review items and their statuses (chunk 18), contract divergence flags still open (chunk 10 §14.8, chunk 11 §15.5, chunk 12 §16.12), and the generation progress (`[project-slug]-sdd-master.md`, or the cover lines of a combined SDD). The register records decisions and process; the chunks state the outcome.
 
 ---
 
@@ -25,7 +25,7 @@ TYPE: Decision Log
 PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: SDD - [Project Name]
-PURPOSE: Single home for the ecosystem selection record, the clarification Q&A, and decision history; the content chunks hold only the settled design.
+PURPOSE: Single home for the architecture questionnaire record, the ecosystem selection record, the clarification Q&A, and decision history; the content chunks hold only the settled design.
 MAINTENANCE: New decisions are added here, not in the content chunks. The chunks carry only the resulting design and current-state caveats.
 -->
 
@@ -41,7 +41,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 | Question | Offered (recommended first) | Chosen | Evidence | Rule home |
 |----------|-----------------------------|--------|----------|-----------|
-| [Q4 Architecture style] | [Modular monolith (Recommended) / Hybrid / Microservices] | [Modular monolith] | [BRD 01 objectives: MVP; one team; 10-nfrs modest load] | [ADR-01](./06-principles-and-decisions.md#anchor) |
+| [Q4 Architecture style] | [Modular monolith (Recommended) / Hybrid / Microservices] | [Modular monolith] | [[KEY] 01 objectives: MVP; one team; [KEY] 10 NFRs: modest load] | [ADR-01](./06-principles-and-decisions.md#anchor) |
 
 [One row per question, Q1-Q8. Always written, even for Accept all: the style is a structural decision.]
 
@@ -51,7 +51,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 | Layer | Offered (recommended first) | Chosen | Source | Rule home |
 |-------|-----------------------------|--------|--------|-----------|
-| [e.g. Messaging & streaming] | [Kafka (Recommended) / SNS+SQS / RabbitMQ] | [Kafka] | [recommended, BRD 10-nfrs NFR-03] | [02 §6 row](./02-ecosystem-overview.md#anchor) |
+| [e.g. Messaging & streaming] | [Kafka (Recommended) / SNS+SQS / RabbitMQ] | [Kafka] | [recommended, [KEY]/NFR-03] | [02 §6 row](./02-ecosystem-overview.md#anchor) |
 | [BRD-mandated row the user overrode] | [locked: PostgreSQL 17] | [Aurora PostgreSQL] | [user override] | [ADR-NN](./06-principles-and-decisions.md#anchor) |
 
 [Only rows that were walked through or overridden. Rows accepted as proposed are not listed one by one; the §6 Notes column already carries their source.]
@@ -99,6 +99,6 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 - Applying a decision updates the chunk text as plain design in present tense ("Wallet events are published through the transactional outbox") and removes the inline marker. The chunk never keeps a "resolved on [date]" stamp, an option letter, or a progress note.
 - Compact traceability references to stable IDs (OI-NN, ADR-NN, UC-NN, AP-NN) inside design text and table cells are allowed in the chunks; storytelling is not.
-- The §6 Notes column keeps each row's source label (`BRD-mandated`, `source SDD`, `default`, `recommended`, `user override`). That label is current-state provenance, not narrative, and stays in the chunk.
+- The §6 Notes column keeps each row's source label (`BRD-mandated`, `source SDD`, `questionnaire`, `default`, `recommended`, `user override`). That label is current-state provenance, not narrative, and stays in the chunk.
 - Chunk 18 keeps each item's current status line and its Resolution Log row. The narrative behind an accepted item moves here.
 - `[project-slug]-sdd-master.md` keeps the generation progress and links this register; it does not duplicate the Q&A records.

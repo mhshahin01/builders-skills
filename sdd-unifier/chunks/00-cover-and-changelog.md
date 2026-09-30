@@ -34,11 +34,11 @@ PART OF: SDD - [Project Name]
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD last read (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier)" to its SDD version cell and names the LLD in the handoff; it never writes into the LLD, whose next run rewrites its own row and clears the note. Before any LLD exists: one row "None yet". -->
 
-| LLD | Scope (§13 services) | Direction | Version | Link |
-|-----|----------------------|-----------|---------|------|
-| None yet | - | - | - | - |
+| LLD | Scope (§13 services) | Direction | Version | SDD version | Link |
+|-----|----------------------|-----------|---------|-------------|------|
+| None yet | - | - | - | - | - |
 
 ---
 

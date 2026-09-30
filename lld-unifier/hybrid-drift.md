@@ -17,7 +17,7 @@ Every section in the unified LLD is one of:
 | `🆕 code-only` | Present in code, not in SDD. | Code-derived content + `> Drift note: present in code, not in SDD. [Backfill SDD or remove from code?]` |
 | `⛔ sdd-only` | In SDD, not yet built. | SDD-derived content + `> Drift note: in SDD, not yet built. [Schedule implementation or defer?]` |
 
-> Note: per the user's CLAUDE.md, emoji glyphs in chat are restricted, but inside generated LLD content they are functional markers (explicitly chosen via decision #5). If preferred, the skill can emit `[ALIGNED]`, `[DRIFT]`, `[CODE-ONLY]`, `[SDD-ONLY]` as text markers — see SKILL.md insight.
+> Note: these glyphs are functional markers inside generated LLD content. If text markers are preferred, the skill can emit `[ALIGNED]`, `[DRIFT]`, `[CODE-ONLY]`, `[SDD-ONLY]`, and `[POLICY]` instead.
 
 ---
 
@@ -63,9 +63,10 @@ Common cases:
 Emit SDD-derived content + `⛔ sdd-only` marker + `> Drift note: in SDD, not yet built. Schedule or defer?`
 
 Common cases:
-- A service the SDD lists in §13 but the codebase has no module for.
 - An event topic the SDD describes but no producer code exists for.
 - An API endpoint the SDD lists but the controller doesn't have it.
+
+A service the SDD lists in §13 with no code at all is not Case D: it gets only the placeholder from `transform-detection.md` § Partial-code resolution, and its SDD content is not expanded in any chunk.
 
 ---
 
@@ -162,12 +163,12 @@ Subsection-level drift inside a per-service file:
 
 This is the **drift index** — every drift marker placed elsewhere has a row here.
 
-| Location | Marker | Severity | Resolution |
-|----------|--------|----------|------------|
-| `04-implementation/wallet-core.md § 7.4 Pattern: Outbox` | `⚠ drift` | HIGH | SDD requires outbox; code does direct Kafka publish in same method as DB write (a dual-write, not an outbox). Reconcile by writing an outbox row in the aggregate's transaction and publishing it from a separate publisher. |
-| `04-implementation/wallet-core.md § 7.2` | `🆕 code-only` | LOW | Class `LegacyAdapter` exists in code but not in SDD. Investigate origin. |
-| `04-implementation/notification-dispatcher.md` | `⛔ sdd-only` | MEDIUM | Service in SDD §13 not yet built. |
-| `04-implementation/refund-service.md § REFUNDS/UC-04` | `⚠ drift` | MEDIUM | `@UseCase("REFUNDS/UC-03")` on `POST /v1/refunds/{refundId}/decision`, which SDD §7.3 lists under REFUNDS/UC-04. Fix the annotation. |
+| Location | Marker | Summary | Severity | Recommended resolution | Why | Status |
+|----------|--------|---------|----------|------------------------|-----|--------|
+| `04-implementation/wallet-core.md § 7.4 Pattern: Outbox` | `⚠ drift` | SDD requires an outbox; code publishes to Kafka in the same method as the DB write (a dual-write, not an outbox) | High | Reconcile in code: write an outbox row in the aggregate's transaction and publish it from a separate publisher | CLAUDE.md makes the outbox mandatory; a dual-write loses or duplicates events on failure | Pending |
+| `04-implementation/wallet-core.md § 7.2` | `🆕 code-only` | Class `LegacyAdapter` exists in code but not in SDD | Low | Investigate its origin, then backfill the SDD or remove it from code | Its business meaning is unknown | Pending |
+| `04-implementation/notification-dispatcher.md` | `⛔ sdd-only` | Service in SDD §13 not yet built | Medium | Implement or defer | [Reason, e.g. its use cases sit in a later roadmap phase] | Pending |
+| `04-implementation/refund-service.md § REFUNDS/UC-04` | `⚠ drift` | `@UseCase("REFUNDS/UC-03")` on `POST /v1/refunds/{refundId}/decision`, which SDD §7.3 lists under REFUNDS/UC-04 | Medium | Reconcile in code: fix the annotation | Triage by `use_case` misses this entry point's requests | Pending |
 
 ### `16-references.md`
 

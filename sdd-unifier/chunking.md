@@ -13,7 +13,7 @@ The chunk skeletons are embedded in this skill folder under `chunks/` — they a
 3. **Related sections stay together.** Executive Summary + Scope + Risks all answer "what are we building and what could go wrong?" — they belong in one chunk (chunk 01).
 4. **Per-service detailed specs are split by service.** This is the SDD's biggest variable — split point is `§17.X` per service. One chunk per service: `13a-service-[slug].md`, `13b-service-[slug].md`, etc.
 5. **Every chunk is self-describing.** First lines are an HTML comment block identifying it.
-6. **The centralized catalogues are contract registries.** Chunk 10 (event hub) owns topic names, event names, and payload contracts; chunk 12 owns roles and permission tokens. Per-service chunks conform to them verbatim — see § Contract consistency below.
+6. **The centralized catalogues are contract registries.** Chunk 10 (event hub) owns topic names, event names, and payload contracts; chunk 11 owns the synchronous API contracts; chunk 12 owns roles and permission tokens. Per-service chunks conform to them verbatim — see § Contract consistency below.
 
 ---
 
@@ -31,8 +31,8 @@ The chunk skeletons are embedded in this skill folder under `chunks/` — they a
 | 07 | `07-cross-cutting-concerns.md` | `chunks/07-cross-cutting-concerns.md` | §11 Cross-Cutting Concerns defaults: DB Modeling, Multi-Tenancy, Deployment, Observability, Configuration, Security. | Medium |
 | 08 | `08-integrations.md` | `chunks/08-integrations.md` | §12 Integrations table — every external integration with protocol, mode, trigger, auth, timeout, rate limit, retries, fallback. | Small–Medium |
 | 09 | `09-services-summary.md` | `chunks/09-services-summary.md` | §13 Services Decomposition summary table (one row per service, with the BRD use cases it owns). | Small |
-| 10 | `10-events-hub.md` | `chunks/10-events-hub.md` | §14 Centralized Event Hub — hub topology decision (+ Mermaid), standard event envelope, topic registry, platform event catalog (per producing service), cross-cutting event guarantees, universal subscribers & doctrines, consistency notes, payload contract samples + coverage matrix. **The platform contract registry.** | Medium–Large |
-| 11 | `11-api-contracts.md` | `chunks/11-api-contracts.md` | §15 Service Integration API Contracts — the API contract registry: platform conventions (URI versioning, standard headers, RFC 9457 error model and standard error codes, auth, idempotency, resilience), the contract index, one `API-NN` block per synchronous integration (endpoint, security and auth, headers, parameters, body, responses, error codes, behaviour), coverage matrix, drift register, and the external contracts awaiting the user. External contracts are `TBD - external` until the user supplies the provider documentation. **The API contract registry.** | Medium–Large |
+| 10 | `10-events-hub.md` | `chunks/10-events-hub.md` | §14 Centralized Event Hub — hub topology decision (+ Mermaid), standard event envelope, topic registry, platform event catalog (per producing service), cross-cutting event guarantees, universal subscribers & doctrines, consistency notes, payload contract samples + coverage matrix, in-process domain events (§14.10, modular monolith or hybrid core). **The platform contract registry.** | Medium–Large |
+| 11 | `11-api-contracts.md` | `chunks/11-api-contracts.md` | §15 Service Integration API Contracts — the API contract registry: platform conventions (URI versioning, standard headers, RFC 9457 error model and standard error codes, auth, idempotency, resilience), the contract index, one `API-NN` block per synchronous integration (endpoint, security and auth, headers, parameters, body, responses, error codes, behaviour; an `Internal (in-process)` contract states port interface, operation, DTOs, raised errors, and permission token instead), coverage matrix, drift register, and the external contracts awaiting the user. External contracts are `TBD - external` until the user supplies the provider documentation. **The API contract registry.** | Medium–Large |
 | 12 | `12-centralized-user-roles.md` | `chunks/12-centralized-user-roles.md` | §16 Centralized User Roles & Authorities — user types, role catalogue, capability matrix, grant/invitation authority, role→services matrix, lifecycle/revocation rules, Mermaid diagrams, permission × role matrix, implementation seed & drift register. | Medium–Large |
 | 13a, 13b, … | `13a-service-[slug].md` | `chunks/13a-service-detailed-template.md` | §17.X Detailed Service Spec — one chunk per service. Each chunk contains the full per-service block (Boundaries, Input, Business Logic, Output, Integrations, DB Modeling with ERD/Tables/Migrations/Retention/Archival/Encryption, Multi-tenancy specs, API standards + List of APIs, Event Model (published + consumed) + Messaging Infra, Constraints, Error Handling, Observability, Developer Notes, Service-Level Diagrams, Compliance, Deployment Strategy, Future Enhancements). | Large each |
 | 14 | `14-performance-and-capacity.md` | `chunks/14-performance-and-capacity.md` | §18 Performance & Capacity (Load Estimates, Throughput Targets per service, Peak Scenarios, Stress Testing Strategy). | Medium |
@@ -40,13 +40,13 @@ The chunk skeletons are embedded in this skill folder under `chunks/` — they a
 | 16 | `16-operations-runbook.md` | `chunks/16-operations-runbook.md` | §20 Operations Runbook (Common Operations procedures, Diagnostics Cheatsheet, On-Call). | Medium |
 | 17 | `17-appendix-and-wishlist.md` | `chunks/17-appendix-and-wishlist.md` | §21 Appendix (BRD link, OpenAPI specs, event schemas, ADR repo, threat model, capacity plan, runbooks, diagrams source), §22 Wishlist. | Small |
 | 18 | `18-open-items-and-clarifications.md` | `chunks/18-open-items-and-clarifications.md` | **Open Items & Clarifications** (§23) — output of the post-generation cleared-context reviewer pass. Architecture-level gaps, missing scenarios, ADR ambiguities, and cross-chunk contract mismatches. Each item carries options AND a concrete **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply. Generated *after* the body by an independent reviewer; never authored by the same context that wrote the SDD. Followed by the user review-and-accept loop (see SKILL.md). | Small–Medium |
-| 19 | `19-e2e-system-design.md` | `chunks/19-e2e-system-design.md` | §24 End-to-End System Design — service landscape, system context, layered architecture, producer→topic→consumer fan-out maps, sync REST edges, key sagas, plus normative references into §14/§15/§16 (one fact, one home: nothing owned by chunks 10/11 is restated). All inline Mermaid. **Gated: written only after chunk 18 is cleared** (SKILL.md step 8b, conditions E1-E4); it consolidates the final reconciled and reviewed state of 09/10/11/12/13x. | Medium–Large |
+| 19 | `19-e2e-system-design.md` | `chunks/19-e2e-system-design.md` | §24 End-to-End System Design — service landscape, system context, layered architecture, producer→topic→consumer fan-out maps, sync edges (HTTP and in-process), key sagas, plus normative references into §14/§15/§16 (one fact, one home: nothing owned by chunks 10/11 is restated). All inline Mermaid. **Gated: written only after chunk 18 is cleared** (SKILL.md step 8b, conditions E1-E4); it consolidates the final reconciled and reviewed state of 09/10/11/12/13x. | Medium–Large |
 
 Total typical chunk count: **19 + N services** (so 21–25 for a typical multi-service system; chunk 19 appears once the e2e gate opens), plus the regenerated `[project-slug]-sdd-master.md` index.
 
 `[project-slug]-sdd-master.md` (skeleton: `chunks/sdd-master.md`) is the master index pointing at the chunks. Regenerate it per project and write it into the output folder alongside the chunks. In `parts` generation it also holds the Generation Progress table (`parts-mode.md`).
 
-`decision-log.md` is a **companion file**, not a numbered chunk: the decision register (ecosystem selection record, clarification Q&A, decision history). Created on first use, linked from `[project-slug]-sdd-master.md`, never merged. Structure: the `decision-log.md` reference in this skill folder.
+`decision-log.md` is a **companion file**, not a numbered chunk: the decision register (architecture questionnaire record, ecosystem selection record, clarification Q&A, decision history). Created on first use, linked from `[project-slug]-sdd-master.md`, never merged. Structure: the `decision-log.md` reference in this skill folder.
 
 **Parts.** In `parts` generation the chunks are written in three parts: 00-09, then `13x` + 10 + 12 + 11, then 14-18 with 19 behind the e2e gate (`parts-mode.md`).
 
@@ -95,7 +95,7 @@ The key goal is a smooth implementation: the LLD and implementers must read ONE 
 
 Generation order that makes this cheap: draft the per-service Event Models and List of APIs → consolidate into chunk 10 → back-propagate fixes into the `13x` chunks → chunk 12 (roles) → chunk 11 (API contracts) → §7.3 Entry points, APIs, and Events (derive-from-BRD) → reconcile (SKILL.md step 6a) → review (chunk 18) → chunk 19 last, behind the e2e gate.
 
-**Use-case traceability (derive-from-BRD).** Every BRD reference carries the key of its source BRD (chunk 00 § Document Lineage), so use cases from different BRDs never collide. §7.3 in chunk 03 follows the same rules as the registries: it is a consolidated view that states nothing its homes do not state. Ownership comes from 09, entry points from the `13x` List of APIs, flows from the 05 `**Use cases:**` lines, API contracts from §15.2, and events from §14.5. Step 6a checks it in both directions, together with every UC link (`brd-to-sdd.md` § Use-case traceability).
+**Use-case traceability (derive-from-BRD).** Every BRD reference carries the key of its source BRD (chunk 00 § Document Lineage), so use cases from different BRDs never collide. §7.3 in chunk 03 follows the same rules as the registries: it is a consolidated view that states nothing its homes do not state. Ownership comes from 09, entry points from the `13x` List of APIs, flows from the 05 `**Use cases:**` lines, API contracts from §15.2, and events from §14.5 and the §14.10 When column. Step 6a checks it in both directions, together with every UC link (`brd-to-sdd.md` § Use-case traceability).
 
 ---
 
@@ -106,18 +106,20 @@ Every chunk begins with this HTML comment block:
 ```markdown
 <!--
 CHUNK: 13a
-TITLE: Service Detailed Spec — Wallet Core
+TITLE: Detailed Service Spec - Wallet Core
 PROJECT: Wallet Management Service
 VERSION: 1.0
-PART OF: SDD — Wallet Management Service
+PART OF: SDD - Wallet Management Service
 -->
 
-# 17.1 Wallet Core
+# 17. Detailed Service Specs
+
+## 17.1 Wallet Core
 
 ...
 ```
 
-Heading levels inside a chunk preserve the template's numbering (`# 17.1`, `## Boundaries`, etc.) so merge handling is trivial — no demotion or promotion needed.
+Heading levels inside a chunk preserve the template's numbering (`# 17.`, `## 17.1`, `### Boundaries`, etc.) so merge handling is trivial — no demotion or promotion needed.
 
 ---
 
@@ -152,7 +154,7 @@ On merge, chunks are concatenated in file-sort order: 00, 01, 02, 03, 04, 05, 06
 
 Steps:
 
-1. Strip the `<!-- CHUNK: ... -->` comment from each chunk.
+1. Strip the `<!-- CHUNK: ... -->` comment and the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer from each chunk.
 2. Concatenate with a single blank line between chunks.
 3. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first).
 4. Regenerate the Table of Contents in chunk 00 against the merged heading outline.
@@ -174,8 +176,8 @@ When asked to split a combined SDD into chunks:
 2. Identify section boundaries by `# 1.`, `# 2.`, … headings.
 3. Group sections per the chunk map.
 4. **Section 17 needs special handling**: identify each `## 17.X` block and split into a separate chunk file `13a-service-[slug].md`, `13b-service-[slug].md`, …
-5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block.
-6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed).
+5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
+6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed). Links are rebased: a link to a BRD or LLD (`./brd-…`, `./BRD-…`, `./lld-…`, `./LLD-…`) gains `../`, and an in-file anchor (`#171-…`, `#841-…`) becomes a link to the chunk that now holds that heading (`./13a-service-[slug].md#171-…`).
 7. Write each chunk file.
 8. Write `[project-slug]-sdd-master.md`. The cover's **Reconciled:** and **E2E gate (§24):** lines move into its Generation Progress (the gate line as **E2E gate (chunk 19):**); chunk 00 does not keep them.
 9. Keep the original combined file.

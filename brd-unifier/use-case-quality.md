@@ -52,6 +52,17 @@ Each sub-section has a quality bar. The tests below help you recognise whether y
 
 **Test:** If the user reads the `Why` and asks "so what?", the `Why` hasn't done its job.
 
+## Preconditions - what must hold before step 1
+
+**Good:** A state the actor or the business can check before starting ("The customer has a verified account."). A state that another use case produces names that use case ("The supplier is onboarded (UC-03)."): the implementation plan turns it into a dependency (`delivery-chunks.md` § Chunk 15). `None.` when nothing must hold.
+
+**Bad:**
+- A Main Flow step restated as a precondition.
+- A technical state ("the token is cached", "the service is up").
+- A state nothing in the BRD can produce, left unflagged: it is a missing prerequisite, so flag it.
+
+**Test:** For each precondition, can you name the use case, the integration, or the outside party that makes it true?
+
 ## Main Flow — the detailed steps
 
 This is where the use case is won or lost. The Main Flow is the contract between the BRD and the delivery team.
@@ -172,14 +183,14 @@ Merge what looks like two UCs into one when:
 - Numbering is sequential across the whole BRD: `UC-01`, `UC-02`, … — not per persona chunk.
 - If the source (SoW, RFP, prior conversation) already uses a scheme, keep it and note the mapping.
 - Never renumber UCs mid-document if the user has seen the prior numbering — renumbering breaks cross-references (including the matrix). If numbering must change, flag it in the changelog.
-- An ID is never reused. A use case that disappears keeps its row in the Use Case Summary: `Merged into UC-NN` when it was folded into another, `Removed: [reason]` when it was dropped. Such a row has no detailed block and is left out of the matrix, the diagrams, the to-do step 5 tables, the implementation plan, and the test cases.
+- An ID is never reused. A use case that disappears keeps its row in the Use Case Summary, with the marker at the start of its Description cell: `Merged into UC-NN` when it was folded into another, `Removed: [reason]` when it was dropped. Such a row has no detailed block and is left out of the matrix, the diagrams, the to-do step 5 tables, the implementation plan, and the test cases.
 - A new use case takes the next free ID, even if that puts IDs out of order inside a persona group.
 
 ## Matrix consistency (chunk 07)
 
 The Users & Use Cases Matrix is derived, not authored independently. After writing or changing any UC:
 
-1. Every UC ID appears exactly once as a matrix row; every persona from chunk 04 appears exactly once as a column.
+1. Every UC ID appears exactly once as a matrix row (rows marked `Merged into UC-NN` or `Removed` are left out); every persona from chunk 04 appears exactly once as a column.
 2. A `Yes` cell must correspond to the UC's Primary or Supporting Actor, and every persona named as a UC actor must have a `Yes`. External supporting parties are never columns and need no `Yes`.
 3. Conditional access ("own records only", "requires second approval") is a numbered footnote, never a bare `Yes`.
 4. A persona column with no `Yes` at all, or a UC row where everyone is allowed everything, is a red flag — recheck the personas and the UC actors.

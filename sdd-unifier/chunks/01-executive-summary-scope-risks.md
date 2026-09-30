@@ -31,6 +31,8 @@ Key technical bets and trade-offs:
 - [Bet 1 and rationale]
 - [Bet 2 and rationale]
 
+**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is]
+
 ---
 
 # 2. Scope

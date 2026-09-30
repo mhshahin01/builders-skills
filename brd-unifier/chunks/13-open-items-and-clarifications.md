@@ -7,7 +7,7 @@ DEPENDS_ON: all preceding chunks (00 through 12)
 PART OF: BRD - [Project Name]
 PURPOSE: Output of the post-generation adversarial review. Captures gaps, missing scenarios, corner cases, and ambiguities flagged by a fresh-context reviewer. Every item carries a concrete Recommended Answer, ready to be applied to the BRD body once the user accepts it.
 GENERATED_BY: brd-unifier post-generation reviewer (cleared-context subagent run after the main BRD body is complete).
-WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, or defer the Recommended Answer. Accepted answers are applied to the referenced chunk(s) as plain requirement text, the item moves to the Resolution Log, and the Changes Log is bumped.
+WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, or defer the Recommended Answer. Accepted answers are applied to the referenced chunk(s) as plain requirement text, the item gets a Resolution Log row, and the Changes Log is bumped. Deferred and rejected items get a Resolution Log row too.
 REGISTER: When an item is accepted and applied, the decision narrative (the question, options, choice, date, rationale) is recorded in `decision-log.md`, the companion register, with a `Rule home:` link to the section now carrying the settled rule. This chunk keeps only the item's current status line and the Resolution Log row; no decision storytelling here or in the body chunks.
 LATER ITEMS: The consistency check (14-todo.md step 2) and the writing of chunks 15-17 can add open items after the first review. They use the same schema, say where they came from in their Where field, e.g. "(raised by consistency check CF-03)", and go through the same acceptance loop before anything is applied.
 DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or Deferred. Closed means Accepted - applied, Adjusted - applied, or Rejected.
@@ -73,7 +73,7 @@ DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or 
 
 ## Resolution Log
 
-<!-- When an open item is accepted (or adjusted) and applied, move its summary here with a pointer to the BRD update (chunk + heading). Keeps the audit trail. -->
+<!-- When an open item is decided (accepted or adjusted and applied, deferred, or rejected), add its row here: for an applied item, a pointer to the BRD update (chunk + heading); for a deferred or rejected one, a pointer to its entry above. Keeps the audit trail. -->
 
 | ID | Resolution Date | Resolved In | Outcome |
 |----|----------------|-------------|---------|

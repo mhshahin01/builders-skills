@@ -19,7 +19,7 @@ Per `chunks/04-implementation-template.md` § 7.4, every applied pattern carries
 4. **Rationale** — one-line specific to this service.
 5. **Mermaid class diagram** — pattern structure.
 6. **Pseudocode skeleton** — key methods.
-7. (FROM-CODE) confidence flag if pattern detection used semantic heuristics.
+7. (FROM-CODE) `> Confirm:` on the detection, dropped only when a test exercises the pattern (`confidence-rules.md`).
 
 ---
 
@@ -103,9 +103,9 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **Triggering condition:** any Spring component (`@Service`, `@Component`, `@RestController`, `@Configuration`).
 
-**FROM-SDD detection:** always applied; mentioned in `04-implementation/<service>.md` § 7.5 DI Graph.
+**FROM-SDD detection:** always applied; mentioned in `04-implementation/<service>.md` § 7.5 Dependency Injection Graph.
 
-**FROM-CODE detection:** check for absence of `@Autowired` on fields. Any presence is a `⚠ drift` flag.
+**FROM-CODE detection:** check for absence of `@Autowired` on fields. Any presence is a `⚠ policy` finding (§ Anti-patterns to flag).
 
 ### Records for DTOs
 
@@ -115,7 +115,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **FROM-SDD detection:** always applied; DTO types listed in `04-implementation/<service>.md` § 7.2 Domain Types as `record`.
 
-**FROM-CODE detection:** check class declarations matching `*Dto`, `*Request`, `*Response`. Non-record types here are `⚠ drift` flag.
+**FROM-CODE detection:** check class declarations matching `*Dto`, `*Request`, `*Response`. Non-record types here are a `⚠ policy` finding (§ Anti-patterns to flag).
 
 ### Multi-tenancy enforcement (every shared-schema index includes tenant_id)
 
@@ -125,7 +125,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **FROM-SDD detection:** SDD §11 Cross-Cutting + per-service Multi-Tenancy Specifications.
 
-**FROM-CODE detection:** Flyway migrations enumerated; check that every CREATE INDEX on a shared-schema table includes `tenant_id` as the leading column. Missing → `⚠ drift` HIGH severity.
+**FROM-CODE detection:** Flyway migrations enumerated; check that every CREATE INDEX on a shared-schema table includes `tenant_id` as the leading column. Missing → a `⚠ policy` finding, HIGH severity (§ Anti-patterns to flag).
 
 ### Resilience4j (timeouts + retry + circuit breaker + bulkhead) on downstream provider calls
 
@@ -191,7 +191,7 @@ These are **discretionary** — applied only when the triggering condition is ge
 
 ### Composition over inheritance
 
-**CLAUDE.md rule:** *"Composition over inheritance."* This is a *guideline*, not a pattern slot. Surface it in `04-implementation/<service>.md` § 7.5 DI Graph by showing collaboration via injected dependencies rather than class hierarchies.
+**CLAUDE.md rule:** *"Composition over inheritance."* This is a *guideline*, not a pattern slot. Surface it in `04-implementation/<service>.md` § 7.5 Dependency Injection Graph by showing collaboration via injected dependencies rather than class hierarchies.
 
 ---
 
@@ -211,6 +211,7 @@ The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-quest
 | Distributed 2PC / `XA` transactions | "No distributed 2PC" | HIGH |
 | Cross-service shared DB schema | "A service's database is private" | HIGH |
 | Cross-tenant query without tenant_id filter | "Cross-tenant queries forbidden at the application layer" | HIGH |
+| Shared-schema index without `tenant_id` as its leading column | "Every index in shared-schema includes tenant_id" | HIGH |
 | Logging tenant_id / PII at INFO | "Never log tenant_id, reseller_id, or PII at INFO level" | HIGH |
 | Schema migration that's not additive | "Backward compatibility on Kafka schemas: additive changes only" | HIGH |
 | Stack traces in error responses | "Errors are actionable; never expose stack traces or raw codes" | MEDIUM |

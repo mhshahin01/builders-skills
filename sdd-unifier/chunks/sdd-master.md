@@ -16,7 +16,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 > **Specs note:** The constitution-grade `Specs` chunk (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with each child LLD (`../lld-[lld-slug]/17-specs.md`), synthesised from this SDD's body. The SDD carries no Specs chunk.
 
-> **Decision history:** [decision-log.md](./decision-log.md) holds the ecosystem selection record, the clarification Q&A, and how each decision was reached. The chunks below state only the settled design. (Link it once the register exists; it is created on first use and never merged.)
+> **Decision history:** [decision-log.md](./decision-log.md) holds the architecture questionnaire record, the ecosystem selection record, the clarification Q&A, and how each decision was reached. The chunks below state only the settled design. (Link it once the register exists; it is created on first use and never merged.)
 
 ---
 
@@ -31,8 +31,8 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 | Part | Chunks | Status | Completed |
 |------|--------|--------|-----------|
 | 1 | 00-09 | [Pending / In progress (last step) / Complete] | [YYYY-MM-DD] |
-| 2 | 13x, 10, 12, 11 | [Pending (part 2)] | - |
-| 3 | 14-18, 19 (gated) | [Pending (part 3)] | - |
+| 2 | 13x, 10, 12, 11 | [Pending / In progress (last step) / Complete] | - |
+| 3 | 14-18, 19 (gated) | [Pending / In progress (last step) / Complete] | - |
 
 **Reconciled:** [YYYY-MM-DD of the last clean step 6a run]
 **E2E gate (chunk 19):** [Locked | Open - Up to date | Stale] - [open conditions E1-E4, if any]
@@ -113,9 +113,9 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 |---------|-------|
 | 13. Services Decomposition (summary table) | [09-services-summary.md](./09-services-summary.md) |
 | 14. Centralized Event Hub (Platform Event Catalog & Payload Contracts) | [10-events-hub.md](./10-events-hub.md) |
-| 15. Service Integration API Contracts (URI, headers, body, error codes, security, auth) | [11-api-contracts.md](./11-api-contracts.md) |
+| 15. Service Integration API Contracts (HTTP: URI, headers, body, error codes, security, auth; in-process: port, DTOs, errors, permission) | [11-api-contracts.md](./11-api-contracts.md) |
 | 16. Centralized User Roles & Authorities (platform-wide) | [12-centralized-user-roles.md](./12-centralized-user-roles.md) |
-| 17.1 Detailed Service Spec (full template) | [13a-service-detailed-template.md](./13a-service-detailed-template.md) |
+| 17.1 [Service 1 Name] - Detailed Spec | [13a-service-[slug].md](./13a-service-[slug].md) |
 
 <!-- When a real SDD has multiple services, add rows here:
 | 17.2 [Service 2 Name] - Detailed Spec | [13b-service-[slug].md](./13b-service-[slug].md) |
@@ -205,7 +205,7 @@ Each `13x` service chunk contains these sub-sections in order:
 |   +-- 10-events-hub.md ................ platform event catalog + payload contracts (event contract registry)
 |   +-- 11-api-contracts.md ............. service integration API contracts (API contract registry)
 |   +-- 12-centralized-user-roles.md .... platform-wide roles & authorities catalogue
-|   +-- 13a-service-detailed-template.md  full spec for service 1 (events match 10, APIs match 11, roles match 12)
+|   +-- 13a-service-[slug].md ........... full spec for service 1 (events match 10, APIs match 11, roles match 12)
 |   +-- [13b, 13c, ...] ................. one chunk per additional service
 +-- 14-performance-and-capacity.md ...... load, throughput, peaks, stress testing
 +-- 15-environments.md .................. Dev / SIT / UAT / Prod

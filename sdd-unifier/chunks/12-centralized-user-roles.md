@@ -21,7 +21,7 @@ CONSISTENCY_RULE: Role names, permission tokens, and per-service authorization n
 
 [Business overview.]
 
-## 16.2 Resolution Model — How a Role Becomes an Allowed Action
+## 16.2 Resolution Model - How a Role Becomes an Allowed Action
 
 <!-- Describe the runtime path from identity to permitted action: token claims -> role/sub-role resolution -> permission lookup -> contextual gates (tenant scope, ownership, module enablement, subscription status). Name where each gate is enforced (edge gateway, authorization service, service-local check). -->
 
@@ -36,7 +36,7 @@ CONSISTENCY_RULE: Role names, permission tokens, and per-service authorization n
 | `[USER_TYPE]` | [Platform / Tenant / End-customer] | [IAM realm / pool] | [Description] |
 | `[USER_TYPE]` | [Plane] | [Source] | [Description] |
 
-## 16.4 Role Catalogue — Authorities & Related Services
+## 16.4 Role Catalogue - Authorities & Related Services
 
 <!-- One sub-section per Tier-1 user type. Each table: role, scope, core authorities (verbs), related services. -->
 
@@ -52,7 +52,7 @@ CONSISTENCY_RULE: Role names, permission tokens, and per-service authorization n
 |---|---|---|---|
 | `[SUB_ROLE]` | [Scope] | [Authorities] | [Services] |
 
-### 16.4.3 Platform Plane (operator — outside tenant tenancy)
+### 16.4.3 Platform Plane (operator - outside tenant tenancy)
 
 | Role | Scope | Core authorities | Related services |
 |---|---|---|---|
@@ -80,7 +80,7 @@ CONSISTENCY_RULE: Role names, permission tokens, and per-service authorization n
 
 | Role | [Service 1] | [Service 2] | [Service 3] |
 |---|---|---|---|
-| `[ROLE]` | [admin / write / read / -] | [—] | [—] |
+| `[ROLE]` | [admin / write / read / -] | [-] | [-] |
 
 ## 16.8 Lifecycle, Scope & Revocation Rules
 
@@ -172,4 +172,4 @@ sequenceDiagram
 |---|---|---|---|---|
 | 1 | [BRD matrix vs 13x vs this chunk] | [Mismatch] | [Fixed on YYYY-MM-DD / flagged as OI-NN] | [Open / Fixed in vX.X] |
 
-<!-- MASTER: [project-slug]-sdd-master.md | PREV: 11-api-contracts.md | NEXT: 13a-service-detailed-template.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 11-api-contracts.md | NEXT: 13a-service-[slug].md -->

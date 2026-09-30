@@ -51,7 +51,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 ## Downstream outputs
 
-<!-- State: Locked (gate shut, never generated) / Up to date ([date], BRD v[X.X]) / Provisional (TD-NN: a gap found while writing it) / Stale (the BRD or this to-do changed after it was written; locked until the gate is open again). -->
+<!-- State: Locked (gate shut, never generated) / Up to date ([date], BRD v[X.X]) / Provisional (TD-NN: a gap found while writing it) / Stale (a change listed in delivery-chunks.md § Refresh triggers came after it was written; locked until the gate is open again). -->
 
 | Output | File | State | Waiting for |
 |--------|------|-------|-------------|
@@ -91,12 +91,12 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 | | |
 |---|---|
 | **Status** | [Status] |
-| **Required inputs** | All BRD chunks 00-13 (and 05 / 06* diagrams once step 5 has run; and 15-17 for check C10) |
+| **Required inputs** | All BRD chunks 00-13 (and 05 / 06* diagrams once step 5 has run; chunk 14 itself, and 15-17 once they exist, for check C10) |
 | **Expected output** | Every finding recorded below with its affected chunks and identifiers, impact, and a disposition; confirmed corrections applied to every affected chunk; a recheck run recorded |
 | **Completion criteria** | The latest check run is dated after the last change to chunks 00-13, and every finding has a documented disposition. Findings deferred for clarification remain visible as open items (TD / OI), which keeps step 1 open. Run 1, made at generation, leaves this step `In progress`. |
 | **Evidence** | [None yet] |
 
-**Checks performed:** C1 conflicting requirements, C2 terminology, C3 scope, C4 duplicated requirements, C5 missing requirements, C6 broken references, C7 use cases vs acceptance criteria, C8 derived views (Use Case Summary, matrix), C9 diagrams vs narrative (after step 5), C10 delivery chunks vs body.
+**Checks performed:** C1 conflicting requirements, C2 terminology, C3 scope, C4 duplicated requirements, C5 missing requirements, C6 broken references, C7 use cases vs acceptance criteria, C8 derived views (Use Case Summary, matrix), C9 diagrams vs narrative (after step 5), C10 delivery chunks vs body (chunk 14 at every write; 15-17 once they exist).
 
 ### Check runs
 
@@ -153,18 +153,19 @@ Do not edit any file during the session. End with a numbered decision list I can
 
 | | |
 |---|---|
-| **Status** | Not started |
-| **Required inputs** | Finalised use cases (06*), the matrix ([07](./07-users-use-cases-matrix.md)), UI/UX Expectations ([11](./11-summary-and-uiux.md)), decisions from steps 1-3, and the project's global UI/UX constitution when one exists (`ui-ux-global-constitution.md`, sections 2, 3, 12, 13 and 14) [Found: path / No UI/UX constitution found; chunk 11 used] |
+| **Status** | Pending gate |
+| **Gate** | Starts only after steps 1-3 are `Complete` with evidence (conditions G1-G3 above, verified in the files). Runs in parallel with step 5; neither waits for the other. The product manager's confirmation is the evidence for step 3. No override. |
+| **Required inputs** | Finalised use cases (06*), the matrix ([07](./07-users-use-cases-matrix.md)), UI/UX Expectations ([11](./11-summary-and-uiux.md)), decisions from steps 1-3, and the project's global UI/UX constitution when one exists (`ui-ux-global-constitution.md`: its token, responsive, mockups and prototypes, and Figma prototypes sections, by name) [Found: path / No UI/UX constitution found; chunk 11 used] |
 | **Expected output** | A playable, responsive prototype covering the table below, reviewed against the criteria, with links recorded in each use case's UI/UX section |
 | **Completion criteria** | Every row is `Approved`; the product manager confirms the review and a dated play-through; the Figma links are recorded in the use cases |
 | **Evidence** | [None yet. Play-through: date and result once confirmed.] |
 
-**Standard to follow.** When the project has a constitution, the generating tool or agent reads it before producing any frame; otherwise chunk 11 is the visual standard and the rules below still apply. For Figma, section 14 applies in full; for another tool, sections 12 and 13 apply and the section 14 rules are applied in their nearest equivalent. P1 rows: every Main Flow playable from the named start frame with no dead ends, every actor-facing control wired, frames for mobile, tablet and desktop. P2 rows: connected to neighbouring frames, desktop and mobile. States are variants, not duplicate frames.
+**Standard to follow.** When the project has a constitution, the generating tool or agent reads it before producing any frame; otherwise chunk 11 is the visual standard and the rules below still apply. For Figma, the constitution's Figma prototypes section applies in full; for another tool, its responsive and mockups and prototypes sections apply and the Figma prototype rules are applied in their nearest equivalent. P1 rows: every Main Flow playable from the named start frame with no dead ends, every actor-facing control wired, frames for mobile, tablet and desktop. P2 rows: connected to neighbouring frames, desktop and mobile. States are variants, not duplicate frames.
 
 **Ready-to-use mockup brief** (recommended; run it yourself in the mockup tool or agent):
 
 ```text
-[With a constitution:] Use ui-ux-global-constitution.md as the shared visual and interaction baseline. Read it before generating any frame: sections 2, 3, 12, 13 and 14.
+[With a constitution:] Use ui-ux-global-constitution.md as the shared visual and interaction baseline. Read it before generating any frame: its token, responsive, mockups and prototypes, and Figma prototypes sections.
 [Without one:] Use the UI/UX Expectations in 11-summary-and-uiux.md as the visual baseline.
 Use the [Project Name] BRD v[X.X] in ./brd-[project-slug]/ for the workflows, fields, permissions and business rules. Read [project-slug]-brd-master.md first, then 14-todo.md.
 Create a playable [Figma / tool] prototype covering every row of the Mockup coverage table below, for [target users].
@@ -177,11 +178,11 @@ Return the share link (view permission, opening on the start frame) and the list
 
 ### Mockup coverage
 
-<!-- Use the screen identifiers already defined in chunk 11 or the use cases' UI/UX sections; assign MK-NN only where none exist. -->
+<!-- One row per screen or flow, each with its own MK-NN: the BRD's screen reference. When the source material defined a screen ID, add it in the Screen / flow cell; never invent one. -->
 
 | Mockup | Screen / flow | Use cases | Requirements and decisions to honour | States to cover | Priority | Playable | Breakpoints delivered | Status | Play-through | Figma link |
 |--------|---------------|-----------|--------------------------------------|-----------------|----------|----------|-----------------------|--------|--------------|-----------|
-| MK-01 | [Screen or flow name] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Mobile, tablet, desktop] | [Not started / Blocked by TD-NN / In review / Approved] | [Confirmed by PM, date, result] | [Link] |
+| MK-01 | [Screen or flow name; the source's screen ID only if the source defined one] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Mobile, tablet, desktop] | [Not started / Blocked by TD-NN / In review / Approved] | [Confirmed by PM, date, result] | [Link] |
 
 **Expected coverage:** every use case with an actor-facing interaction has at least one screen; every observable Main Flow step is visible on a screen; every alternate or exception flow with a user-visible state has that state; role differences follow the matrix; global standards follow chunk 11; P1 rows are fully interactive and delivered at mobile, tablet and desktop; P2 rows are connected and delivered at desktop and mobile.
 

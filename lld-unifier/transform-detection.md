@@ -53,7 +53,7 @@ When the user picks `from-code` or `hybrid` and the skill detects that the code 
    ```markdown
    > **Status:** Not yet built. SDD-described in [SDD path] §17.X. [Hybrid: `⛔ sdd-only`]
    > **Owns use cases (SDD 09), not built yet:** [[KEY]/UC-NN](...), … [or: None]
-   > **TODO:** when this service is scaffolded, re-run `/lld-unifier --from-code <service-path>` to populate this chunk.
+   > **TODO:** when this service is scaffolded, re-run lld-unifier in the from-code direction on `<service-path>` (SKILL.md step 9, "re-run from-code") to populate this chunk.
    ```
    This placeholder is the rule in every mode that reads code (from-code, hybrid, partial) whenever an expected service has no code at all; hybrid never writes a class skeleton for it. The use-case trace accepts it: the use cases it owns are listed as not built, with no invented workflow. An SDD-only endpoint or event inside a built service is not a missing service: it is drift (hybrid) or a `> Confirm:` (from-code).
 4. **Notes the partial-code choice** in `15-open-questions.md` § Decisions Pending.
@@ -92,7 +92,7 @@ The skill primarily targets the user's CLAUDE.md stack (Java 21 / Spring Boot 3.
 
 - Path is a folder ending in `sdd-*`.
 - Contains files named `00-cover-and-changelog.md`, `01-executive-summary-scope-risks.md`, `02-ecosystem-overview.md`, etc.
-- Each file starts with `<!-- CHUNK: NN ... PART OF: SDD — ... -->`.
+- Each file starts with `<!-- CHUNK: NN ... PART OF: SDD - ... -->`.
 
 If 4+ of these match, it's an sdd-unifier chunked output.
 
@@ -109,7 +109,7 @@ In either case, the SDD is read in full; field mapping per `sdd-to-lld.md`.
 
 Same recognition rules as in `sdd-unifier:transform-detection.md` (BRDs follow the brd-unifier convention).
 
-A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location; an older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things: the IDs its use-case trace cites (use case headings in 05 and 06x, screen IDs in 11 and the use cases' UI/UX sections, `MK-NN` and Figma links in 14 Mockup coverage, test cases in 16; `sdd-to-lld.md` § Use-case traceability), and supplementary purpose, scope, and glossary content that the SDD might paraphrase.
+A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location; an older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things: the IDs its use-case trace cites (use case headings in 05 and 06x, the `MK-NN` rows and Figma links in 14 Mockup coverage (the screen references), any screen ID the BRD text carries from its source, test cases in 16; `sdd-to-lld.md` § Use-case traceability), and supplementary purpose, scope, and glossary content that the SDD might paraphrase.
 
 ### SoW / Statement of Work
 

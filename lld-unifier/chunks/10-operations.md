@@ -30,7 +30,7 @@ PART OF: LLD - [Project Name]
 |---------|-----------------|------------------|
 | `[service-a]` | App responds | DB pool healthy, Kafka producer ready, Flyway migrations complete |
 
-## 13.3 Metrics (RED — Rate, Errors, Duration)
+## 13.3 Metrics (RED: Rate, Errors, Duration)
 
 > **Default per service:**
 
@@ -43,7 +43,7 @@ PART OF: LLD - [Project Name]
 | `outbox_oldest_age_seconds` | gauge | `service` | Outbox liveness |
 | `db_pool_active` | gauge | `service`, `pool` | DB pool saturation |
 
-> **Per-service custom metrics** are listed in each service's `04-implementation/<service>.md` § Observability subsection (if applicable).
+> **Per-service custom metrics** (from each service's SDD `13x` Observability) are added to this table, one row per metric with its `service` label.
 
 ## 13.4 Logs
 
@@ -69,11 +69,11 @@ PART OF: LLD - [Project Name]
 
 | Dashboard | Tool | Audience | URL |
 |-----------|------|----------|-----|
-| `[Project] — Service Health` | [Grafana] | All | [URL] |
-| `[Project] — Outbox & Saga` | [Grafana] | SRE | [URL] |
-| `[Project] — Tenant View` | [Grafana] | Customer Success | [URL] |
+| `[Project] - Service Health` | [Grafana] | All | [URL] |
+| `[Project] - Outbox & Saga` | [Grafana] | SRE | [URL] |
+| `[Project] - Tenant View` | [Grafana] | Customer Success | [URL] |
 
-> `> TODO: dashboard URLs — verify`
+> `> TODO: dashboard URLs - verify`
 
 ## 13.7 Alerts
 

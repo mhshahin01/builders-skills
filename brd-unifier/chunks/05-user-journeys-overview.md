@@ -30,7 +30,7 @@ LANGUAGE: Business language only. No technology names, protocols, or implementat
 
 ## Use Case Summary
 
-<!-- Every use case in the BRD, one row each. UC numbering is sequential across the whole BRD. Group rows per persona - the detailed chunks (06a, 06b, ...) split per persona in the same order. -->
+<!-- Every use case in the BRD, one row each. UC numbering is sequential across the whole BRD. A use case that disappears keeps its row, and its Description cell starts with `Merged into UC-NN.` or `Removed: [reason].` (use-case-quality.md § UC numbering and IDs). Group rows per persona - the detailed chunks (06a, 06b, ...) split per persona in the same order. -->
 
 | UC ID | Use Case | Primary Actor | Description |
 |-------|----------|---------------|-------------|
@@ -68,4 +68,4 @@ flowchart LR
 **Summary:** [1-2 sentences: who does what inside the product boundary, and the relationships shown.]
 -->
 
-<!-- MASTER: [project-slug]-brd-master.md | PREV: 04-scope-and-personas.md | NEXT: 06a-use-cases-detailed.md -->
+<!-- MASTER: [project-slug]-brd-master.md | PREV: 04-scope-and-personas.md | NEXT: 06a-use-cases-[persona-slug].md -->

@@ -29,11 +29,11 @@
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link. Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md) whose Related SDD line links to this file are added if missing, stale rows are flagged, never deleted. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD last read (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this file are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier)" to its SDD version cell and names the LLD in the handoff; it never writes into the LLD, whose next run rewrites its own row and clears the note. Before any LLD exists: one row "None yet". -->
 
-| LLD | Scope (§13 services) | Direction | Version | Link |
-|-----|----------------------|-----------|---------|------|
-| None yet | - | - | - | - |
+| LLD | Scope (§13 services) | Direction | Version | SDD version | Link |
+|-----|----------------------|-----------|---------|-------------|------|
+| None yet | - | - | - | - | - |
 
 ---
 
@@ -88,6 +88,8 @@ Key technical bets and trade-offs:
 
 - [Bet 1 and rationale]
 - [Bet 2 and rationale]
+
+**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is]
 
 ---
 
@@ -169,12 +171,12 @@ Owner: who will own the mitigation and the monitoring of the risk.
 <!--
 Summary of the platform-wide technology stack and shared infrastructure that all services in this SDD must conform to.
 This section is the single source of truth for the implementation constitution and planned technology choices.
-SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem selection, the skill first presents the proposed ecosystem (BRD Technical Inputs verbatim > CLAUDE.md defaults > BRD-informed recommendations; in TRANSFORM, the source SDD's named technologies, versions, and topology come first, locked as `source SDD`) for a one-shot accept-all; if not accepted, it walks the user through the items in grouped batches, highlighting the recommended option per item with the BRD evidence that drives it. Record the outcome per row in the Notes column (e.g., "BRD-mandated", "source SDD", "default accepted", "user override - see ADR-NN").
+SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem selection, the skill first presents the proposed ecosystem (BRD Technical Inputs verbatim > CLAUDE.md defaults > BRD-informed recommendations; in TRANSFORM, the source SDD's named technologies, versions, and topology come first, locked as `source SDD`) for a one-shot accept-all; if not accepted, it walks the user through the items in grouped batches, highlighting the recommended option per item with the BRD evidence that drives it. Record the outcome per row in the Notes column (e.g., "BRD-mandated", "source SDD", "questionnaire", "default", "recommended", "user override - see ADR-NN").
 -->
 
 | Layer | Technology / Service | Version / Tier | Notes |
 |-------|----------------------|----------------|-------|
-| Architecture Doctrine | [Microservices + EDA (event-driven backbone) + DDD (bounded contexts) + Hexagonal (ports & adapters) per service - the platform default] | n/a | [Confirmed in ecosystem selection; deviations need an ADR] |
+| Architecture Doctrine | [Style and communication model from the architecture questionnaire, e.g., Modular monolith with in-process module ports, or Microservices + EDA backbone; DDD (bounded contexts) + Hexagonal (ports & adapters) in every style] | n/a | [questionnaire (ADR-01), or the source when it did not run, else proposed and flagged] |
 | Compute / Infra | [On-prem Kubernetes / EKS / AKS / GKE] | [vX.Y] | [Cluster topology, node groups, multi-AZ, etc.] |
 | Container Runtime | [containerd / Docker] | [vX.Y] | [Notes] |
 | Service Mesh / Ingress | [Istio / Linkerd / NGINX Ingress / Cloud LB] | [vX.Y] | [mTLS, traffic policies] |
@@ -189,17 +191,17 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 | Observability: Logging | [Loki / ELK / CloudWatch / other] | [Version] | [Retention, indices] |
 | Observability: Metrics | [Prometheus + Grafana / Datadog / other] | [Version] | [Scrape interval, dashboards] |
 | Observability: Tracing | [OpenTelemetry + Jaeger / Tempo / X-Ray] | [Version] | [Sampling rate] |
-| Backend Runtime | [Language + Framework, e.g., Java 21 / Spring Boot 3.4+] | [Version] | [Layering rules] |
+| Backend Runtime | [Language + Framework, e.g., Java 21 / Spring Boot 3.5+] | [Version] | [Layering rules] |
 | Frontend Stack | [Framework + UI lib, e.g., Angular / Tailwind / PrimeNG] | [Version] | [Design system, primary color] |
 | Reporting / BI | [Tool] | [Version] | [Read-replica or warehouse-backed] |
 
 **Ecosystem-level rules:**
 
-<!-- The first three rules are platform defaults (EDA / DDD / Hexagonal). Keep them unless the user explicitly overrode them during ecosystem selection - an override needs an ADR in §10. -->
+<!-- The first three rules are platform defaults (EDA / DDD / Hexagonal), adapted to the style in ADR-01 (architecture-questionnaire.md § Effect on the SDD): microservices keep the service wording; a modular monolith or hybrid core also writes the module variant. Any other override of them needs an ADR in §10. -->
 
-- **Event-driven by default (EDA):** every cross-service state change travels as an asynchronous event through the Centralized Event Hub (§14); synchronous REST is reserved for true request-response, capped at one hop. Outbox pattern mandatory - no dual-writes.
-- **DDD bounded contexts:** one service owns one bounded context, one database, one team of decisions. No shared schemas across services; the §13 decomposition follows domain boundaries, not technical tiers.
-- **Hexagonal architecture (ports & adapters) per service:** domain core isolated from transport and infrastructure; inbound/outbound adapters (REST, messaging, persistence, providers) plug into ports. Provider integrations sit behind anti-corruption adapters.
+- **Event-driven by default (EDA):** every cross-service state change travels as an asynchronous event through the Centralized Event Hub (§14); synchronous REST is reserved for true request-response, capped at one hop. In a modular monolith or hybrid core, module-to-module changes use in-process domain events (§14.10) and `Internal (in-process)` port calls (§15); anything that leaves the process goes through the hub. Outbox pattern mandatory - no dual-writes.
+- **DDD bounded contexts:** one service or module owns one bounded context, its data, and one team of decisions: one database per service, or one schema per module with no cross-module joins in a modular monolith. No shared schemas across services or modules; the §13 decomposition follows domain boundaries, not technical tiers.
+- **Hexagonal architecture (ports & adapters) per service or module:** domain core isolated from transport and infrastructure; inbound/outbound adapters (REST, messaging, persistence, providers) plug into ports, and modules call each other only through ports. Provider integrations sit behind anti-corruption adapters.
 - [Rule, e.g., timezone - UTC for all datetimes]
 - [Rule, e.g., ID strategy - UUIDv7 primary keys]
 - [Rule, e.g., service-to-service auth]
@@ -252,14 +254,15 @@ flowchart LR
 
 <!--
 Derive-from-BRD only. For an SDD with no source BRD, keep this heading and write: "Not applicable - no source BRD."
-One row per use case of every source BRD, including the rows a BRD marks "Merged into UC-NN" or "Removed". Rows are grouped by BRD in the order of the Source BRDs register (§ Document Lineage in the cover), each group under a row naming the BRD (data source) with its version, key, and a link to its master. Inside a group, rows follow that BRD's Use Case Summary. Every use case carries its BRD key: [KEY/UC-NN](link).
+One row per use case of every source BRD, including the rows a BRD marks "Merged into UC-NN" or "Removed". Rows are grouped by BRD in the order of the Source BRDs register (§ Document Lineage in the cover), each group under a row naming the BRD (data source) with its version, key, and a link to its master or combined file (its Source BRDs Link). Inside a group, rows follow that BRD's Use Case Summary. Every use case carries its BRD key: [KEY/UC-NN](link).
 A consolidated view: every column is read from its home and never states a mapping the home does not state.
-  Use case (BRD), Title, Status: the BRD Use Case Summary (title exactly as the BRD writes it).
+  Use case (BRD), Title: the BRD Use Case Summary (title exactly as the BRD writes it).
+  Status: derived from the marker that opens the use case's Description cell in that summary: no marker gives Active; "Merged into UC-NN." gives Merged into [KEY]/UC-NN (keyed); "Removed: [reason]." gives Removed (the reason stays in the BRD).
   Owner: the §13 "Use cases (BRD)" column, the home of ownership (exactly one owner per active use case).
   Entry points: the named service's List of APIs (§17.X), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]).
   Flows: the "Use cases:" lines in §8.4 and §8.5.
   APIs: §15.2 "Use case ref".
-  Events: the "when" citations in §14.5.
+  Events: the "when" citations in §14.5 and the When column of §14.10 (in-process domain events).
 Links: each UC ID links to its heading in the BRD (file + anchor; from this combined file the BRD is at ./brd-[brd-slug]/ or ./BRD-[BrdName]-v[X.X].md). Owner and Flows link to headings in this file. Rules: brd-to-sdd.md § Use-case traceability.
 Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATION: ...] in that cell; these markers keep the e2e gate shut. Flows, APIs, and Events may be "-". Merged or removed rows show "-" in every mapping column.
 -->
@@ -268,7 +271,7 @@ Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATI
 |----------------|-------|---------------|--------------|---------------------|------------|--------------|--------|
 | **[[BRD project name] v[X.X]](./brd-[brd-slug]/[brd-slug]-brd-master.md) ([KEY])** | | | | | | | |
 | [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [Short title, as in the BRD] | [[service-name](#171-[service-name-slug])] | `[METHOD] /v1/[path]` | [[§8.4.1](#841-workflow-[flow-slug]) / -] | [API-NN / -] | [`EVENT_NAME` / -] | Active |
-| [[KEY]/UC-02](./brd-[brd-slug]/05-user-journeys-overview.md#use-case-summary) | [Short title] | - | - | - | - | - | [Merged into UC-01 / Removed] |
+| [[KEY]/UC-02](./brd-[brd-slug]/05-user-journeys-overview.md#use-case-summary) | [Short title] | - | - | - | - | - | [Merged into [KEY]/UC-01 / Removed] |
 
 
 ---
@@ -356,7 +359,6 @@ flowchart TB
 
 ## 8.4 Workflow Diagrams
 
-<!-- This chunk continues the System Design section from chunk 04 (Architecture Style & Diagrams). -->
 <!-- Add one workflow per critical end-to-end business flow. Inline Mermaid is the default diagram medium; each diagram gets a 1-2 sentence prose Summary so it reads without rendering. Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
 <!-- Derive-from-BRD: every workflow and sequence starts with a "Use cases:" line linking the BRD use cases it shows (link rules: brd-to-sdd.md § Use-case traceability), or "None - platform flow". §7.3 reads its Flows column from these lines. Inside the Mermaid block, use cases stay plain IDs. With no source BRD, leave the line out. -->
 
@@ -455,7 +457,7 @@ For deeper, individual ADRs, link to a separate ADR repository / folder.
 
 <!--
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
-(see "Services" below) and the override must be justified there.
+(§17 Detailed Service Specs below) and the override must be justified there.
 -->
 
 ## 11.1 DB Modeling (Default)
@@ -535,12 +537,12 @@ Each concern in this section is the platform-wide default. Individual services m
 
 # 13. Services Decomposition (Summary)
 
-<!-- Use cases (BRD), derive-from-BRD: the BRD use cases this service owns, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability). This column is the home of ownership: every active BRD use case has exactly one owner here, and §7.3 reads it. A service that owns no use case writes "None - [what it serves]", e.g. "None - serves the BRD chunk 09 reports". A merged or removed service row writes "-". With no source BRD, write "-". -->
+<!-- Type: `service` (its own deployable) or `module` (inside the single deployable of a modular monolith or hybrid core; architecture-questionnaire.md § Effect on the SDD). Status: `Active`, `Merged into [service]`, or `Removed: [reason]`; a merged or removed row stays in place, keeps its §17.X number, and has no §17.X block (parts-mode.md, What every part does, step 4). Use cases (BRD), derive-from-BRD: the BRD use cases this service owns, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability). This column is the home of ownership: every active BRD use case has exactly one owner here, and §7.3 reads it. A service that owns no use case writes "None - [what it serves]", e.g. "None - serves the BRD chunk 09 reports". A merged or removed service row writes "-". With no source BRD, write "-". -->
 
-| Service | Overview | Responsibility | Use cases (BRD) | Owns DB | Input | Output | Business Logic (Summary) | Integrations | Characteristics |
-|---------|----------|----------------|-----------------|---------|-------|--------|--------------------------|--------------|--------------------|
-| [Service Name] | [One-line] | [Responsibility] | [[KEY/UC-NN](BRD link), [KEY/UC-NN](BRD link)] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
-| [Service Name] | [One-line] | [Responsibility] | [None - what it serves] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] |
+| Service | Type | Overview | Responsibility | Use cases (BRD) | Owns DB | Input | Output | Business Logic (Summary) | Integrations | Characteristics | Status |
+|---------|------|----------|----------------|-----------------|---------|-------|--------|--------------------------|--------------|--------------------|--------|
+| [Service Name] | [service / module] | [One-line] | [Responsibility] | [[KEY/UC-NN](BRD link), [KEY/UC-NN](BRD link)] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] | Active |
+| [Service Name] | [service / module] | [One-line] | [Responsibility] | [None - what it serves] | [DB name / schema] | [Inputs] | [Outputs] | [Summary] | [Integrations] | [Characteristics] | [Active / Merged into [service] / Removed: [reason]] |
 
 
 ---
@@ -551,7 +553,7 @@ Each concern in this section is the platform-wide default. Individual services m
 
 # 14. Centralized Event Hub (Platform Event Catalog & Payload Contracts)
 
-> **What this chunk is.** The one place that lists **every event on the platform** with its producer, consumers, key family, payload contract, and business meaning (what / when / why), plus the hub topology that carries them. It is a derived consolidation of the per-service Event Models (each `13x` chunk § Event-Driven Architecture). Downstream LLD generation and implementers read this chunk as the single contract surface - the key goal is a smooth implementation with no producer/consumer mismatches.
+> **What this section is.** The one place that lists **every event on the platform** with its producer, consumers, key family, payload contract, and business meaning (what / when / why), plus the hub topology that carries them. It is a derived consolidation of the per-service Event Models (each `13x` chunk § Event-Driven Architecture). Downstream LLD generation and implementers read this chunk as the single contract surface - the key goal is a smooth implementation with no producer/consumer mismatches.
 
 ---
 
@@ -676,19 +678,19 @@ flowchart LR
 Grouped by producing service / topic - one sub-section per producer, in §13 decomposition order.
 Status legend: committed = wired in its phase; candidate = name fixed, no consumer wired until the contract ratifies; Analytics-only = no named domain consumer.
 Consumer reconciliation: consumer lists are reconciled from BOTH the producer's published table AND every consumer's consumed table. Where a producer under-lists, show the broader real set and footnote it.
-Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "when" cites it as a link with the step, e.g. "[REFUNDS/UC-04](BRD link) step 6". §7.3 reads its Events column from these citations. An event with another trigger (schedule, external callback, another event) names that trigger instead.
+Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "when" cites it as a link with the step, e.g. "[REFUNDS/UC-04](BRD link) step 6". §7.3 reads its Events column from these citations and from the §14.10 When column. An event with another trigger (schedule, external callback, another event) names that trigger instead.
 -->
 
 **Status legend:** `committed` / `candidate` / `Analytics-only` / `Pn` = phase.
 
-### 14.5.1 [Producer Service] — `[topic-name]` ([key family]; [phase])
+### 14.5.1 [Producer Service] - `[topic-name]` ([key family]; [phase])
 
 | Event | Consumers | Payload (beyond envelope) | Business: what · when · why | Status |
 |---|---|---|---|---|
 | `[EVENT_NAME]` | [Consumer services] | `[fields beyond the envelope]` | [What fact] · [when it fires: [KEY/UC-NN](BRD link) step N, or the other trigger] · [why downstream cares] | [committed] |
 | `[EVENT_NAME]` | [Consumer services] | `[fields]` | [what · when · why] | [candidate] |
 
-### 14.5.2 [Producer Service] — `[topic-name]` ([key family]; [phase])
+### 14.5.2 [Producer Service] - `[topic-name]` ([key family]; [phase])
 
 | Event | Consumers | Payload (beyond envelope) | Business: what · when · why | Status |
 |---|---|---|---|---|
@@ -702,7 +704,7 @@ Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "
 
 1. **Atomicity:** domain state + outbox row commit in one transaction; the relay publishes only after commit (no dual-writes).
 2. **Delivery:** at-least-once everywhere; consumers dedup on `(consumer, event_id)`.
-3. **Ordering:** per-aggregate via `aggregate_version` (last-writer-wins for projections; validated transitions for state machines) — not broker ordering.
+3. **Ordering:** per-aggregate via `aggregate_version` (last-writer-wins for projections; validated transitions for state machines) - not broker ordering.
 4. **Poison handling:** invalid transitions and undeserializable messages dead-letter with alarm + redrive runbook; never silently dropped.
 5. **Schema evolution:** additive-only, registry-enforced; breaking change = new event name.
 6. **Replay:** archive -> consumer queue, never archive -> topic.
@@ -750,7 +752,7 @@ Define common value objects once, then reference them.
 | `Money` | `amount decimal(19,4)`, `currency string(ISO-4217)` | [events] |
 | `[ValueObject]` | [fields] | [events] |
 
-### 14.9.1 `[EVENT_NAME]` — [status]
+### 14.9.1 `[EVENT_NAME]` - [status]
 
 **Producer:** [service] · **Topic:** `[topic-name]` · **Key family:** [family]
 
@@ -773,12 +775,13 @@ Define common value objects once, then reference them.
 
 <!--
 Domain events that one module publishes and other modules of the same deployable handle in process (architecture-questionnaire.md § Effect on the SDD). They are not integration events: the broker delivery rules (§14.2 one-hub rules, §14.2.1, §14.6) do not apply. An event that must also leave the deployable is published through the outbox as an integration event and catalogued in §14.5. Events that never leave one module stay out of scope.
+When (derive-from-BRD): the use case step that fires the event, cited like the §14.5 "when": a keyed link plus the part, e.g. "[REFUNDS/UC-04](BRD link) step 5", or "None - platform" when no use case step fires it. This registry is the only home of the When; §7.3 reads its Events column from here and from §14.5.
 A microservices SDD writes "Not applicable - no in-process events".
 -->
 
-| Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
-|---|---|---|---|---|---|
-| `[EventName]` | [Module] | [Modules] | [after commit] | `[EventDto]`: [fields] | [Notes] |
+| Event | Publisher module | Listener modules | When | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
+|---|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [[KEY/UC-NN](BRD link) step N / None - platform] | [after commit] | `[EventDto]`: [fields] | [Notes] |
 
 
 ---
@@ -1023,7 +1026,7 @@ A microservices SDD writes "Not applicable - no in-process events".
 
 ## 15.5 Consistency Notes & Drift Register
 
-<!-- Divergences between this section and §12, the §17.X List of APIs, or §16 (permission tokens), and any synchronous chain deeper than one hop. Fixed divergences are not listed; open ones stay here until resolved. -->
+<!-- Divergences between this section and §12, the §17.X List of APIs, or §16 (permission tokens), and any synchronous chain deeper than one hop. A divergence fixed during reconciliation is not listed; a listed row keeps Status `Open` until it is fixed, then `Fixed in vX.X` (SKILL.md step 6a). -->
 
 | # | Where | Divergence | Status |
 |---|-------|------------|--------|
@@ -1048,7 +1051,7 @@ A microservices SDD writes "Not applicable - no in-process events".
 
 # 16. Centralized User Roles & Authorities (Platform-Wide)
 
-> **What this chunk is.** The one place that answers: what user types exist, which roles and sub-roles they break into, what each role is allowed to do, who may create or invite whom, and which services each role interacts with. Downstream, the LLD and the identity/authorization implementation seed from this catalogue - the key goal is that authorization behaves identically across every service.
+> **What this section is.** The one place that answers: what user types exist, which roles and sub-roles they break into, what each role is allowed to do, who may create or invite whom, and which services each role interacts with. Downstream, the LLD and the identity/authorization implementation seed from this catalogue - the key goal is that authorization behaves identically across every service.
 
 ---
 
@@ -1058,7 +1061,7 @@ A microservices SDD writes "Not applicable - no in-process events".
 
 [Business overview.]
 
-## 16.2 Resolution Model — How a Role Becomes an Allowed Action
+## 16.2 Resolution Model - How a Role Becomes an Allowed Action
 
 <!-- Describe the runtime path from identity to permitted action: token claims -> role/sub-role resolution -> permission lookup -> contextual gates (tenant scope, ownership, module enablement, subscription status). Name where each gate is enforced (edge gateway, authorization service, service-local check). -->
 
@@ -1073,7 +1076,7 @@ A microservices SDD writes "Not applicable - no in-process events".
 | `[USER_TYPE]` | [Platform / Tenant / End-customer] | [IAM realm / pool] | [Description] |
 | `[USER_TYPE]` | [Plane] | [Source] | [Description] |
 
-## 16.4 Role Catalogue — Authorities & Related Services
+## 16.4 Role Catalogue - Authorities & Related Services
 
 <!-- One sub-section per Tier-1 user type. Each table: role, scope, core authorities (verbs), related services. -->
 
@@ -1089,7 +1092,7 @@ A microservices SDD writes "Not applicable - no in-process events".
 |---|---|---|---|
 | `[SUB_ROLE]` | [Scope] | [Authorities] | [Services] |
 
-### 16.4.3 Platform Plane (operator — outside tenant tenancy)
+### 16.4.3 Platform Plane (operator - outside tenant tenancy)
 
 | Role | Scope | Core authorities | Related services |
 |---|---|---|---|
@@ -1117,7 +1120,7 @@ A microservices SDD writes "Not applicable - no in-process events".
 
 | Role | [Service 1] | [Service 2] | [Service 3] |
 |---|---|---|---|
-| `[ROLE]` | [admin / write / read / -] | [—] | [—] |
+| `[ROLE]` | [admin / write / read / -] | [-] | [-] |
 
 ## 16.8 Lifecycle, Scope & Revocation Rules
 
@@ -1248,7 +1251,7 @@ Each service follows the exact same structure for predictability and grep-abilit
 
 ### Business Logic
 
-<!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (§13 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2", "AC-1" (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
+<!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (§13 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2: [short label]", "AC-3: customer is notified". BR-n and AC-n are positions in the BRD lists, so each always carries its short label (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
 
 [Description of the core logic.]
 
@@ -1355,11 +1358,11 @@ erDiagram
 
 #### List of APIs (Swagger-friendly)
 
-<!-- Endpoints called by another service or an external system carry their API ID and link to §15, which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. -->
+<!-- Endpoints called by another service or an external system carry their API ID and link to §15, which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. Permission token (§16): the token the endpoint checks, verbatim from §16; an endpoint that only an external system calls (callback, webhook) writes "-" (§15.1 Authorization by contract type). -->
 
-| Method | Path | Summary | Request Body | Response | Auth Scope | API ID (§15) |
-|--------|------|---------|--------------|----------|------------|--------------|
-| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[scope]` | [API-NN / -] |
+| Method | Path | Summary | Request Body | Response | Permission token (§16) | API ID (§15) |
+|--------|------|---------|--------------|----------|------------------------|--------------|
+| [METHOD] | `[path]` | [Summary] | `[RequestSchema]` | `[ResponseSchema]` | `[service].[resource].[action]` | [API-NN / -] |
 
 ### Event-Driven Architecture (If Applicable)
 
@@ -1381,7 +1384,17 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 |------------|---------------------------|-------|------------------------|------------------------|
 | `[EVENT_NAME]` | [Producer service] | `[topic - verbatim from §14.4]` | [Projection update / state transition / trigger] | [Inbox dedup key, aggregate_version handling] |
 
+**In-process domain events (modules only):**
+
+<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match §14.10 except When, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable". -->
+
+| Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
+|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [after commit] | `[EventDto]`: [fields] | [Notes] |
+
 #### Messaging Infra
+
+<!-- Integration events on the broker only. A module with no integration events writes "Not applicable - no integration events". -->
 
 - **Broker:** [Broker]
 - **Schema registry:** [Registry / approach]
@@ -1391,6 +1404,8 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 - **DLQ strategy:** [DLQ + replay]
 
 ### Constraints
+
+<!-- Authorization notes: the roles allowed for each owned use case, with their §16 permission tokens verbatim; each endpoint's token is in the List of APIs Permission token (§16) column. -->
 
 - [Constraint 1]
 - [Constraint 2]
@@ -1690,7 +1705,7 @@ sequenceDiagram
 | **Concern** | One paragraph. What was missed and why it matters for downstream LLD or implementation. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
-| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives — the evidence behind it (BRD requirement, NFR, doctrine/CLAUDE.md default, operational risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
+| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives - the evidence behind it (BRD requirement, NFR, doctrine/CLAUDE.md default, operational risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
 | **Status** | Open (awaiting decision) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. |
 
 ---
@@ -1703,9 +1718,9 @@ sequenceDiagram
 - **Type:** [Architecture gap | Missing scenario | Corner case | Ambiguity | Risk | Inconsistency | NFR shortfall | ADR needed | Contract mismatch | Duplication]
 - **Concern:** [One paragraph.]
 - **Options:**
-  - **A.** [Option A] — [one-line tradeoff].
-  - **B.** [Option B] — [one-line tradeoff].
-  - **C.** [Option C] — [one-line tradeoff]. *(Optional.)*
+  - **A.** [Option A] - [one-line tradeoff].
+  - **B.** [Option B] - [one-line tradeoff].
+  - **C.** [Option C] - [one-line tradeoff]. *(Optional.)*
 - **Recommended Answer:** [Option letter + the concrete resolution text, ready to paste into the SDD. E.g., "Option A - add ADR-07 to §10: 'Use the transactional outbox pattern for all state-change events; rationale: ...'"]
 - **Why:** [The reason this option wins: evidence (BRD requirement, NFR, doctrine default) + the tradeoff accepted.]
 - **Status:** Open
@@ -1718,8 +1733,8 @@ sequenceDiagram
 - **Type:** [...]
 - **Concern:** [...]
 - **Options:**
-  - **A.** [...] — [...].
-  - **B.** [...] — [...].
+  - **A.** [...] - [...].
+  - **B.** [...] - [...].
 - **Recommended Answer:** [...]
 - **Why:** [...]
 - **Status:** Open
@@ -1780,12 +1795,13 @@ sequenceDiagram
 | Services | [N] | §13 (chunk 09) |
 | Topics | [N] | §14.4 (chunk 10) |
 | Distinct published events | [N] | §14.9 coverage matrix (chunk 10) |
-| Synchronous REST edges | [N] | §24.7 |
+| Synchronous HTTP edges | [N] | §24.7 |
+| In-process port calls | [N] | §24.7 |
 | Sagas documented | [N] | §24.8 |
 
 ### Faithfulness & Deliberate Simplifications (no silent caps)
 
-<!-- List every simplification made in this chunk's diagrams (e.g., "domain producers clustered into one node in §24.2", "only the 3 load-bearing sagas drawn"). If nothing was simplified, say so. -->
+<!-- List every simplification made in this section's diagrams (e.g., "domain producers clustered into one node in §24.2", "only the 3 load-bearing sagas drawn"). If nothing was simplified, say so. -->
 
 - [Simplification 1 + where the full detail lives.]
 
@@ -1840,7 +1856,7 @@ flowchart TB
 
 <!-- Owned by §14.2.1 - referenced, never restated here. One prose sentence + the pointer. -->
 
-Every event on every topic flows through the one universal mechanism — outbox → relay → topic → per-consumer queue with inbox dedup and DLQ. **Normative definition and diagram: §14.2.1.**
+Every event on every topic flows through the one universal mechanism - outbox → relay → topic → per-consumer queue with inbox dedup and DLQ. **Normative definition and diagram: §14.2.1.**
 
 ## 24.5 Producer → Topic → Consumer Fan-Out (the event map)
 
@@ -1871,15 +1887,15 @@ flowchart LR
 
 <!-- Name the broad consumers only (they would clutter every fan-out diagram above); their binding rules are owned by §14.7 - reference, don't restate. -->
 
-- [Universal subscriber — see §14.7 for its binding rule.]
+- [Universal subscriber - see §14.7 for its binding rule.]
 
 ## 24.6 Cross-Service Doctrines
 
 <!-- Name each platform-wide interaction doctrine + a pointer to its normative home (§14.7 / ADR). Names only - the rules are not restated here. -->
 
-1. [Doctrine name — normative home §14.7 / ADR-NN.]
+1. [Doctrine name - normative home §14.7 / ADR-NN.]
 
-## 24.7 Synchronous REST Edges (one-hop rule)
+## 24.7 Synchronous Edges (one-hop rule)
 
 <!-- The whole-system view of every service-to-service synchronous call. The contracts themselves (URI, headers, body, error codes, auth) live in §15 and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. A modular monolith or hybrid core lists its `Internal (in-process)` port calls as separately labelled edges (`in-process` after the callee), never as HTTP edges. -->
 

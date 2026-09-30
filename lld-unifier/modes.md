@@ -144,7 +144,7 @@ The user points the skill at an SDD covering full scope, but only some services 
 
 1. Identifies which services have code (via `code-explorer`).
 2. Runs FROM-CODE on the existing services.
-3. Emits `> TODO: not yet built (SDD-described — see SDD §17.X)` placeholders for un-built services in `04-implementation/<service>.md` files.
+3. Emits the placeholder from `transform-detection.md` § Partial-code resolution (status, the use cases it owns as not built, the re-run TODO) for un-built services in `04-implementation/<service>.md` files.
 
 **When to use:** mid-build state where some services are scaffolded and you want to capture current state without inflating the unbuilt parts from SDD intent alone.
 

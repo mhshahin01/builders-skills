@@ -1,6 +1,6 @@
-# Source Transformation — SoW, Existing BRD, or Loose Spec → Unified BRD
+# Source Transformation: SoW, pre-BRD, Existing BRD, or Loose Spec → Unified BRD
 
-This file defines how to translate a source document into the unified BRD template, regardless of whether the source is a SoW, an existing BRD in another format, or a loose product spec.
+This file defines how to translate a source document into the unified BRD template, regardless of whether the source is a SoW, a pre-BRD from `pre-brd-unifier`, an existing BRD in another format, or a loose product spec.
 
 It exists because the field mapping is not always obvious, and getting it wrong produces a BRD that looks structured but is semantically empty.
 
@@ -74,6 +74,7 @@ Rules:
 3. **For each UC**, populate all blocks per the template. Expanding what the source itself states into detailed steps stays unmarked. Any behaviour the source does not state (an inferred persona, rule, step, or exception flow) is written as a proposal with the clarification marker, `**[NEEDS CLARIFICATION: proposed <behaviour>; confirm or replace]**`, so the to-do collects it for the user to decide. Example: "Users can request refunds" becomes detailed request steps with no marker, but a refund window, an approval path, or a failure rule the source does not state is a proposal. Per block:
    - **Actor & Goal** — primary/supporting actors, one-sentence goal, business trigger.
    - **Why** - if the source gives rationale, paraphrase it. If not, write the value it serves, taken from the Business Objectives, as a proposal, or flag `[NEEDS CLARIFICATION: business value of UC-NN]`.
+   - **Preconditions** - what must hold before step 1, as the source states it. A precondition the source does not state is a proposal; write `None.` when nothing must hold.
    - **Main Flow** - expand the source's bullets into detailed numbered steps alternating actor action and system response, in business terms. A step that adds behaviour the source does not state is a proposal; where the source is too vague to propose a step, flag the gap.
    - **Alternate & Exception Flows** - branches and failures as the user experiences them. Carry across the ones the source states. Sources rarely state these: write each other branch or failure as a proposal, and flag the ones you cannot propose.
    - **Business Rules & Constraints** - rules, limits, eligibility conditions specific to this UC. A rule or limit the source does not state is a proposal.
@@ -117,7 +118,7 @@ If not named explicitly, infer from role references scattered across the text ("
 
 ### "Timeline" / "Milestones" / "Phases"
 
-Timelines typically do **not** go into the BRD — the BRD describes the system, not the programme plan. Exception: if a phase fundamentally changes system behaviour (e.g., "in Phase 2, multi-tenancy is enabled"), that's an FR or domain concept.
+Timelines typically do **not** go into the BRD — the BRD describes the system, not the programme plan. Exception: if a phase fundamentally changes system behaviour (e.g., "in Phase 2, multi-tenancy is enabled"), that's a use case or domain concept.
 
 ### "Commercial" / "Pricing" / "Payment terms"
 
@@ -165,6 +166,30 @@ When the source has no clear structure (Notion brain-dump, single-page brief, sc
 
 ---
 
+## pre-BRD (pre-brd-unifier output) to BRD
+
+A pre-BRD answers "is this worth building?". It holds discovery analysis, not requirements. Take from it the idea, the users, the scope, and the priorities, and write the requirements in this template. Market figures, scores, and verdicts stay in the pre-BRD: cite them with a link, never copy them (one fact, one home).
+
+| pre-BRD chunks | BRD home | How |
+|---|---|---|
+| 01 Concept Sheet, 02 Product Charter, 15 OKRs | 01 Executive Summary, Background and Context / Problem Statement, Business Objectives | Restate the problem and the goals in business terms. Each OKR key result becomes a business objective with its measure. |
+| 03 Lean Canvas, 04 Value Proposition Canvas, 05 Empathy Map | 04 Personas, 05 User Journeys | Customer segments become personas. Jobs, pains, and gains shape each persona's journey and the use cases that serve it. |
+| 06-12 Market and competition (Market Comparison, Market Sizing, PESTLE, Porter's Five Forces, EFAS, IFAS, SWOT) | 01 Background and Context; 02 Facts and Challenges | One short paragraph of market context plus a link; the figures stay in the pre-BRD. A legal or regulatory PESTLE factor becomes a 02 constraint and, where it sets a quality, an NFR candidate in 10. |
+| 13 RICE, 14 MoSCoW | 04 Project Scope; 12 Wishlist | Must and Should items go in scope; Could and Won't items go out of scope or to the wishlist. Their priority orders the use case list in part 1. |
+| 16-20 Strategy (BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle) | None: context only | Read for context. A strategy statement never becomes a requirement. |
+| 21 Roadmap and Project Plan | 04 Project Scope; 12 Wishlist | A phase that changes system behaviour becomes scope or use cases (§ "Timeline" / "Milestones" / "Phases"); later phases go to the wishlist. |
+| 22 Executive Summary Scoreboard, 23 Investor Assessment | 01 Background and Context | Cite the verdict (`Go`, `Conditional Go`, or `No-Go`) with a link; never restate the scores. |
+| 24 Open Items and Assumptions Log | 02 Assumptions; clarification markers | A validated assumption becomes a 02 assumption. An open item becomes a `[NEEDS CLARIFICATION: ...]` marker where it applies. |
+
+Rules:
+
+- Business language only. A technical statement in the pre-BRD goes verbatim to Appendix § Technical Inputs for the SDD.
+- Link each cited chunk from its BRD home, for example `[pre-BRD 07 Market Sizing](../pre-brd-[slug]/07-market-sizing-analysis.md)`.
+- A `No-Go` or `Conditional Go` verdict does not block the BRD. Name it, with its conditions, in the handoff.
+- What the pre-BRD does not cover (detailed steps, exception flows, business rules, acceptance criteria) follows § "Deliverables" / "Features" / "Capabilities" / "Requirements": behaviour the source does not state is a proposal with the clarification marker.
+
+---
+
 ## Handling voice and audience shift
 
 Source docs are often written for one audience; the BRD targets the delivery team.
@@ -184,13 +209,13 @@ Then apply the plain-language style (`writing-style.md`): sources written for pr
 
 ## Gap inventory
 
-At the end of any transformation, produce an internal count of `[NEEDS CLARIFICATION: ...]` markers and surface the total in the handoff summary.
+At the end of any transformation, count the `[NEEDS CLARIFICATION: ...]` markers in two groups and surface both totals in the handoff summary: **gaps** (the source does not say, and nothing is proposed) and **proposals** (`[NEEDS CLARIFICATION: proposed ...]`, behaviour the skill proposed for the user to confirm). Both kinds go to the to-do and keep gate condition G1 shut until they are resolved.
 
-Thresholds:
+Thresholds apply to gap markers only, because only they measure the source; proposals are reported as "to confirm":
 
-- **0–5 markers:** healthy. The source was rich; minimal follow-up needed.
-- **6–14 markers:** typical. Recommend the user review and close before circulating.
-- **15+ markers:** the source is significantly under-specified for this template. Recommend a clarification session **before** the BRD is circulated for review. Do not soften this recommendation — a BRD with 15+ open clarifications is not review-ready.
+- **0–5 gap markers:** healthy. The source was rich; minimal follow-up needed.
+- **6–14 gap markers:** typical. Recommend the user review and close before circulating.
+- **15+ gap markers:** the source is significantly under-specified for this template. Recommend a clarification session **before** the BRD is circulated for review. Do not soften this recommendation: a BRD with 15+ open gaps is not review-ready.
 
 ---
 

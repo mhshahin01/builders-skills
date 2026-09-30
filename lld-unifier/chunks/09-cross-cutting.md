@@ -14,12 +14,12 @@ PART OF: LLD - [Project Name]
 
 | Concern | Choice | Source |
 |---------|--------|--------|
-| Token issuer | Keycloak realm `[name]` | CLAUDE.md (on-prem default) |
+| Token issuer | [SDD §6 IAM / AuthN row], realm `[name]` | SDD §6 (CLAUDE.md default, Keycloak on-prem, only when SDD §6 is silent) |
 | Token type | JWT (Bearer) | Standard |
-| Validation point | API gateway | CLAUDE.md (no per-service JWT validation) |
-| Internal service-to-service auth | mTLS via [Istio / Linkerd / NGINX] | CLAUDE.md spirit |
+| Validation point | API gateway for inbound traffic; for internal HTTP calls the provider (its filter or a sidecar) validates the caller's token and checks the contract's SDD §16 permission token | CLAUDE.md (gateway for edge concerns); SDD §15.1 (internal calls) |
+| Internal service-to-service auth | The caller's client-credentials token (`Authorization: Bearer`), with mTLS via [Istio / Linkerd / NGINX] as the transport; in-process port calls check the token at the port (04 § 7.2 Authorization, Kind Port) | SDD §15.1 |
 | Tenant ID source | `tenant_id` JWT claim | CLAUDE.md multi-tenancy rule |
-| Tenant ID propagation | `X-Tenant-Id` header on internal calls | LLD convention |
+| Tenant ID propagation | `X-Tenant-Id` header on internal HTTP calls; in-process calls carry the tenant in the call context | SDD §15.1 (LLD convention when it is silent) |
 | Logging policy | `tenant_id` never logged at INFO; never log PII at INFO | CLAUDE.md hard rule |
 
 ## 12.2 Idempotency
@@ -36,7 +36,7 @@ PART OF: LLD - [Project Name]
 
 ## 12.3 Resilience (downstream calls)
 
-> **Library:** Resilience4j (CLAUDE.md default).
+> **Library:** Resilience4j (CLAUDE.md default). **Scope:** HTTP and broker calls; in-process port calls (06 § 9.6) take no timeout, retry, circuit breaker, or bulkhead.
 
 | Pattern | Default config | Override mechanism |
 |---------|----------------|-------------------|
@@ -47,8 +47,9 @@ PART OF: LLD - [Project Name]
 
 > **Convention:** retries on idempotent calls only. Non-idempotent calls (without an idempotency key) must not be retried automatically.
 
-## 12.4 Outbox Pattern (mandatory for state-changing events)
+## 12.4 Outbox Pattern (mandatory for state-changing integration events)
 
+- **Scope:** integration events on the broker (07 § 10.1-10.5). The in-process domain events of 07 § 10.6 are published in process at their transaction phase and use no outbox.
 - **Table:** `outbox` per service schema (see `05-data-model.md`).
 - **Writer:** inserts the outbox row in the same local transaction as the aggregate write, so both commit or neither does. The write path never sends to Kafka directly, inside the transaction or after commit.
 - **Publisher:** separate scheduled job with one active instance per service (scheduler lock or leader election), every 1s, batch up to 100 rows, oldest first. A second concurrent publisher would re-send rows and break per-key order.
@@ -72,7 +73,7 @@ PART OF: LLD - [Project Name]
 | `status` | int | HTTP status code |
 | `detail` | string | Specific to this occurrence |
 | `instance` | string | The path that produced the error |
-| `code` (extension) | string | Internal error code (`<context>-<error>`) |
+| `errorCode` (extension) | string | From an SDD: the SDD §15.1 standard code or the contract's domain code, verbatim (`VALIDATION_FAILED`, `PAYOUT_REFUSED`); from code with no SDD: the code the service returns |
 | `traceId` (extension) | string | OpenTelemetry trace ID |
 | `errors` (extension) | array | For validation failures: list of field-level errors |
 
@@ -118,12 +119,12 @@ PART OF: LLD - [Project Name]
 ## 12.9 Configuration
 
 - **Source order:** environment variables > Spring profile properties > defaults.
-- **Secrets:** [Vault / AWS Secrets Manager / Kubernetes Secrets — pick one] — never in env vars committed to git.
+- **Secrets:** [Vault / AWS Secrets Manager / Kubernetes Secrets - pick one] - never in env vars committed to git.
 - **Feature flags:** [system + naming convention].
 
 ## 12.10 Health & Readiness
 
-- **Liveness:** `/actuator/health/liveness` — fast in-process check (no DB).
-- **Readiness:** `/actuator/health/readiness` — checks DB connectivity, Kafka cluster reachable, schema migrations complete.
+- **Liveness:** `/actuator/health/liveness` - fast in-process check (no DB).
+- **Readiness:** `/actuator/health/readiness` - checks DB connectivity, Kafka cluster reachable, schema migrations complete.
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 08-state-and-rules.md | NEXT: 10-operations.md -->

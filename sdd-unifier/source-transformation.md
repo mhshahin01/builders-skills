@@ -33,7 +33,7 @@ This is the main TRANSFORM path. The source is already an SDD but in a different
 ### Approach
 
 1. **Build a section crosswalk first.** Map each source section to a target template section. Note any source sections with no target.
-2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs — they must use `Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / API Standards / Event Model / Constraints / Error Handling / Observability / Compliance / Deployment Strategy`).
+2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs — they must use the sub-sections of `chunks/13a-service-detailed-template.md`, in order: `What / Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / Multi-Tenancy Specifications / API Standards / Event-Driven Architecture / Constraints / Error Handling / Observability & Monitoring / Developer Notes / Service-Level Diagrams / Compliance / Deployment Strategy / Future Enhancements`).
 3. **Stub missing sections** with `[NEEDS CLARIFICATION: ...]`.
 4. **Drop irrelevant sections** silently (vendor sign-off blocks, commercial appendices) and note in the handoff.
 

@@ -5,7 +5,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 DEPENDS_ON: 04, 05, 09, 10 (event hub), 11 (API contracts), 12 (user roles), 13a+ (per-service chunks), 18 (open items: must be cleared first)
 PART OF: SDD - [Project Name]
-PURPOSE: The single end-to-end view of the whole system: every service, every topic, every producer->consumer edge, the synchronous REST edges, and the key sagas. Authored LAST, only after chunk 18 is cleared, so it consolidates the final reconciled and reviewed state.
+PURPOSE: The single end-to-end view of the whole system: every service, every topic, every producer->consumer edge, the synchronous edges (HTTP and in-process), and the key sagas. Authored LAST, only after chunk 18 is cleared, so it consolidates the final reconciled and reviewed state.
 GATE: This chunk cannot be generated or refreshed until the e2e gate is open (SKILL.md step 8b, conditions E1-E4): every open item in chunk 18 is resolved (Deferred counts as open), no contract divergence is open, no clarification marker is left in the chunks it consolidates or in 03 §7.3 (use-case traceability), and the contract reconciliation was rerun after the last change. No override. While the gate is shut, nothing of this chunk is written, not even a draft or outline.
 FAITHFULNESS_RULE: This chunk is a faithful consolidation, not a new design. Every count, name, and edge must trace to chunks 09, 10, 11, 12, and 13x. Any deliberate simplification (clustered edges, sampled sagas) is stated explicitly - no silent caps.
 NO_DUPLICATION_RULE: One fact, one home. This chunk shows only what no other chunk shows (the whole-system fan-out maps and saga views). Normative content owned elsewhere (the async mechanism §14.2.1, the topic registry §14.4, the guarantees §14.6, the doctrines §14.7) is REFERENCED, never restated.
@@ -30,7 +30,8 @@ NO_DUPLICATION_RULE: One fact, one home. This chunk shows only what no other chu
 | Services | [N] | §13 (chunk 09) |
 | Topics | [N] | §14.4 (chunk 10) |
 | Distinct published events | [N] | §14.9 coverage matrix (chunk 10) |
-| Synchronous REST edges | [N] | §24.7 |
+| Synchronous HTTP edges | [N] | §24.7 |
+| In-process port calls | [N] | §24.7 |
 | Sagas documented | [N] | §24.8 |
 
 ### Faithfulness & Deliberate Simplifications (no silent caps)
@@ -90,7 +91,7 @@ flowchart TB
 
 <!-- Owned by §14.2.1 (chunk 10) - referenced, never restated here. One prose sentence + the pointer. -->
 
-Every event on every topic flows through the one universal mechanism — outbox → relay → topic → per-consumer queue with inbox dedup and DLQ. **Normative definition and diagram: §14.2.1 ([10-events-hub.md](./10-events-hub.md)).**
+Every event on every topic flows through the one universal mechanism - outbox → relay → topic → per-consumer queue with inbox dedup and DLQ. **Normative definition and diagram: §14.2.1 ([10-events-hub.md](./10-events-hub.md)).**
 
 ## 24.5 Producer → Topic → Consumer Fan-Out (the event map)
 
@@ -121,15 +122,15 @@ flowchart LR
 
 <!-- Name the broad consumers only (they would clutter every fan-out diagram above); their binding rules are owned by §14.7 - reference, don't restate. -->
 
-- [Universal subscriber — see §14.7 for its binding rule.]
+- [Universal subscriber - see §14.7 for its binding rule.]
 
 ## 24.6 Cross-Service Doctrines
 
 <!-- Name each platform-wide interaction doctrine + a pointer to its normative home (§14.7 / ADR). Names only - the rules are not restated here. -->
 
-1. [Doctrine name — normative home §14.7 / ADR-NN.]
+1. [Doctrine name - normative home §14.7 / ADR-NN.]
 
-## 24.7 Synchronous REST Edges (one-hop rule)
+## 24.7 Synchronous Edges (one-hop rule)
 
 <!-- The whole-system view of every service-to-service synchronous call. The contracts themselves (URI, headers, body, error codes, auth) live in §15 (chunk 11) and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. A modular monolith or hybrid core lists its `Internal (in-process)` port calls as separately labelled edges (`in-process` after the callee), never as HTTP edges. -->
 

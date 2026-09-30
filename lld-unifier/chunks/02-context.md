@@ -1,6 +1,6 @@
 <!--
 CHUNK: 02
-TITLE: Context — Bounded Context & System Neighbours
+TITLE: Context - Bounded Context & System Neighbours
 PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: LLD - [Project Name]
@@ -18,13 +18,13 @@ PART OF: LLD - [Project Name]
 
 | Upstream | Interaction | Protocol | Notes |
 |----------|-------------|----------|-------|
-| [System / Service] | [Sync REST / Async event / Schedule] | [HTTPS / Kafka / gRPC] | [Notes] |
+| [System / Service / Module] | [Sync REST / Async event / In-process port / In-process event / Schedule] | [HTTPS / Kafka / gRPC / In-process] | [Notes] |
 
 ## 5.3 Downstream Consumers (systems this LLD's services call / publish to)
 
 | Downstream | Interaction | Protocol | Notes |
 |------------|-------------|----------|-------|
-| [System / Service] | [Sync REST / Async event / Schedule] | [HTTPS / Kafka / gRPC] | [Notes] |
+| [System / Service / Module] | [Sync REST / Async event / In-process port / In-process event / Schedule] | [HTTPS / Kafka / gRPC / In-process] | [Notes] |
 
 ## 5.4 Cross-Service Dependencies (within this LLD)
 
@@ -44,14 +44,14 @@ graph LR
   SVC_C -->|REST| EXT_Y
 ```
 
-> **Convention:** keep this diagram service-level (not class-level). Class-level wiring lives in `04-implementation/<service>.md`.
+> **Convention:** keep this diagram service-level (not class-level). Class-level wiring lives in `04-implementation/<service>.md`. In a modular monolith, label module-to-module edges `in-process: [Port.operation]` or `in-process: [EventName]` (SDD §24.7 and §14.10), never as REST or topic edges.
 
 > Miro: [optional whiteboard view URL]
 
 ## 5.5 Shared Conventions (apply to every service in scope)
 
-- **Auth:** [Keycloak realm strategy / OAuth2 server / mTLS — per CLAUDE.md default unless overridden]
-- **Tenant resolution:** [Header / JWT claim / subdomain — per CLAUDE.md multi-tenancy strategy]
+- **Auth:** [Keycloak realm strategy / OAuth2 server / mTLS - per CLAUDE.md default unless overridden]
+- **Tenant resolution:** [Header / JWT claim / subdomain - per CLAUDE.md multi-tenancy strategy]
 - **Correlation ID:** [Header name and propagation rule]
 - **Time zone:** UTC for all timestamps (CLAUDE.md default).
 - **ID strategy:** UUIDv7 generated at the service layer (CLAUDE.md default).

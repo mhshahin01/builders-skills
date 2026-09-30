@@ -17,15 +17,17 @@ PART OF: LLD - [Project Name]
 
 ### Service: `[service-a]`
 
-| Method | Path | Summary | Idempotency-Key | Auth Scope | Status Codes |
-|--------|------|---------|-----------------|------------|--------------|
-| `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 409, 422 |
-| `GET` | `/v1/foo/{id}` | Get foo by ID | N/A | `foo:read` | 200, 404 |
-| `GET` | `/v1/foo` | List foos (paginated) | N/A | `foo:read` | 200, 400 |
-| `PATCH` | `/v1/foo/{id}` | Update foo | Required | `foo:write` | 200, 400, 404, 409, 422 |
-| `DELETE` | `/v1/foo/{id}` | Delete foo (soft) | Required | `foo:write` | 204, 404 |
+| API ID (§15) | Method | Path | Summary | Idempotency-Key | Permission token (SDD §16) | Status Codes |
+|--------------|--------|------|---------|-----------------|----------------------------|--------------|
+| [API-01](../sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) | `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 409, 422 |
+| - | `GET` | `/v1/foo/{id}` | Get foo by ID | N/A | `foo:read` | 200, 404 |
+| - | `GET` | `/v1/foo` | List foos (paginated) | N/A | `foo:read` | 200, 400 |
+| - | `PATCH` | `/v1/foo/{id}` | Update foo | Required | `foo:write` | 200, 400, 404, 409, 422 |
+| - | `DELETE` | `/v1/foo/{id}` | Delete foo (soft) | Required | `foo:write` | 204, 404 |
 
 > **Convention:** every write endpoint touching money/wallet/notifications/external-providers requires an `Idempotency-Key` header (CLAUDE.md). The dedup tuple is `(tenant_id, idempotency_key)` with TTL 24h.
+>
+> **API ID:** the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked to its block; `-` for an endpoint no §15 contract covers (for example one only the frontend calls). The owner's 04 file names the controller (provider side) or client (caller side). Permission tokens are SDD §16 tokens, verbatim.
 
 ### Service: `[service-b]`
 
@@ -69,7 +71,8 @@ PART OF: LLD - [Project Name]
   "title": "Idempotency Conflict",
   "status": 409,
   "detail": "Idempotency key K is in flight on another request",
-  "instance": "/v1/foo"
+  "instance": "/v1/foo",
+  "errorCode": "CONFLICT"
 }
 ```
 
@@ -77,11 +80,12 @@ PART OF: LLD - [Project Name]
 
 ## 9.3 Authentication & Authorisation
 
-- **Token issuer:** Keycloak realm `[realm-name]` (CLAUDE.md default for on-prem).
+- **Token issuer:** [SDD §6 IAM / AuthN row], realm `[realm-name]` (CLAUDE.md default, Keycloak on-prem, only when SDD §6 is silent).
 - **Token type:** JWT (Bearer).
-- **Validation point:** API gateway (CLAUDE.md: cross-cutting concerns live in gateway/sidecar, not duplicated per service).
-- **Scope mapping:** see endpoint inventory tables above.
-- **Tenant resolution:** `tenant_id` claim in JWT; propagated via `X-Tenant-Id` header to downstream calls.
+- **Validation point:** the API gateway for inbound traffic (CLAUDE.md: cross-cutting concerns live in gateway/sidecar, not duplicated per service).
+- **Internal HTTP calls (SDD §15.1):** the caller sends its client-credentials token (`Authorization: Bearer`); the provider, in its filter or a sidecar, checks the contract's SDD §16 permission token; mTLS stays as the transport. In-process port calls check the token at the port (04 § 7.2 Authorization, Kind Port).
+- **Permission tokens:** the endpoint inventory tables above (SDD §16, verbatim).
+- **Tenant resolution:** `tenant_id` claim in JWT; propagated via the `X-Tenant-Id` header on downstream HTTP calls (SDD §15.1); in-process port calls carry it in the call context.
 
 ## 9.4 Pagination, Sorting, Filtering
 
@@ -92,7 +96,7 @@ PART OF: LLD - [Project Name]
 
 ## 9.5 OpenAPI snippets
 
-> **Convention:** the full OpenAPI spec lives at `[path]`. Snippets in this section are illustrative only — do not maintain in two places. Cite the operation ID and the spec line.
+> **Convention:** the full OpenAPI spec lives at `[path]`. Snippets in this section are illustrative only - do not maintain in two places. Cite the operation ID and the spec line.
 
 ```yaml
 # operationId: createFoo
@@ -113,5 +117,18 @@ post:
     '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/FooResponse' } } } }
     '409': { description: Idempotency conflict, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Problem' } } } }
 ```
+
+## 9.6 In-Process Port Contracts (SDD §15)
+
+<!--
+Modular monolith or hybrid core only: one row per SDD §15 contract of Type `Internal (in-process)`, a module-to-module call through a port. A microservices SDD writes "Not applicable - no in-process contracts".
+Names match SDD §15 verbatim and link its contract block; the DTO fields and error list stay in the SDD. No HTTP method, path, headers, status codes, or resilience config: the call never leaves the process.
+-->
+
+| API ID (§15) | Port interface | Operation | Request / response DTO records | Raised errors (`errorCode`) | Permission token (SDD §16) | Implementing adapter |
+|--------------|----------------|-----------|--------------------------------|-----------------------------|----------------------------|----------------------|
+| [API-03](../sdd-[sdd-slug]/11-api-contracts.md#[api-03-heading-slug]) | `[ProviderPort]` | `[operation]` | `[RequestDto]` / `[ResponseDto]` | `[DomainError]` (`[DOMAIN_CODE]`) | `[token]` | `[ProviderPortAdapter]` in `[provider-module]` |
+
+> **Convention:** the provider module's `04-implementation/<module>.md` § 7.2 lists the port and its adapter, and its Authorization table checks the token at the port (Kind Port). Caller modules depend on the port interface only.
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 05-data-model.md | NEXT: 07-event-contracts.md -->

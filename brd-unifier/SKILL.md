@@ -14,7 +14,7 @@ description: >-
 
 # BRD Unifier
 
-Author, transform, and unify Business Requirements Documents (BRDs / BRD-HLDs) into the user's standardised template. This skill encapsulates the section structure, the per-persona use-case convention (`Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules / Acceptance Criteria / Future Enhancements / UI/UX`), the Users & Use Cases Matrix, the chunking model, the SoW-and-BRD transformation rules, and the inline-Mermaid-first diagram policy.
+Author, transform, and unify Business Requirements Documents (BRDs / BRD-HLDs) into the user's standardised template. This skill encapsulates the section structure, the per-persona use-case convention (`Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX`), the Users & Use Cases Matrix, the chunking model, the SoW-and-BRD transformation rules, and the inline-Mermaid-first diagram policy.
 
 The embedded templates in this skill folder are the authoritative source — `TEMPLATE-COMBINED.md` for the single-file layout and `chunks/*.md` for the chunked layout.
 
@@ -91,11 +91,11 @@ If the user has already implied a mode in their request ("give me the full doc i
 9. **Quality over theatre.** Use-case blocks are substantive — see `use-case-quality.md` for the bar.
 10. **Generate or transform — detect, don't ask twice.** See `transform-detection.md`.
 11. **One fact, one home (no duplication).** The BRD is the single home for business facts: UC-NN blocks, the Users & Use Cases Matrix, personas, business NFRs, business integrations. Downstream documents (SDD, LLD) reference them by ID and link — so IDs and names must stay stable across revisions (renaming a UC or persona breaks the chain; add a mapping note in the Changes Log if unavoidable). Within the BRD, no content is restated across chunks — cross-reference with a link. Restated content is a review defect (OI Type: Duplication).
-12. **Decision history lives in the register, not in the body.** Content chunks state the settled rule in plain present tense ("The credential is revealed once, at generation"), never the decision narrative ("The user selected option A on...", "Q-10 remains partial", "three questions remain"). The decision story (the clarification Q&A, which option was chosen, who decided, when, what was delegated, what was superseded, walkthrough progress, per-decision impact assessments, part-handoff instructions) goes into `decision-log.md`, the companion register in `./brd-[project-slug]/` (structure: the `decision-log.md` reference in this skill folder). Compact traceability references to stable IDs (Q-NN, UC-NN, OS-NN, D-NN) inside rule text and table cells are allowed; storytelling is not.
+12. **Decision history lives in the register, not in the body.** Content chunks state the settled rule in plain present tense ("The credential is revealed once, at generation"), never the decision narrative ("The user selected option A on...", "Q-10 remains partial", "three questions remain"). The decision story (the clarification Q&A, which option was chosen, who decided, when, what was delegated, what was superseded, walkthrough progress, per-decision impact assessments, part-handoff instructions) goes into `decision-log.md`, the companion register in `./brd-[project-slug]/` (structure: the `decision-log.md` reference in this skill folder). Compact traceability references to stable IDs (Q-NN, UC-NN, OI-NN, TD-NN, NFR-NN, or any other ID the BRD defines) inside rule text and table cells are allowed; storytelling is not.
 13. **Delivery chunks are derived, evidence-gated, and locked behind the to-do.** Every generation ends with `14-todo.md`, the product-manager checklist (`delivery-chunks.md`); in `parts` generation that is the end of part 3. **Chunks 15, 16, and 17 cannot be generated or refreshed until chunk 14 is cleared:** all five to-do steps `Complete` with evidence and every item `Resolved`. `Deferred` does not count, and there is no override. The order stays 14 -> 15 -> 16 -> 17. Delivery chunks cite the body (00-13) by ID and link and never add a requirement, decision, acceptance criterion, or resolution; a gap found while deriving them becomes a to-do item, not invented content, and shuts the gate again. Generating a checklist is never evidence that a decision or review happened: no step is `Complete` without recorded evidence. Use-case diagrams (chunk 05) and use-case flowcharts (chunks `06*`) are drawn only at to-do step 5, after steps 1-3 are complete, in parallel with the step 4 mockups.
 14. **Plain language: simple, clear, precise, easy to understand.** An easy BRD is essential, and simplicity is essential. Short sentences, common words, active voice, one idea per sentence, one term for one thing, the exact number or name instead of a vague word. No complex words where a simple one fits. Simple never means vague or incomplete: every number, rule, exception, and limit stays. This applies to every chunk (00-17), table cell, diagram label, test case, slide, and voiceover. Readability covers the whole reading experience: requirement text never uses process vocabulary (delegation, walkthrough, checkpoint) and reads smoothly for someone who never saw the decision process. Rules, word list, and the mandatory plain-language pass: `writing-style.md`.
 15. **Parts by default, with a real stop.** In CHUNKS mode the BRD is written in three parts (00-05, then `06*` and 07, then 08-14). After parts 1 and 2 the skill shows a short summary, says what to review, and **stops until the user says to continue**. Scope, personas, and the use-case list are agreed before the use cases are detailed. `whole` writes everything in one run. Rules: `parts-mode.md`.
-16. **Project files rule the generation when they exist.** Before any generation, transform, refresh, or delivery chunk, look in the project root for `AGENTS.md` (or `AGENT.md`) and `ui-ux-global-constitution.md`. Both are optional; never ask for one the project does not have. When present, they govern the whole BRD (chunks 00-17): `AGENTS.md` gives the project's directions and how its features link together, so use it to connect related use cases, journeys, and integrations and to follow its conventions; the constitution is the UI/UX standard for chunk 11, the step 4 mockups, and the look of chunk 17 (color and typography tokens, named, never copied as raw hex; chunk 11 cites the constitution's sections by name, not number). Without a constitution, chunk 11 uses the brand or key color the user confirms (asked once, never an invented value) and a responsive rule that stands on its own, citing no constitution. Business language (principle 2) still applies: technical content from either file goes to Appendix § Technical Inputs, never into the body. If either file conflicts with the source material or another chunk, do not pick one: raise an `OI-NN`. Say in the handoff which of the two files were found and used.
+16. **Project files rule the generation when they exist.** Before any generation, transform, refresh, or delivery chunk, look in the project root for `AGENTS.md` (or `AGENT.md`) and `ui-ux-global-constitution.md`. Both are optional; never ask for one the project does not have. When present, they govern the whole BRD (chunks 00-17): `AGENTS.md` gives the project's directions and how its features link together, so use it to connect related use cases, journeys, and integrations and to follow its conventions; the constitution is the UI/UX standard for chunk 11, the step 4 mockups, and the look of chunk 17 (color and typography tokens, named, never copied as raw hex; every citation of the constitution, in chunk 11, the step 4 mockups, and chunk 17, names its sections and never their numbers). Without a constitution, chunk 11 uses the brand or key color the user confirms (asked once, never an invented value) and a responsive rule that stands on its own, citing no constitution. Business language (principle 2) still applies: technical content from either file goes to Appendix § Technical Inputs, never into the body. If either file conflicts with the source material or another chunk, do not pick one: raise an `OI-NN`. Say in the handoff which of the two files were found and used.
 
 ---
 
@@ -112,16 +112,16 @@ Per the Argument parsing section above. Do not skip this — the mode determines
 See `transform-detection.md` for the decision rules. In short:
 
 - **GENERATE** — fresh BRD from a SoW, conversation, or topic seed.
-- **TRANSFORM** — re-shape an existing document (an old-format BRD, a flat scope doc, a single-file BRD that needs chunking, or a chunked BRD that needs combining) into this template.
+- **TRANSFORM** — re-shape an existing document (a pre-BRD from `pre-brd-unifier`, an old-format BRD, a flat scope doc, a single-file BRD that needs chunking, or a chunked BRD that needs combining) into this template.
 
-Both intents end with the same output shape (CHUNKS or COMBINED, per step 1) — the difference is in step 3.
+Both intents end with the same output shape (CHUNKS or COMBINED, per step 1) — the difference is in step 6 (TRANSFORM intent).
 
 ### 3. Intake (short — not a clarification storm)
 
 Ask at most **three** questions before starting, only those that genuinely block quality:
 
 - **Project / system name** — if not stated.
-- **Source material** — SoW attached? Existing BRD to migrate? Conversation context only? From scratch?
+- **Source material** — SoW attached? A pre-BRD from `pre-brd-unifier`? Existing BRD to migrate? Conversation context only? From scratch?
 - **Personas** — if the source does not make clear who the users are, ask for the user types once; personas drive the use-case chunks and the matrix.
 
 If an answer is already in the conversation, do not re-ask.
@@ -146,8 +146,8 @@ All diagrams (persona journey summaries, summarized workflows, context sketches)
 
 | Part | Writes | Then |
 |---|---|---|
-| 1 | Chunks 00-05 and `[project-slug]-brd-master.md` with its Generation Progress table | Exit checklist, plain-language pass, part summary, **stop and wait** |
-| 2 | Every `06*` chunk, then the matrix (step 6a); back-fill of 00-05 | Exit checklist, plain-language pass, part summary, **stop and wait** |
+| 1 | Chunks 00-05 and `[project-slug]-brd-master.md` with its Generation Progress table | Plain-language pass, exit checklist, part summary, **stop and wait** |
+| 2 | Every `06*` chunk, then the matrix (step 6a); back-fill of 00-05 | Plain-language pass, exit checklist, part summary, **stop and wait** |
 | 3 | Chunks 08-12; back-fill; plain-language pass and exit checklist; then steps 7, 8, and 8a (chunks 13 and 14) | Final `[project-slug]-brd-master.md` and chunk 00, full handoff (step 9) |
 
 Never start the next part in the same turn, and never without the user's go-ahead. In `whole`, run steps 6 to 9 straight through, as one run.
@@ -198,7 +198,7 @@ After the body of the BRD is written but **before** presenting to the user (in `
 
 **How to run it.**
 
-1. Use the `Agent` tool with `subagent_type: general-purpose` (or `comprehensive-review:full-review` if appropriate for the project complexity). The subagent starts with no conversation memory, which is the point.
+1. Use the `Agent` tool with `subagent_type: general-purpose`. The subagent starts with no conversation memory, which is the point.
 2. Pass the subagent:
    - Absolute paths to all generated chunks (or the combined file).
    - The path to this BRD's templates so it knows the expected structure.
@@ -233,7 +233,7 @@ The Open Items are not left for the user to discover — walk them through each 
    - Record the decision in `decision-log.md` (create the register on first use; structure: the `decision-log.md` reference in this skill folder): the question, its options, the chosen answer, the date, and the rationale (the Why), under the clarification register, with a `Rule home:` link to the chunk section now carrying the settled rule. A decision that replaces an earlier one keeps both records, the newer one marked as superseding.
    - If the change touches actors or permissions, re-verify the Users & Use Cases Matrix (step 6a rules).
    - Set the OI's Status to `Accepted - applied` (or `Adjusted - applied`), add a Resolution Log row, and bump the Changes Log in chunk 00 once for the batch. Chunk 13 keeps only the item's current status line; the narrative lives in the register.
-4. **Deferred / Rejected** items keep their entry with the new status and rationale; they are not applied.
+4. **Deferred / Rejected** items keep their entry with the new status and rationale, and get a Resolution Log row (their pointer for to-do step 1); they are not applied.
 5. If the user says "later" / "I'll review offline", leave all items `Open` and note in the handoff that the acceptance loop is pending — do not apply anything without an explicit decision.
 
 ### 8a. Generate the to-do, `14-todo.md` (mandatory, every full generation, both modes; in `parts` it closes part 3)
@@ -269,7 +269,7 @@ Triggered when the user asks for the implementation plan, the test cases, the pr
 2. **Gate shut:** write none of the three: no draft, preview, or outline, in a file or in the chat. A user's "I take responsibility" is not evidence for any step. Update the Delivery gate block and the Downstream outputs rows in `14-todo.md` (`Locked`, or `Stale` if they already exist). Tell the user exactly what is still open (steps, `TD-NN`, `OI-NN`, `CF-NN`, clarification markers, mockup rows) and the next action. If the user insists, explain the rule and repeat the list.
 3. **Gate open:** read the skeletons, then write **15**. Check the gate again, then write **16** (follow the skeleton exactly; it encodes the owner's reference format). Check the gate again, then write **17** (every storyboard sums to exactly 30 seconds). In COMBINED mode 15 and 16 are appended to the combined file as its last two sections.
 4. **A gap found while writing** (a missing prerequisite, a circular dependency, an expected result the BRD does not state) becomes a `TD-NN`. Only the affected content is labelled: `Provisional (TD-NN)`, or `Blocked` for a task that cannot be delivered without the answer (`delivery-chunks.md` § Chunk 15). The chunk in hand is finished and **the next chunk is not started**. Report what must be decided.
-5. Run the plain-language pass on what was written, then both blocks of § Verification before presenting. Update `14-todo.md` last (links, `Blocks`, Downstream outputs).
+5. Run the plain-language pass on what was written, then both blocks of `delivery-chunks.md` § Verification before presenting. Update `14-todo.md` last (links, `Blocks`, Downstream outputs).
 
 ### 9. Present
 
@@ -282,7 +282,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - Project name, version, mode (chunks / combined), file paths.
 - Number of chunks (if chunks mode) or section count (if combined), including the persona count and use-case count.
 - Count of inline Mermaid diagrams generated (and the Miro board URL, only if one was requested).
-- Count of inline `[NEEDS CLARIFICATION: ...]` markers — explicit body-level gap inventory.
+- Count of inline `[NEEDS CLARIFICATION: ...]` markers, as two numbers: gaps (the explicit body-level gap inventory; for a transform, judged against the thresholds in `sow-transformation.md` § Gap inventory) and proposals to confirm (`[NEEDS CLARIFICATION: proposed ...]`).
 - Plain-language pass: confirm it ran on the body and on every delivery chunk written; name any chunk that still reads heavy and why (for example, verbatim source wording that had to stay).
 - Open Items summary: total, accepted & applied, adjusted, deferred, rejected, still open.
 - Matrix status: personas × use cases covered, plus any footnoted conditional cells.
@@ -298,7 +298,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 | User says | Action |
 |---|---|
 | "merge", "consolidate", "single file", "full doc" (after chunks exist) | Concatenate chunks per `chunking.md` § Merge handling. Write to `./brd-[project-slug]/BRD-[ProjectName]-v[X.X]-MERGED.md` (the same folder as the chunks, so relative links keep working). Keep originals. **Never merge `14-todo.md`, `17-for-ppt.md`, or `decision-log.md`**; 15 and 16 are merged after 13 once they exist. |
-| "split into chunks", "re-chunk this", "chunk this BRD" (when a combined file exists) | Read the combined file, slice by template sections per `chunks/*.md` skeleton, write chunked output. Keep the original combined file. |
+| "split into chunks", "re-chunk this", "chunk this BRD" (when a combined file exists) | Read the combined file and split it per `chunking.md` § Re-chunk handling (the heading map, chunk headers and footers, and `[project-slug]-brd-master.md`). Keep the original combined file. |
 | "regenerate chunk N", "update section X" | Targeted regeneration of one chunk or section, leaving the rest untouched. If use cases change, re-derive the matrix (step 6a), refresh `14-todo.md`, and mark chunks 15-17 `Stale` if they exist (`delivery-chunks.md` § Refresh triggers). |
 | "update the todo", or decisions handed back from a grill-me session | Apply confirmed decisions through the step 8 mechanics, rerun the consistency check, and refresh `14-todo.md` (statuses, evidence, Delivery gate block). Every ID stays stable. |
 | "generate / refresh the implementation plan", "the test cases", "the ppt or video brief", "the delivery chunks" | Step 8c (gated): verify G1-G5 first. Gate shut means nothing is written and the user gets the list of what is open. |
@@ -314,7 +314,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 
 - `TEMPLATE-COMBINED.md` — the single-file template. Read at the start of any COMBINED-mode generation.
 - `chunks/*.md` — the per-chunk template skeletons. Read at the start of any CHUNKS-mode generation.
-- `chunking.md` — canonical chunk map, naming convention, merge rules.
+- `chunking.md` — canonical chunk map, naming convention, heading map, merge and re-chunk rules.
 - `modes.md` — chunks vs combined behavioural details.
 - `parts-mode.md`: the generation option. The three parts, what each settles and what the user reviews, the checkpoint (stop and wait), the exit checklists, the back-fill of earlier parts, the progress record in `[project-slug]-brd-master.md`, and resuming. Read at the start of every CHUNKS-mode generation.
 - `decision-log.md`: the companion decision register. What belongs there (clarification Q&A, choices, dates, rationales, superseded history, walkthrough and delegation notes, per-decision assessments, part-handoff records), its canonical structure, the companion-file rules (created on first use, linked from `[project-slug]-brd-master.md` and chunk 00's Table of Contents, never merged), and the rule that content chunks carry only the settled outcome. Read whenever a clarification is raised, decided, or applied.
@@ -336,7 +336,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - **Combined output filename**: `BRD-[ProjectName]-v[X.X].md` (PascalCase project name, no spaces).
 - **Merged-from-chunks filename**: `BRD-[ProjectName]-v[X.X]-MERGED.md`, written inside `./brd-[project-slug]/`.
 - **Delivery chunks**: `14-todo.md` (every generation; in `parts`, at the end of part 3), then `15-implementation.md`, `16-uat-bat-test-cases.md`, `17-for-ppt.md` (only once the delivery gate is open), in `./brd-[project-slug]/`. In COMBINED mode 15 and 16 are sections of the combined file; 14 and 17 are still files in `./brd-[project-slug]/`. 14 and 17 are never merged.
-- **Decision register**: `decision-log.md`, the companion decision register, in `./brd-[project-slug]/` next to `[project-slug]-brd-master.md` (in COMBINED mode, next to `14-todo.md`). Created on first use (the first decided clarification), linked from `[project-slug]-brd-master.md` and chunk 00's Table of Contents, never merged into merged or combined output. Structure and rules: the `decision-log.md` reference in this skill folder.
+- **Decision register**: `decision-log.md`, the companion decision register, in `./brd-[project-slug]/` next to `[project-slug]-brd-master.md` (in COMBINED mode, next to `14-todo.md`). Created on first use (the first decided clarification), linked from `[project-slug]-brd-master.md` and chunk 00's Table of Contents (in COMBINED mode, from the combined file's Table of Contents as `./brd-[project-slug]/decision-log.md`), never merged into merged or combined output. Structure and rules: the `decision-log.md` reference in this skill folder.
 - **Delivery identifiers**: `TD-NN`, `CF-NN`, `MK-NN`, `TASK-NN`, `DP-NN`, `TC-[AREA]-NN`, `SL-NN`, `V-NN` / `V-NN-Cn`. The one list with meanings is in `delivery-chunks.md` § Ground rules. Stable across refreshes; never renumbered.
 - **Encoding**: UTF-8, LF line endings.
 - **Tables**: pipe-table format, no hard line wrap.

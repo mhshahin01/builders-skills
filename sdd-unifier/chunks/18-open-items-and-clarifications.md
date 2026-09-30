@@ -9,10 +9,10 @@ PART OF: SDD - [Project Name]
 PURPOSE: Output of the post-generation cleared-context reviewer pass. Captures architecture-level gaps, missing scenarios, integration corner cases, ADR ambiguities, and cross-chunk contract mismatches flagged by an independent reviewer. Every item carries a concrete Recommended Answer, ready to be applied to the SDD body once the architect accepts it.
 GENERATED_BY: sdd-unifier post-generation reviewer (cleared-context subagent run after the main SDD body is complete).
 SCOPE: The reviewer reads ALL preceding chunks. Contract-consistency findings are first-class: topic names, event names, payload fields, and consumer lists that diverge between the Centralized Event Hub (chunk 10), the per-service chunks (13x), the Centralized User Roles catalogue (chunk 12), and the Service Integration API Contracts (chunk 11) are valid OI items. The End-to-End System Design (chunk 19) does not exist yet when this review runs; it is written after this chunk is cleared.
-WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, or defer the Recommended Answer. Accepted answers are applied to the referenced chunk(s), the item moves to the Resolution Log, and the Changes Log is bumped.
+WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, defer, or reject the Recommended Answer. Accepted answers are applied to the referenced chunk(s), the item moves to the Resolution Log, and the Changes Log is bumped.
 -->
 
-# Open Items & Clarifications
+# 23. Open Items & Clarifications
 
 > **What this section is.** A structured backlog of architectural concerns identified after the main SDD was authored, by a reviewer running with cleared context. Each item comes with a **Recommended Answer** - a concrete, ready-to-apply resolution. Items are decisions awaiting the architect's acceptance: accept the recommendation (or adjust it), and it gets reflected into the SDD body.
 >
@@ -30,7 +30,7 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 | **Concern** | One paragraph. What was missed and why it matters for downstream LLD or implementation. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
-| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives — the evidence behind it (BRD requirement, NFR, doctrine/CLAUDE.md default, operational risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
+| **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives - the evidence behind it (BRD requirement, NFR, doctrine/CLAUDE.md default, operational risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
 | **Status** | Open (awaiting decision) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. |
 
 ---
@@ -43,9 +43,9 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 - **Type:** [Architecture gap | Missing scenario | Corner case | Ambiguity | Risk | Inconsistency | NFR shortfall | ADR needed | Contract mismatch | Duplication]
 - **Concern:** [One paragraph.]
 - **Options:**
-  - **A.** [Option A] — [one-line tradeoff].
-  - **B.** [Option B] — [one-line tradeoff].
-  - **C.** [Option C] — [one-line tradeoff]. *(Optional.)*
+  - **A.** [Option A] - [one-line tradeoff].
+  - **B.** [Option B] - [one-line tradeoff].
+  - **C.** [Option C] - [one-line tradeoff]. *(Optional.)*
 - **Recommended Answer:** [Option letter + the concrete resolution text, ready to paste into the SDD. E.g., "Option A - add ADR-07 to §10: 'Use the transactional outbox pattern for all state-change events; rationale: ...'"]
 - **Why:** [The reason this option wins, e.g., "Option A is the platform doctrine default (EDA + outbox, no dual-writes) and closes the at-least-once gap the BRD's 'money movements are never lost' expectation implies; B (broker transactions) couples the DB to the broker version."]
 - **Status:** Open
@@ -58,8 +58,8 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 - **Type:** [...]
 - **Concern:** [...]
 - **Options:**
-  - **A.** [...] — [...].
-  - **B.** [...] — [...].
+  - **A.** [...] - [...].
+  - **B.** [...] - [...].
 - **Recommended Answer:** [...]
 - **Why:** [...]
 - **Status:** Open

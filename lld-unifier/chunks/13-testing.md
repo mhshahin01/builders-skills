@@ -87,7 +87,7 @@ class FooApiIntegrationTest {
 - Consumer tests: each consumer verifies it can parse the published contract.
 - CI gate: contract verification runs on every PR.
 
-## 16.5 Frontend Tests (if applicable — see `14-frontend.md`)
+## 16.5 Frontend Tests (if applicable)
 
 - Unit / component: Jest + Angular Testing Library; one spec per component / service / pipe.
 - End-to-end: Playwright; one spec per BRD use case, named and tagged per § 16.8 (with no source BRD: one spec per critical user journey).
@@ -96,7 +96,7 @@ class FooApiIntegrationTest {
 ## 16.6 Test Data Strategy
 
 - **Builders:** every aggregate type has a `@TestBuilder` class for fixture creation.
-- **Tenant fixtures:** `tenant_a`, `tenant_b` baseline tenants in test data — used to verify tenant isolation by negative test.
+- **Tenant fixtures:** `tenant_a`, `tenant_b` baseline tenants in test data - used to verify tenant isolation by negative test.
 - **Time:** `Clock` injected; tests use `Clock.fixed(...)` for deterministic timestamps.
 - **IDs:** UUIDv7 generator can be replaced with a deterministic sequence in tests.
 

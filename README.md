@@ -7,7 +7,7 @@ Five skills that take a product from a raw idea to an implementation-ready desig
 - [How the skills link together](#how-the-skills-link-together)
 - [1. pre-BRD](#1-pre-brd-pre-brd-unifier) · [2. BRD](#2-brd-brd-unifier) · [3. SDD](#3-sdd-sdd-unifier) · [4. LLD](#4-lld-lld-unifier) · [5. Business reviewer](#5-business-reviewer-business-reviewer-unifier)
 - [Installation and usage](#installation-and-usage)
-- [Suggested workflow](#suggested-workflow)
+- [Suggested workflow](#suggested-workflow) · [Known gaps](#known-gaps)
 
 ---
 
@@ -32,7 +32,7 @@ flowchart LR
 | Stage | Skill | Question it answers | You give it | It writes | It stops for you |
 | ----- | ----- | ------------------- | ----------- | --------- | ---------------- |
 | 1. Discovery | `pre-brd-unifier` | Is this worth building? | An idea, notes, or a brief | `./pre-brd-[slug]/`: master and 24 chunks; `.xlsx` on request | Before the Excel export, which runs only after you approve the Markdown |
-| 2. Requirements | `brd-unifier` | What are we building, and why? | A SoW, brief, product spec, RFP scope, old BRD, or notes | `./brd-[slug]/`: master and chunks 00-14; 15-17 once unlocked | After parts 1 and 2; on every open item; at the delivery gate (G1-G5) |
+| 2. Requirements | `brd-unifier` | What are we building, and why? | A pre-BRD, SoW, brief, product spec, RFP scope, old BRD, or notes | `./brd-[slug]/`: master and chunks 00-14; 15-17 once unlocked | After parts 1 and 2; on every open item; at the delivery gate (G1-G5) |
 | 3. Solution design | `sdd-unifier` | How does the whole system work? | One or more finished BRDs, or an SDD to reshape | `./sdd-[slug]/`: master, chunks 00-18, one `13x` chunk per service; 19 once unlocked | Project type, architecture, and ecosystem choices; after parts 1 and 2; on every open item; at the e2e gate (E1-E4) |
 | 4. Detailed design | `lld-unifier` | How is each service built? | An SDD, a codebase, or both | `./lld-[slug]/`: master, chunks 00-18, one `04-implementation/<service>.md` per service | The direction question (from-sdd, from-code, hybrid), always asked |
 | Review | `business-reviewer-unifier` | Does the document chain hold up? | The documents to challenge | `review-comments-tracker.md` in the project root | On every review point, one at a time |
@@ -44,7 +44,7 @@ flowchart LR
 All skills follow the same house style, so output is interchangeable and tool-friendly across stages.
 
 - **Markdown only.** No `.docx` or `.pdf` unless explicitly requested. The one exception is the pre-BRD `.xlsx` export, produced only on demand after the Markdown is approved.
-- **Chunks or combined.** Every authoring skill takes `chunks` (the default: one file per section group) or `combined` (one file). The BRD and SDD also take `parts` (the default in chunks mode: three parts, with a stop for your review after parts 1 and 2) or `whole` (one run).
+- **Chunks or combined.** Every authoring skill takes `chunks` (the default: one file per section group) or `combined` (one file). The BRD and SDD also take `parts` (the default in chunks mode: three parts, with a stop for your review after parts 1 and 2) or `whole` (one run). The BRD, SDD, and LLD convert between the two layouts in both directions (merge and re-chunk); each skill's `chunking.md` holds the rules.
 - **Stable file names.** `NN-kebab-name.md`, with a letter suffix where a chunk repeats (`06a`, `06b` per persona in the BRD; `13a`, `13b` per service in the SDD). The LLD puts one file per service in `04-implementation/`. Numbers never shift, so links stay valid.
 - **Self-describing chunks.** BRD, SDD, and LLD chunks open with a `<!-- CHUNK: NN ... -->` comment and close with a `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer. Each folder has a master index: `[project-slug]-brd-master.md`, `[project-slug]-sdd-master.md`, `[project-slug]-lld-master.md`, and `00-pre-brd-master.md`. The BRD and SDD masters also record generation progress, so an interrupted run resumes where it stopped.
 - **What vs how.** The BRD is business language only (the WHAT). The SDD owns every technical decision (the HOW). The LLD owns implementation detail and the constitution-grade Specs chunk (Mission, Tech Stack, Roadmap, Project Type) that feeds SpecKit `/constitution`.
@@ -289,7 +289,7 @@ flowchart LR
 
 | | |
 | --- | --- |
-| You provide | A source (SoW, brief, product spec, RFP scope, old BRD, notes) or a topic. Optional: `AGENTS.md` and `ui-ux-global-constitution.md` in the project root, read automatically when present. |
+| You provide | A source (a pre-BRD, SoW, brief, product spec, RFP scope, old BRD, notes) or a topic. Optional: `AGENTS.md` and `ui-ux-global-constitution.md` in the project root, read automatically when present. |
 | It asks you | The output format if not given; at most three intake questions (project name, source, personas); the brand or key color when there is no UI/UX constitution; a decision on every open item. |
 | It stops | After parts 1 and 2 until you say "continue"; and for 15-17, until the delivery gate is open. |
 | It never | Puts technology, protocols, or implementation terms in the body; invents measures, targets, or behaviour; writes 15-17 (not even a draft) while the gate is shut; applies an open item without your decision. |
@@ -324,8 +324,8 @@ flowchart LR
 | 07 | `07-cross-cutting-concerns.md` | §11 | Data modeling, multi-tenancy, deployment, observability, configuration, security defaults | Part 1 |
 | 08 | `08-integrations.md` | §12 | Every external integration with protocol, auth, timeout, retries, fallback | Part 1 |
 | 09 | `09-services-summary.md` | §13 | One row per service or module (Type), with the BRD use cases it owns and its status | Part 1 |
-| 10 | `10-events-hub.md` | §14 | Centralized Event Hub: topics, events, envelope, payload contracts (the event registry) | Part 2 |
-| 11 | `11-api-contracts.md` | §15 | One `API-NN` contract per synchronous integration (the API registry) | Part 2 |
+| 10 | `10-events-hub.md` | §14 | Centralized Event Hub: topics, events, envelope, payload contracts, and in-process domain events (§14.10) (the event registry) | Part 2 |
+| 11 | `11-api-contracts.md` | §15 | One `API-NN` contract per synchronous integration, HTTP or in-process port call (the API registry) | Part 2 |
 | 12 | `12-centralized-user-roles.md` | §16 | Roles, permission tokens, capability and permission matrices (the role registry) | Part 2 |
 | 13a, 13b, ... | `13a-service-[slug].md` | §17.X | Full spec of one service: boundaries, logic, data model, APIs, events, errors, observability | Part 2 |
 | 14 | `14-performance-and-capacity.md` | §18 | Load estimates, throughput targets, peak scenarios, stress testing | Part 3 |
@@ -348,7 +348,7 @@ flowchart LR
 **Summary:** the service specs are drafted first, then consolidated into the three registries and reconciled against them; the review follows, and the end-to-end design is written last, only once every open item is closed.
 
 - Chunks 10, 11, and 12 are the contract registries: topic and event names, API method and URI, role names and permission tokens in every `13x` chunk must match them character for character. Divergences go to §14.8, §15.5, or §16.12 and are never reconciled silently.
-- §7.3 is a consolidated view: owner from 09, entry points from the `13x` List of APIs, flows from 05, APIs from §15.2, events from §14.5.
+- §7.3 is a consolidated view: owner from 09, entry points from the `13x` List of APIs, flows from 05, APIs from §15.2, events from §14.5 and §14.10.
 - The e2e gate opens only when every open item is closed (`Deferred` counts as open), no contract divergence is `Open`, no clarification marker is left in 09-13x or §7.3, and the reconciliation is newer than the last change (E1-E4, SKILL.md step 8b). There is no override.
 - The SDD never writes a Specs chunk: the LLD owns Specs.
 
@@ -421,7 +421,7 @@ flowchart LR
 | | |
 | --- | --- |
 | You provide | An SDD folder (from-sdd), a code path (from-code), or both (hybrid). The BRDs are found through the SDD's lineage. |
-| It asks you | The output shape if not given; the direction (always, with a suggested default); at most three intake questions; the Project Type when the SDD lacks it; a missing version pin; roadmap phases when the SDD has no natural breaks. |
+| It asks you | The output shape if not given; the direction (always, with a suggested default); at most three intake questions; the Project Type when the SDD lacks it; a missing version pin; roadmap phases when the SDD has no natural breaks; on an existing LLD whose SDD has moved on, whether to refresh the affected chunks (it lists the SDD changes first). |
 | It stops | When the SDD is unfinished (a part still pending, or §7.3 still `Pending (part 2)`). |
 | It never | Picks a direction silently; invents class names, columns, topics, or version pins (it flags them); creates a use case, test case, or screen ID; writes into the SDD beyond its own Child LLDs row. |
 | Done when | The body, the Specs, and chunk 18 exist, and the handoff reports the flag and drift counts, the use-case trace per BRD, and the Child LLDs row. |
@@ -430,6 +430,7 @@ flowchart LR
 
 - from-code and hybrid dispatch two specialist agents: `feature-dev:code-explorer` for structural discovery and `code-documentation:docs-architect` for narrative synthesis (`agent-orchestration.md`).
 - Confidence and pattern rules (`confidence-rules.md`, `pattern-rules.md`) govern how inferred facts are marked and which patterns apply.
+- Reads a modular-monolith SDD too: each module gets its own `04-implementation/` file, in-process port contracts go to 06 §9.6 and in-process domain events to 07 §10.6, with no HTTP, broker, outbox, or retry settings for them.
 - Every traced entry point carries `@UseCase("REFUNDS/UC-04")`, which puts a `use_case` attribute on its logs and spans; routes and e2e tests carry the same keyed IDs.
 
 **Reference files:** `chunking.md`, `modes.md`, `transform-detection.md`, `sdd-to-lld.md`, `code-extraction.md`, `hybrid-drift.md`, `pattern-rules.md`, `confidence-rules.md`, `lld-quality.md`, `mermaid-diagrams.md`, `agent-orchestration.md`, `TEMPLATE-COMBINED.md`.
@@ -517,7 +518,7 @@ Call a skill by name with its arguments, or just describe the task in plain word
 Tips:
 
 - Run from the project folder where the documents should be written; each skill writes its folder there, so sibling folders (`brd-*`, `sdd-*`, `lld-*`) link to each other with relative paths.
-- Point each skill at its input: an idea or notes for pre-BRD, a SoW or old BRD for BRD, the BRD folder for SDD, the SDD folder or a code path for LLD.
+- Point each skill at its input: an idea or notes for pre-BRD, a SoW, old BRD, or pre-BRD folder for BRD, the BRD folder for SDD, the SDD folder or a code path for LLD.
 - In `parts` mode the BRD and the SDD stop after parts 1 and 2; reply "continue" to go on, or "do the rest in one go".
 - Say "export to Excel" after approving a pre-BRD to get the `.xlsx`.
 
@@ -530,4 +531,11 @@ Tips:
 3. Run **SDD** on the finished BRD folder(s). Confirm the architecture and the ecosystem, review after parts 1 and 2, and decide the open items; the end-to-end design follows once they are all closed.
 4. Run **LLD** from the SDD, by default once for the whole system (or once per group of services): `from-sdd` before code exists, `hybrid` once it does. It registers itself in the SDD.
 5. Run the **business reviewer** at any point to challenge the document chain from several angles.
-6. Hand the LLD and its `17-specs.md` to SpecKit and Claude Code for the build. When the BRD changes later, update the SDD ("BRD `KEY` has a new version") and then refresh the LLD's trace.
+6. Hand the LLD and its `17-specs.md` to SpecKit and Claude Code for the build. When the BRD changes later, update the SDD ("BRD `KEY` has a new version"); the SDD marks its child LLDs out of date, and each LLD offers a targeted refresh on its next run.
+
+---
+
+## Known gaps
+
+- The newest paths have not been run on a sample project yet: the LLD's modular-monolith path, the BRD merge and re-chunk heading map, SDD version tracking, and the pre-BRD to BRD mapping.
+- `business-reviewer-unifier` reviews BRDs and SDDs generically; it does not yet check the SDD's document lineage, §7.3 use case traceability, or contract registries.

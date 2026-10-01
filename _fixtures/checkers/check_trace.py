@@ -4,6 +4,8 @@ ROOT = sys.argv[1]
 LLD = os.path.join(ROOT, "lld-refunds-platform")
 SDD = os.path.join(ROOT, "sdd-refunds-platform")
 BRD_R = os.path.join(ROOT, "brd-refunds-portal")
+BRDS = {"REFUNDS": BRD_R, "LOYALTY": os.path.join(ROOT, "brd-loyalty-points")}
+PENDING = "Pending (BRD 16 not written)"
 
 def read(p):
     with open(p, encoding="utf-8") as f:
@@ -21,15 +23,23 @@ for line in read(os.path.join(SDD, "03-users-and-use-cases.md")).splitlines():
         s73[uc] = dict(title=title, owner=owner, entry=entry, status=status)
 print("SDD 7.3 rows:", list(s73))
 
-# ---- BRD REFUNDS chunk 16 Related UC
+# ---- BRD chunk 16 Related UC (a BRD without chunk 16 is Pending)
 tc_by_uc = {}
-for line in read(os.path.join(BRD_R, "16-uat-bat-test-cases.md")).splitlines():
-    m = re.match(r"\| (TC-[A-Z]{3}-\d\d) \|(.*)$", line)
-    if m:
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        tc, related = cells[0], cells[5]
-        for uc in re.findall(r"UC-\d\d", related):
-            tc_by_uc.setdefault("REFUNDS/" + uc, []).append("REFUNDS/" + tc)
+tcs_by_key = {}
+for key, brd in BRDS.items():
+    p16 = os.path.join(brd, "16-uat-bat-test-cases.md")
+    if not os.path.isfile(p16):
+        continue
+    tcs_by_key[key] = set()
+    for line in read(p16).splitlines():
+        m = re.match(r"\| (TC-[A-Z]{3}-\d\d) \|(.*)$", line)
+        if m:
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            tc, related = cells[0], cells[5]
+            tcs_by_key[key].add(f"{key}/{tc}")
+            for uc in dict.fromkeys(re.findall(r"UC-\d\d", related)):
+                tc_by_uc.setdefault(f"{key}/{uc}", []).append(f"{key}/{tc}")
+print("BRDs with chunk 16:", sorted(tcs_by_key))
 
 # ---- LLD 04 blocks and traceability lines
 blocks = {}
@@ -69,12 +79,12 @@ for uc, row in s73.items():
     if fields.get("Entry points") != row["entry"]:
         problems.append(f"{uc} entry points differ:\n   LLD {fields.get('Entry points')}\n   SDD {row['entry']}")
     tcs = re.findall(r"\[((?:REFUNDS|LOYALTY)/TC-[A-Z]{3}-\d\d)\]", fields.get("UAT/BAT", ""))
-    if uc.startswith("REFUNDS/"):
+    key = uc.split("/")[0]
+    if key in tcs_by_key:
         if sorted(tcs) != sorted(tc_by_uc.get(uc, [])):
             problems.append(f"{uc} TCs {tcs} vs chunk16 {tc_by_uc.get(uc)}")
-    else:
-        if fields.get("UAT/BAT") != "Pending (BRD 16 not written)":
-            problems.append(f"{uc} LOYALTY UAT/BAT should be Pending")
+    elif fields.get("UAT/BAT") != PENDING:
+        problems.append(f"{uc} {key} UAT/BAT should be Pending")
     blocks[uc]["screens_field"] = fields.get("Screens", "")
 
 # ---- 14 17.3 routes
@@ -108,7 +118,6 @@ for r in routes:
     if [scr] != r[1] or sorted(ucs) != sorted(r[2]):
         problems.append(f"route {r[0]} data {scr} {ucs} vs row {r[1]} {r[2]}")
 
-BRDS = {"REFUNDS": BRD_R, "LOYALTY": os.path.join(ROOT, "brd-loyalty-points")}
 SCREEN_REF = re.compile(r"\[(REFUNDS|LOYALTY)/([A-Z]{2,4}-\d\d)\]\(([^)\s]+)\)")
 
 
@@ -174,8 +183,11 @@ for line in idx.splitlines():
         problems.append(f"index {uc} title/status mismatch")
     if s73[uc]["status"] == "Active":
         tcs = re.findall(r"\[((?:REFUNDS|LOYALTY)/TC-[A-Z]{3}-\d\d)\]", cells[6])
-        if uc.startswith("REFUNDS/") and sorted(tcs) != sorted(tc_by_uc.get(uc, [])):
+        key = uc.split("/")[0]
+        if key in tcs_by_key and sorted(tcs) != sorted(tc_by_uc.get(uc, [])):
             problems.append(f"index {uc} TCs differ")
+        elif key not in tcs_by_key and cells[6] != PENDING:
+            problems.append(f"index {uc} {key} UAT/BAT should be Pending")
         rts = re.findall(r"`(/[^`]*)`", cells[5])
         if sorted(rts) != sorted([r[0] for r in routes if uc in r[2]]):
             problems.append(f"index {uc} routes differ")
@@ -206,11 +218,14 @@ for uc, e in all_eps:
 
 # ---- 13 16.8 specs vs chunk 16
 t13 = read(os.path.join(LLD, "13-testing.md"))
-spec_tcs = set(re.findall(r"\[(REFUNDS/TC-[A-Z]{3}-\d\d)\]", t13))
-all_tcs = set(x for v in tc_by_uc.values() for x in v) | {"REFUNDS/TC-NFR-01", "REFUNDS/TC-NFR-02"}
+spec_tcs = set(re.findall(r"\[((?:REFUNDS|LOYALTY)/TC-[A-Z]{3}-\d\d)\]", t13))
+all_tcs = set().union(*tcs_by_key.values())
 missing = all_tcs - spec_tcs
 if missing:
     problems.append(f"test cases with no spec and no Not automated reason: {sorted(missing)}")
+unknown = spec_tcs - all_tcs
+if unknown:
+    problems.append(f"13 cites test cases that are not in a BRD chunk 16: {sorted(unknown)}")
 
 
 def split_row(line):

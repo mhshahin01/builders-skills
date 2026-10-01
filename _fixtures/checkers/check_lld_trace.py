@@ -116,6 +116,74 @@ def child_llds(sdd_dir):
     return [r.strip() for r in table_rows(section(read(c00), r"Child LLDs"))]
 
 
+CHILD_COLUMNS = ["LLD", "Scope (§13 services)", "Direction", "Version", "SDD version", "Link"]
+
+
+def cells(row):
+    return [c.strip() for c in row.strip().strip("|").split("|")]
+
+
+def first_match(path, pattern):
+    if not os.path.isfile(path):
+        return None
+    m = re.search(pattern, read(path), re.M)
+    return m.group(1) if m else None
+
+
+def lineage(lld_dir, sdd_dir, master):
+    c00 = os.path.join(sdd_dir, "00-cover-and-changelog.md")
+    if not os.path.isfile(c00):
+        return ["SDD chunk 00 missing"]
+    lines = [l for l in section(read(c00), r"Child LLDs") if l.strip().startswith("|")]
+    if len(lines) < 2:
+        return ["SDD chunk 00 has no Child LLDs table"]
+    problems = []
+    header = cells(lines[0])
+    if header != CHILD_COLUMNS:
+        problems.append(f"Child LLDs columns {header}, expected {CHILD_COLUMNS}")
+    sdd_ver = first_match(c00, r"^\*\*Version:\*\*\s*v?([0-9]+(?:\.[0-9]+)*)")
+    lld_ver = first_match(os.path.join(lld_dir, "00-metadata.md"), r"^\|\s*\*\*Version\*\*\s*\|\s*v?([0-9]+(?:\.[0-9]+)*)")
+    target = os.path.normpath(os.path.join(lld_dir, master)) if master else None
+    own = None
+    for line in lines[2:]:
+        row = dict(zip(header, cells(line)))
+        m = re.search(r"\]\(([^)\s]+)\)", row.get("Link", ""))
+        if m and target and os.path.normpath(os.path.join(sdd_dir, m.group(1))) == target:
+            own = row
+    if own is None:
+        problems.append("no Child LLDs row links to this LLD's master")
+        return problems
+    recorded = own.get("SDD version", "")
+    m = re.match(r"v?([0-9]+(?:\.[0-9]+)*)", recorded)
+    read_ver = m.group(1) if m else None
+    note = f"(out of date: SDD is now v{sdd_ver}; refresh through lld-unifier)"
+    if read_ver is None:
+        problems.append(f"SDD version cell {recorded!r} holds no version")
+    elif read_ver == sdd_ver:
+        if "out of date" in recorded:
+            problems.append(f"SDD version cell {recorded!r} is current but marked out of date")
+    elif note not in recorded:
+        problems.append(f"row read SDD v{read_ver}, the SDD is v{sdd_ver}, and the cell lacks {note!r}")
+    if own.get("Version") != lld_ver:
+        problems.append(f"Version {own.get('Version')!r} vs LLD 00-metadata {lld_ver!r}")
+    if own.get("Direction") not in ("from-sdd", "hybrid", "partial", "from-code"):
+        problems.append(f"Direction {own.get('Direction')!r}")
+    services = read(os.path.join(sdd_dir, "09-services-summary.md")) if os.path.isfile(os.path.join(sdd_dir, "09-services-summary.md")) else ""
+    for name in re.split(r"[,;]\s*", own.get("Scope (§13 services)", "").replace("`", "")):
+        if name and name not in services:
+            problems.append(f"scope service {name!r} is not in SDD chunk 09")
+    refs = os.path.join(lld_dir, "16-references.md")
+    sdd_rows = [cells(r) for r in table_rows(section(read(refs), r"19\.1"))] if os.path.isfile(refs) else []
+    sdd_rows = [r for r in sdd_rows if r and r[0] == "Related SDD"]
+    if not sdd_rows:
+        problems.append("16 §19.1 has no Related SDD row")
+    elif read_ver and len(sdd_rows[0]) > 2:
+        m = re.match(r"v?([0-9]+(?:\.[0-9]+)*)", sdd_rows[0][2])
+        if not m or m.group(1) != read_ver:
+            problems.append(f"16 §19.1 records SDD {sdd_rows[0][2]!r}, the Child LLDs row says v{read_ver}")
+    return problems
+
+
 def brd_ids(brd_dir):
     ids = set()
     for p in md_files(brd_dir):
@@ -185,6 +253,9 @@ def main():
                     kind = "sdd"
                 stats[f"links_{kind}"] += 1
                 if not os.path.isfile(resolved):
+                    if os.path.isdir(resolved) and not anchor:
+                        stats[f"links_{kind}_ok"] += 1
+                        continue
                     broken.append((rel, label, target, "file missing"))
                     continue
                 if anchor:
@@ -235,14 +306,16 @@ def main():
         "unknown_ids": unknown_ids,
         "tc_ranges": ranges,
         "child_llds_rows_in_sdd": child_llds(sdd_dir),
+        "lineage_problems": lineage(lld_dir, sdd_dir, master[0] if master else None),
         **{k: v for k, v in sorted(stats.items())},
     }
-    for k in ("broken_links", "unkeyed_ids", "unknown_ids", "tc_ranges"):
+    listed = ("broken_links", "unkeyed_ids", "unknown_ids", "tc_ranges", "lineage_problems")
+    for k in listed:
         print(f"{k}: {len(result[k])}")
         for item in result[k][:40]:
             print("   ", item)
     for k, v in result.items():
-        if k not in ("broken_links", "unkeyed_ids", "unknown_ids", "tc_ranges"):
+        if k not in listed:
             print(f"{k}: {v}")
     if json_out:
         with open(json_out, "w", encoding="utf-8") as f:

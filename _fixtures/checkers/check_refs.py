@@ -117,7 +117,7 @@ def main(skill, sdd):
         print(f"heading {token!r}: in sdd-unifier 00={token in sdd00}, cited in sdd-to-lld.md={token in s2l}")
     m = re.search(r"### Child LLDs \(children\).*?\n(\|[^\n]*\|)\n", sdd00, re.S)
     cols = [c.strip() for c in m.group(1).strip("|").split("|")]
-    mine = re.findall(r"^\| (LLD|Scope \(§13 services\)|Direction|Version|Link) \|", s2l, re.M)
+    mine = re.findall(r"^\| (LLD|Scope \(§13 services\)|Direction|Version|SDD version|Link) \|", s2l, re.M)
     print(f"sdd-unifier Child LLDs columns: {cols}")
     print(f"sdd-to-lld.md column rows:     {mine} -> {'MATCH' if mine == cols else 'DIFFER'}")
 

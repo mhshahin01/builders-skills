@@ -1,0 +1,187 @@
+<!--
+TYPE: Master Index
+PROJECT: Refunds Platform
+VERSION: 1.0
+PART OF: LLD - Refunds Platform
+PURPOSE: Navigation graph for AI implementers and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
+FILENAME: Written per project as ./lld-refunds-platform/refunds-platform-lld-master.md. The SDD's Child LLDs row links to this file, and sdd-unifier finds an unregistered LLD through the Related SDD line below.
+VERSIONING: All chunks share the LLD version number. When any chunk is updated, bump the LLD version in this master and in the updated chunk(s).
+MAINTENANCE: When adding or removing services (especially 04-implementation/<service>.md files), update the tables below, the dependency graph, and the reading-order table.
+-->
+
+# LLD Master Index - Refunds Platform
+
+> **How to use:** This file is the entry point for the Low-Level Design Document. Each section below maps to a chunk file containing the full template content. Links are relative to this directory. An AI agent should load this file first, identify which chunk(s) are relevant to the task, and navigate to only those chunks.
+
+> **Mode:** from-sdd
+>
+> **Project Type:** Greenfield (recorded in [17-specs.md](./17-specs.md) § 4; resolved from the SDD at intake)
+>
+> **Tech Stack snapshot:** Backend Java 21 / Spring Boot 3.5+; Frontend Angular 17+ (standalone) with PrimeNG and Tailwind; Mobile not applicable; Data PostgreSQL 17+; Messaging Apache Kafka with a JSON Schema registry (version not pinned) - canonical copy in [17-specs.md](./17-specs.md) § 2, consolidated from SDD `02-ecosystem-overview.md`
+>
+> **Related SDD:** See [../sdd-refunds-platform/refunds-platform-sdd-master.md](../sdd-refunds-platform/refunds-platform-sdd-master.md) (if applicable).
+>
+> **Related BRD(s):** One per source BRD, with the key from the SDD's Source BRDs register: `REFUNDS` [../brd-refunds-portal/refunds-portal-brd-master.md](../brd-refunds-portal/refunds-portal-brd-master.md); `LOYALTY` [../brd-loyalty-points/loyalty-points-brd-master.md](../brd-loyalty-points/loyalty-points-brd-master.md).
+>
+> **Production bug?** Start at the [Use-Case Traceability Index](./16-references.md#199-use-case-traceability-index): from a use case, route, screen, or failing test case to the workflow, the SDD §7.3 row, the BRD use case, its UAT/BAT cases, and its e2e spec.
+>
+> **Specs:** [17-specs.md](./17-specs.md) - owned by this LLD (Mission, Tech Stack, Roadmap, Project Type), synthesised from the SDD after the body; the direct input for speckit `/constitution`. (Legacy chains carried a Specs at `../sdd-[sdd-slug]/15-specs.md` or `../brd-[brd-slug]/12-specs.md` - consumed as input if present; none exists in this chain.)
+
+---
+
+## Document Metadata
+
+| Section | Chunk |
+|---------|-------|
+| Title block, Version, Author, Reviewers, Approvers, Status, Mode | [00-metadata.md](./00-metadata.md) |
+| Related BRD/SDD reference | [00-metadata.md](./00-metadata.md) |
+| Changes Log | [00-metadata.md](./00-metadata.md) |
+
+## Strategic Framing
+
+| Section | Chunk |
+|---------|-------|
+| 1. Purpose | [01-purpose-and-scope.md](./01-purpose-and-scope.md) |
+| 2. Scope (In / Out) | [01-purpose-and-scope.md](./01-purpose-and-scope.md) |
+| 3. Assumptions | [01-purpose-and-scope.md](./01-purpose-and-scope.md) |
+| 4. Glossary | [01-purpose-and-scope.md](./01-purpose-and-scope.md) |
+| 5. Context (Bounded Context, Upstream/Downstream) | [02-context.md](./02-context.md) |
+| 6. Architecture Overview (Component Topology, Deployment) | [03-architecture.md](./03-architecture.md) |
+
+## Implementation (load-bearing)
+
+| Section | Chunk |
+|---------|-------|
+| 7. Per-Service Implementation (one file per service) | [04-implementation/](./04-implementation/) |
+| 7.1 loyalty-service (module of `refunds-platform-core`; owns LOYALTY/UC-01, LOYALTY/UC-02) | [04-implementation/loyalty-service.md](./04-implementation/loyalty-service.md) |
+| 7.2 notification-service (service; owns no use case) | [04-implementation/notification-service.md](./04-implementation/notification-service.md) |
+| 7.3 payout-service (service; owns no use case) | [04-implementation/payout-service.md](./04-implementation/payout-service.md) |
+| 7.4 refund-service (module of `refunds-platform-core`; owns REFUNDS/UC-01 to REFUNDS/UC-04) | [04-implementation/refund-service.md](./04-implementation/refund-service.md) |
+
+### Per-Service Sub-Sections (within each `04-implementation/<service>.md`)
+
+| Sub-Section | Description |
+|-------------|-------------|
+| Responsibility | Service's bounded context in one paragraph |
+| Class & Interface Map | Classes, interfaces, method signatures, ports and adapters (modular monolith), authorization per entry point |
+| Method Pseudocode | Method-level pseudocode for non-trivial logic |
+| Design Patterns Applied | Per-pattern: name, triggering CLAUDE.md rule, roles, rationale, Mermaid class diagram, pseudocode skeleton |
+| Dependency Injection Graph | Constructor wiring, bean composition |
+| Transaction Boundaries | `@Transactional` propagation, isolation, rollback rules |
+| Error Handling | Exceptions thrown, RFC 9457 codes, mapping to HTTP status |
+| Use-Case Workflows | Per `[KEY]/UC-NN` block: traceability line (BRD, SDD §7.3, owner, entry points, UAT/BAT cases, screens and routes), control flow, sequence (Mermaid), saga steps, compensation, idempotency points, outbox emission, retries/timeouts |
+
+## Contracts & Data
+
+| Section | Chunk |
+|---------|-------|
+| 8. Data Model (ERD, tables, indexes, tenant strategy, Flyway plan) | [05-data-model.md](./05-data-model.md) |
+| 9. API Contracts (REST endpoints, idempotency, auth, OpenAPI refs, in-process port contracts) | [06-api-contracts.md](./06-api-contracts.md) |
+| 10. Event Contracts (broker topics, schemas, outbox, DLQ, in-process domain events) | [07-event-contracts.md](./07-event-contracts.md) |
+| 11. State Machines & Business Rules | [08-state-and-rules.md](./08-state-and-rules.md) |
+
+## Platform Concerns
+
+| Section | Chunk |
+|---------|-------|
+| 12. Cross-Cutting (auth/tenant, idempotency, retry/circuit breaker, RFC 9457) | [09-cross-cutting.md](./09-cross-cutting.md) |
+| 13. Operations (config, health, RED metrics, logs, tracing, runbooks) | [10-operations.md](./10-operations.md) |
+| 14. Security (data classification, PII, secrets, threat notes) | [11-security.md](./11-security.md) |
+| 15. Performance (SLOs, throughput, caching, load tests) | [12-performance.md](./12-performance.md) |
+| 16. Testing (unit, integration Testcontainers, contract, e2e Playwright) | [13-testing.md](./13-testing.md) |
+| 17. Frontend (conditional - present only when UI exists) | [14-frontend.md](./14-frontend.md) |
+
+## Audit & Reference
+
+| Section | Chunk |
+|---------|-------|
+| 18. Open Questions / Drift Index / Confidence Flags | [15-open-questions.md](./15-open-questions.md) |
+| 19. References (BRD/SDD links, ADRs, runbooks) | [16-references.md](./16-references.md) |
+| 19.9 Use-Case Traceability Index (production-bug entry point) | [16-references.md § 19.9](./16-references.md#199-use-case-traceability-index) |
+| 20. Specs (Mission, Tech Stack, Roadmap, Project Type - speckit `/constitution` input) | [17-specs.md](./17-specs.md) |
+| 21. Open Items & Clarifications (reviewer output) | [18-open-items-and-clarifications.md](./18-open-items-and-clarifications.md) |
+
+---
+
+## Confidence & Drift Marker Legend
+
+| Marker | Meaning |
+|--------|---------|
+| `> Confirm:` | Medium-confidence inference. Reviewer should verify but content is usable. |
+| `> TODO: <best-guess> - verify` | Low-confidence inference. Reviewer must verify or replace. |
+| `✅` (implicit, no marker) | Aligned: from-code and from-sdd match (hybrid mode only). |
+| `⚠ drift` | Hybrid only: SDD intent and code reality disagree. See `> Drift note:` block. |
+| `🆕 code-only` | Hybrid only: present in code, not in SDD. |
+| `⛔ sdd-only` | Hybrid only: in SDD, not yet built. |
+| `⚠ policy` | Every mode that reads code: the code breaks a CLAUDE.md rule or a `pattern-rules.md` anti-pattern; indexed in 15 § 18.6 with the rule and severity. |
+
+All flags are indexed in [15-open-questions.md](./15-open-questions.md).
+
+---
+
+## Chunk Dependency Graph
+
+```
+refunds-platform-lld-master.md (you are here)
+|
++-- 00-metadata.md ............................. mode, version, authors, related BRD/SDD
++-- 01-purpose-and-scope.md .................... purpose, scope, assumptions, glossary
++-- 02-context.md .............................. bounded context, upstream/downstream
++-- 03-architecture.md ......................... component overview, deployment, build layout of the core
++-- 04-implementation/ ......................... per-service deep-dive (load-bearing)
+|   +-- loyalty-service.md ..................... points ledger, RefundPaid take-back, purchase import (LOYALTY/UC-01, LOYALTY/UC-02)
+|   +-- notification-service.md ................ refund events to email and SMS (participates in REFUNDS/UC-01, REFUNDS/UC-03, REFUNDS/UC-04)
+|   +-- payout-service.md ...................... one payout per approved refund (participates in REFUNDS/UC-04)
+|   +-- refund-service.md ...................... refund request lifecycle (REFUNDS/UC-01 to REFUNDS/UC-04)
++-- 05-data-model.md ........................... ERD, tables, indexes, tenant strategy
++-- 06-api-contracts.md ........................ REST endpoints, idempotency, in-process ports
++-- 07-event-contracts.md ...................... broker topics, schemas, outbox, in-process events
++-- 08-state-and-rules.md ...................... state machines, business rules
++-- 09-cross-cutting.md ........................ auth, tenant, retry, circuit breaker
++-- 10-operations.md ........................... config, metrics, logs, tracing
++-- 11-security.md ............................. data classification, PII, secrets
++-- 12-performance.md .......................... SLOs, throughput, caching
++-- 13-testing.md .............................. unit, integration, contract, e2e (specs tagged by use case)
++-- 14-frontend.md ............................. Angular module tree, routes -> screens -> use cases
++-- 15-open-questions.md ....................... drift index, flag index
++-- 16-references.md ........................... BRD/SDD links, ADRs, runbooks, use-case traceability index
++-- 17-specs.md ................................ constitution-grade summary (synthesised after the body)
++-- 18-open-items-and-clarifications.md ........ reviewer findings (post-generation)
+```
+
+### Reading Order by Task
+
+| Agent / Reader Task | Start With | Then |
+|---------------------|-----------|------|
+| Triage a production bug (page, route, error report, log line, or failing UAT case) | 16 § 19.9 (the row of its `use_case`, route, screen, or test case) | the row's workflow block (04), BRD use case, SDD §7.3, UAT/BAT cases, e2e spec |
+| Implement a service | 04-implementation/[svc].md | 05, 06, 07, 09 |
+| Understand a workflow | 04-implementation/[svc].md (workflows section) | 07, 08 |
+| Add a new API endpoint | 06 | 04-implementation/[svc].md, 09 |
+| Add a new event | 07 | 04-implementation/[svc].md (event-publishing service) |
+| Verify a design pattern | 04-implementation/[svc].md (Design Patterns) | (linked CLAUDE.md rule) |
+| Audit drift (hybrid only) | 15 | grep `⚠`, `🆕`, `⛔` across the LLD |
+| Plan migration / DB change | 05 | 04-implementation/[svc].md (DB-touching service) |
+| Plan a runbook | 10 | 12, 11 |
+| Write tests | 13 (§ 16.8 for e2e) | 04-implementation/[svc].md, 06, 07, the BRD's UAT/BAT cases |
+| Feed speckit `/constitution` | 17-specs.md | (only this) |
+| Triage reviewer findings | 18 | the chunk(s) referenced by each open item |
+
+### Cross-Document Navigation (BRD ↔ SDD ↔ LLD)
+
+| Upstream chunk | Related LLD Chunk | Relationship |
+|----------------|-------------------|--------------|
+| brd/05 + 06x - Use cases | lld/04-implementation/[svc].md (`[KEY]/UC-NN` blocks) + lld/16 § 19.9 | The BRD owns the use case IDs and titles; the LLD cites them, keyed, with links to their headings |
+| brd/14 Mockup coverage (and any screen ID the BRD text carries) - Screens | lld/14 § 17.3 | The BRD owns the `MK-NN` rows (one per screen or flow) and the use cases each serves; the LLD maps routes to them |
+| brd/16 - UAT/BAT Test Cases | lld/13 § 16.8 + the 04 traceability lines | The BRD owns the test cases; the LLD tags e2e specs with them |
+| sdd/00 - Document Lineage | lld/00 + lld/16 § 19.1 | SDD lists the source BRDs and their keys; the LLD registers itself in its Child LLDs table |
+| sdd/03 - §7.3 Use Case Traceability | lld/04-implementation/[svc].md (traceability lines) + lld/16 § 19.9 | SDD traces each use case to its owner and entry points; LLD carries the trace to workflows, routes, tests, and spans |
+| sdd/04 - Architecture Style | lld/03 - Architecture | SDD names the style; LLD operationalises with concrete component topology |
+| sdd/05 - Workflows & Sequences | lld/04-implementation/[svc].md (workflows) | SDD describes the cross-service flow; LLD refines per service with idempotency, outbox, saga steps |
+| sdd/07 - Cross-Cutting Concerns | lld/09 - Cross-Cutting | SDD sets defaults; LLD applies them concretely with Resilience4j config, error codes |
+| sdd/10 - Centralized Event Hub | lld/07 - Event Contracts | Topic and event names match SDD §14 verbatim; payload contracts are referenced (§14.9), and the LLD adds the producer and consumer implementation; §14.10 in-process domain events go to lld/07 § 10.6 |
+| sdd/11 - Service Integration API Contracts | lld/06 - API Contracts | SDD's `API-NN` contracts are referenced; for HTTP contracts the LLD adds clients, DTO records, and resilience config (§ 9.1), for `Internal (in-process)` ones the port and its adapter (§ 9.6) |
+| sdd/12 - Centralized User Roles | lld/11 - Security + lld/09 - Cross-Cutting | Role names and permission tokens match SDD §16 verbatim; the catalogue is referenced, and the LLD adds the enforcement (authZ decisions and checks) |
+| sdd/13a - Service Detailed Spec | lld/04-implementation/[svc].md | SDD defines the contract; LLD defines the implementation (classes, patterns, pseudocode) |
+| sdd/14 - Performance & Capacity | lld/12 - Performance | SDD lists targets; LLD describes the caching/index strategy that meets them |
+| sdd/16 - Operations Runbook | lld/10 - Operations | SDD describes procedures; LLD links to runbook URLs and exposes the metrics/logs they reference |
+| sdd/19 - E2E System Design | lld/02 - Context | SDD's reconciled system map orients the LLD's cross-service dependency view (not written yet: SDD gate Locked) |

@@ -77,6 +77,7 @@ for fn in files:
     content = strip_code(read(os.path.join(SDD, fn)))
     content = re.sub(r"<!--.*?-->", "", content, flags=re.S)
     for i, line in enumerate(content.splitlines(), 1):
+        line = re.sub(r"`[^`]*`", "", line)
         for m in re.finditer(r"(?<![A-Z/])UC-\d\d", line):
             start = m.start()
             prefix = line[max(0, start - 8):start]
@@ -87,6 +88,8 @@ for fn in files:
         for m in re.finditer(r"(REFUNDS|LOYALTY)/UC-\d\d", line):
             before = line[:m.start()]
             after = line[m.end():]
+            if before.endswith("Merged into "):
+                continue
             if not (before.endswith("[") and after.startswith("](")):
                 problems.append(f"{fn}:{i}: unlinked {m.group(0)}: {line.strip()[:120]}")
 
@@ -94,8 +97,11 @@ for fn in files:
 for fn in files:
     content = strip_code(read(os.path.join(SDD, fn)))
     for i, line in enumerate(content.splitlines(), 1):
+        line = re.sub(r"`[^`]*`", "", line)
         for m in re.finditer(r"(?<![A-Z/\w])(NFR|TI)-\d\d", line):
             prefix = line[max(0, m.start() - 8):m.start()]
+            if m.group(1) == "TI" and re.search(r"(?:REFUNDS|LOYALTY) \d\d $", line[:m.start()]):
+                continue
             if not (prefix.endswith("REFUNDS/") or prefix.endswith("LOYALTY/")):
                 problems.append(f"{fn}:{i}: unkeyed {m.group(0)}: {line.strip()[:120]}")
 
@@ -159,6 +165,55 @@ for fn in files:
         for m in re.finditer(r"`((?:refund|loyalty|payout|notification)\.[a-z]+\.[a-z\-]+)`", read(os.path.join(SDD, fn))):
             if m.group(1) not in tokens:
                 problems.append(f"{fn}: token {m.group(1)} not in §16.11")
+
+
+def cells(row):
+    return [c.strip() for c in row.strip().strip("|").split("|")]
+
+
+def norm_ep(text):
+    return re.sub(r"\s+", " ", text.replace("`", "")).strip()
+
+
+sec152 = re.split(r"\n## ", c11.split("\n## 15.2", 1)[1], maxsplit=1)[0] if "\n## 15.2" in c11 else ""
+index = {}
+for line in sec152.splitlines():
+    if re.match(r"^\| API-\d\d \|", line):
+        index[cells(line)[0]] = cells(line)
+index_head = next((cells(l) for l in sec152.splitlines() if l.startswith("| API ID |")), [])
+uri_col = index_head.index("Method & URI") if "Method & URI" in index_head else None
+for fn in files:
+    if not fn.startswith("13"):
+        continue
+    lines = read(os.path.join(SDD, fn)).splitlines()
+    for i, line in enumerate(lines):
+        if not line.startswith("| Method | Path |"):
+            continue
+        head = cells(line)
+        for col in ("Permission token (§16)", "API ID (§15)"):
+            if col not in head:
+                problems.append(f"{fn}: List of APIs has no '{col}' column")
+        for row in lines[i + 2:]:
+            if not row.startswith("|"):
+                break
+            c = dict(zip(head, cells(row)))
+            ep = norm_ep(f"{c.get('Method', '')} {c.get('Path', '')}")
+            if "Permission token (§16)" in head:
+                cell = c.get("Permission token (§16)", "")
+                found = re.findall(r"`([^`]+)`", cell)
+                if not found and cell != "-":
+                    problems.append(f"{fn}: {ep}: permission token cell {cell!r} names no token")
+                for token in found:
+                    if token not in tokens and not re.fullmatch(r"(?:refund|loyalty|payout|notification)\.[a-z]+\.[a-z\-]+", token):
+                        problems.append(f"{fn}: {ep}: permission token {token} not in §16.11")
+            for api in re.findall(r"API-\d\d", c.get("API ID (§15)", "")):
+                if uri_col is not None and api in index and "TBD" not in index[api][uri_col] and norm_ep(index[api][uri_col]) != ep:
+                    problems.append(f"{fn}: {ep}: {api} is {norm_ep(index[api][uri_col])!r} in §15.2")
+for line in c11.splitlines():
+    if line.startswith("| Authorization |"):
+        for token in re.findall(r"`([a-z]+\.[a-z]+\.[a-z\-]+)`", line):
+            if token not in tokens:
+                problems.append(f"11: contract Authorization token {token} not in §16.11")
 
 # 9. Marker counts
 counts = {}

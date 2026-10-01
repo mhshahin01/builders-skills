@@ -36,13 +36,20 @@ for dp, _, fs in os.walk(LLD):
                             issues.append(f"{where}: message without text: {s}")
                     if depth != 0:
                         issues.append(f"{where}: unbalanced alt/end ({depth})")
-                if kind in ("classDiagram", "erDiagram"):
+                if kind == "classDiagram":
                     txt = "\n".join(block)
                     if txt.count("{") != txt.count("}"):
                         issues.append(f"{where}: unbalanced braces")
+                if kind == "erDiagram":
+                    opens = sum(1 for b in block if re.match(r"^\s*[\w\"-]+\s*\{\s*$", b))
+                    closes = sum(1 for b in block if re.match(r"^\s*\}\s*$", b))
+                    if opens != closes:
+                        issues.append(f"{where}: unbalanced entity braces ({opens} open, {closes} close)")
                 if kind in ("graph", "flowchart"):
                     for b in block[1:]:
                         for lab in re.findall(r"\[([^\]\"]*)\]", b):
+                            if lab.startswith("(") and lab.endswith(")"):
+                                lab = lab[1:-1]
                             if any(c in lab for c in "(){}"):
                                 issues.append(f"{where}: unquoted special chars in label [{lab}]")
                 if kind == "stateDiagram-v2":

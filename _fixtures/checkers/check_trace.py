@@ -108,6 +108,56 @@ for r in routes:
     if [scr] != r[1] or sorted(ucs) != sorted(r[2]):
         problems.append(f"route {r[0]} data {scr} {ucs} vs row {r[1]} {r[2]}")
 
+BRDS = {"REFUNDS": BRD_R, "LOYALTY": os.path.join(ROOT, "brd-loyalty-points")}
+SCREEN_REF = re.compile(r"\[(REFUNDS|LOYALTY)/([A-Z]{2,4}-\d\d)\]\(([^)\s]+)\)")
+
+
+def mockup_rows(brd):
+    t = read(os.path.join(brd, "14-todo.md"))
+    if "### Mockup coverage" not in t:
+        return {}
+    sec = re.split(r"\n#{1,3} ", t.split("### Mockup coverage", 1)[1], maxsplit=1)[0]
+    out = {}
+    for line in sec.splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if line.startswith("| ") and cells[0] != "Mockup" and len(cells) > 2:
+            out[cells[0]] = set(re.findall(r"UC-\d\d", cells[2]))
+    return out
+
+
+def brd_text(brd):
+    return "\n".join(read(os.path.join(brd, f)) for f in sorted(os.listdir(brd)) if f.endswith(".md") and not f.startswith("14-"))
+
+
+mockups = {k: mockup_rows(d) for k, d in BRDS.items()}
+texts = {k: brd_text(d) for k, d in BRDS.items()}
+notes = []
+for key, rows in mockups.items():
+    odd = sorted(i for i in rows if not i.startswith("MK-"))
+    if odd:
+        notes.append(f"{key} BRD chunk 14 Mockup coverage rows without an MK-NN ID: {odd}")
+for r in routes:
+    for key, ident, target in SCREEN_REF.findall(r[3]):
+        if ident.startswith("MK-"):
+            if ident not in mockups[key]:
+                problems.append(f"route {r[0]}: {key}/{ident} is not a row of BRD chunk 14 Mockup coverage")
+            elif {u.split("/")[1] for u in r[2] if u.startswith(key + "/")} != mockups[key][ident]:
+                problems.append(f"route {r[0]}: use cases {r[2]} vs {key}/{ident} row {sorted(mockups[key][ident])}")
+            if not target.endswith("14-todo.md#mockup-coverage"):
+                problems.append(f"route {r[0]}: {key}/{ident} links to {target}, not 14-todo.md#mockup-coverage")
+        elif not re.search(r"(?<![\w-])" + re.escape(ident) + r"(?![\w-])", texts[key]):
+            problems.append(f"route {r[0]}: screen ID {key}/{ident} is not in the {key} BRD text")
+for uc, b in blocks.items():
+    got = set()
+    for part in re.split(r"(?=\[(?:REFUNDS|LOYALTY)/)", b.get("screens_field", "")):
+        m = SCREEN_REF.match(part)
+        if m:
+            for route in re.findall(r"`(/[^`]*)`", part):
+                got.add((f"{m.group(1)}/{m.group(2)}", route))
+    exp = {(s, r[0]) for r in routes if uc in r[2] for s in r[1]}
+    if got != exp:
+        problems.append(f"{uc} screens field pairs {sorted(got)} vs 17.3 {sorted(exp)}")
+
 # ---- 16 19.9 index rows in order
 refs = read(os.path.join(LLD, "16-references.md"))
 idx = refs.split("## 19.9", 1)[1]
@@ -129,6 +179,9 @@ for line in idx.splitlines():
         rts = re.findall(r"`(/[^`]*)`", cells[5])
         if sorted(rts) != sorted([r[0] for r in routes if uc in r[2]]):
             problems.append(f"index {uc} routes differ")
+        scr = {f"{k}/{i}" for k, i, _ in SCREEN_REF.findall(cells[4])}
+        if scr != {s for r in routes if uc in r[2] for s in r[1]}:
+            problems.append(f"index {uc} screens {sorted(scr)} differ from 17.3")
     else:
         if any(c != "-" for c in cells[3:8]):
             problems.append(f"index {uc} merged row has mapping values")
@@ -141,10 +194,12 @@ for fn in ("refund-service.md", "loyalty-service.md"):
         if f"`{ep}`" not in s73[uc]["entry"]:
             problems.append(f"@UseCase {uc} on {ep} not in 7.3 entry points")
 all_eps = [(uc, e) for uc, r in s73.items() for e in re.findall(r"`([^`]+)`", r["entry"])]
-alltxt = read(os.path.join(LLD, "04-implementation", "refund-service.md")) + read(os.path.join(LLD, "04-implementation", "loyalty-service.md"))
 for uc, e in all_eps:
-    if not re.search(r"^\| `" + re.escape(e) + r"` \| `[^`]+` \| `" + re.escape(uc) + r"` \|", alltxt, re.M):
-        problems.append(f"no @UseCase row for {uc} {e}")
+    owner_file = os.path.join(LLD, "04-implementation", s73[uc]["owner"] + ".md")
+    owner_txt = read(owner_file) if os.path.isfile(owner_file) else ""
+    row = re.search(r"^\| `" + re.escape(e) + r"` \| `[^`]+` \| `" + re.escape(uc) + r"` \|", owner_txt, re.M)
+    if not row and not (f'@UseCase("{uc}")' in owner_txt and e in owner_txt):
+        problems.append(f"no @UseCase for {uc} {e} in {s73[uc]['owner']}.md")
 
 # ---- 13 16.8 specs vs chunk 16
 t13 = read(os.path.join(LLD, "13-testing.md"))
@@ -154,6 +209,95 @@ missing = all_tcs - spec_tcs
 if missing:
     problems.append(f"test cases with no spec and no Not automated reason: {sorted(missing)}")
 
+
+def split_row(line):
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+sdd_apis = []
+for fn in sorted(os.listdir(SDD)):
+    if not fn.startswith("13"):
+        continue
+    lines = read(os.path.join(SDD, fn)).splitlines()
+    for i, line in enumerate(lines):
+        if not line.startswith("| Method | Path |"):
+            continue
+        head = split_row(line)
+        for row in lines[i + 2:]:
+            if not row.startswith("|"):
+                break
+            c = dict(zip(head, split_row(row)))
+            sdd_apis.append(((c.get("Method", "").strip("`"), c.get("Path", "").strip("`")),
+                             c.get("Permission token (§16)", c.get("Auth Scope", "")).replace("`", ""),
+                             re.findall(r"API-\d\d", c.get("API ID (§15)", ""))))
+c11 = read(os.path.join(SDD, "11-api-contracts.md"))
+sec152 = c11.split("\n## 15.2", 1)[1].split("\n## ", 1)[0] if "\n## 15.2" in c11 else ""
+head152 = next((split_row(l) for l in sec152.splitlines() if l.startswith("| API ID |")), [])
+contracts = {split_row(l)[0]: dict(zip(head152, split_row(l))) for l in sec152.splitlines() if re.match(r"^\| API-\d\d \|", l)}
+api06 = read(os.path.join(LLD, "06-api-contracts.md"))
+lines = api06.split("\n## 9.1", 1)[1].split("\n## 9.2", 1)[0].splitlines() if "\n## 9.1" in api06 else []
+heading = ""
+for i, line in enumerate(lines):
+    if line.startswith("### "):
+        heading = line
+    if not (heading.startswith("### Service:") and line.startswith("| ") and "| Method |" in line and "| Path |" in line):
+        continue
+    head = split_row(line)
+    for col in ("API ID (§15)", "Permission token (SDD §16)"):
+        if col not in head:
+            problems.append(f"06 §9.1 {heading[4:]}: no '{col}' column")
+    for row in lines[i + 2:]:
+        if not row.startswith("|"):
+            break
+        c = dict(zip(head, split_row(row)))
+        key = (c.get("Method", "").strip("`"), c.get("Path", "").strip("`"))
+        ids = set(re.findall(r"API-\d\d", row))
+        outbound = [i for i in ids if contracts.get(i, {}).get("Type", "").startswith("External outbound")]
+        if outbound:
+            service = re.search(r"`([^`]+)`", heading)
+            for i in outbound:
+                if service and contracts[i].get("Consumer (caller)", "").replace("`", "") != service.group(1):
+                    problems.append(f"06 §9.1 {heading[4:]}: {i} consumer is {contracts[i].get('Consumer (caller)')!r} in SDD §15.2")
+            continue
+        same = [e for e in sdd_apis if e[0] == key]
+        if len(same) != 1:
+            same = [e for e in sdd_apis if ids & set(e[2])] or same
+        if not same:
+            problems.append(f"06 §9.1 {' '.join(key)}: not in any SDD 13x List of APIs")
+            continue
+        _, token, apis = same[0]
+        mine = c.get("Permission token (SDD §16)", c.get("Auth Scope", "")).replace("`", "")
+        if mine != token:
+            problems.append(f"06 §9.1 {' '.join(key)}: token {mine!r} vs SDD {token!r}")
+        if "API ID (§15)" in head and re.findall(r"API-\d\d", c.get("API ID (§15)", "")) != apis:
+            problems.append(f"06 §9.1 {' '.join(key)}: API ID {c.get('API ID (§15)')!r} vs SDD {apis}")
+tokens = set(re.findall(r"^\| `([a-z]+\.[a-z]+\.[a-z\-]+)` \|", read(os.path.join(SDD, "12-centralized-user-roles.md")), re.M))
+for fn in sorted(os.listdir(os.path.join(LLD, "04-implementation"))):
+    lines = read(os.path.join(LLD, "04-implementation", fn)).splitlines()
+    if not any(line.startswith("| Entry point | Kind |") for line in lines):
+        problems.append(f"04 {fn}: no authorization table (| Entry point | Kind | Permission token ... |)")
+    for i, line in enumerate(lines):
+        if not line.startswith("| Entry point | Kind |"):
+            continue
+        head = split_row(line)
+        col = next((h for h in head if h.startswith("Permission token")), None)
+        if col is None:
+            problems.append(f"04 {fn}: authorization table has no Permission token column")
+            continue
+        for row in lines[i + 2:]:
+            if not row.startswith("|"):
+                break
+            for t in re.findall(r"`([a-z]+\.[a-z]+\.[a-z\-]+)`", dict(zip(head, split_row(row))).get(col, "")):
+                if t not in tokens:
+                    problems.append(f"04 {fn}: token {t} not in SDD §16.11")
+if any(re.match(r"^\| API-\d\d \|", l) and split_row(l)[4:5] == ["Internal"] for l in c11.splitlines()):
+    for fn in ("06-api-contracts.md", "11-security.md"):
+        if "client-credentials" not in read(os.path.join(LLD, fn)):
+            problems.append(f"{fn}: SDD §15.2 lists internal HTTP contracts but the LLD has no client-credentials rule")
+
 print("problems:", len(problems))
 for p in problems:
     print(" -", p)
+print("notes:", len(notes))
+for n in notes:
+    print(" -", n)

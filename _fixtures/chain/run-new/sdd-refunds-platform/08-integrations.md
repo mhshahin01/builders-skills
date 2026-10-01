@@ -1,0 +1,21 @@
+<!--
+CHUNK: 08
+TITLE: Integrations
+PROJECT: Refunds Platform
+VERSION: 1.0
+DEPENDS_ON: 04, 02
+PART OF: SDD - Refunds Platform
+-->
+
+# 12. Integrations
+
+Business partners, purposes, and criticality are owned by the BRDs: [REFUNDS 08 § Integrations](../brd-refunds-portal/08-integrations.md#integrations) and [LOYALTY 08 § Integrations](../brd-loyalty-points/08-integrations.md#integrations). POS Records appears in both BRDs and is one row here (INT-03). Every synchronous integration has an API contract in §15 (chunk 11); every one of them is `TBD - external` until the provider documentation is supplied (§15.6).
+
+| Integration ID | What (System) | Purpose | How (Protocol / Mode) | When (Trigger) | Auth | Timeout | Rate Limit | Retries & Backoff | Fallback | Notes |
+|----------------|---------------|---------|------------------------|----------------|------|---------|------------|--------------------|----------|-------|
+| INT-01 | Payment Provider (CardPay Ltd) | Pay approved refunds back to the original card; receive payout results (REFUNDS 08 row "Payment Provider") | HTTPS, synchronous request for the payout; payout result inbound from CardPay (transport TBD - external) | `REFUND_APPROVED` consumed by payout-service; each retry | TBD - external (CardPay scheme); credentials per tenant in the secrets manager | [NEEDS CLARIFICATION: timeout per payout call] | TBD - external | Exponential backoff with jitter inside the ADR-10 retry window from the first attempt ([REFUNDS/UC-04](../brd-refunds-portal/06b-use-cases-branch-manager.md#uc-04-approve--reject-refund) E1); same `Idempotency-Key` on every attempt (ADR-10). [NEEDS CLARIFICATION: initial delay and backoff cap.] | Payout stays pending; at the end of the window `PAYOUT_FAILED` keeps the request APPROVED and `REFUND_PAYOUT_FAILED` emails the branch's managers | Owner: payout-service. Contracts: API-02 (outbound), API-03 (inbound). Circuit breaker and bulkhead around the CardPay adapter. |
+| INT-02 | Notification Partner (MsgHub) | Send customer email and SMS (REFUNDS 08 row "Notification Partner") | HTTPS, synchronous send per message | Refund events consumed by notification-service | TBD - external (MsgHub scheme); credentials per tenant in the secrets manager | [NEEDS CLARIFICATION: timeout per send] | TBD - external | Exponential backoff with jitter. [NEEDS CLARIFICATION: attempts and window per message.] | Message marked FAILED after the last attempt, alert raised; refund state is never affected | Owner: notification-service. Contract: API-04. Bulkhead per channel (email, SMS). |
+| INT-03 | POS Records (Retail IT team) | Receipt lookup for refund requests (REFUNDS 08 row "Point-of-Sale Records"); member purchases that earn points (LOYALTY 08 row "POS Records") | Receipt lookup: HTTPS, synchronous, called by refund-service. Member purchases: inbound to loyalty-service, transport TBD - external (push or file) | Lookup: customer opens or submits a refund request ([REFUNDS/UC-01](../brd-refunds-portal/06a-use-cases-customer.md#uc-01-request-a-refund) steps 1-2 and 5). Purchases: every member purchase, the same day (LOYALTY 02 Assumption 1) | TBD - external (Retail IT scheme) | [NEEDS CLARIFICATION: timeout for the receipt lookup] | TBD - external | Lookup: up to 2 retries on idempotent failures with jitter, then the circuit opens. Purchases: provider redelivery; loyalty-service is idempotent on the purchase reference. | Lookup: the customer is asked to try again later (503); purchases: the balance shows the date of the last movement ([LOYALTY/UC-01](../brd-loyalty-points/06a-use-cases-member.md#uc-01-view-points-balance) step 2) until the feed catches up | Owners: refund-service (API-01) and loyalty-service (API-06). |
+| INT-04 | Keycloak Admin API (platform IAM) | Resolve a customer's email, phone, and locale for a message (ADR-09) | HTTPS, synchronous read | Each message notification-service sends | Keycloak client credentials of notification-service | [NEEDS CLARIFICATION: timeout per lookup] | - | Up to 2 retries on idempotent failures with jitter | The message waits and retries with the message's own backoff (INT-02) | Owner: notification-service. Contract: API-05. Platform component, not a BRD partner. |
+
+<!-- MASTER: refunds-platform-sdd-master.md | PREV: 07-cross-cutting-concerns.md | NEXT: 09-services-summary.md -->

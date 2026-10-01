@@ -1,0 +1,20 @@
+<!--
+CHUNK: 08
+TITLE: Integrations
+PROJECT: Refunds Portal
+VERSION: 1.0
+DEPENDS_ON: 04, 02
+PART OF: SDD - Refunds Portal
+-->
+
+# 12. Integrations
+
+The partners, business purpose, information exchanged, direction, and criticality are in [BRD 08](../brd-refunds-portal/08-integrations.md) and are not restated. This table adds the technical fields. Provider-owned fields (wire protocol, authentication scheme, rate limits) are `TBD - external` until the provider documentation is supplied (§15.6); our-side policy is stated here and inherited by the contracts in §15.
+
+| Integration ID | What (System) | Purpose | How (Protocol / Mode) | When (Trigger) | Auth | Timeout | Rate Limit | Retries & Backoff | Fallback | Notes |
+|----------------|---------------|---------|------------------------|----------------|------|---------|------------|--------------------|-----------| ------|
+| INT-01 | CardPay Ltd (BRD 08 Payment Provider) | Pay approved refunds to the original card; receive payout results | Outbound: synchronous HTTPS call made by the payouts dispatcher from committed state (asynchronous to the user). Inbound: result callback if CardPay reports results asynchronously. Wire protocol and format **[TBD - EXTERNAL: CardPay API documentation]** | First attempt when `REFUND_REQUEST_APPROVED` is consumed; later attempts on the retry schedule; callbacks when CardPay sends them | Provider scheme `TBD - external`; per-tenant credentials in the secrets manager | **[NEEDS CLARIFICATION: per-attempt timeout]** | `TBD - external` (provider limit); our dispatcher concurrency **[NEEDS CLARIFICATION: bulkhead size]** | Exponential backoff with jitter; the same idempotency key (payout id) on every attempt; status check (API-06) before a retry after a timeout when offered (ADR-08). **[NEEDS CLARIFICATION: retry schedule and stop condition]** | The request stays Approved and the payout is retried; the branch manager is told when the escalation window passes (UC-04 E1); the circuit breaker pauses dispatch while CardPay fails | Owner: payouts (§17.2). Contracts: API-03 and API-06 (outbound), API-04 (inbound). Hard dependency (BRD 02 Dependencies item 1; R-02); duplicate-payout risk R-03. |
+| INT-02 | MsgHub (BRD 08 Notification Partner) | Send customer emails and SMS messages about their refund; tell the branch manager about escalated payouts if that channel is email or SMS | Outbound: synchronous HTTPS call made by the notifications dispatcher from committed state (asynchronous to the user). Wire protocol and format **[TBD - EXTERNAL: MsgHub API documentation]** | A lifecycle event consumed by notifications (§17.3) | Provider scheme `TBD - external`; per-tenant credentials in the secrets manager | **[NEEDS CLARIFICATION: per-attempt timeout]** | `TBD - external` (provider limit) | Exponential backoff with jitter; the dispatch id as idempotency key when MsgHub supports one. **[NEEDS CLARIFICATION: maximum attempts per message]** | The dispatch is marked Failed and alarmed; the refund lifecycle is unaffected and the customer still sees the current status in the portal (UC-02) | Owner: notifications (§17.3). Contract: API-05. |
+| INT-03 | Point-of-Sale Records (BRD 08, Retail IT team) | Look up a receipt: lines, amounts, branch, purchase date (UC-01) | Outbound: synchronous HTTPS request-response while the customer waits. Wire protocol and format **[TBD - EXTERNAL: Retail IT Point-of-Sale lookup documentation]** | The customer enters a receipt number; again at submission (server-side re-check) | Provider scheme `TBD - external`; credentials in the secrets manager | **[NEEDS CLARIFICATION: timeout inside the customer-facing latency target of §18]** | `TBD - external` | At most one retry on a timeout or 503, with jitter (read-only call); circuit breaker | Fail fast with `PURCHASE_RECORDS_UNAVAILABLE` and an actionable message (§11.7); receipts are not cached (§6) | Owner: refund-requests (§17.1). Contract: API-01. Availability risk R-04; source of the original payment reference open (§3 assumption 3). |
+
+<!-- MASTER: refunds-portal-sdd-master.md | PREV: 07-cross-cutting-concerns.md | NEXT: 09-services-summary.md -->

@@ -187,8 +187,11 @@ for line in idx.splitlines():
             problems.append(f"index {uc} merged row has mapping values")
 
 # ---- @UseCase tables vs 7.3
-for fn in ("refund-service.md", "loyalty-service.md"):
-    txt = read(os.path.join(LLD, "04-implementation", fn))
+for fn in sorted({r["owner"] + ".md" for r in s73.values() if r["status"] == "Active"}):
+    path = os.path.join(LLD, "04-implementation", fn)
+    if not os.path.isfile(path):
+        continue
+    txt = read(path)
     for m in re.finditer(r"^\| `([A-Z]+ [^`]+)` \| `[^`]+` \| `((?:REFUNDS|LOYALTY)/UC-\d\d)` \|", txt, re.M):
         ep, uc = m.group(1), m.group(2)
         if f"`{ep}`" not in s73[uc]["entry"]:

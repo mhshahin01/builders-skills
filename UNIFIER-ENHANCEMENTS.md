@@ -16,11 +16,15 @@ The readiness plan for the five unifier skills (pre-brd-unifier, brd-unifier, sd
 | 1 | Save the chain fixtures, baseline runs, and checkers into `_fixtures/` | Done | `test/unifier-fixtures` 9148923, merged into main as 057f137 | 2026-09-30 |
 | 2 | Rerun the SDD and LLD on main; extend the checkers; add `diff_runs.py` | Done | `test/chain-rerun` 6263882, merged into main as 057f137 | 2026-09-30 |
 | 3 | Test the four untested paths from README "Known gaps" | Done | `test/known-gap-scenarios` ebc20a4, merged into main as 2855377 | 2026-10-01 |
-| 4 | Open the SDD e2e gate once; write LOYALTY chunk 16; refresh the LLD trace | Done, awaiting review | `test/e2e-gate-and-loyalty-uat` (from 2855377), nothing committed | 2026-10-01 |
-| 5 | Business reviewer on the chain; close its Known gap | Not started | - | - |
+| 4 | Open the SDD e2e gate once; write LOYALTY chunk 16; refresh the LLD trace | Done | `test/e2e-gate-and-loyalty-uat` d16e939, merged into main as 8568446 | 2026-10-01 |
+| 5 | Business reviewer on the chain; close its Known gap | Done, awaiting review: option (c) chosen and implemented | `test/business-reviewer-chain` (from 8568446), nothing committed | 2026-10-01 |
 | 6 | Fix round; fixture BRD upgrade decision; rerun the chain; README; baseline; memory | Not started | - | - |
 
-**Git:** main is local only, 5 commits ahead of origin, not pushed. The branches `test/unifier-fixtures`, `test/chain-rerun`, and `test/known-gap-scenarios` are merged but not deleted. The step 4 work is uncommitted on `test/e2e-gate-and-loyalty-uat`: `_fixtures/chain/run-2026-10-01-e2e/`, `_fixtures/checkers/check_e2e.py`, the `check_trace.py` change, `_fixtures/README.md`, `_fixtures/notes/`, and this file (untracked).
+**Git:** main is local only, 7 commits ahead of origin, not pushed. The branches `test/unifier-fixtures`, `test/chain-rerun`, `test/known-gap-scenarios`, and `test/e2e-gate-and-loyalty-uat` are merged but not deleted. Step 5 runs on `test/business-reviewer-chain`, branched from main 8568446. Its work is uncommitted there:
+- the run and notes: `_fixtures/chain/run-2026-10-01-review/`, `_fixtures/notes/step5-findings.md`, `step5-plan.md`, `step5-logs/`, `_fixtures/README.md`, and this file;
+- the option (c) skill change: every business-reviewer-unifier file except `reviewer-personas.md`, one request row each in `sdd-unifier/SKILL.md` and `brd-unifier/SKILL.md`, and the root `README.md`.
+
+The four Band files in `C:\Users\negat\Downloads\` were synced as well; they are outside the repo.
 
 ## Context (all steps)
 
@@ -67,7 +71,7 @@ All four paths pass; pre-BRD to BRD has two defects. The runs are in `_fixtures/
 - **d. LLD modular monolith.** One 04 file per module, the port contract in 06 §9.6, the in-process events in 07 §10.6, and no broker or HTTP resilience rules on them.
 - **Checker fix.** `check_trace.py` now reads the owner files from §7.3, so module names work.
 
-## Step 4: open the SDD e2e gate once, LOYALTY chunk 16, LLD trace refresh (Done, awaiting review)
+## Step 4: open the SDD e2e gate once, LOYALTY chunk 16, LLD trace refresh (Done)
 
 **Result.** All three goals were met on one chain, saved as `_fixtures/chain/run-2026-10-01-e2e/`. The full log, with every finding and the 23 applied answers, is `_fixtures/notes/step4-findings.md`.
 - **LOYALTY:** v1.2 with its delivery gate open, chunk 15 (4 tasks) and chunk 16 (31 test cases).
@@ -116,13 +120,49 @@ All four paths pass; pre-BRD to BRD has two defects. The runs are in `_fixtures/
 
 If B1 or A1 has no complete output when you resume, rerun its brief on a fresh copy of the affected folder. If A2 reports new markers, run A1 again for those only, then A2 again.
 
-## Step 5: business reviewer (Not started)
+## Step 5: business reviewer (Done, awaiting review)
 
 1. Run `business-reviewer-unifier panel` on the step 4 chain, then walkthrough, apply, and verify.
 2. Then close its Known gap: it does not check the SDD's document lineage, the §7.3 use case traceability, or the contract registries. Give the user options with a recommendation, for example:
    - (a) one new "chain integrity" persona: the existing personas stay as they are, but each panel run costs one more agent;
    - (b) those checks added to the existing personas.
 3. Implement only after the user decides.
+
+**Result.** The run is saved as `_fixtures/chain/run-2026-10-01-review/` (88 files, with `review-comments-tracker.md` in its root). The full log is `_fixtures/notes/step5-findings.md`. The panel output, the walkthrough record, and the verify record are in `_fixtures/notes/step5-logs/`.
+- **Panel.** 60 findings became 39 points. All were Applied with the recommended option, and the Verification pass scored 8/10 (26 remnants: 24 fixed, 2 rejected).
+- **Versions.** REFUNDS 1.1 and LOYALTY 1.3 are In Review with their delivery gates Shut (open items 1 to 32 and 8 to 18, plus a new G6 sign-off condition). SDD 1.3 has its e2e gate `Shut - Stale` and chunk 19 at 1.2. The LLD is unchanged and out of date.
+- **Detection.** Two panel reviewers called the Child LLDs row wrong, but it was right. The LLD was out of the default scope, and the SDD decision log's last check predates the LLD refresh.
+- **Apply.** Links, §7.3, and the registry cross-references stayed consistent. But the walkthrough changed structures that other skills own: lineage table columns, a chunk 10 table column, the BRD 02 dependency table, chunk 18 status values, and the E3 and G6 gate conditions. It deferred version bumps, and it left the LLD and the gated chunks behind with no hand-off. Effects: check_uc_keys 0 to 166, E1 fails, check_trace 5 to 11, check_sdd 50 to 68.
+- **Verify.** The remnant hunt looks for stale text, not template conformance.
+
+**Known gap options (the user chose (c) on 2026-10-01; implemented, uncommitted).**
+- (a) A sixth default persona, Chain Integrity. It checks lineage at both ends, §7.3 against its homes, the registries against 13x, and the gate and status vocabularies.
+- (b) The same checks added to DC (lineage, §7.3) and PA (registries, gates).
+- (c) Hand chain integrity to the owning skills:
+  - apply changes content, never another skill's structures;
+  - versions follow each document's own rule at apply time;
+  - after apply, a hand-off: sdd-unifier "BRD <KEY> has a new version" for each changed BRD, the Child LLDs out-of-date note, and lld-unifier and brd-unifier refreshes;
+  - intake reads each child LLD's version record;
+  - the verify brief also checks template conformance.
+- (d) (a) plus (c).
+
+Recommended: (c). The tradeoffs are in the step 5 report and in `notes/step5-findings.md` § Summary.
+
+**Option (c) as implemented (2026-10-01).**
+- business-reviewer-unifier:
+  - a BRD or SDD keeps its template structure, and a structural need becomes a Skill changes requested entry;
+  - an LLD or a gated chunk is never edited;
+  - the story goes in the owner's `decision-log.md`;
+  - one version bump per document per review session, at the first content change, with a Changes Log row listing each point and the chunks it changed;
+  - each child LLD's version record (master, `00-metadata.md`, `16-references.md` § 19.1) goes to the panel as lineage context;
+  - the verify brief checks template conformance and lineage at both ends, and leaves lineage rows to the hand-off;
+  - the close writes a Hand-offs block (`To run` or `Done`): brd-unifier "update the todo", then sdd-unifier "BRD <KEY> has a new version" (all changed BRDs in one request) or "the business review changed this SDD", then lld-unifier "the SDD has a new version" (plus "refresh the trace" when a BRD's use cases, test cases, or screens changed).
+- sdd-unifier: a new step 10 row, "the business review changed this SDD", and several BRDs in one "new version" request.
+- brd-unifier: the "update the todo" row takes a business review's decisions.
+- Root README: a lineage bullet, §5, Suggested workflow; the reviewer's Known gap line removed.
+- Band files synced.
+- A read-only consistency check found 4 A, 15 B, and 12 C items. All are fixed except two: B15 (the pre-BRD is in the reviewer's scope in the README and Band files but not in the skill's Intake; it predates (c)) was then decided by the user: option A, with the pre-BRD optional (implemented: Intake lists a pre-BRD when there is one and never mentions it otherwise; a pre-BRD keeps its template, takes Answer-cell changes only with derived values recomputed, gets no version or changelog (the tracker lists its changed chunks), and reaches the BRD owner through the BRD hand-off). C11 (= K1) goes to step 6. A3 also showed that brd-unifier's own Stale rules omit the master's Delivery Chunks State cell, which lld-unifier reads; that goes to step 6.
+- Not yet tested on a run: step 6's chain rerun covers it.
 
 **Proposed run setup** (2026-10-01; the user confirms it by sending the step 5 prompt):
 - **Before step 5:** commit step 4 on `test/e2e-gate-and-loyalty-uat`, merge it into main, and do not push. Step 5 then runs on `test/business-reviewer-chain`, branched from main.
@@ -139,6 +179,20 @@ If B1 or A1 has no complete output when you resume, rerun its brief on a fresh c
   - save the result as `_fixtures/chain/run-<date>-review`;
   - log in `_fixtures/notes/step5-findings.md`;
   - then the Known gap options with a recommendation, and stop.
+
+**Run folder.** `C:\Users\negat\AppData\Local\Temp\claude\C--Users-negat--claude-skills\23e92d30-8ed6-494a-b8a9-6f1c0f209d91\scratchpad\s5\` (a copy of `chain/run-2026-10-01-e2e`, 87 files; the tracker goes in its root). If it is gone, recreate it from `_fixtures/chain/run-2026-10-01-e2e` and rerun the stages. The briefs are in `_fixtures/notes/step5-plan.md`.
+
+**Intake (the orchestrator's answers, 2026-10-01).**
+- **Scope:** the two BRDs (REFUNDS 1.0 Approved, LOYALTY 1.2 In Review) and the SDD (1.2 Draft), 63 files. The LLD is not picked up: SKILL.md step 1 detects "numbered business docs, BRD chunk folders, SDDs", and the LLD is none of these. `sdd-marker-decisions.md` in the root is not a chain document.
+- **SME domain (inferred, accepted):** multi-branch retail store operations: customer refunds and returns handled at the branch and paid back to the original card, and a points-based member loyalty programme.
+- **Panel:** the default five personas, no add-ons.
+
+| Sub-step | What | Status | Output |
+|----------|------|--------|--------|
+| P | Panel: five cleared-context background reviewers (BO, SME, PM, PA, DC), read-only, launched in parallel by this session | Done 13:12 (30 to 38 min each, about 420K to 460K tokens each) | 60 raw findings, 12 per persona (`SP\s5-logs\panel-raw-*.md`). Merged by this session into `s5\review-comments-tracker.md`: 39 points (21 findings merged into 15 rows; BO 9, SME 9, PM 6, PA 10, DC 5). DC-11 and PA-12 call the Child LLDs row wrong; the LLD's own 16 §19.1 and Changes Log show it is right (the LLD was out of the panel's scope, and the SDD decision log's last Child LLDs check predates the LLD refresh) |
+| W | Walkthrough and apply: one background agent plays the skill and the user, accepts each recommended option, applies per point, updates the tracker per point | Done about 16:20 (about 3 h; a 13:17 launch stopped at its first step on an API safeguard error and wrote nothing). Backup `SP\s5-backup-pre-W`, snapshot `SP\s5-post-W` | 39 of 39 Applied; 59 files changed (REFUNDS 19, LOYALTY 15, SDD 24, tracker), LLD untouched; log `SP\s5-logs\walkthrough-log.md`. REFUNDS OIs 1 to 32, LOYALTY 8 to 18; both BRD gates Shut on a new G6; e2e gate "Shut - Stale". Checkers: links clean, registry checks pass; check_uc_keys 169 (the register gained a Status column), E1 fails on a new "Superseded in part" status, check_sdd 50 to 66, check_trace 5 to 11 (LLD now behind). Details: `notes/step5-findings.md` § W |
+| V | Verify: a fresh cleared-context agent hunts stale remnants (apply-and-verify.md brief); then remnant fixes, the Verification pass block, and versioning | V1 done 16:55 (28 min, read-only confirmed). V2 done about 17:40 (about 45 min); backup `SP\s5-backup-pre-V2` | V1: 8/10, 26 remnants (1 High, 5 Medium, 20 Low), report `SP\s5-logs\verify-report.md`; it does not check template conformance (it called the reshaped lineage rows right). V2: 24 fixed, 2 rejected (the chunk 19 banner, the dedup note); REFUNDS 1.1, LOYALTY 1.3, SDD 1.3 (chunk 19 stays 1.2), each with a Changes Log row; 55 files; three temporary files outside its scope, deleted |
+| Checks | Every checker, diff_runs against `run-2026-10-01-e2e`, save as `chain/run-2026-10-01-review`, `notes/step5-findings.md` | Done 17:50 | The results are in the table in `notes/step5-findings.md` § Checks and in the `_fixtures/README.md` results column. The saved copy gives the same results. |
 
 ## Step 6: fix round (Not started)
 
@@ -262,6 +316,44 @@ The full log, with IDs, is `_fixtures/notes/step4-findings.md` (B1 G1-G17, A2a S
   - S10, C1-4, C1-5, C1-9, G4: minor vs major; chunk headers vs Changes Log rows; duplicate 1.0 rows.
   - S1 = C1: the unconditional Stale.
 
+### Step 5
+
+The full log, with IDs, is `_fixtures/notes/step5-findings.md` (I1-I2, K1-K6, L1-L4, A1-A8, and the agents' skill-text items).
+
+**The Known gap decision:** (c), implemented (see the step 5 section); it addresses A1 to A5 and A8. Rerun the review under the new rules as part of the chain rerun.
+
+**Held from the (c) consistency check:**
+- B15: decided (option A, pre-BRD optional) and implemented.
+- brd-unifier: its Stale rules (`delivery-chunks.md` § The delivery gate and § Refresh triggers, SKILL.md step 8c) omit the master's Delivery Chunks State cell.
+
+**business-reviewer-unifier text:**
+- K1: universal rule 3 field names.
+- K2: the SME charter's PropTech examples and its pointer to the template rules.
+- K3: the BO charter assumes a product sold to customers.
+- K4: the 5-to-12 cap, which every reviewer hit.
+- K5 (merge rules):
+  - no seniority order for the primary;
+  - "both sides" against tracker-schema.md;
+  - no rule for a finding that two decisions resolve.
+- K6: the tracker keeps no Why or Direction, so a resumed walkthrough loses them.
+- I1: the default scope against an LLD in the root.
+- Applied or Deferred for a point that becomes an open item.
+- The walkthrough order question, the restatement format, and "security-related".
+- The versioning checklist: per document or per chunk, gated chunks, bump size, and where the changelog lives.
+- The hunt's scope ("structural changes" against "all decisions") and re-scoring after the fixes.
+- "Mark Stale" against a gate that forbids writing the chunk.
+
+**Fixture content the review left (accept, or fix with the decision):** the run is a fixture of a review in progress (gates Shut, LLD behind). Do not use it as the baseline.
+
+**Checkers:**
+- check_e2e: E4 compares dates only (same-day changes pass), and it prints set items in a varying order.
+- check_uc_keys should say when it cannot read the register.
+
+**Run hygiene:**
+- Agents wrote temporary files outside their scope four times (`/tmp`, `s5-logs`), and each deleted them.
+- One walkthrough edit was made before its decision (PA-11).
+- A brief that mentions transcripts tripped an API safeguard at the first step.
+
 **SDD content left wrong by the runs (fix in the fixture or accept):**
 - the 17 V1 mismatches;
 - the five SDD inconsistencies C1 reported (PII masking vs §19, INT-02 dead-letter vs §17.3, `refund_takeback.refund_reference`, 503 vs 500, Figure 18 vs §17.2);
@@ -312,3 +404,7 @@ The full log, with IDs, is `_fixtures/notes/step4-findings.md` (B1 G1-G17, A2a S
 | 2026-10-01 | V1 done: 17 chunk 19 mismatches (1 wrong, 3 misleading, 13 cosmetic), ambiguities W1 to W9. C1 still running. |
 | 2026-10-01 | C1 done (LLD v1.1, LOYALTY trace). Checks run, the run saved as `chain/run-2026-10-01-e2e`, README updated. Step 4 done, awaiting the user's review; nothing committed. Next: step 5. |
 | 2026-10-01 | Step 5 run setup proposed (see the step 5 section); waiting for the user's go, which also covers committing and merging step 4. |
+| 2026-10-01 | The user reviewed step 4. Committed as d16e939 and merged into local main as 8568446 (not pushed). Step 5 started on `test/business-reviewer-chain`; the five panel reviewers launched at 12:35. |
+| 2026-10-01 | Panel done (60 findings) and merged into 39 points (13:17). Walkthrough and apply done about 16:20 (39 Applied). Verify: the hunt scored 8/10 with 26 remnants; fixes and versioning done about 17:40 (REFUNDS 1.1, LOYALTY 1.3, SDD 1.3). Checks run, the run saved as `chain/run-2026-10-01-review`, README and logs updated. The Known gap options were given to the user; nothing committed, no skill changed. Next: the user's decision on the Known gap, then step 6. |
+| 2026-10-01 | The user chose option (c). Implemented in business-reviewer-unifier, sdd-unifier (one row), brd-unifier (one row), and the root README; Band files synced. A read-only consistency check (4 A, 15 B, 12 C) was fixed except B15 (held for the user) and C11 (step 6). Overview page published: https://claude.ai/artifact/GYQLZZeSBxQXkfmzV8uLKC. Nothing committed. Step 5 done, awaiting review; next: step 6. |
+| 2026-10-01 | B15 decided by the user: option A, with the pre-BRD optional (never mentioned when absent). Implemented in business-reviewer-unifier (Intake, principle 9, Apply rules 3, 6, 7, the verify templates, the BRD hand-off row, the tracker's Versioning rule), both READMEs, the Band review-lead file, and the overview page. |

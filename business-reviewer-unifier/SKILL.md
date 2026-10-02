@@ -2,7 +2,7 @@
 name: business-reviewer-unifier
 description: >-
   Run a multi-angle adversarial review panel over business and design documents (business docs,
-  domain identification, service boundaries, project preparation, BRDs, SDDs) and drive the findings
+  domain identification, service boundaries, project preparation, pre-BRDs, BRDs, SDDs) and drive the findings
   to resolution. Use when asked to review documents from different angles, run a review panel or
   multi-agent review, challenge the docs, do a business review, resume a review, walk through review
   points, apply review comments, or verify applied changes. Keeps a review-comments-tracker.md in
@@ -44,8 +44,8 @@ Paths in this file are relative to the skill folder.
 | `panel` | Dispatch the reviewer panel, merge findings, write the tracker. Stop. |
 | `walkthrough` | Resume point-by-point resolution from the existing tracker. |
 | `apply` | Apply all Decided-but-unapplied points chain-wide. |
-| `verify` | Cleared-context consistency re-review, then versioning + changelogs. |
-| (empty) | **Detect from tracker state:** no `review-comments-tracker.md` means `panel`; tracker has Pending points means `walkthrough`; all points Decided/Applied but no verification record means offer `verify`; otherwise report status and ask. |
+| `verify` | Cleared-context consistency re-review, then the close and the hand-offs to the owning skills. |
+| (empty) | **Detect from tracker state:** no `review-comments-tracker.md` means `panel`; Pending points mean `walkthrough`; Decided points not yet applied mean `apply`; every point closed (Applied, Partially applied, Rejected, Deferred) but no Verification pass means offer `verify`; a Verification pass but no Hand-offs block means the close (step 7); Hand-offs rows still `To run` mean offer the next one; otherwise report status and ask. |
 
 The empty-argument default runs `panel` then flows into `walkthrough`
 (announce the transition). `apply` happens per point during walkthrough,
@@ -74,6 +74,12 @@ not as a deferred batch, unless the user asks to decide everything first.
    category (PropTech, FinTech, HealthTech) is an invalid SME domain.
 8. **One point in flight at a time** during walkthrough, presented with full
    context per `walkthrough-protocol.md`.
+9. **The owning skill keeps its documents whole.** A pre-BRD, BRD, or SDD
+   made by pre-brd-unifier, brd-unifier, or sdd-unifier keeps its template
+   structure: a decision changes content, never that structure. An LLD is
+   never edited. The first content change to a document bumps its version
+   as its own rule says, and the close hands the chain back to the owning
+   skills (`apply-and-verify.md`).
 
 ---
 
@@ -84,8 +90,13 @@ not as a deferred batch, unless the user asks to decide everything first.
 Ask at most three questions, skipping anything already in context:
 
 - **Document chain**: list the docs detected in the project root (numbered
-  business docs, BRD chunk folders, SDDs) and confirm which are in scope.
-  Default: the whole chain.
+  business docs, a pre-BRD when there is one, BRD chunk folders, SDDs) and
+  confirm which are in scope. Default: the whole chain. The pre-BRD is
+  optional: when the project has none, the review never mentions one.
+  LLD folders are not reviewed. When an SDD in
+  scope lists child LLDs, each LLD's version record goes to the reviewers
+  as lineage context only: its master, `00-metadata.md` (Changes Log), and
+  `16-references.md` § 19.1 (the SDD version it read).
 - **SME domain**: MANDATORY. Resolve in this order: (a) explicit in the
   invocation, (b) inferable from the docs' own framing; if inferred, restate
   it and ask for confirmation before dispatching, (c) ask the user outright.
@@ -99,7 +110,8 @@ Ask at most three questions, skipping anything already in context:
 
 Dispatch one cleared-context subagent per persona, in parallel, per
 `panel-orchestration.md`. Each receives: absolute paths to the full doc
-chain, its charter from `reviewer-personas.md`, and the finding schema.
+chain, the lineage context from Intake when there is one, its charter from
+`reviewer-personas.md`, and the finding schema.
 Personas:
 
 - **Business Owner (BO)**: revenue model, GTM risk, moats/churn, phasing vs
@@ -140,23 +152,32 @@ Follow `walkthrough-protocol.md` exactly. Summary of the contract:
 ### 5. Apply (per point, immediately after decision)
 
 Apply chain-wide in the same step: every affected document, including
-downstream BRD/SDD chunks that cite the changed content. Update the tracker
-row to Applied (or Partially applied / Rejected / Deferred) immediately.
+downstream BRD/SDD chunks that cite the changed content. Change content
+only, inside the structure the owning skill defines, and bump a document's
+version at its first change in the session (`apply-and-verify.md` § Apply).
+Update the tracker row to Applied (or Partially applied / Rejected /
+Deferred) immediately.
 
 ### 6. Verify (after all points closed)
 
 Dispatch a fresh cleared-context agent to hunt stale remnants of the
-structural changes: counts, batch numbers, section references, superseded
-phrasing, citations to renamed files. Fix what it finds; record the pass and
-score in the tracker.
+decisions: counts, batch numbers, section references, superseded phrasing,
+citations to renamed files, template structure that drifted, and lineage
+rows that disagree with the version record at their other end. Fix what it
+confirms, except what belongs to the hand-off (`apply-and-verify.md` §
+Verify); record the pass and score in the tracker.
 
-### 7. Version and close
+### 7. Close and hand off
 
-Bump in-document versions, add changelog entries naming the review session
-and tracker, rename files where the version is in the filename, and update
-cross-citations to renamed files. Record the versioning block in the
-tracker. Present the close-out summary: points by status, structural
-decisions list, files touched, new versions.
+Add the verify fixes to each changed document's Changes Log row for this
+session, check the citations to any renamed file, and complete the
+Versioning block in the tracker. Then write the Hand-offs block: the owning
+skills re-check the changed documents in chain order (`apply-and-verify.md`
+§ Hand-off).
+Present the close-out summary: points by status, structural decisions list,
+skill changes requested, files touched, new versions, and the hand-offs with
+the request to give each skill. Offer to start the first hand-off; each runs
+only on the user's word.
 
 ---
 
@@ -183,6 +204,13 @@ decisions list, files touched, new versions.
   the explicit escape hatch and requires the user's word).
 - Never pads reviewer output with invented findings to look thorough.
 - Never batches tracker updates to the end of the session.
+- Never changes the template structure of a pre-BRD, BRD, or SDD (the list
+  in `apply-and-verify.md`, Apply rule 6), and never edits an LLD or a gated
+  chunk: a decision that needs a structural change becomes a skill change
+  for the user, and what the owning skill updates goes to the hand-off.
+- Never leaves a document whose content changed at its old version, and
+  never closes a session without the hand-offs to the owning skills in the
+  tracker.
 
 ---
 
@@ -195,5 +223,6 @@ decisions list, files touched, new versions.
 - `tracker-schema.md`: tracker file structure, columns, status vocabulary,
   footer sections.
 - `walkthrough-protocol.md`: the point-presentation contract.
-- `apply-and-verify.md`: chain-wide application rules, verification pass
-  brief, versioning checklist.
+- `apply-and-verify.md`: chain-wide application rules (content within the
+  owning skill's structure, versions at the first change), verification
+  pass brief, close checklist, and the hand-offs to the owning skills.

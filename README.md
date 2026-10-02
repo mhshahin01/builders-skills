@@ -194,8 +194,9 @@ flowchart LR
 
 - **One SDD, one or more parent BRDs, zero or more child LLDs.** SDD chunk 00 § Document Lineage lists each source BRD (key, version, link) and each child LLD (scope, direction, version, the SDD version it last read, link). Each LLD adds or updates only its own row; the SDD checks those rows on every run and marks a row out of date once the SDD has moved past the version that LLD read.
 - **A new SDD version:** on its next run, the LLD compares the SDD version it recorded (16 §19.1) with the current one, lists the SDD changes since then, and offers a targeted refresh of the LLD chunks they affect. It never refreshes silently.
-- **A new BRD version:** tell `sdd-unifier` "BRD `KEY` has a new version". It updates the lineage, derives the delta, reconciles contracts again, and marks chunk 19 `Stale`. Then ask `lld-unifier` to "refresh the trace".
+- **A new BRD version:** tell `sdd-unifier` "BRD `KEY` has a new version". It updates the lineage, derives the delta, reconciles contracts again, and marks chunk 19 `Stale`. Then tell `lld-unifier` "the SDD has a new version", and also "refresh the trace" when the BRD's use cases, test cases, or screens changed.
 - **BRD chunk 16 written later, or screens and mockups changed:** "refresh the trace" in the LLD updates the 04 lines, routes, e2e tags, and the index. Nothing else is rewritten.
+- **After a business review:** `business-reviewer-unifier` changes content only, inside each BRD's and SDD's template structure, never edits an LLD or a gated chunk, and bumps each changed document's version once. Its close lists the hand-offs in chain order: `brd-unifier` "update the todo" for each changed BRD, then `sdd-unifier` "BRD `KEY` has a new version" naming the changed BRDs (or "the business review changed this SDD" when no BRD changed), then `lld-unifier` "the SDD has a new version" for each child LLD, plus "refresh the trace" when a BRD's use cases, test cases, or screens changed.
 
 ---
 
@@ -441,7 +442,7 @@ flowchart LR
 
 ## 5. Business reviewer (`business-reviewer-unifier`)
 
-**Purpose:** a multi-angle adversarial review panel over business and design documents (pure-business docs, domain identification, service boundaries, project preparation, BRDs, SDDs), driven to resolution. It is the cross-document panel; it is separate from the single reviewer pass built into each authoring skill.
+**Purpose:** a multi-angle adversarial review panel over business and design documents (pure-business docs, domain identification, service boundaries, project preparation, a pre-BRD when there is one, BRDs, SDDs), driven to resolution. It is the cross-document panel; it is separate from the single reviewer pass built into each authoring skill.
 
 **Usage:** `business-reviewer-unifier [panel|walkthrough|apply|verify]`. With no argument, the phase is detected from the tracker.
 
@@ -450,9 +451,9 @@ flowchart LR
 | `panel` | Dispatches the reviewer personas and builds `review-comments-tracker.md` in the project root. |
 | `walkthrough` | Resumes point-by-point resolution with you. |
 | `apply` | Applies decided points across the whole document chain. |
-| `verify` | Cleared-context consistency re-review, then versioning and changelogs. |
+| `verify` | Cleared-context consistency re-review, then the close and the hand-offs to the owning skills. |
 
-**What to expect:** you point it at the documents; it asks you to decide each point; it never applies a point you have not decided. It is done when every point is decided, applied, and verified.
+**What to expect:** you point it at the documents; it asks you to decide each point; it never applies a point you have not decided. It changes content, never the structure a document's skill defines (a needed structural change is listed as a skill change), and bumps each changed document's version once. The panel does not run the §7.3 and contract-registry checks itself: `sdd-unifier` re-checks them, and the lineage tables, at the hand-off. It is done when every point is decided, applied, and verified, and its close lists the hand-offs to the skills that own the changed documents ([Lineage and change flow](#lineage-and-change-flow)).
 
 **Reference files:** `reviewer-personas.md`, `panel-orchestration.md`, `tracker-schema.md`, `walkthrough-protocol.md`, `apply-and-verify.md`.
 
@@ -530,7 +531,7 @@ Tips:
 2. If go, run the **BRD** skill on the validated concept (or an inbound SoW). Review after parts 1 and 2, decide the open items, then work through the to-do in chunk 14. Once the delivery gate is open, ask for the implementation plan, the UAT/BAT test cases, and the presentation brief.
 3. Run **SDD** on the finished BRD folder(s). Confirm the architecture and the ecosystem, review after parts 1 and 2, and decide the open items; the end-to-end design follows once they are all closed.
 4. Run **LLD** from the SDD, by default once for the whole system (or once per group of services): `from-sdd` before code exists, `hybrid` once it does. It registers itself in the SDD.
-5. Run the **business reviewer** at any point to challenge the document chain from several angles.
+5. Run the **business reviewer** at any point to challenge the document chain from several angles. It ends by handing the changed documents back to their skills (the BRD's to-do, the SDD's reconciliation, each LLD's refresh).
 6. Hand the LLD and its `17-specs.md` to SpecKit and Claude Code for the build. When the BRD changes later, update the SDD ("BRD `KEY` has a new version"); the SDD marks its child LLDs out of date, and each LLD offers a targeted refresh on its next run.
 
 ---
@@ -538,4 +539,3 @@ Tips:
 ## Known gaps
 
 - The newest paths have not been run on a sample project yet: the LLD's modular-monolith path, the BRD merge and re-chunk heading map, SDD version tracking, and the pre-BRD to BRD mapping.
-- `business-reviewer-unifier` reviews BRDs and SDDs generically; it does not yet check the SDD's document lineage, §7.3 use case traceability, or contract registries.

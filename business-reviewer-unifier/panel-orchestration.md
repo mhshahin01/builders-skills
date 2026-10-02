@@ -8,9 +8,11 @@
 - Each subagent receives:
   1. Absolute paths to every in-scope document (the full chain, not just
      "its" documents; cross-doc findings need the whole picture).
-  2. Its charter, copied verbatim from `reviewer-personas.md`, with the
+  2. When the chain has child LLDs, the lineage context from Intake (each
+     LLD's version record), marked as context, not for review.
+  3. Its charter, copied verbatim from `reviewer-personas.md`, with the
      SME domain substituted into the SME charter.
-  3. The finding schema below and the instruction to return findings as
+  4. The finding schema below and the instruction to return findings as
      raw structured text (their final message is data, not prose for the
      user).
 
@@ -35,6 +37,12 @@ direction lines are seeds for the walkthrough options, not decisions.
 > is present.
 >
 > Read these files fully: [paths].
+>
+> (When the chain has child LLDs:) Lineage context, not for review:
+> [paths]. A finding about lineage compares both ends: the parent's row and
+> the child's own version record. A check recorded in a decision log may
+> predate the latest update at either end, so it does not settle the
+> question.
 >
 > [charter text]
 >

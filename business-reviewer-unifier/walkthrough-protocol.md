@@ -19,7 +19,12 @@ rejected; do not regress to either.
       section it lives in (quote or paraphrase the offending text).
    2. **Why it matters**: the consequence if left as is.
    3. **Options**: a table of 2 to 4 options with one-line trade-offs each.
+      An option that changes a structure the owning skill defines (a
+      column, status value, gate condition, or ID scheme; `apply-and-verify.md`,
+      Apply rule 6) says so, and names the part that would become a skill
+      change.
    4. **Recommendation**: one explicit recommended option with the reason.
+      Prefer an option that works within the owning skill's structure.
    Then ask for acceptance.
 5. **Never** compress this into bare AskUserQuestion option labels. If
    AskUserQuestion is used at all, it comes AFTER the full prose

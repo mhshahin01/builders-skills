@@ -1,4 +1,4 @@
-# Modes - Chunks vs Combined
+# Modes: Chunks vs Combined
 
 The output shape is set by the argument (`pre-brd-unifier chunks|combined`) or the interactive prompt (chunks is default). Mode is independent of intent (generate vs transform) and independent of Excel export (which is a separate, post-approval step).
 
@@ -6,7 +6,7 @@ The output shape is set by the argument (`pre-brd-unifier chunks|combined`) or t
 
 Output: `./pre-brd-[project-slug]/` containing `00-pre-brd-master.md` plus one file per framework, `01-…` through `22-…`, the investor assessment `23-investor-assessment.md` (investor pass), and `24-open-items-and-assumptions-log.md` (reviewer pass).
 
-Skeleton source: `chunks/*.md`. Copy each file's structure, fill the Answer slots, save under the same filename in the output folder. Each chunk keeps its self-describing comment block:
+Skeleton source: `chunks/*.md`. Copy each file's structure, fill the Answer slots, save under the same filename in the output folder. Each chunk keeps its self-describing comment block; in the output, add the `PROJECT:` line and set `PART OF:` to the project (the skeletons carry `PART OF: PRE-BRD Master` as a placeholder):
 
 ```markdown
 <!--

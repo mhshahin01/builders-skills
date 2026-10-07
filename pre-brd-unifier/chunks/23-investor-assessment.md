@@ -7,7 +7,7 @@ PART OF: PRE-BRD Master
 
 # Investor Assessment
 
-An independent investor-lens evaluation of the whole pre-BRD. Where the Executive Summary Scoreboard (22) is a mechanical weighted composite of the analysis tiers, this chunk is a judgment: an investor reads the filled chunks and scores the opportunity across seven aspects out of 10, then issues a **Go** / **No-Go** verdict with a strong, evidence-backed Why. It is authored by a dedicated investor agent after all other chunks (including 22) are filled and the reviewer pass is complete.
+An independent investor-lens evaluation of the whole pre-BRD. Where the Executive Summary Scoreboard (22) is a mechanical weighted composite of the analysis tiers, this chunk is a judgment: an investor reads the filled chunks and scores the opportunity across seven aspects out of 10, then issues a **Go** / **No-Go** verdict with a strong, evidence-backed Why. It is authored by a dedicated investor agent after chunks 01 to 22 are filled. The reviewer pass runs after it and reviews this chunk with the rest.
 
 **Active lens:** [Venture-return | Business-case] - venture-return for a fundable startup; business-case for an internal product, enterprise initiative, or cost-center bet. The lens reinterprets the aspects (e.g. "Financial viability & return" = investor return/exit vs. ROI/payback/TCO vs. internal hurdle rate; "Go-to-market" = acquisition vs. adoption/rollout) while keeping the same seven aspects, weights, scale, and verdict bands.
 
@@ -54,7 +54,7 @@ A short, decisive narrative an investor would stand behind.
 - **Verdict in one line:** 
 - **Top 3 reasons supporting the verdict:** 
 - **Top risks / deal-breakers:** 
-- **Conditions that would move a Conditional Go to a Go:** 
+- **Conditions to clear (what would move the verdict up one band; for a Go, what must stay true):** 
 - **Reconciliation with the Scoreboard (22):** [Agree / Disagree] - why.
 
 ## Sources

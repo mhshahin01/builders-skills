@@ -3,6 +3,7 @@ from copy import copy
 
 import openpyxl
 import pytest
+from openpyxl.comments import Comment
 
 import export_xlsx as ex
 
@@ -159,6 +160,23 @@ def test_export_clears_stale_answer_cells(tmp_path):
     out = openpyxl.load_workbook(dst)
     assert out["RICE Framework"]["D5"].value == 2       # written
     assert out["RICE Framework"]["D4"].value is None    # stale value cleared
+
+
+def test_export_scrubs_em_dashes_in_cells_and_comments(tmp_path):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "RICE Framework"
+    ws["B2"] = "Guidance \u2014 read only"
+    ws["B3"].comment = Comment("Source \u2014 2025 report", "Author")
+    src = tmp_path / "ref.xlsx"
+    wb.save(src)
+
+    dst = tmp_path / "out.xlsx"
+    ex.export({"sheets": {}}, dst, src=src, cell_map={"RICE Framework": {"answer_cells": ["D4"]}})
+
+    out = openpyxl.load_workbook(dst)["RICE Framework"]
+    assert out["B2"].value == "Guidance - read only"
+    assert out["B3"].comment.text == "Source - 2025 report"
 
 
 # NOTE: the `aggregates` path in expand_variable_rows is forward-looking.

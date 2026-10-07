@@ -17,9 +17,12 @@ Part of the SWOT analysis. IFAS focuses on identifying the internal strengths an
 - Weighted score = Weight x Rating, computed per factor.
 - Total score = sum of all weighted scores.
 
-Add one row per internal factor.
+List exactly 4 internal factors, one per row, with at least one strength.
 
 | Internal factor (strength or weakness) | Type (S/W) | Weight (0 to 1) | Rating (1=Poor to 5=Strong) | Weighted score | Comments |
 |---|---|---|---|---|---|
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
 |  |  |  |  |  |  |
 |  | **Total** |  |  |  |  |

@@ -79,7 +79,7 @@ def set_control_panel(wb, switch: dict | None) -> None:
 
 def clear_all_answers(wb, cmap: dict) -> None:
     """Blank every whitelisted Answer cell across ALL mapped sheets so the
-    reference workbook's example values can never survive into the output —
+    reference workbook's example values can never survive into the output -
     not even in a sheet the payload omits. Formula and sample cells are never
     in the whitelist, so they are untouched.
     """
@@ -97,17 +97,20 @@ def clear_all_answers(wb, cmap: dict) -> None:
 
 
 def scrub_em_dashes(wb) -> None:
-    """Replace the em dash (U+2014) with a hyphen in every string cell of the
-    output workbook. The reference template's own guidance and READ-ONLY sample
-    text contains em dashes; cloning carries them into the deliverable. House
-    style forbids the em dash, so scrub the generated file (the reference
-    workbook itself is never modified).
+    """Replace the em dash (U+2014) with a hyphen in every string cell and
+    every cell comment of the output workbook. The reference template's own
+    guidance, READ-ONLY sample text, and cell comments contain em dashes;
+    cloning carries them into the deliverable. House style forbids the em
+    dash, so scrub the generated file (the reference workbook itself is never
+    modified).
     """
     for ws in wb.worksheets:
         for row in ws.iter_rows():
             for c in row:
-                if isinstance(c.value, str) and "—" in c.value:
-                    c.value = c.value.replace("—", "-")
+                if isinstance(c.value, str) and "\u2014" in c.value:
+                    c.value = c.value.replace("\u2014", "-")
+                if c.comment is not None and "\u2014" in c.comment.text:
+                    c.comment.text = c.comment.text.replace("\u2014", "-")
 
 
 def export(payload: dict, dst: Path, *, src: Path = REFERENCE, cell_map: dict | None = None) -> Path:

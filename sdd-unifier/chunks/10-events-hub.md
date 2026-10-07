@@ -27,6 +27,7 @@ Then answer four questions for the whole platform:
   4. Why and when each fires (business moment + downstream purpose)
 State what is OUT of scope: in-process events that never leave one module or one service; provider webhooks (REST callbacks, not bus events); external adapter ingestion edges normalized at an anti-corruption layer before any platform event.
 In a modular monolith or a hybrid core, domain events between modules are IN scope: catalogue them in §14.10, apart from the integration events on the broker.
+A modular monolith with no integration events answers the four questions for its §14.10 events here and keeps the §14.2 to §14.9 headings, each reading `Not applicable - no integration events (in-process domain events: §14.10).`, except §14.7 and §14.8, which still apply to the §14.10 events, and §14.9.0, which may hold value objects the §14.10 DTOs share. It writes no §14.9.X event headings, and §14.9.99 states 0 integration events.
 -->
 
 [Eventing posture + the four questions + out-of-scope list.]
@@ -135,7 +136,7 @@ flowchart LR
 
 <!--
 Grouped by producing service / topic - one sub-section per producer, in §13 decomposition order.
-Status legend: committed = wired in its phase; candidate = name fixed, no consumer wired until the contract ratifies; Analytics-only = no named domain consumer.
+Status legend: committed = wired in its phase; candidate = name fixed; consumers may be named, but none is built against it until its payload contract (§14.9) is ratified, which makes it committed; Analytics-only = no named domain consumer.
 Consumer reconciliation: consumer lists are reconciled from BOTH the producer's published table AND every consumer's consumed table. Where a producer under-lists, show the broader real set and footnote it.
 Use-case link (derive-from-BRD): when a BRD use case step fires the event, the "when" cites it as a link with the step, e.g. "[REFUNDS/UC-04](BRD link) step 6". §7.3 reads its Events column from these citations and from the §14.10 When column. An event with another trigger (schedule, external callback, another event) names that trigger instead.
 -->
@@ -235,8 +236,11 @@ Define common value objects once, then reference them.
 <!--
 Domain events that one module publishes and other modules of the same deployable handle in process (architecture-questionnaire.md § Effect on the SDD). They are not integration events: the broker delivery rules (§14.2 one-hub rules, §14.2.1, §14.6) do not apply. An event that must also leave the deployable is published through the outbox as an integration event and catalogued in §14.5. Events that never leave one module stay out of scope.
 When (derive-from-BRD): the use case step that fires the event, cited like the §14.5 "when": a keyed link plus the part, e.g. "[REFUNDS/UC-04](BRD link) step 5", or "None - platform" when no use case step fires it. This registry is the only home of the When; §7.3 reads its Events column from here and from §14.5.
+Delivery: one line above the table, stated once for the deployable. Durable: each event is recorded in a publication log (its home: §11.1) in the publisher's transaction and redelivered until every listener completes. In memory: an event is lost if the process stops before a listener runs. The Transaction phase column says when a listener runs, not whether the event survives a stop.
 A microservices SDD writes "Not applicable - no in-process events".
 -->
+
+**Delivery:** [Durable - recorded in the publication log (§11.1) in the publisher's transaction, redelivered until every listener completes / In memory - lost if the process stops before a listener runs]
 
 | Event | Publisher module | Listener modules | When | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
 |---|---|---|---|---|---|---|

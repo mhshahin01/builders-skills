@@ -24,6 +24,7 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Naming:** [Convention]
 - **Indexing:** [Default rules]
 - **JSON columns:** [Usage rules]
+- **Publication log (modular monolith or hybrid core, durable in-process events, §14.10):** [Table, written in the publisher's transaction; redelivery and retention / Not applicable]
 
 ## 11.2 Multi-Tenancy (Default)
 

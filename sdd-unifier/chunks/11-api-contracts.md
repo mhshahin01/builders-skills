@@ -5,20 +5,24 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 DEPENDS_ON: 02 (ecosystem: IAM, gateway), 05 (sequences), 07 (§11.6 security defaults), 08 (§12 integrations), 09 (services), 12 (roles and permission tokens), 13a+ (per-service API lists)
 PART OF: SDD - [Project Name]
-PURPOSE: The API contract registry for every synchronous integration: service-to-service calls, module-to-module port calls in a modular monolith or hybrid core, outbound calls from a service to an external system, and inbound calls from an external system into a service (callbacks, webhooks). Each HTTP contract states the URI, headers, body, responses, error codes, security, and auth, and each in-process port contract its port interface, operation, DTOs, raised errors, and permission token, so both sides implement the same contract with zero drift.
+PURPOSE: The API contract registry for every synchronous domain or provider integration (standard operational infrastructure is not one: SKILL.md step 6a): service-to-service calls, module-to-module port calls in a modular monolith or hybrid core, outbound calls from a service to an external system, and inbound calls from an external system into a service (callbacks, webhooks). Each HTTP contract states the URI, headers, body, responses, error codes, security, and auth, and each in-process port contract its port interface, operation, DTOs, raised errors, permission token, and behaviour (idempotency and transaction), so both sides implement the same contract with zero drift.
 CONTRACT_RULE: This chunk is canonical for integration API contracts. Each per-service chunk (13x) lists an HTTP endpoint in its "List of APIs", or an in-process port call in its Integrations table, with the API ID and a link here; it never restates the headers, body, or error codes. Event contracts stay in chunk 10; roles and permission tokens stay in chunk 12 and are referenced here verbatim.
 EXTERNAL_RULE: A contract whose other side is an external system is `TBD - external` until the user supplies the provider's API documentation. Provider-owned fields (URI, headers, body, responses, error codes, auth scheme) are written as `TBD` with the marker `**[TBD - EXTERNAL: ...]**`, never invented. Our-side policy (timeout, retries, circuit breaker, fallback, where credentials are stored) comes from §12 and is filled.
 -->
 
 # 15. Service Integration API Contracts
 
-> **What this chunk is.** One contract block per synchronous integration API (`API-NN`), with everything an implementer on either side needs: endpoint, security, headers, parameters, body, responses, error codes, and behaviour (idempotency, timeouts, retries). Internal contracts are fully defined here. External contracts are placeholders marked `TBD - external` for the user to complete from the provider's documentation.
+> **What this chunk is.** One contract block per synchronous domain or provider integration API (`API-NN`; standard operational infrastructure is out of scope, §15.1), with everything an implementer on either side needs: endpoint, security, headers, parameters, body, responses, error codes, and behaviour (idempotency, timeouts, retries). Internal contracts are fully defined here. External contracts are placeholders marked `TBD - external` for the user to complete from the provider's documentation.
 >
 > **What this chunk is not.** It does not list client-facing endpoints that no other service or external party calls (those stay in each service's "List of APIs" in chunks 13x and in the OpenAPI specs, §21). It does not hold event contracts (§14, chunk 10).
 
 ---
 
 ## 15.1 Contract Conventions (platform defaults)
+
+API-NN covers domain/provider integrations, including internal business ports. Standard operational database, Vault and IAM client/admin/token operations are infrastructure configuration in ecosystem/security/operations, not API-NN contracts. A custom business integration cannot claim that exemption.
+
+<!-- Record the infrastructure boundary and its source; keep real domain/provider integrations in the contract coverage matrix. -->
 
 <!-- Stated once here; every contract block inherits them and lists only its deviations. Values come from §6 (ecosystem), §11.6 (security defaults), and the doctrine. Missing value -> [NEEDS CLARIFICATION: ...]. -->
 
@@ -82,7 +86,7 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call no use case drives; §7.3 reads its APIs column from here. -->
+<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call that serves no use case; §7.3 reads its APIs column from here. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
@@ -228,13 +232,20 @@ EXTERNAL_RULE: A contract whose other side is an external system is `TBD - exter
 |-------|-------------|------|-----------|-----------------|
 | `[DomainError]` | [DOMAIN_CODE] | [Condition] | [No] | [Action] |
 
+**Behaviour**
+
+| Aspect | Value |
+|--------|-------|
+| Idempotency | [The idempotency key, and what a repeated call returns] |
+| Transaction | [Joins the caller's transaction / Runs in its own transaction] |
+
 <!-- Repeat a contract block for each API-NN. External inbound contracts (callbacks, webhooks) follow the same TBD rule for provider-owned fields; our side (endpoint path, signature verification, idempotency, replay protection) is defined when the provider's scheme is known. They carry no §16 permission token (§15.1 Authorization by contract type). -->
 
 ---
 
 ## 15.4 Coverage Matrix
 
-<!-- Every synchronous integration has a contract. Sources: every §12 row with a synchronous protocol, every synchronous edge in §8.5 sequences, and every synchronous row in a service's Integrations table (chunks 13x). -->
+<!-- Every synchronous domain/provider integration has an API-NN and coverage row; sources are §12, §8.5 and per-service Integrations. Apply the §15.1 operational infrastructure boundary. Custom business interfaces are never exempt. -->
 
 | Source | Item | API ID(s) | Covered |
 |--------|------|-----------|---------|

@@ -1,4 +1,4 @@
-# Modes — Chunks vs Combined
+# Modes: Chunks vs Combined
 
 The skill produces output in one of two shapes. The shape is determined either by the argument passed (`sdd-unifier chunks` / `sdd-unifier combined`) or, when no argument is passed, by the interactive mode prompt with CHUNKS as the default.
 
@@ -100,7 +100,7 @@ See `chunking.md` for chunking strategy and merge handling.
 23. Open Items & Clarifications (reviewer output)
 24. End-to-End System Design (gated: appended only after §23 is cleared)
 
-**No chunk comment blocks** in combined mode — the file is a single artefact.
+**No chunk comment blocks** in combined mode: the file is a single artefact.
 
 **Always `whole`.** A combined SDD is written in one run; `combined parts` is not available. The decision register still lives outside the file, at `./sdd-[project-slug]/decision-log.md`.
 
@@ -125,7 +125,7 @@ When the user says "merge", "consolidate", "single file", "full doc" after a chu
 2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block and its `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
 3. Concatenate with a single blank line between chunks.
 4. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first). Keep every §17.X number as published, in chunk-letter order (13a → §17.1, 13b → §17.2, …); never renumber or close a gap left by a merged or removed service.
-5. Copy the master's **Reconciled:** and **E2E gate (chunk 19):** lines into the cover, unchanged (the gate line as **E2E gate (§24):**). A merge never reopens or refreshes the gate: a `Stale` gate stays `Stale`, and that line is the warning on §24.
+5. Copy the master's **Reconciled:**, **E2E gate (chunk 19):**, and **E2E basis:** lines into the cover, unchanged (the gate line as **E2E gate (§24):**), and its E3 marker inventory, with each source link rebased to its heading's anchor in the merged file. A merge never reopens or refreshes the gate: a `Stale` gate stays `Stale`, and that line is the warning on §24.
 6. Regenerate the Table of Contents in the cover section against the merged heading outline.
 7. Regenerate the Figures and Tables indices.
 8. Write to `./sdd-[project-slug]/SDD-[ProjectName]-v[X.X]-MERGED.md` (alongside the chunks). `[project-slug]-sdd-master.md` and `decision-log.md` are never merged.
@@ -139,9 +139,9 @@ When the user says "split into chunks", "chunk this SDD", "re-chunk this":
 2. Identify section boundaries by `# `, `## ` headings matching the template structure.
 3. Group sections per the canonical chunk map (see `chunking.md`).
 4. For section 17 (Detailed Service Specs), each `## 17.X` block becomes its own chunk file (`13a-service-*.md`).
-5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
+5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer. Its VERSION is the combined file's version for chunk 00, and for any other chunk the version of the newest Changes Log row whose `Chunks:` list names it or one of its sections, else the combined file's version (SKILL.md § Output conventions, Versions).
 6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed). Links are rebased: a link to a BRD or LLD (`./brd-…`, `./BRD-…`, `./lld-…`, `./LLD-…`) gains `../`, and an in-file anchor (`#171-…`, `#841-…`) becomes a link to the chunk that now holds that heading (`./13a-service-[slug].md#171-…`).
-7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index, which takes over the cover's Reconciled and E2E gate lines).
+7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index, which takes over the cover's Reconciled, E2E gate, and E2E basis lines and its E3 marker inventory, each inventory source link rebased to the chunk that now holds its heading).
 8. Keep the original combined file.
 
 ---

@@ -34,7 +34,7 @@ PART OF: SDD - [Project Name]
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD last read (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier)" to its SDD version cell and names the LLD in the handoff; it never writes into the LLD, whose next run rewrites its own row and clears the note. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD reflects (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier)" to its SDD version cell (replacing an earlier such note) and names the LLD in the handoff; it never writes into the LLD, whose next run rewrites its own row and clears the note only when the row then names this SDD's current version. Before any LLD exists: one row "None yet". -->
 
 | LLD | Scope (§13 services) | Direction | Version | SDD version | Link |
 |-----|----------------------|-----------|---------|-------------|------|
@@ -44,9 +44,13 @@ PART OF: SDD - [Project Name]
 
 ## Changes Log
 
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count; companion headers reflect current parent without a separate bump. -->
+
 | Version | Updated Date | Updated By | Reviewed By | Approved By | Update Summary |
 |---------|--------------|------------|-------------|-------------|----------------|
-| 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. |
+| 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. Chunks: none (initial build) |
+
+<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. -->
 
 ---
 

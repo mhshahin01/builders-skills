@@ -63,7 +63,7 @@ stateDiagram-v2
 
 ### Integrations
 
-<!-- Every synchronous row carries its API ID; the full contract (URI, headers, body, error codes, security) lives in §15 (chunk 11) and is not restated here. Asynchronous rows reference the event in §14 (chunk 10). -->
+<!-- Every synchronous domain or provider row carries its API ID (standard operational infrastructure is not one: SKILL.md step 6a); the full contract (URI, headers, body, error codes, security) lives in §15 (chunk 11) and is not restated here. Asynchronous rows reference the event in §14 (chunk 10). -->
 
 | Integration | Direction | Protocol | Purpose | Contract | Failure Handling |
 |-------------|-----------|----------|---------|----------|------------------|
@@ -73,7 +73,7 @@ stateDiagram-v2
 
 #### Entity Relationship
 
-<!-- Inline Mermaid is the default diagram medium. Append an optional `> Miro: <url>` line below the block only if a richer whiteboard version exists on a real board. -->
+<!-- Inline Mermaid is the default diagram medium. The ERD shows entities, keys (PK, FK), and relationships only; every other column lives in Tables Design below. Append an optional `> Miro: <url>` line below the block only if a richer whiteboard version exists on a real board. -->
 
 ```mermaid
 erDiagram
@@ -160,6 +160,8 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 
 #### Event Model
 
+<!-- Published events and Consumed events list integration events on the broker only. A module with no integration events writes "Not applicable - no integration events" under each. -->
+
 **Published events:**
 
 | Event Name | Producer | Producer Specs | Consumers | Consumer Specs | Schema (Summary) | Delivery Guarantee |
@@ -174,7 +176,7 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 
 **In-process domain events (modules only):**
 
-<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match chunk 10 §14.10 except When, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable". -->
+<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match chunk 10 §14.10 except When, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable - no in-process events". -->
 
 | Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
 |---|---|---|---|---|---|
@@ -201,7 +203,7 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 
 ### Error Handling
 
-<!-- Derive-from-BRD: tie each domain error to the exception flow it realises, e.g. "[REFUNDS/UC-04](BRD link) E1 -> 422 PAYOUT_REFUSED". -->
+<!-- Keep every bullet; a bullet that does not apply reads `Not applicable - [reason]`. In a module, the errors its in-process ports raise go under Synchronous APIs. Derive-from-BRD: tie each domain error to the exception flow it realises, e.g. "[REFUNDS/UC-04](BRD link) E1 -> 422 PAYOUT_REFUSED". -->
 
 - **Synchronous APIs:** [Approach]
 - **Validation errors:** [Approach]

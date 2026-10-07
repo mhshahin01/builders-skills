@@ -1,4 +1,4 @@
-# Intent Detection — Generate / Transform / Derive-from-BRD
+# Intent Detection: Generate / Transform / Derive-from-BRD
 
 The skill operates in one of three intents. This file gives the rules for deciding which.
 
@@ -19,7 +19,7 @@ Is there a source document attached, pasted, or referenced by path?
          │   ├── Yes (chunked form, target is combined)    → TRANSFORM (merge)
          │   └── Yes, both forms match target              → TRANSFORM (refresh / regenerate)
          ├── Source is a SoW / Statement of Work?
-         │   → GENERATE (treat SoW as input context, not as a document to transform — SDDs are not produced from SoWs directly; if there's no BRD yet, suggest running brd-unifier first)
+         │   → GENERATE (treat SoW as input context, not as a document to transform: SDDs are not produced from SoWs directly; if there's no BRD yet, suggest running brd-unifier first)
          ├── Source is a different SDD format (Word doc, IEEE 1016, vendor template, prior in-house format)?
          │   → TRANSFORM (cross-template migration)
          ├── Source is architecture notes / RFC drafts / design memos?
@@ -49,7 +49,7 @@ If 4+ of these match, it's a brd-unifier chunked output.
 - Filename starts with `BRD-` (e.g., `BRD-WalletManagement-v1.0.md`).
 - Has the BRD section structure: Executive Summary, Background, Business Objectives, Glossary, Assumptions / Constraints, Facts, Challenges, Dependencies, Definitions & Important Details, Project Scope, Personas, User Journeys & Use Cases (UC blocks with `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules / Acceptance Criteria / Future Enhancements / UI/UX`), Users & Use Cases Matrix, Integrations, Reporting, NFRs, Summary, UI/UX Expectations, Appendix, Wishlist. (Legacy BRDs: Functional Requirements with `What/Why/How` blocks and a Technical Implementation Expectations section.)
 
-If 5+ of these section names are present in template order, it's a BRD. (Multiple of these match the section names regardless of authoring tool — the structure is what matters, not the filename.)
+If 5+ of these section names are present in template order, it's a BRD. (Multiple of these match the section names regardless of authoring tool: the structure is what matters, not the filename.)
 
 In either case → **DERIVE-FROM-BRD**. Read the BRD per `brd-to-sdd.md` § Detecting BRD input form.
 
@@ -59,7 +59,7 @@ In either case → **DERIVE-FROM-BRD**. Read the BRD per `brd-to-sdd.md` § Dete
 
 Signs:
 
-- Section headings include §1 Executive Summary, §6 Ecosystem Overview, §7 System Users & Use Cases, §8 System Design / High-Level Architecture, §11 Cross-Cutting Concerns, §13 Services Decomposition, §14 Centralized Event Hub, §15 Service Integration API Contracts, §16 Centralized User Roles, §17.X per-service blocks, §18 Performance & Capacity, §20 Operations Runbook (the earlier map used §15.X services, §17 performance, §19 runbook, and no API contracts section, see `chunking.md` § Earlier chunk map; legacy SDDs use §13.1/§13.2.X services, §14 performance — recognise all three).
+- Section headings include §1 Executive Summary, §6 Ecosystem Overview, §7 System Users & Use Cases, §8 System Design / High-Level Architecture, §11 Cross-Cutting Concerns, §13 Services Decomposition, §14 Centralized Event Hub, §15 Service Integration API Contracts, §16 Centralized User Roles, §17.X per-service blocks, §18 Performance & Capacity, §20 Operations Runbook (the earlier map used §15.X services, §17 performance, §19 runbook, and no API contracts section, see `chunking.md` § Earlier chunk map; legacy SDDs use §13.1/§13.2.X services, §14 performance; recognise all three).
 - Per-service blocks use `Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / API Standards / Event Model / Constraints / Error Handling / Observability / Compliance / Deployment Strategy`.
 - Has a Changes Log with Reviewer + Approver columns.
 
@@ -75,7 +75,7 @@ Signs:
 **Important:** SoW → SDD is **not** a direct path in this skill. SDDs are technical design artefacts that depend on architectural decisions; SoWs don't have those. If the user gives you only a SoW and asks for an SDD:
 
 1. Tell them clearly: "An SDD usually derives from a BRD, not directly from a SoW. The BRD captures the requirements (and is the source of truth for what the system does); the SDD captures the technical design (how to build it). Want me to first generate a BRD using brd-unifier, then derive the SDD from it? Or proceed with a fresh-generate SDD using the SoW as raw context but expect heavy `[NEEDS CLARIFICATION: ...]` markers?"
-2. If they choose option A (BRD first), the work is bigger than this skill — defer to brd-unifier for the BRD step.
+2. If they choose option A (BRD first), the work is bigger than this skill: defer to brd-unifier for the BRD step.
 3. If they choose option B (proceed anyway), treat the SoW as raw context for GENERATE intent, not as a transformation target.
 
 ### Different SDD format
@@ -93,7 +93,7 @@ Re-architect into this template's section order. Carry every fact across; flag e
 Signs:
 
 - Single-topic depth (e.g., "Why we picked Kafka over RabbitMQ"), not full system coverage.
-- May follow an RFC template (Context / Decision / Consequences) — short.
+- May follow an RFC template (Context / Decision / Consequences), short.
 - Author-voice rather than team-voice.
 
 Treat as raw context for GENERATE. Lift specific decisions into §10 Architectural Decisions; lift specific tech choices into §6 Ecosystem Overview. The rest of the SDD is generated fresh.
@@ -119,14 +119,14 @@ Transform is not "copy the source verbatim into the new shape". It is:
 
 ## What "derive-from-BRD" actually means
 
-Derive is a **structured partial fill** — the BRD has some content the SDD needs, but the SDD has many sections the BRD doesn't cover.
+Derive is a **structured partial fill**: the BRD has some content the SDD needs, but the SDD has many sections the BRD doesn't cover.
 
 1. Read the BRD fully.
 2. Apply the field mapping in `brd-to-sdd.md` to fill BRD-derivable sections.
 3. For SDD-only sections, produce the heading + structure + a focused `[NEEDS CLARIFICATION: ...]` marker naming the specific decision the architect must make. Examples:
-   - "API style" → `[NEEDS CLARIFICATION: REST, gRPC, or GraphQL for <service>? The architecture questionnaire leaves it open.]`
+   - "Authorization enforcement" → `[NEEDS CLARIFICATION: where is each Users & Use Cases Matrix rule enforced: role claims in the token, a policy engine, or per-service checks? The architecture questionnaire and the ecosystem selection leave it open.]`
    - "Multi-Tenancy default" → `[NEEDS CLARIFICATION: shared schema with tenant_id, schema-per-tenant, or DB-per-tenant? CLAUDE.md default is schema-per-tenant for high-volume services, shared-schema with tenant_id for low-volume. Confirm or override per service.]`
-   - "Per-service Throughput Targets" → `[NEEDS CLARIFICATION: sustained RPS, peak RPS, p50/p95/p99 latency targets per service. Not derivable from the BRD's NFRs alone — needs architect input.]`
+   - "Per-service Throughput Targets" → `[NEEDS CLARIFICATION: sustained RPS, peak RPS, p50/p95/p99 latency targets per service. Not derivable from the BRD's NFRs alone: needs architect input.]`
 4. Apply CLAUDE.md defaults where they fit (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka on-prem or SNS+SQS on AWS, Keycloak, Angular 17+ standalone). The architecture style comes from the architecture questionnaire (SKILL.md step 3b, `architecture-questionnaire.md`), which always runs for this intent. Note in the Ecosystem Overview that these are defaults and can be overridden.
 5. The output is intentionally an architect-ready skeleton, not a finished SDD.
 
@@ -141,16 +141,17 @@ See `brd-to-sdd.md` for the full mapping table.
 Treat as TRANSFORM with targeted regeneration:
 
 - Identify which sections the user wants changed.
-- Regenerate only those (chunks: rewrite affected chunk files; combined: rewrite affected sections in place).
-- Bump the version in the Changes Log.
+- Regenerate those (chunks: rewrite affected chunk files; combined: rewrite affected sections in place), then back-fill every other chunk or section the change makes wrong (`parts-mode.md` § What every part does, step 3).
+- Bump the version (SKILL.md § Output conventions, Versions); the Changes Log row's `Chunks:` list names every chunk changed, or every changed section in COMBINED mode, including the back-filled ones.
+- Finish through the common tail in SKILL.md step 10: affected step 6a, chunk 19 Stale mark, scoped delta/application verification, step 8 marker handling, then step 8b gate/current-output check and the handoff. Targeted edits do not stop at the Stale mark.
 
 ### "Make a new service spec for [Service Name] in this SDD"
 
 Treat as TARGETED ADD:
 
-- In CHUNKS mode: add a new `13x-service-[slug].md` chunk (next free letter) and update the §13 Services Decomposition table in chunk 09, wire the service into the §14 event catalog (chunk 10) if it publishes or consumes events, give each of its synchronous integrations an `API-NN` in §15 (chunk 11) and its roles and permission tokens in §16 (chunk 12), then rerun SKILL.md step 6a and mark chunk 19 `Stale` if it exists.
+- In CHUNKS mode: add a new `13x-service-[slug].md` chunk (next free letter) and update the §13 Services Decomposition table in chunk 09, wire the service into the §14 event catalog (chunk 10) if it publishes or consumes events, give each of its synchronous domain or provider integrations an `API-NN` in §15 (chunk 11; standard operational infrastructure is not one: SKILL.md step 6a) and its roles and permission tokens in §16 (chunk 12), then rerun SKILL.md step 6a and mark chunk 19 `Stale` if it exists.
 - In COMBINED mode: insert a new `## 17.X` block in section 17 and update §13, §14, §15, and §16 the same way, rerun SKILL.md step 6a, and set the cover's E2E gate line to `Stale` if §24 exists.
-- Bump the version in the Changes Log.
+- Bump the version (SKILL.md § Output conventions, Versions), then finish through the common tail in SKILL.md step 10: scoped delta/application verification (step 7, On an update), step 8 marker handling, then step 8b gate/current-output check and the handoff.
 
 ### Source is in a non-English language
 

@@ -7,7 +7,7 @@ PART OF: PRE-BRD Master
 
 # Executive Summary Scoreboard
 
-A go / no-go synthesis. It aggregates five signals (market attractiveness, problem / solution fit, feasibility, competitive risk, strategic fit) from the analysis tiers above into a single weighted composite and a recommendation. Generate it only after its dependencies are filled.
+A go / no-go synthesis. It aggregates five signals (market attractiveness, problem / solution fit, feasibility, competitive risk, strategic fit) from the tier 2 analyses (07, 09, 10, 11) into a single weighted composite and a recommendation. Generate it only after its dependencies are filled.
 
 ## Dependencies to verify before scoring
 

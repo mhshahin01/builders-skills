@@ -44,7 +44,7 @@ PART OF: SDD - [Project Name]
 
 ## Changes Log
 
-<!-- Initial row: Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count; companion headers reflect current parent without a separate bump. -->
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, a new coverage record row included when the update changes other content (coverage rows alone bump nothing); companion headers reflect current parent without a separate bump. -->
 
 | Version | Updated Date | Updated By | Reviewed By | Approved By | Update Summary |
 |---------|--------------|------------|-------------|-------------|----------------|

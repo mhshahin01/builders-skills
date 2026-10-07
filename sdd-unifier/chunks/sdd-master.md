@@ -4,7 +4,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: SDD - [Project Name]
 PURPOSE: Navigation graph for AI agents and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
-VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and chunk 00 carry the current SDD version; every other chunk carries the version in which its content last changed, and chunk 19 the version it was written at.
+VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and chunk 00 carry the current SDD version; every other chunk carries the version in which its content last changed, and chunk 19 the version it was written at (a later write that changes none of its content keeps it).
 MAINTENANCE: When adding or removing chunks (especially 13x service chunks), update the tables below, the dependency graph, and the reading-order table.
 -->
 
@@ -35,8 +35,8 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 | 3 | 14-18, 19 (gated) | [Pending / In progress (last step) / Complete] | - |
 
 **Reconciled:** [Date, checker, request and checked content revision/hash or explicit final-edit-then-check order]
-**E2E gate (chunk 19):** [Locked | Open - Up to date | Stale] - [open conditions E1-E4, if any]
-**E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
+**E2E gate (chunk 19):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
+**E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
 
 ### E3 marker inventory
 

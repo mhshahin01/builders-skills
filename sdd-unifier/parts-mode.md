@@ -68,7 +68,7 @@ When the user gives corrections: apply them to the existing chunks first, rerun 
 
 ### End of part 3
 
-Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 18), the open items acceptance loop (step 8), the e2e gate check (step 8b: chunk 19 is written only if E1-E4 are met, otherwise it stays `Locked` and the handoff lists what is open), the final `[project-slug]-sdd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on chunks 00-17. Later updates run the delta review (SKILL.md step 7, On an update).
+Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 18), the open items acceptance loop (step 8), the e2e gate check (step 8b: chunk 19 is written only if E1-E4 are met, otherwise it stays `Locked` and the handoff lists what is open), the final `[project-slug]-sdd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on chunks 00-17. Later updates run the review that SKILL.md step 7 (On an update) sets: a delta review, or the application check of applied pending items.
 
 ---
 
@@ -106,7 +106,7 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 
 - [ ] Every BRD NFR is quantified into a technical target in 14, or flagged; no target, capacity number, or version pin was invented.
 - [ ] Every environment in 15 and every runbook procedure in 16 is concrete (the good-procedure bar of `sdd-quality.md`), or flagged.
-- [ ] Chunk 18 exists and every OI has a decision or is listed as open in the handoff; chunk 19 is written only when the e2e gate is open, and then its counts, names, edges, and claims trace to chunks 02 to 13x with nothing owned by those chunks restated, and its faithfulness check (SKILL.md step 8b) has run, with every mismatch fixed in chunk 19.
+- [ ] Chunk 18 exists and every OI has a decision or is listed as open in the handoff; chunk 19 is written only when the e2e gate is open, and then its counts, names, edges, and claims trace to chunks 02 to 13x with nothing owned by those chunks restated, and its faithfulness check (SKILL.md step 8b) has run, with every mismatch fixed in chunk 19 and the fixes confirmed.
 - [ ] The back-fill of 00, 01, 06, 07, and 09 is done.
 - [ ] No decision-process narration in content chunks. Accepted open items are applied as plain design text; their narrative is in `decision-log.md` with working rule-home links.
 

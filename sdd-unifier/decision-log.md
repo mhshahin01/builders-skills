@@ -5,7 +5,7 @@
 **Companion file rules.**
 
 - Lives in `./sdd-[project-slug]/`, next to `[project-slug]-sdd-master.md`. In COMBINED mode it is still written to `./sdd-[project-slug]/decision-log.md` (the folder is created for it), and the handoff names its path.
-- Created on first use: when the first decision is recorded (the architecture questionnaire, an ecosystem walkthrough answer, a user override, a resolved clarification, a settled marker, an accepted open item, or a business review point). An "Accept all" ecosystem answer with no other decision does not create it. Do not write an empty register.
+- Created on first use: when the first decision is recorded (the architecture questionnaire, an ecosystem walkthrough answer, a user override, a resolved clarification, a settled marker, an accepted open item, a direct design instruction, or a business review point). An "Accept all" ecosystem answer with no other decision does not create it. Do not write an empty register.
 - Linked from `[project-slug]-sdd-master.md` once it exists.
 - Never merged into the combined or merged SDD. It is decision history, not design text.
 - Entries are append-only in spirit: a superseded decision keeps its record, and the later record says it supersedes the earlier one.
@@ -68,7 +68,9 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 **Question:** [What was asked, in one or two sentences.]
 
-**Decision record, [YYYY-MM-DD]:** [What was decided: the chosen option or custom answer, and who decided (the user, a delegation recorded below, or the source that settled it: a BRD version such as `LOYALTY v1.2`, or a business review point). The rationale, unless an ADR carries it. A question decided in stages gets one record per stage, dated, newest last; a record that replaces an earlier one says so ("This supersedes ..."). Open remainder is stated here, never in the chunks.]
+**Decision record, [YYYY-MM-DD]:** [What was decided: the chosen option or custom answer, and who decided (the user, a delegation recorded below, or the source that settled it: a BRD version such as `LOYALTY v1.2`, or a business review point). The rationale, unless an ADR carries it. A question decided in stages gets one record per stage, dated, newest last; a record that replaces an earlier one says so ("This supersedes ...").]
+
+**Open remainder:** [None, or after a partial answer the exact question still open, with its named owner and location; never in the chunks. For a question decided in stages, what is still open after the newest record.]
 
 **Rule home:** [[Section name]](./NN-chunk.md#anchor-of-the-settled-design)
 
@@ -100,7 +102,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 ### Action entries
 
-**[Action], [YYYY-MM-DD]:** [What was done in that session: chunks written, back-fills, markers raised or resolved, contracts re-reconciled, what stays pending.]
+**[Action], [YYYY-MM-DD]:** [What was done in that session: chunks written, back-fills, markers raised or resolved, contracts re-reconciled, what stays pending. A direct design instruction from the user, with no question behind it, is recorded here: the instruction as the user gave it, then `Rule home:` and the link to the section that now states it.]
 
 ## Part N handoff record
 

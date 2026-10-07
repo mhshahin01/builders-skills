@@ -138,7 +138,7 @@ See `brd-to-sdd.md` for the full mapping table.
 
 ### "Update this SDD" (existing SDD with light changes requested)
 
-Treat as TRANSFORM with targeted regeneration:
+Treat as TRANSFORM with targeted regeneration, without rerunning intake or steps 3a to 3c:
 
 - Identify which sections the user wants changed.
 - Regenerate those (chunks: rewrite affected chunk files; combined: rewrite affected sections in place), then back-fill every other chunk or section the change makes wrong (`parts-mode.md` § What every part does, step 3).

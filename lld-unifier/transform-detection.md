@@ -25,6 +25,7 @@ After confirming output shape (chunks / combined), ask the direction question of
 | Only an SDD path | from-sdd |
 | Both code path and SDD path | hybrid |
 | Neither | from-sdd (the most common greenfield case); ask the user to provide an SDD |
+| An existing LLD (an update, a refresh, an added service) | The Mode its `00-metadata.md` records; for `partial`, the row its inputs match |
 
 **Project Type override.** Resolve the Project Type, recorded in the SDD §1 at SDD intake (legacy chains: SDD `15-specs.md` § 4 / combined `# 19. Specs`, or BRD `12-specs.md`), and apply this override BEFORE the smart defaults above (it later lands in this LLD's own `17-specs.md` § 4):
 
@@ -103,7 +104,7 @@ In either case, the SDD is read in full; field mapping per `sdd-to-lld.md`.
 
 Same recognition rules as in `sdd-unifier:transform-detection.md` (BRDs follow the brd-unifier convention).
 
-A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location; an older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things: the IDs its use-case trace cites (use case headings in 05 and 06x, the `MK-NN` rows and Figma links in 14 Mockup coverage (the screen references), any screen ID the BRD text carries from its source, test cases in 16; `sdd-to-lld.md` § Use-case traceability), and supplementary purpose, scope, and glossary content that the SDD might paraphrase.
+A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location; an older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things: the IDs its use-case trace cites (use case headings in 05 and 06x, the `MK-NN` rows in 14 Mockup coverage (the screen references; the Figma link is reached through the row), any screen ID the BRD text carries from its source, test cases in 16; `sdd-to-lld.md` § Use-case traceability), and supplementary purpose, scope, and glossary content that the SDD might paraphrase.
 
 ### SoW / Statement of Work
 
@@ -162,6 +163,7 @@ See `hybrid-drift.md` for the full diff rules.
 
 Treat as targeted regeneration:
 
+- Ask the direction question as on any run (SKILL.md step 2), with the recorded Mode as the suggested default.
 - Identify which chunks the user wants changed.
 - Regenerate only those.
 - Bump the version once for the request (SKILL.md § Output conventions, Versions).

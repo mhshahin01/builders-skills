@@ -80,7 +80,7 @@ RELATIONSHIP_TO_15: chunk 15 indexes the author's own `> Confirm:` and `> TODO:`
 
 ## Reviewer Notes
 
-<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service, plus the three `global` rows. Zero findings is valid for a surface that was checked. Free-form notes that did not become a numbered open item follow it. -->
+<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service, plus the three `global` rows. Zero findings is valid for a surface that was checked. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed chunk: its Service cell reads `[YYYY-MM-DD] delta: chunk NN` (a per-service file by its name) or `[YYYY-MM-DD] delta: global`, and its Risk surface cell names the surfaces checked. A scoped application check (SKILL.md step 7, Answers in the same update) adds one dated row per applied item: its Service cell reads `[YYYY-MM-DD] application check: OI-NN`, and its What was checked cell names each chunk and section the item changed. The brackets are part of each label: `[2026-10-07] delta: chunk 13`, `[2026-10-07] application check: OI-14`. Free-form notes that did not become a numbered open item follow it. -->
 
 | Service | Risk surface | Checked | Findings | What was checked |
 |---------|--------------|---------|----------|------------------|

@@ -10,7 +10,7 @@ PART OF: LLD - [Project Name]
 
 ## 19.1 Source Documents
 
-<!-- One row per source BRD, keyed as in the SDD's Source BRDs register. The use-case trace rows record the upstream state the trace was built from, so a later run can see what changed (sdd-to-lld.md § Use-case traceability). The Related SDD version is what SKILL.md step 3c compares with the SDD's current version on the next run. -->
+<!-- One row per source BRD, keyed as in the SDD's Source BRDs register. The use-case trace rows record the upstream state the trace was built from, so a later run can see what changed (sdd-to-lld.md § Use-case traceability). The Related SDD version is what SKILL.md step 3c compares with the SDD's current version on the next run. Each version cell holds the upstream version this LLD last read, at its build or its last accepted refresh. It is not the version in which that part last changed, so the §7.3 row repeats the Related SDD version. -->
 
 | Document | Path / URL | Version / state | Notes |
 |----------|------------|-----------------|-------|

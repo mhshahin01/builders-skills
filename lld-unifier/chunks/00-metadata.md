@@ -37,7 +37,7 @@ PART OF: LLD - [Project Name]
 
 ## Changes Log
 
-<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count. -->
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, and so do chunk 15 flag rows and the 16 § 19.1 upstream state (SKILL.md § Output conventions, Versions). -->
 
 | Version | Date | Author | Mode | Change Summary |
 |---------|------|--------|------|----------------|

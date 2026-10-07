@@ -1,11 +1,11 @@
-# Pattern Rules — CLAUDE.md design rules → triggering conditions
+# Pattern Rules: CLAUDE.md design rules → triggering conditions
 
 This file maps the user's CLAUDE.md design defaults to **triggering conditions** that the skill uses to decide whether a pattern applies in a given service.
 
 It is used in two directions:
 
 - **FROM-SDD:** when a triggering condition is met (e.g., a service emits state-changing events), the corresponding pattern is *applied proactively* to the LLD with the rule attribution.
-- **FROM-CODE:** the same conditions are used as detection heuristics — if code matches the structural fingerprint, the pattern is *recognised* and documented.
+- **FROM-CODE:** the same conditions are used as detection heuristics: if code matches the structural fingerprint, the pattern is *recognised* and documented.
 
 ---
 
@@ -15,10 +15,10 @@ Per `chunks/04-implementation-template.md` § 7.4, every applied pattern carries
 
 1. **Pattern name.**
 2. **Triggering CLAUDE.md rule** (verbatim quote).
-3. **Roles** — which classes/methods play which part.
-4. **Rationale** — one-line specific to this service.
-5. **Mermaid class diagram** — pattern structure.
-6. **Pseudocode skeleton** — key methods.
+3. **Roles**: which classes/methods play which part.
+4. **Rationale**: one-line specific to this service.
+5. **Mermaid class diagram**: pattern structure.
+6. **Pseudocode skeleton**: key methods.
 7. (FROM-CODE) `> Confirm:` on the detection, dropped only when a test exercises the pattern (`confidence-rules.md`).
 
 ---
@@ -31,26 +31,26 @@ These patterns MUST be applied in any service whose conditions match. From-sdd: 
 
 **CLAUDE.md rule:** *"Outbox pattern is mandatory for any state change that must produce an event. No dual-writes to DB and Kafka."*
 
-**Triggering condition:** the service emits one or more events (Kafka, SNS, etc.) as a result of a state-changing operation (insert, update, delete on a domain aggregate).
+**Triggering condition:** a state-changing operation (insert, update, delete on a domain aggregate) must be followed by a side effect that must not be lost: an event the service emits (Kafka, SNS, etc.), a write to an external provider, or an in-process domain event whose SDD §14.10 Delivery line is durable (a publication log). Each carries the dual-write risk the rule forbids.
 
-**FROM-SDD detection:** the SDD's per-service Event Model lists ≥1 event with the service as producer.
+**FROM-SDD detection:** the SDD's per-service Event Model lists ≥1 event with the service as producer, a workflow writes to a provider after a state change, or the module publishes a §14.10 event under a durable Delivery line.
 
 **FROM-CODE detection:** structural. Recognise the Outbox only when both hold, each cited with file:line:
 
-1. **Atomic write:** the service inserts a durable outbox record (an `outbox` table in its own schema) in the same local transaction as the aggregate change, so both commit or neither does.
-2. **Separate publisher:** a component outside that transaction reads committed outbox records and publishes them to the broker (a scheduled poller by default; a CDC relay on the outbox table also qualifies).
+1. **Atomic write:** the service inserts a durable outbox record (an `outbox` table, or a publication log, in its own schema) in the same local transaction as the aggregate change, so both commit or neither does.
+2. **Separate publisher:** a component outside that transaction reads committed outbox records and delivers them to their target, the broker, a provider, or the in-process listeners (a scheduled poller by default; a CDC relay on the outbox table also qualifies).
 
 A `KafkaTemplate.send` (or equivalent) beside a repository write is never evidence of an Outbox, whether it runs inside the transaction or after commit. Without the atomically written record it is a direct dual-write: report it under § Anti-patterns to flag.
 
-**Roles:**
-- Outbox table (in service schema).
+**Roles** (the same for every target: the broker, a provider, or the in-process listeners):
+- Outbox table (in service schema; for a durable in-process event, the publication log).
 - Outbox writer (inside the same tx as the aggregate write).
 - Outbox publisher (separate from the writing tx; scheduled job by default, one active instance per service).
 
 **Delivery contract** (the publisher the LLD specifies, and its pseudocode skeleton):
-- A record is marked processed only after the broker acknowledges the send (`acks=all`). The acknowledgement check is a visible step in the pseudocode, before `markProcessed`.
+- A record is marked processed only after its target acknowledges it: the broker's acknowledgement (`acks=all`), the provider's success response, or every listener's commit. The acknowledgement check is a visible step in the pseudocode, before `markProcessed`.
 - A failed or timed-out send leaves the record unprocessed, so the next poll retries it. It is never marked processed or deleted.
-- Duplicates are expected. If the broker acknowledges but the processed update fails (database error, or a crash before the update), the record is still unprocessed and the next poll publishes it again. A failed or timed-out send may also have reached the broker. The payload, including `eventId`, is fixed when the record is written, so a re-send is identical and consumers dedupe it (`chunks/07-event-contracts.md` § 10.4).
+- Duplicates are expected. If the target acknowledges but the processed update fails (database error, or a crash before the update), the record is still unprocessed and the next poll delivers it again. A failed or timed-out send may also have reached its target. The payload, including `eventId`, is fixed when the record is written, so a re-send is identical and the receiver dedupes it (broker consumers: `chunks/07-event-contracts.md` § 10.4).
 - From-code mode documents the publisher as the code behaves. A breach of this contract stays visible in the skeleton and is flagged per § Anti-patterns to flag; the skeleton is never rewritten to comply.
 
 ### Idempotency (on money / wallet / notification / external-provider write endpoints)
@@ -61,7 +61,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **FROM-SDD detection:** the SDD's per-service API list includes a `POST/PUT/PATCH/DELETE` endpoint whose name or summary mentions money / wallet / notification / payment / send / charge / transfer.
 
-**FROM-CODE detection:** structural — look for `@RequestHeader("Idempotency-Key")` parameter on the controller method, AND an `idempotency_record` table OR equivalent dedup store.
+**FROM-CODE detection:** structural. Look for `@RequestHeader("Idempotency-Key")` parameter on the controller method, AND an `idempotency_record` table OR equivalent dedup store.
 
 **Roles:**
 - Idempotency record table.
@@ -83,7 +83,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 - Per-domain subclasses with error codes.
 - `@RestControllerAdvice` translator.
 
-### Outbox Saga (cross-service transactions)
+### Saga (cross-service transactions)
 
 **CLAUDE.md rule:** *"Sagas (choreography by default, orchestration when the flow is complex or needs central visibility) for cross-service business transactions. No distributed 2PC."*
 
@@ -91,7 +91,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **FROM-SDD detection:** the SDD's Workflows section describes a flow that crosses services and modifies state in each.
 
-**FROM-CODE detection:** structural — look for orchestrator services with explicit step+compensate methods, OR choreography-style listeners that react to upstream events with conditional state transitions.
+**FROM-CODE detection:** structural. Look for orchestrator services with explicit step+compensate methods, OR choreography-style listeners that react to upstream events with conditional state transitions.
 
 **Roles (orchestration variant):** Orchestrator + Steps + Compensations.
 
@@ -133,9 +133,9 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **Triggering condition:** any service that calls an external system (Integrations table in SDD §12).
 
-**FROM-SDD detection:** `09-cross-cutting.md` § 12.3 + per-call config in `04-implementation/<service>.md`.
+**FROM-SDD detection:** `09-cross-cutting.md` § 12.3, the defaults table plus one instance table row per downstream call's Resilience4j instance.
 
-**FROM-CODE detection:** structural — look for `@CircuitBreaker`, `@Retry`, `@Bulkhead`, `@TimeLimiter` annotations OR programmatic Resilience4j use.
+**FROM-CODE detection:** structural. Look for `@CircuitBreaker`, `@Retry`, `@Bulkhead`, `@TimeLimiter` annotations OR programmatic Resilience4j use.
 
 ---
 
@@ -143,7 +143,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 CLAUDE.md says: *"Use the right pattern, do not over-engineer. Strategy for runtime variants, Factory Method for object creation hierarchies, Mediator to decouple peers, Chain of Responsibility for pipelines."*
 
-These are **discretionary** — applied only when the triggering condition is genuinely present.
+These are **discretionary**: applied only when the triggering condition is genuinely present.
 
 ### Strategy
 
@@ -155,7 +155,7 @@ These are **discretionary** — applied only when the triggering condition is ge
 
 ### Factory Method
 
-**Triggering condition:** object creation hierarchies — multiple constructor paths that should be encapsulated.
+**Triggering condition:** object creation hierarchies (multiple constructor paths that should be encapsulated).
 
 **FROM-SDD detection:** mentions like "create a foo of type X" with multiple types.
 
@@ -204,8 +204,9 @@ The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-quest
 | Field injection (`@Autowired` on fields) | "Constructor injection only" | MEDIUM |
 | DTO classes (not records) | "Records for DTOs" | LOW |
 | Direct dual-write: a database write plus a broker send in one operation with no outbox record written in the same transaction (send inside the transaction or after commit) | "No dual-writes to DB and Kafka" | HIGH |
+| A provider call, or an in-process event delivery, after a state change with no outbox record written in the same transaction, where the SDD marks the side effect as one that must not be lost (an external write, or a durable §14.10 Delivery line); with no SDD, flag it `> Confirm:` instead | "Outbox pattern is mandatory" (§ Outbox, triggering condition) | HIGH |
 | Outbox record written outside the aggregate's transaction (`REQUIRES_NEW`, after commit) | "Outbox pattern is mandatory" | HIGH |
-| Outbox publisher marks a record processed without a successful broker acknowledgement (fire-and-forget send, or update before the acknowledgement) | "Outbox pattern is mandatory" | HIGH |
+| Outbox publisher marks a record processed without its target's acknowledgement (fire-and-forget send, or update before the acknowledgement) | "Outbox pattern is mandatory" | HIGH |
 | Missing idempotency on money endpoints | "Idempotency keys on all write endpoints touching money..." | HIGH |
 | Synchronous chained REST > 1 hop | "No service-to-service chained REST calls more than one hop deep" | MEDIUM |
 | Distributed 2PC / `XA` transactions | "No distributed 2PC" | HIGH |
@@ -223,10 +224,10 @@ Each finding cites the rule it breaks and takes the severity above.
 
 ## Rationale templates (for from-sdd application)
 
-When applying a pattern in from-sdd direction, the rationale should be specific to the service. Here are templates for common cases — the skill substitutes the service-specific bits:
+When applying a pattern in from-sdd direction, the rationale should be specific to the service. Here are templates for common cases. The skill substitutes the service-specific bits:
 
 - **Outbox:** "State changes in `[aggregate]` emit `[event-name]` events to downstream consumers `[consumer-list]`. Direct dual-write to DB+Kafka would risk inconsistency on failure. The outbox row commits in the same transaction as the state change, and a separate publisher delivers it at least once, marking it processed only after the broker acknowledges."
 - **Strategy:** "[Operation] differs per `[discriminator]` (`[variant-list]`). Hard-coding the variants in a single method would couple new-variant addition to a code change in `[ContextClass]`. Strategy decouples each variant into its own class, picked at runtime by `[discriminator]`."
-- **Saga (choreography):** "The `[business-flow]` flow modifies state in `[svc-A]` and `[svc-B]`. Distributed 2PC is forbidden by CLAUDE.md; choreography saga is the default — `[svc-A]` emits `[event-1]`, `[svc-B]` reacts and emits `[event-2]`. Compensation actions documented in each service's workflow section."
+- **Saga (choreography):** "The `[business-flow]` flow modifies state in `[svc-A]` and `[svc-B]`. Distributed 2PC is forbidden by CLAUDE.md; choreography saga is the default: `[svc-A]` emits `[event-1]`, `[svc-B]` reacts and emits `[event-2]`. Compensation actions documented in each service's workflow section."
 - **Saga (orchestration):** "The `[business-flow]` flow has `[N]` steps with conditional branching at step `[K]`. Choreography would require each service to know the state of `[branch-condition]`; orchestration via `[OrchestratorService]` keeps that knowledge centralised. Each step has a documented compensation."
 - **Resilience4j on a downstream call:** "Calls to `[external-system]` may fail; per CLAUDE.md, every external-provider call has timeouts, retry with backoff+jitter, circuit breaker, and bulkhead. Bulkhead size `[N]` chosen to bound concurrent calls and prevent thread starvation under provider slowdowns."

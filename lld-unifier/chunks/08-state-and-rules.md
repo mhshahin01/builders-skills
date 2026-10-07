@@ -28,6 +28,8 @@ stateDiagram-v2
   DELETED --> [*]
 ```
 
+**Summary:** [1-2 sentences: the states and what moves the aggregate between them.]
+
 **Transition rules:**
 
 | From | Event | To | Guard | Side effect |

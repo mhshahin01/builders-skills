@@ -44,6 +44,8 @@ graph LR
   SVC_C -->|REST| EXT_Y
 ```
 
+**Summary:** [1-2 sentences: which services in this LLD depend on which, and over what.]
+
 > **Convention:** keep this diagram service-level (not class-level). Class-level wiring lives in `04-implementation/<service>.md`. In a modular monolith, label module-to-module edges `in-process: [Port.operation]` or `in-process: [EventName]` (SDD §24.7 and §14.10), never as REST or topic edges.
 
 > Miro: [optional whiteboard view URL]

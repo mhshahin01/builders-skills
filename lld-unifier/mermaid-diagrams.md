@@ -8,14 +8,14 @@ LLDs use **inline Mermaid** as the default for sequence, state, ERD, and class d
 
 | Diagram type | Default format | Where it appears | Optional Miro link? |
 |--------------|----------------|------------------|---------------------|
-| Sequence (per use case) | Mermaid `sequenceDiagram` inline | `04-implementation/<service>.md` § 7.8 | Yes — for cross-team whiteboard view |
-| Class diagram (per design pattern) | Mermaid `classDiagram` inline | `04-implementation/<service>.md` § 7.4 | No — pattern diagrams stay inline only |
-| State machine | Mermaid `stateDiagram-v2` inline | `08-state-and-rules.md` § 11.1 | Yes — for stakeholder review |
-| Entity-relationship | Mermaid `erDiagram` inline | `05-data-model.md` § 8.1 | Yes — for DB review with DBA |
-| Component topology | Mermaid `graph TB` inline | `03-architecture.md` § 6.1 | Yes — usually inherited from SDD's Miro board |
+| Sequence (per use case) | Mermaid `sequenceDiagram` inline | `04-implementation/<service>.md` § 7.8 | Yes (for cross-team whiteboard view) |
+| Class diagram (per design pattern) | Mermaid `classDiagram` inline | `04-implementation/<service>.md` § 7.4 | No (pattern diagrams stay inline only) |
+| State machine | Mermaid `stateDiagram-v2` inline | `08-state-and-rules.md` § 11.1 | Yes (for stakeholder review) |
+| Entity-relationship | Mermaid `erDiagram` inline | `05-data-model.md` § 8.1 | Yes (for DB review with DBA) |
+| Component topology | Mermaid `graph TB` inline | `03-architecture.md` § 6.1 | Yes (usually inherited from SDD's Miro board) |
 | Cross-service dependency graph | Mermaid `graph LR` inline | `02-context.md` § 5.4 | Yes |
-| DI graph (per service) | Mermaid `graph TB` inline | `04-implementation/<service>.md` § 7.5 | No — implementation detail |
-| Saga flow | Mermaid `sequenceDiagram` inline | `04-implementation/<orchestrator>.md` § 7.8 | Yes — for stakeholder review |
+| DI graph (per service) | Mermaid `graph TB` inline | `04-implementation/<service>.md` § 7.5 | No (implementation detail) |
+| Saga flow | Mermaid `sequenceDiagram` inline | `04-implementation/<orchestrator>.md` § 7.8 | Yes (for stakeholder review) |
 | Workflow / control flow | Mermaid `flowchart TD` inline | `04-implementation/<service>.md` § 7.8 (alternative to sequence for non-actor flows) | Yes |
 
 ---
@@ -42,7 +42,8 @@ sequenceDiagram
 - Always specify the language hint (`mermaid`).
 - Use named participants (`participant X as Long Name`) when shorter aliases improve readability.
 - Annotate alt-paths for error scenarios.
-- Keep diagrams scoped — no diagram should exceed ~30 lines. If it does, split into multiple smaller diagrams (e.g., happy path + error path).
+- Follow every diagram with a 1-2 sentence prose summary (`**Summary:** ...`), so the chunk reads without a renderer.
+- Keep diagrams scoped: no diagram should exceed ~30 lines, except the layered view in `03-architecture.md` § 6.1 Component Topology and an ERD, which shows entities, keys, and relationships only (the columns live in `05-data-model.md` § 8.2). If another diagram does, split it into multiple smaller diagrams (e.g., happy path + error path).
 - Use case IDs inside a diagram are plain keyed IDs, in a quoted label where the syntax needs one (`UC04(("REFUNDS/UC-04"))`, `Note over Client,Controller: REFUNDS/UC-04 step 1`), never links. The links live in the text around the diagram (`sdd-to-lld.md` § Use-case traceability).
 
 ---
@@ -62,7 +63,7 @@ When a diagram has a richer Miro version (e.g., colour-coded ownership, stakehol
 **Convention:**
 - The Miro link is *additive*, not replacement. The Mermaid stays.
 - The skill never writes a Miro link if no real board exists. Empty placeholders like `> Miro: [TBD]` are not used.
-- If the SDD's diagram is on Miro and the LLD inherits it, link to the SDD's existing board — don't create a new LLD-specific board.
+- If the SDD's diagram is on Miro and the LLD inherits it, link to the SDD's existing board: don't create a new LLD-specific board.
 
 ---
 
@@ -117,7 +118,7 @@ Roles:
 ```mermaid
 stateDiagram-v2
   [*] --> DRAFT
-  DRAFT --> ACTIVE : activate [guard: required-fields-present]
+  DRAFT --> ACTIVE : activate [required fields present]
   ACTIVE --> SUSPENDED : suspend
   SUSPENDED --> ACTIVE : resume
   ACTIVE --> DELETED : delete
@@ -132,14 +133,11 @@ erDiagram
   WALLET {
     uuid id PK
     uuid tenant_id FK
-    text status
-    timestamptz created_at
   }
   LEDGER_ENTRY {
     uuid id PK
     uuid wallet_id FK
-    numeric amount
-    text direction
+    uuid tenant_id FK
   }
 ```
 
@@ -169,10 +167,10 @@ Node shapes:
 
 ## When NOT to draw a diagram
 
-- Per-getter / per-setter classes — no diagram, just a class table.
-- Stateless services — no state machine.
-- One-step workflows — no sequence diagram (the description is the diagram).
-- Pure CRUD endpoints — no per-endpoint sequence diagram (one global "happy path POST + error" pair covers them all).
+- Per-getter / per-setter classes: no diagram, just a class table.
+- Stateless services: no state machine.
+- One-step workflows: no sequence diagram (the description is the diagram).
+- Pure CRUD endpoints: no per-endpoint sequence diagram (one global "happy path POST + error" pair covers them all).
 
 The skill leans toward fewer, more meaningful diagrams. A 6-line state machine that describes nothing is worse than no diagram.
 
@@ -183,7 +181,7 @@ The skill leans toward fewer, more meaningful diagrams. A 6-line state machine t
 Mermaid syntax errors break the doc. The skill should:
 
 1. Validate every emitted Mermaid block parses (syntactically) before writing.
-2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + a `> TODO: Mermaid syntax error — please review and fix.` flag.
+2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + a `> TODO: Mermaid syntax error: review and fix.` flag.
 3. Surface the fallback count in the handoff summary.
 
 ---

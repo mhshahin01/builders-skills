@@ -54,21 +54,29 @@ PART OF: LLD - [Project Name]
 
 ## 18.5 Inference Confidence Summary
 
-| Section | High-confidence rows | Medium-confidence rows | Low-confidence rows |
-|---------|---------------------|------------------------|---------------------|
-| 7. Implementation (per service) | [N] | [N] | [N] |
-| 8. Data Model | [N] | [N] | [N] |
-| 9. API Contracts | [N] | [N] | [N] |
-| 10. Event Contracts | [N] | [N] | [N] |
-| 11. State & Rules | [N] | [N] | [N] |
-| 12. Cross-Cutting | [N] | [N] | [N] |
-| 13. Operations | [N] | [N] | [N] |
-| 14. Security | [N] | [N] | [N] |
-| 15. Performance | [N] | [N] | [N] |
-| 16. Testing | [N] | [N] | [N] |
-| 17. Frontend | [N] | [N] | [N] |
+| Section | Medium: open `> Confirm:` flags | Low: open `> TODO:` flags |
+|---------|---------------------------------|---------------------------|
+| 1. Purpose | [N] | [N] |
+| 2. Scope | [N] | [N] |
+| 3. Assumptions | [N] | [N] |
+| 4. Glossary | [N] | [N] |
+| 5. Context | [N] | [N] |
+| 6. Architecture Overview | [N] | [N] |
+| 7.N [Service Name] (one row per service) | [N] | [N] |
+| 8. Data Model | [N] | [N] |
+| 9. API Contracts | [N] | [N] |
+| 10. Event Contracts | [N] | [N] |
+| 11. State & Rules | [N] | [N] |
+| 12. Cross-Cutting | [N] | [N] |
+| 13. Operations | [N] | [N] |
+| 14. Security | [N] | [N] |
+| 15. Performance | [N] | [N] |
+| 16. Testing | [N] | [N] |
+| 17. Frontend | [N] | [N] |
+| 20. Specs | [N] | [N] |
+| Global (flags this chunk holds itself, outside its tables) | [N] | [N] |
 
-> **Convention:** these counts are updated whenever a chunk is regenerated.
+> **Convention:** each cell counts the open flags of its kind in that section, as a search for `> Confirm:` and `> TODO:` finds them; nothing is judged, and a section with none reads 0. These counts are updated whenever a chunk is regenerated.
 
 ## 18.6 Policy Findings (every mode that reads code)
 

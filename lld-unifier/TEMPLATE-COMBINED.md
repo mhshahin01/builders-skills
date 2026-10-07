@@ -31,9 +31,11 @@
 
 ## Changes Log
 
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count. -->
+
 | Version | Date | Author | Mode | Change Summary |
 |---------|------|--------|------|----------------|
-| [X.X] | [YYYY-MM-DD] | [Author] | [mode] | Initial LLD draft via lld-unifier. |
+| [X.X] | [YYYY-MM-DD] | [Author] | [mode] | Initial LLD draft via lld-unifier. Chunks: none (initial build) |
 
 ## Table of Contents
 
@@ -106,6 +108,8 @@ graph LR
   SVC_A --> SVC_B
 ```
 
+**Summary:** [1-2 sentences: which services in this LLD depend on which, and over what.]
+
 ## 5.5 Shared Conventions (apply to every service in scope)
 
 - **Auth:** [Keycloak realm strategy / OAuth2 server / mTLS, per CLAUDE.md default unless overridden]
@@ -124,6 +128,8 @@ graph TB
   SVC_A --> DB_A[(PostgreSQL)]
   SVC_A -.publish.-> KAFKA[(Kafka)]
 ```
+
+**Summary:** [1-2 sentences: which services in this LLD depend on which, and over what.]
 
 ## 6.2 Deployment Topology
 
@@ -163,12 +169,12 @@ graph TB
 ### Responsibility
 
 ### Class & Interface Map
-- Controllers, Services, ServiceImpls, Repositories, Domain types (records), Method signatures
-- Every entry point a use-case traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (§12.8). Platform endpoints carry none.
+- Controllers (with the event listeners and scheduled jobs that are entry points, their trigger as the endpoint), Services, ServiceImpls, Repositories, Domain types (records), Method signatures
+- Every entry point a use case's traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (§12.8). An `Event:` or `Schedule:` trigger that SDD §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. Platform endpoints, and the entry points of a `#### Workflow:` block, carry none.
 
 #### Ports and Adapters (in-process contracts)
 
-Modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process)` contract this module provides or calls (port interface, operation, API ID, role, adapter class), as in `chunks/04-implementation-template.md` § 7.2; the contract itself is in §9.6. A microservices SDD writes "Not applicable - no in-process contracts".
+Modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process)` contract this module provides or calls (port interface, operation, API ID, role, adapter class), as in `chunks/04-implementation-template.md` § 7.2; the contract itself is in §9.6. With no SDD §15 `Internal (in-process)` contract here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules call no port), write "Not applicable - no in-process contracts".
 
 #### Authorization
 
@@ -191,16 +197,17 @@ For each applied pattern: name, triggering CLAUDE.md rule, roles, rationale, Mer
 RFC 9457 mapping per exception, with its SDD §15.1 `errorCode` (`NOT_FOUND`, `VALIDATION_FAILED`, `CONFLICT`, or the contract's domain code), as in `chunks/04-implementation-template.md` § 7.7.
 
 ### Use-Case Workflows
-One subsection per active use case this service owns (SDD §7.3 Owner), headed with the SDD's BRD key and the BRD's ID and title exactly. A merged or removed use case gets no block. Each workflow has: the traceability line, control flow, sequence diagram (Mermaid), idempotency points, outbox emission points, retry/timeout choices.
+One subsection per active use case this service owns (SDD §7.3 Owner), headed with the SDD's BRD key and the BRD's ID and title exactly. A merged or removed use case gets no block. Behaviour the BRD or SDD asks for that no use case covers (a scheduled job, a BRD chunk 09 report, an NFR-driven process) gets a `#### Workflow: [name]` block instead (`sdd-to-lld.md` § Use-case traceability). Each workflow has: the traceability line, control flow, sequence diagram (Mermaid; none for a one-step workflow or a pure CRUD endpoint, per `mermaid-diagrams.md` § When NOT to draw a diagram), idempotency points, outbox emission points, retry/timeout choices.
 
 <!--
 TRACEABILITY LINE (required, directly under the heading; rules: sdd-to-lld.md § Use-case traceability). Fields in this order, read from their homes, never restated further:
   BRD: the use case link (BRD heading anchor, built from the real heading). SDD: the §7.3 link, the same in every block.
   Owner and Entry points: exactly as SDD §7.3 writes them (method + path, or Schedule: / Event: triggers, with the service named when it is not the owner).
   UAT/BAT: every non-retired BRD chunk 16 case whose Related UC names this use case, one by one, each linked to its feature-area heading; "Pending (BRD 16 not written)" while chunk 16 is locked; "None - BRD coverage gap" when chunk 16 has none.
-  Screens: from §17.3, the MK-NN (linked to 14-todo.md#mockup-coverage; or the screen ID, where the BRD text carries one) and each route that starts the use case; "Not applicable - no UI" when §17 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
+  Screens: from §17.3, the screen reference (the ID of the screen's chunk 14 row, its MK-NN or, in a BRD written before MK-NN, its screen ID, linked to 14-todo.md#mockup-coverage; only a screen ID with no chunk 14 row links to the BRD heading that carries it) and each §17.3 route whose Use cases cell names the use case; "Not applicable - no UI" when §17 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
 Every BRD ID carries the key from the SDD's Source BRDs register. Paths start with ./ (this file sits next to the BRD and SDD folders); links to workflow blocks are same-file anchors.
 No source BRD, or pure from-code: heading "#### Workflow: [Flow name]" and the line "> **Traceability:** Not applicable - no source BRD" (or "- no source SDD"). Never a made-up UC ID.
+Behaviour the BRD or SDD asks for that no use case covers: heading "#### Workflow: [Flow name]" and the line "> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the [KEY]/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them]". It gets no §19.9 row.
 -->
 
 #### [KEY]/UC-01: [Use case title, exactly as the BRD writes it]
@@ -233,6 +240,8 @@ sequenceDiagram
   Controller-->>Client: 201 Created
 ```
 
+**Summary:** [1-2 sentences describing the flow in prose.]
+
 **Idempotency points / Outbox emission points / Retry and timeout policy:** [As in `chunks/04-implementation-template.md` § 7.8]
 
 **Error handling:** [Validation → 400 + FooValidationException; [KEY]/UC-01 E1 → 409 + FooConflictException; DB failure → 500 + retry-after header]
@@ -259,11 +268,17 @@ sequenceDiagram
 
 ## 8.1 Entity Relationship (system-wide)
 
+<!-- Entities, keys (PK, FK), and relationships only, as the SDD's ERD draws them, with no line cap; every other column lives in § 8.2 (sdd-to-lld.md § Field mapping table, 13a DB Modeling). -->
+
 ```mermaid
 erDiagram
 ```
 
+**Summary:** [1-2 sentences: the main entities and their key relationships.]
+
 ## 8.2 Tables (per service)
+
+One table per service with a Source column per row, as in `chunks/05-data-model.md` § 8.2.
 
 ## 8.3 Indexes
 
@@ -299,11 +314,11 @@ Internal HTTP calls follow SDD §15.1: the caller sends its client-credentials t
 
 ## 9.6 In-Process Port Contracts (SDD §15)
 
-<!-- Modular monolith or hybrid core only: one row per SDD §15 contract of Type `Internal (in-process)`. A microservices SDD writes "Not applicable - no in-process contracts". No HTTP method, path, headers, status codes, or resilience config: the call never leaves the process. -->
+<!-- Modular monolith or hybrid core only: one row per SDD §15 contract of Type `Internal (in-process)`. With no SDD §15 `Internal (in-process)` contract here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules call no port), write "Not applicable - no in-process contracts". No HTTP method, path, headers, status codes, or resilience config: the call never leaves the process. Idempotency and Transaction are the contract's Behaviour rows, as SDD §15 writes them. -->
 
-| API ID (§15) | Port interface | Operation | Request / response DTO records | Raised errors (`errorCode`) | Permission token (SDD §16) | Implementing adapter |
-|--------------|----------------|-----------|--------------------------------|-----------------------------|----------------------------|----------------------|
-| [API-03](./sdd-[sdd-slug]/11-api-contracts.md#[api-03-heading-slug]) | `[ProviderPort]` | `[operation]` | `[RequestDto]` / `[ResponseDto]` | `[DomainError]` (`[DOMAIN_CODE]`) | `[token]` | `[ProviderPortAdapter]` in `[provider-module]` |
+| API ID (§15) | Port interface | Operation | Request / response DTO records | Raised errors (`errorCode`) | Idempotency | Transaction | Permission token (SDD §16) | Implementing adapter |
+|--------------|----------------|-----------|--------------------------------|-----------------------------|-------------|-------------|----------------------------|----------------------|
+| [API-03](./sdd-[sdd-slug]/11-api-contracts.md#[api-03-heading-slug]) | `[ProviderPort]` | `[operation]` | `[RequestDto]` / `[ResponseDto]` | `[DomainError]` (`[DOMAIN_CODE]`) | [The key; what a repeat returns] | [Joins the caller's transaction / Runs in its own] | `[token]` | `[ProviderPortAdapter]` in `[provider-module]` |
 
 # 10. Event Contracts
 
@@ -321,7 +336,9 @@ Internal HTTP calls follow SDD §15.1: the caller sends its client-credentials t
 
 ## 10.6 In-Process Domain Events (SDD §14.10)
 
-<!-- Modular monolith or hybrid core only: one row per SDD §14.10 event. A microservices SDD writes "Not applicable - no in-process events". No topic, consumer group, DLQ, or outbox: the event never leaves the process. -->
+<!-- Modular monolith or hybrid core only: one row per SDD §14.10 event. With no SDD §14.10 in-process domain event here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules publish none), write "Not applicable - no in-process events". No topic, consumer group, or DLQ: the event never leaves the process. A durable Delivery line uses the §12.4 outbox as its publication log, as in `chunks/07-event-contracts.md` § 10.6. -->
+
+> **Delivery:** [Durable / In memory], the value of the SDD §14.10 Delivery line.
 
 | Event | Publisher module | Listener modules | Transaction phase | Payload (DTO) | When |
 |-------|------------------|------------------|-------------------|---------------|------|
@@ -345,11 +362,11 @@ Internal calls follow SDD §15.1: the caller's client-credentials token, checked
 
 ## 12.3 Resilience (downstream calls)
 
-HTTP and broker calls only; in-process port calls (§9.6) take no timeout, retry, circuit breaker, or bulkhead.
+HTTP and broker calls only; in-process port calls (§9.6) take no timeout, retry, circuit breaker, or bulkhead. The defaults table comes first, then an instance table with one row per Resilience4j instance (Instance, Caller (service, API ID), Timeout, Retry, Circuit breaker, Bulkhead, Source), `Default` where a cell equals the defaults, as in `chunks/09-cross-cutting.md` § 12.3.
 
-## 12.4 Outbox Pattern (mandatory for state-changing integration events)
+## 12.4 Outbox Pattern (mandatory for side effects that must follow a state change)
 
-Integration events on the broker only; the in-process domain events of §10.6 use no outbox.
+Every side effect that must follow a state change and must not be lost: integration events on the broker, writes to an external provider, and the §10.6 in-process events whose SDD §14.10 Delivery line is durable (the outbox is then their publication log). In-memory §10.6 events use no outbox. Table and column names follow the SDD when it names them (a `13x` DB Modeling, or SDD §11.1 for the publication log; `outbox` and `processed_at` otherwise).
 
 ## 12.5 Saga Pattern (cross-service transactions)
 
@@ -359,7 +376,7 @@ Integration events on the broker only; the in-process domain events of §10.6 us
 
 | Concern | Choice |
 |---------|--------|
-| Mandatory fields | `ts`, `level`, `service`, `traceId`, `spanId`, `tenantId` (never PII), `event`, `attrs` |
+| Mandatory fields | The SDD §11.4 Logging fields, verbatim; when it names none: `ts`, `level`, `service`, `traceId`, `spanId`, `correlationId`, `event`, `attrs`. No PII at INFO; the tenant ID only at DEBUG (Level for tenant context) |
 | Use-case field | `use_case`: the keyed BRD use case ID(s) of the entry point handling the request (`REFUNDS/UC-04`), from the log MDC (§12.8). Absent on platform endpoints. |
 | Level for tenant context | DEBUG (never INFO per CLAUDE.md) |
 | Level for `use_case` | Any level, INFO included: a use case ID is not tenant data or PII |
@@ -374,10 +391,10 @@ Integration events on the broker only; the in-process domain events of §10.6 us
 |---------|--------|--------|
 | Attribute | `use_case` on the server or consumer span of every entry point SDD §7.3 lists for an in-scope use case, and the same key in the log MDC | [LLD convention / SDD §11.4] |
 | Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`). An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`) | SDD §7.3 |
-| Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (`UC-01` would match `UC-010`) | LLD convention |
+| Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (it also matches a longer ID that contains the one searched for) | LLD convention |
 | Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
 | Not set | Platform endpoints (health, actuator, sign-in) | LLD convention |
-| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (§17.3); `use_case` joins the route's `useCases` in the Value form | LLD convention |
+| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (§17.3); `use_case` joins the route's `useCases` in the Value form when present; a screen-only Workflow route has no `use_case` | LLD convention |
 
 > Confirm: `use_case` is an LLD convention; the SDD does not settle a use case attribute (drop this flag when SDD §11.4 or a 13x Observability section names one).
 
@@ -388,6 +405,8 @@ Integration events on the broker only; the in-process domain events of §10.6 us
 # 13. Operations
 
 ## 13.1 Configuration (per service)
+
+One row per variable with a Source column, as in `chunks/10-operations.md` § 13.1.
 
 ## 13.2 Health & Readiness
 
@@ -491,8 +510,8 @@ The Not automated line lists every non-retired chunk 16 case of an in-scope use 
 
 <!--
 Every route has a row (sdd-to-lld.md § Use-case traceability). This table is the home of route -> screen; a screen's use cases are read from the BRD, never guessed from the route.
-  Screen (BRD): the MK-NN of the screen or flow the route implements, from BRD chunk 14 Mockup coverage (one row per screen or flow, the screen reference), linked to 14-todo.md#mockup-coverage; or the screen ID, only where the BRD text carries one from its source (brd-unifier never defines one), linked to the heading that carries it; else "None - platform page" (sign-in, not found, the shell).
-  Use cases (BRD): the use cases the BRD gives that screen (its MK-NN row, or the UI/UX sections that name it), linked to their BRD headings; "None - platform page" for platform pages.
+  Screen (BRD): the ID of the BRD chunk 14 Mockup coverage row (one row per screen or flow, the screen reference) of the screen or flow the route implements, linked to 14-todo.md#mockup-coverage: its MK-NN, or in a BRD written before MK-NN the screen ID that keys the row. The chunk 14 row wins; only a screen ID with no chunk 14 row, where the BRD text carries one from its source (brd-unifier never defines one), links to the heading that carries it. Else "None - platform page" (sign-in, not found, the shell), or "None - no BRD screen ([link])" for a route that serves a Workflow block (behaviour no use case covers, such as a BRD chunk 09 report). When that screen has a chunk 14 row, the row wins: cite its ID here.
+  Use cases (BRD): the use cases the BRD gives that screen (its chunk 14 row, or for a screen ID with no row the UI/UX sections that name it), linked to their BRD headings; "None - platform page" for platform pages; "None - no BRD screen ([link])" for a Workflow route, which carries no route data; "None - no BRD use case ([link])" for a Workflow route whose screen has a chunk 14 row, whose route data carries the screen only.
 Every BRD ID carries the key from the SDD's Source BRDs register. Every active use case with a screen the actor sees has at least one route; a use case with neither a screen ID nor an MK-NN gets "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN".
 Route paths and components are this LLD's design choice (from-sdd: "> Confirm:"). With no source BRD, the two BRD columns read "Not applicable - no source BRD".
 -->
@@ -503,7 +522,7 @@ Route paths and components are this LLD's design choice (from-sdd: "> Confirm:")
 | `/foo/:id` | `FooDetailComponent` | [[KEY]/MK-02](./brd-[brd-slug]/14-todo.md#mockup-coverage) | [[KEY]/UC-02](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-02-[title-slug]) | `authGuard`, `tenantGuard` | Yes |
 | `/login` | `LoginComponent` | None - platform page | None - platform page | - | Yes |
 
-**Use-case context at runtime.** Every route that implements a BRD screen carries it in its route data, so a frontend error report names the screen and the use case:
+**Use-case context at runtime.** Every route that implements a BRD screen carries it in its route data. It carries use cases only when the BRD names them for that route. A Workflow route with no BRD use case carries `screen` only. The route configuration lists each such route with its own `data` entry, one per table row with a BRD screen; a sentence that summarises the rest does not count:
 
 ```ts
 {
@@ -513,7 +532,7 @@ Route paths and components are this LLD's design choice (from-sdd: "> Confirm:")
 }
 ```
 
-The global `ErrorHandler` and the frontend telemetry read the data of the deepest active route and attach `screen` and `use_case` to every error report and RUM span (§12.8). Platform pages carry no such data.
+The global `ErrorHandler` and the frontend telemetry read the data of the deepest active route and attach its `screen` to every error report and RUM span; they attach `use_case` only when that route has `useCases` (§12.8). Platform pages carry no such data.
 
 ## 17.4 PrimeNG Components Used
 
@@ -539,6 +558,8 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 
 ## 18.5 Inference Confidence Summary
 
+Open `> Confirm:` and `> TODO:` flags counted per section, with a row for every section (§1 to §17, one §7 row per service, and §20) and a Global row for the flags §18 holds itself, as in `chunks/15-open-questions.md` § 18.5.
+
 ## 18.6 Policy Findings (every mode that reads code)
 
 # 19. References
@@ -553,7 +574,7 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 | Related SDD | [[sdd-slug]-sdd-master.md](./sdd-[sdd-slug]/[sdd-slug]-sdd-master.md) | [version] | |
 | SDD §7.3 Use Case Traceability | [03-users-and-use-cases.md § 7.3](./sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) | SDD v[X.X] | Owners and entry points of the traced use cases |
 | [KEY] UAT/BAT test cases (BRD chunk 16) | [16-uat-bat-test-cases.md](./brd-[brd-slug]/16-uat-bat-test-cases.md) [or `Not written`] | [Up to date / Provisional (TD-NN) / Stale / Pending (BRD 16 not written)] | Test case IDs and their `Related UC` |
-| [KEY] Mockup coverage (BRD chunk 14) | [14-todo.md § Mockup coverage](./brd-[brd-slug]/14-todo.md#mockup-coverage) | [as of BRD v[X.X]] | `MK-NN` rows (the screen references, one per screen or flow) and their Figma links |
+| [KEY] Mockup coverage (BRD chunk 14) | [14-todo.md § Mockup coverage](./brd-[brd-slug]/14-todo.md#mockup-coverage) | [as of BRD v[X.X]] | `MK-NN` rows (the screen references, one per screen or flow) and their use cases; the Figma links stay in the BRD row |
 | Source code repo | [URL] | [commit / branch] | (from-code / hybrid) |
 
 ## 19.2 Architectural Decision Records
@@ -598,7 +619,7 @@ With no source BRD, write "Not applicable - no source BRD."
 # 20. Specs
 
 <!--
-Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD: Mission from SDD §1 (2-3 sentences, core idea only), Tech Stack from SDD §6 verbatim with version pins (must equal §6.3 Runtime Stack above - a mismatch is drift to flag), Roadmap from SDD §13 + BRD UC ownership (3-6 delivery phases), Project Type from intake with the LLD direction taken. Direct input for speckit /constitution. Tone: short, precise, declarative. See chunks/17-specs.md for the full skeleton.
+Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD: Mission from SDD §1 (2-3 sentences, core idea only), Tech Stack from SDD §6 verbatim with version pins (must equal §6.3 Runtime Stack above - a mismatch is drift to flag; a pin missing from the resolved stack is never asked for and points to the §6.3 `> TODO:`, SKILL.md step 6b), Roadmap from SDD §13 + BRD UC ownership (3-6 delivery phases), Project Type from intake with the LLD direction taken. Direct input for speckit /constitution. Tone: short, precise, declarative. See chunks/17-specs.md for the full skeleton.
 -->
 
 ## 20.1 Mission
@@ -638,7 +659,7 @@ This section complements (does not replace) §18, which is the author-generated 
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Service name + sub-section, or "global". |
-| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift / Contract drift (vs SDD §14/§15/§16) / Specs-body mismatch / Duplication (SDD content restated instead of referenced) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour no BRD use case covers; never a new UC). |
+| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift / Contract drift (vs SDD §14/§15/§16) / Specs-body mismatch / Duplication (SDD content restated outside the sourced derived views in SKILL.md principle 13) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour that no BRD use case covers and no BRD or SDD section asks for; never a new UC). |
 | **Concern** | One paragraph. What was missed and why it matters. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommendation** | REQUIRED. The reviewer's suggested option - always pick one, even for close calls. |
@@ -663,9 +684,11 @@ This section complements (does not replace) §18, which is the author-generated 
 
 ## 21.3 Resolution Log
 
+<!-- When an open item is resolved, add its row here with a pointer to the LLD update. An upstream change that settles an item, in whole or in part, adds its row too (sdd-to-lld.md § Refresh triggers). -->
+
 | ID | Resolution Date | Resolved In | Outcome |
 |----|----------------|-------------|---------|
-| [OI-XX] | [YYYY-MM-DD] | [Service / sub-section] | [Option chosen - short note] |
+| [OI-XX] | [YYYY-MM-DD] | [Service / sub-section] | [Option chosen - short note, or Settled by, Superseded by, or Reopened by SDD v[X.X] (or [KEY] v[X.X]) - short note] |
 
 ## 21.4 Reviewer Notes
 

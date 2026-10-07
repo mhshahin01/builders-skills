@@ -18,7 +18,7 @@ PART OF: LLD - [Project Name]
 | Related SDD | [[sdd-slug]-sdd-master.md](../sdd-[sdd-slug]/[sdd-slug]-sdd-master.md) [or `Not applicable`] | [version] | |
 | SDD §7.3 Use Case Traceability | [03-users-and-use-cases.md § 7.3](../sdd-[sdd-slug]/03-users-and-use-cases.md#73-use-case-traceability-brd--sdd) | SDD v[X.X] | Owners and entry points of the traced use cases |
 | [KEY] UAT/BAT test cases (BRD chunk 16) | [16-uat-bat-test-cases.md](../brd-[brd-slug]/16-uat-bat-test-cases.md) [or `Not written`] | [Up to date / Provisional (TD-NN) / Stale / Pending (BRD 16 not written)] | Test case IDs and their `Related UC` |
-| [KEY] Mockup coverage (BRD chunk 14) | [14-todo.md § Mockup coverage](../brd-[brd-slug]/14-todo.md#mockup-coverage) | [as of BRD v[X.X]] | `MK-NN` rows (the screen references, one per screen or flow) and their Figma links |
+| [KEY] Mockup coverage (BRD chunk 14) | [14-todo.md § Mockup coverage](../brd-[brd-slug]/14-todo.md#mockup-coverage) | [as of BRD v[X.X]] | `MK-NN` rows (the screen references, one per screen or flow) and their use cases; the Figma links stay in the BRD row |
 | Source code repo | [URL] | [commit / branch] | (from-code / hybrid) |
 
 ## 19.2 Architectural Decision Records

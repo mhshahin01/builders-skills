@@ -11,16 +11,18 @@ PART OF: LLD - [Project Name]
 
 ## 13.1 Configuration (per service)
 
-| Service | Variable | Type | Default | Notes |
-|---------|----------|------|---------|-------|
-| `[service-a]` | `DB_URL` | string | (none) | JDBC URL |
-| `[service-a]` | `DB_USER` | string | (none) | DB username |
-| `[service-a]` | `DB_PASSWORD` | secret | (none) | From [Vault path] |
-| `[service-a]` | `KAFKA_BROKERS` | csv | (none) | Bootstrap servers |
-| `[service-a]` | `KEYCLOAK_ISSUER_URI` | string | (none) | Token issuer |
-| `[service-a]` | `OUTBOX_POLL_INTERVAL_MS` | int | 1000 | Outbox publisher cadence |
-| `[service-a]` | `OUTBOX_BATCH_SIZE` | int | 100 | Outbox publisher batch |
-| `[service-a]` | `OUTBOX_SEND_TIMEOUT_MS` | int | 10000 | Max wait for the broker acknowledgement; on timeout the row stays unprocessed |
+| Service | Variable | Type | Default | Notes | Source |
+|---------|----------|------|---------|-------|--------|
+| `[service-a]` | `DB_URL` | string | (none) | JDBC URL | [SDD §19 Environments] |
+| `[service-a]` | `DB_USER` | string | (none) | DB username | [SDD §19 Environments] |
+| `[service-a]` | `DB_PASSWORD` | secret | (none) | From [Vault path] | [SDD §19 Environments] |
+| `[service-a]` | `KAFKA_BROKERS` | csv | (none) | Bootstrap servers | [SDD §19 Environments] |
+| `[service-a]` | `KEYCLOAK_ISSUER_URI` | string | (none) | Token issuer | [SDD §19 Environments] |
+| `[service-a]` | `OUTBOX_POLL_INTERVAL_MS` | int | 1000 | Outbox publisher cadence | LLD (`09-cross-cutting.md` § 12.4) |
+| `[service-a]` | `OUTBOX_BATCH_SIZE` | int | 100 | Outbox publisher batch | LLD (`09-cross-cutting.md` § 12.4) |
+| `[service-a]` | `OUTBOX_SEND_TIMEOUT_MS` | int | 10000 | Max wait for the target's acknowledgement; on timeout the row stays unprocessed | LLD (`09-cross-cutting.md` § 12.4) |
+
+> **Source:** each Default restates the SDD value it comes from (SDD §19 Environments, or the `13x` section that sets it) and links it; `LLD` marks a variable or default the LLD adds. A default that differs from the SDD is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3).
 
 ## 13.2 Health & Readiness
 
@@ -73,7 +75,7 @@ PART OF: LLD - [Project Name]
 | `[Project] - Outbox & Saga` | [Grafana] | SRE | [URL] |
 | `[Project] - Tenant View` | [Grafana] | Customer Success | [URL] |
 
-> `> TODO: dashboard URLs - verify`
+<!-- While the dashboard URLs are unknown, write: > TODO: dashboard URLs - verify -->
 
 ## 13.7 Alerts
 

@@ -24,7 +24,7 @@ RELATIONSHIP_TO_15: chunk 15 indexes the author's own `> Confirm:` and `> TODO:`
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Service name + sub-section (e.g., `wallet-core / Method Pseudocode`), or "global" if cross-cutting. |
-| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift (hybrid-mode only) / Contract drift (vs SDD §14/§15/§16) / Specs-body mismatch / Duplication (SDD content restated instead of referenced) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour the design needs that no BRD use case covers; never a new UC). |
+| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift (hybrid-mode only) / Contract drift (vs SDD §14/§15/§16) / Specs-body mismatch / Duplication (SDD content restated outside the sourced derived views in SKILL.md principle 13) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour that no BRD use case covers and no BRD or SDD section asks for; never a new UC). |
 | **Concern** | One paragraph. What was missed and why it matters for code correctness or production reliability. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommendation** | REQUIRED. The reviewer's suggested option - always pick one, even for close calls (state that it is a close call in the Why). |
@@ -70,11 +70,11 @@ RELATIONSHIP_TO_15: chunk 15 indexes the author's own `> Confirm:` and `> TODO:`
 
 ## Resolution Log
 
-<!-- When an open item is resolved, move its summary here with a pointer to the LLD update (chunk + service + sub-section). -->
+<!-- When an open item is resolved, move its summary here with a pointer to the LLD update (chunk + service + sub-section). An upstream change that settles an item, in whole or in part, adds its row too (sdd-to-lld.md § Refresh triggers). -->
 
 | ID | Resolution Date | Resolved In | Outcome |
 |----|----------------|-------------|---------|
-| [OI-XX] | [YYYY-MM-DD] | [Chunk / service / sub-section] | [Option chosen - short note] |
+| [OI-XX] | [YYYY-MM-DD] | [Chunk / service / sub-section] | [Option chosen - short note, or Settled by, Superseded by, or Reopened by SDD v[X.X] (or [KEY] v[X.X]) - short note] |
 
 ---
 

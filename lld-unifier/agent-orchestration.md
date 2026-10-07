@@ -1,4 +1,4 @@
-# Agent Orchestration — code-explorer + docs-architect
+# Agent Orchestration: code-explorer + docs-architect
 
 This file gives the dispatch templates for the two specialist agents the skill orchestrates in FROM-CODE and HYBRID directions. It is the single home of their asks; `code-extraction.md` points here.
 
@@ -6,7 +6,7 @@ The skill itself does **not** read source code. It dispatches agents that do, th
 
 ---
 
-## Agent 1 — `feature-dev:code-explorer`
+## Agent 1: `feature-dev:code-explorer`
 
 **Role:** structural discovery. Maps the codebase. Output is *evidence*, not narrative.
 
@@ -28,42 +28,43 @@ prompt: |
 
   Please produce a STRUCTURAL DISCOVERY REPORT covering:
 
-  1. **Entry points** — controllers (`@RestController`), event listeners (`@KafkaListener`, `@RabbitListener`, `@JmsListener`), schedulers (`@Scheduled`), CLI mains. One row per entry point with: file:line, the trigger (HTTP method + path / topic / cron), the entry-point class.
+  1. **Entry points**: controllers (`@RestController`), event listeners (`@KafkaListener`, `@RabbitListener`, `@JmsListener`), schedulers (`@Scheduled`), CLI mains. One row per entry point with: file:line, the trigger (HTTP method + path / topic / cron), the entry-point class.
 
-  2. **Service decomposition** — modules / packages / projects that constitute distinct services. List with: service name (slug), root path, build tool (Maven / Gradle / npm), main class.
+  2. **Service decomposition**: modules / packages / projects that constitute distinct services. List with: service name (slug), root path, build tool (Maven / Gradle / npm), main class.
 
-  3. **Call graph (per service)** — controller → service interface → service-impl → repository → external calls. Document with file:line citations. Mermaid `graph LR` per service if helpful.
+  3. **Call graph (per service)**: controller → service interface → service-impl → repository → external calls. Document with file:line citations. Mermaid `graph LR` per service if helpful.
 
-  4. **Class & interface inventory (per service)** — controllers, service interfaces, service impls, repositories, domain types (records, entities). Method signatures (full Java signature including parameter types and return type).
+  4. **Class & interface inventory (per service)**: controllers, service interfaces, service impls, repositories, domain types (records, entities). Method signatures (full Java signature including parameter types and return type).
 
-  5. **Database schema (per service)** — Flyway migrations enumerated (`src/main/resources/db/migration`). Per migration: version, purpose, tables created/altered. Per table: columns with types and constraints; indexes (with WHERE clauses if partial); FK relationships.
+  5. **Database schema (per service)**: Flyway migrations enumerated (`src/main/resources/db/migration`). Per migration: version, purpose, tables created/altered. Per table: columns with types and constraints; indexes (with WHERE clauses if partial); FK relationships.
 
-  6. **Kafka topology** — per service: topics produced (look for `KafkaTemplate.send`, outbox writes), topics consumed (look for `@KafkaListener`). Per topic: name, key strategy, partition count if discoverable, schema reference if found. In a modular monolith, also list the in-process domain events per module: publishers (`ApplicationEventPublisher.publishEvent`, domain event registration) and listeners (`@EventListener`, `@TransactionalEventListener` with its phase), with the event type and its DTO.
+  6. **Kafka topology**: per service: topics produced (look for `KafkaTemplate.send`, outbox writes), topics consumed (look for `@KafkaListener`). Per topic: name, key strategy, partition count if discoverable, schema reference if found. In a modular monolith, also list the in-process domain events per module: publishers (`ApplicationEventPublisher.publishEvent`, domain event registration) and listeners (`@EventListener`, `@TransactionalEventListener` with its phase), with the event type and its DTO.
 
-  7. **REST contracts (per service)** — per controller method: HTTP method, path (combining class-level `@RequestMapping` + method-level), request body type, response body type, status codes, auth (`@PreAuthorize` expression), idempotency-key handling (`@RequestHeader("Idempotency-Key")` presence). In a modular monolith, also list the in-process ports between modules: the port interface and its operations, the calling module, the implementing adapter, and the permission check at the port.
+  7. **REST contracts (per service)**: per controller method: HTTP method, path (combining class-level `@RequestMapping` + method-level), request body type, response body type, status codes, auth (`@PreAuthorize` expression), idempotency-key handling (`@RequestHeader("Idempotency-Key")` presence). In a modular monolith, also list the in-process ports between modules: the port interface and its operations, the calling module, the implementing adapter, and the permission check at the port.
 
-  8. **Cross-cutting hooks** — interceptors (`HandlerInterceptor`), aspects (`@Around`), filters (servlet filters), guards (Spring Security `@Configuration`). Per hook: scope (which paths/methods), purpose (auth / tenant / logging / rate-limiting / audit).
+  8. **Cross-cutting hooks**: interceptors (`HandlerInterceptor`), aspects (`@Around`), filters (servlet filters), guards (Spring Security `@Configuration`). Per hook: scope (which paths/methods), purpose (auth / tenant / logging / rate-limiting / audit).
 
-  9. **Structural pattern detection** — apply heuristics:
+  9. **Structural pattern detection**: apply heuristics:
      - **Strategy candidate:** interface with multiple impls + a context class that holds one of them (often as `Map<Enum, Strategy>`).
      - **Factory Method candidate:** static factory methods returning interface types.
      - **Chain of Responsibility candidate:** ordered list of handlers with a shared interface (`canHandle` + `handle`).
      - **Mediator candidate:** single class injected by multiple peers, delegating cross-peer communication.
      - **Saga orchestrator candidate:** service class with explicit step methods + compensating step methods.
-     - **Outbox candidate:** only when (a) the outbox row is inserted in the same database transaction as the aggregate write (check propagation: `REQUIRES_NEW` or an after-commit hook breaks this), and (b) a separate publisher (scheduled poller, or CDC relay on the outbox table) publishes committed rows. Also report whether the publisher marks a row processed only after a successful broker acknowledgement. A `KafkaTemplate.send` beside a repository write is not an Outbox candidate, inside the transaction or after commit; list it under § 13.
+     - **Outbox candidate:** only when (a) the outbox row is inserted in the same database transaction as the aggregate write (check propagation: `REQUIRES_NEW` or an after-commit hook breaks this), and (b) a separate publisher (scheduled poller, or CDC relay on the outbox table) publishes committed rows. Also report whether the publisher marks a row processed only after its target (the broker, a provider, or every in-process listener) acknowledges it. A `KafkaTemplate.send` beside a repository write is not an Outbox candidate, inside the transaction or after commit; list it under § 13.
      For each detection: name the pattern, list the participating classes with file:line, and rate confidence (medium by default; high only when a test exercises the pattern, cited with file:line).
 
-  10. **Resilience4j config (per call)** — `@CircuitBreaker`, `@Retry`, `@Bulkhead`, `@TimeLimiter` annotations or programmatic `CircuitBreakerRegistry` usage. Per call: which downstream provider, which policies applied, threshold values.
+  10. **Resilience4j config (per call)**: `@CircuitBreaker`, `@Retry`, `@Bulkhead`, `@TimeLimiter` annotations or programmatic `CircuitBreakerRegistry` usage. Per call: which downstream provider, which policies applied, threshold values.
 
-  11. **Observability hooks (per service)** — `@Timed`, `@Counted`, `MeterRegistry` calls. Per metric: name, labels, type (counter / gauge / histogram).
+  11. **Observability hooks (per service)**: `@Timed`, `@Counted`, `MeterRegistry` calls. Per metric: name, labels, type (counter / gauge / histogram).
 
-  12. **Multi-tenancy enforcement points** — Hibernate filters (`@Filter`), row-level-security policy clauses, query helpers that inject `tenant_id`. Document the enforcement mechanism per service.
+  12. **Multi-tenancy enforcement points**: Hibernate filters (`@Filter`), row-level-security policy clauses, query helpers that inject `tenant_id`. Document the enforcement mechanism per service.
 
-  13. **Anti-patterns** — flag any of:
+  13. **Anti-patterns**: flag any of:
       - Field injection (`@Autowired` on fields).
       - Direct dual-write: a repository write plus `KafkaTemplate.send` (or equivalent) in one operation with no outbox row written in the same transaction, whether the send runs inside the transaction or after commit.
+      - A provider client call, or an in-process event delivery, after a state change with no outbox row in the same transaction. Report the side effect it carries; the synthesis decides against the SDD whether it must not be lost.
       - Outbox row written outside the aggregate's transaction (`REQUIRES_NEW`, after commit).
-      - Outbox publisher that marks a row processed without a successful broker acknowledgement (fire-and-forget send, or update before the acknowledgement).
+      - Outbox publisher that marks a row processed without its target's acknowledgement (fire-and-forget send, or update before the acknowledgement).
       - Missing `Idempotency-Key` on write endpoints whose path mentions money/wallet/notify/payment/charge/transfer.
       - SQL queries lacking `tenant_id` predicate on shared-schema tables.
       - Logging statements at INFO level that include `tenant_id` or PII.
@@ -93,7 +94,7 @@ A structured Markdown report. The skill captures it for Phase 2.
 
 ---
 
-## Agent 2 — `code-documentation:docs-architect`
+## Agent 2: `code-documentation:docs-architect`
 
 **Role:** narrative synthesis. Turns Phase 1 evidence into per-section LLD content.
 
@@ -133,19 +134,19 @@ prompt: |
      - Identify methods that are NON-TRIVIAL: multi-step, branches beyond null-check, touches multiple aggregates, performs idempotency check, emits outbox row.
      - For each, write step-by-step pseudocode.
      - Cite the source file:line at the top of the pseudocode block. The citation is provenance only: the block keeps its `> Confirm:` unless `confidence-rules.md` allows an upgrade.
-     - Skip methods that are plain CRUD (single repo call + map to DTO) — those are obvious from the signature.
+     - Skip methods that are plain CRUD (single repo call + map to DTO): those are obvious from the signature.
 
   3. **Design-pattern subsections** (per detected pattern)
      Target: `04-implementation/<service>.md` § 7.4 Design Patterns Applied
      For each pattern from Phase 1 § 9 (Structural pattern detection), write:
-     - Triggering CLAUDE.md rule (verbatim quote from the user's CLAUDE.md — see below for the relevant rules).
+     - Triggering CLAUDE.md rule (verbatim quote from the user's CLAUDE.md). See below for the relevant rules.
      - Rationale specific to this service (one paragraph: why this pattern was chosen here, what it solves).
      - Roles table (which classes/methods play which part).
      - Mermaid `classDiagram` showing the pattern structure.
      - Pseudocode skeleton of the key method(s).
      - Confidence flag if Phase 1 marked the detection as medium/low confidence.
      - Document a pattern only when its structure is present: if file or class names suggest a pattern the structure does not match, do NOT document it.
-     - Outbox: document the publisher (roles, skeleton, delivery rules) from the code as it is. If the code marks a row processed without a successful broker acknowledgement, keep that visible and point to the Phase 1 anti-pattern (a `⚠ policy` finding); never substitute the template's publisher text.
+     - Outbox: document the publisher (roles, skeleton, delivery rules) from the code as it is. If the code marks a row processed without its target's acknowledgement, keep that visible and point to the Phase 1 anti-pattern (a `⚠ policy` finding); never substitute the template's publisher text.
 
   4. **Use-case workflow narratives** (one per entry point or workflow)
      Target: `04-implementation/<service>.md` § 7.8 Use-Case Workflows
@@ -158,7 +159,7 @@ prompt: |
      - Outbox emission points (if outbox writes occur).
      - Retry / timeout policy (from Phase 1 § 10).
      - Error handling per error type.
-     - Mermaid `sequenceDiagram` with all participants (client, controller, service, DB, outbox, Kafka, downstream).
+     - Mermaid `sequenceDiagram` with all participants (client, controller, service, DB, outbox, Kafka, downstream), except for a one-step workflow or a pure CRUD endpoint (`mermaid-diagrams.md` § When NOT to draw a diagram).
 
   5. **Cross-service saga narratives** (if multi-service flows are detected)
      Target: orchestrator service's `04-implementation/<orchestrator>.md` § 7.8 Cross-service Saga
@@ -174,7 +175,7 @@ prompt: |
      - One Mermaid `graph LR` showing which services call/produce-to which.
      - One paragraph naming external systems (upstream / downstream) and the protocol used.
 
-  7. **Architectural style — as operationalised**
+  7. **Architectural style - as operationalised**
      Target: `03-architecture.md` § 6.4
      - Concrete operationalisation of the architecture style: topic naming convention, schema registry choice, outbox-table convention, saga choreography vs orchestration, inter-service sync vs async policy.
 
@@ -182,9 +183,9 @@ prompt: |
 
   - **High confidence (no flag):** claims grounded in code structure, table DDL, topic config, REST annotations.
   - **Medium confidence (`> Confirm:`):** pattern detection via structural heuristic, rationale inferred from naming/structure, pseudocode summarising a method body that may have edge cases.
-  - **Low confidence (`> TODO: <best-guess> — verify`):** business rule narrative inferred from variable names + branch structure when no test or comment confirms it.
+  - **Low confidence (`> TODO: <best-guess> - verify`):** business rule narrative inferred from variable names + branch structure when no test or comment confirms it.
 
-  Apply confidence flags ONLY where they are warranted. Don't flag every paragraph — that defeats the purpose.
+  Apply confidence flags ONLY where they are warranted. Don't flag every paragraph: that defeats the purpose.
 
   ## CLAUDE.MD RULES (the user's standing design rules to attribute patterns to)
 
@@ -211,16 +212,16 @@ Markdown with `<!-- target: ... -->` tags. The skill walks the output, splits by
 
 ---
 
-## Phase 3 — Template fitting (the skill's own work)
+## Phase 3: Template fitting (the skill's own work)
 
 Once both agents have returned, the skill:
 
-1. **Validates Phase 1 output structure** — checks that all 16 sections of the discovery report are present (sections 14-16 may read "None found"). If any are missing, re-dispatches with a follow-up prompt.
-2. **Validates Phase 2 output tags** — every block has a `<!-- target: ... -->` tag. Untagged blocks are dropped with a warning.
-3. **Routes Phase 2 blocks into chunks** — splits by tag, walks the chunk files, inserts content at the matching `## section` heading.
-4. **Applies confidence flags** — per `confidence-rules.md`. If Phase 2 already flagged a block, carry the flag. If Phase 2 missed flagging a low-confidence block, the skill applies its own based on the source-of-evidence heuristics.
+1. **Validates Phase 1 output structure**: checks that all 16 sections of the discovery report are present (sections 14-16 may read "None found"). If any are missing, re-dispatches with a follow-up prompt.
+2. **Validates Phase 2 output tags**: every block has a `<!-- target: ... -->` tag. Untagged blocks are dropped with a warning.
+3. **Routes Phase 2 blocks into chunks**: splits by tag, walks the chunk files, inserts content at the matching `## section` heading.
+4. **Applies confidence flags**: per `confidence-rules.md`. If Phase 2 already flagged a block, carry the flag. If Phase 2 missed flagging a low-confidence block, the skill applies its own based on the source-of-evidence heuristics.
 5. **Traces to BRD use cases** when an SDD was given: matches entry points, routes, specs, and use-case markers per `code-extraction.md` § Tracing to BRD use cases, then runs SKILL.md step 6a, and registers in the SDD per step 6c.
-6. **Generates `15-open-questions.md`** — walks all chunks, greps for `> Confirm:`, `> TODO:`, and `⚠ policy` markers (hybrid: also `⚠ drift`, `🆕 code-only`, `⛔ sdd-only`), and indexes each in its § 18.x table.
+6. **Generates `15-open-questions.md`**: walks all chunks, greps for `> Confirm:`, `> TODO:`, and `⚠ policy` markers (hybrid: also `⚠ drift`, `🆕 code-only`, `⛔ sdd-only`), and indexes each in its § 18.x table.
 7. **Runs SKILL.md steps 6b (Specs) and 7 (cleared-context review)**, then surfaces the handoff summary.
 
 ---
@@ -231,4 +232,4 @@ Once both agents have returned, the skill:
 - **Always include the relevant CLAUDE.md rules** when asking for pattern application or anti-pattern detection. The agent doesn't have the user's CLAUDE.md in its context by default.
 - **Cap output length** in the brief. ~3000 lines for Phase 1 reports, ~5000 lines for Phase 2 syntheses, beyond that the skill should re-dispatch with a narrower scope.
 - **Ask for citations** (file:line in Phase 1, source-of-evidence in Phase 2). Citations make the output verifiable.
-- **Don't ask for invention.** Both agents should report what they found (Phase 1) or synthesise from what was found (Phase 2). They should NOT invent SLOs, threat notes, peak scenarios — those flag as `> TODO:` in the skill's template-fit step.
+- **Don't ask for invention.** Both agents should report what they found (Phase 1) or synthesise from what was found (Phase 2). They should NOT invent SLOs, threat notes, peak scenarios: those flag as `> TODO:` in the skill's template-fit step.

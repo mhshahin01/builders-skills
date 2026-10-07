@@ -36,6 +36,7 @@ Used directly by speckit /constitution.
 Consolidated from the SDD's §6 Ecosystem Overview - verbatim, with version pins - and cross-checked against this LLD's §6.3 Runtime Stack (they must agree; a mismatch is drift to flag, not to hide).
 One bullet per tier, language + framework + key version.
 If a tier is not applicable to this product, write "Not applicable." - do not delete the row.
+A version pin missing from the resolved stack is never asked for: write the tier without it and point to the §6.3 `> TODO:` that routes it to SDD §6 (SKILL.md step 6b).
 From-code direction (no SDD): read from the actual dependency manifests (high confidence).
 Used by speckit /constitution AND by pattern-rules.md for stack-appropriate pattern selection.
 -->

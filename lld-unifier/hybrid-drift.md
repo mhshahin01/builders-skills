@@ -1,4 +1,4 @@
-# Hybrid Mode — Two-Pass Drift Detection
+# Hybrid Mode: Two-Pass Drift Detection
 
 This file defines the diff logic for hybrid direction: when both an SDD and complete code are available, the skill produces a unified LLD with inline drift markers showing where design intent diverges from code reality.
 
@@ -23,15 +23,15 @@ Every section in the unified LLD is one of:
 
 ## Two-pass workflow
 
-### Pass 1 — From-SDD (in memory)
+### Pass 1: From-SDD (in memory)
 
 Run the FROM-SDD workflow per `sdd-to-lld.md`. Produce per-section "designed" content. Do NOT write to disk yet.
 
-### Pass 2 — From-code (in memory)
+### Pass 2: From-code (in memory)
 
 Run the FROM-CODE workflow per `code-extraction.md`. Produce per-section "built" content. Do NOT write to disk yet.
 
-### Pass 3 — Diff and unify
+### Pass 3: Diff and unify
 
 For each chunk and each subsection within the chunk, classify into one of four cases:
 
@@ -46,7 +46,7 @@ Emit a single content block (no marker). The skill considers the section *aligne
 Emit reconciled content + `⚠ drift` marker. Reconciliation rule:
 
 - For factual content (schema, topics, endpoints): emit the **code** as the live state, plus a `> Drift note: SDD says X, code does Y.` Code is the truth-by-default for current state.
-- For rationale / narrative content: emit the **SDD** rationale (which captures design intent) + `> Drift note: code reflects this differently — see [chunk:section-X] for the as-built behaviour.`
+- For rationale / narrative content: emit the **SDD** rationale (which captures design intent) + `> Drift note: code reflects this differently - see [chunk:section-X] for the as-built behaviour.`
 - For pattern application: emit both, attributing each to its source: `Designed: [pattern X per CLAUDE.md rule Y]. Built: [different pattern, or simpler/more-complex variant].`
 
 #### Case C: Only from-code produced content; from-sdd was silent
@@ -75,7 +75,7 @@ A service the SDD lists in §13 with no code at all is not Case D: it gets only 
 ### `00-metadata.md`
 
 - Mode field is `hybrid`.
-- Changes Log entry: "Hybrid LLD generated; N drift markers, M code-only, K sdd-only — see 15-open-questions.md."
+- Changes Log entry: "Hybrid LLD generated; N drift markers, M code-only, K sdd-only - see 15-open-questions.md."
 
 ### `01-purpose-and-scope.md`
 
@@ -128,7 +128,7 @@ Subsection-level drift inside a per-service file:
 
 - Per concern: SDD specifies the default; code implements. Compare per-row.
 - Idempotency on money writes: code MUST implement (CLAUDE.md hard rule). If SDD says yes and code doesn't → `⚠ drift` flagged HIGH severity.
-- Outbox pattern: same, hard rule. HIGH severity drift when the code has no outbox recognised per `pattern-rules.md` § Outbox (atomic aggregate-and-outbox write plus a separate publisher), writes to the database and Kafka directly, or marks outbox rows processed without a broker acknowledgement.
+- Outbox pattern: same, hard rule. HIGH severity drift when the code has no outbox recognised per `pattern-rules.md` § Outbox (atomic aggregate-and-outbox write plus a separate publisher), writes to the database and Kafka directly, or marks outbox rows processed without their target's acknowledgement.
 
 ### `10-operations.md`
 
@@ -138,7 +138,7 @@ Subsection-level drift inside a per-service file:
 ### `11-security.md`
 
 - Data classification: SDD-derived (intent).
-- PII inventory: emit code as live state — drift here is HIGH severity (PII handled differently than SDD specified is a compliance risk).
+- PII inventory: emit code as live state. Drift here is HIGH severity (PII handled differently than SDD specified is a compliance risk).
 - Compliance: SDD-derived; flag drift if code lacks an enforcement point the SDD describes.
 
 ### `12-performance.md`
@@ -161,7 +161,7 @@ Subsection-level drift inside a per-service file:
 
 ### `15-open-questions.md`
 
-This is the **drift index** — every drift marker placed elsewhere has a row here.
+This is the **drift index**: every drift marker placed elsewhere has a row here.
 
 | Location | Marker | Summary | Severity | Recommended resolution | Why | Status |
 |----------|--------|---------|----------|------------------------|-----|--------|
@@ -184,7 +184,7 @@ The trace follows `sdd-to-lld.md` § Use-case traceability. SDD §7.3 and the BR
 | Situation | Marker | Default severity |
 |---|---|---|
 | A §7.3 entry point of an active in-scope use case has no code endpoint, listener, or job | `⛔ sdd-only` on the Entry points field | MEDIUM |
-| A user-facing code endpoint matches no §7.3 entry point and is not a platform endpoint | `🆕 code-only` + `> Drift note: behaviour no BRD use case covers? Open question, never a new UC.` | MEDIUM |
+| A user-facing code endpoint matches no §7.3 entry point, is not a platform endpoint, and does nothing the BRD or SDD asks for | `🆕 code-only` + `> Drift note: behaviour no BRD use case covers? Open question, never a new UC.` | MEDIUM |
 | Code names a different use case for an entry point than §7.3 (`@UseCase`, MDC key) | `⚠ drift` | MEDIUM |
 | A code entry point matches a §7.3 entry point on method and path (or event / schedule) but sits in a different service than §7.3 names | `⚠ drift` on the Entry points field | MEDIUM |
 | A route's `data.screen` or `data.useCases` disagrees with the BRD screen and its use cases | `⚠ drift` | LOW |
@@ -213,7 +213,7 @@ The severity is recorded in `15-open-questions.md` § 18.1. The skill computes a
 Some sections cannot be cleanly diffed (e.g., a free-form rationale paragraph). For these:
 
 - Emit **SDD's version** as the designed intent.
-- Emit **code's observed behaviour** as a `> Drift note: code does X — verify whether intentional drift or unimplemented requirement`.
+- Emit **code's observed behaviour** as a `> Drift note: code does X - verify whether intentional drift or unimplemented requirement`.
 - Severity: MEDIUM by default; reviewer can edit.
 
 Never silently merge two contradictory paragraphs. The whole point of hybrid mode is to surface drift, not paper over it.

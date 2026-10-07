@@ -42,7 +42,7 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file
 |-------|-----------|-------|
 | `[FooController]` | `[GET /v1/foo/{id}, POST /v1/foo, ...]` | [Permission token (SDD §16), idempotency rules] |
 
-> **Convention:** every entry point a § 7.8 traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (`09-cross-cutting.md` § 12.8). Platform endpoints carry none.
+> **Convention:** every entry point a use case's § 7.8 traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (`09-cross-cutting.md` § 12.8). An `Event:` or `Schedule:` trigger that SDD §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. Platform endpoints, and the entry points of a `### Workflow:` block, carry none. Event listeners and scheduled jobs that are entry points go in the Controllers table too, with their trigger in the Endpoints cell (`Event: [EVENT_NAME]`, `Schedule: [name]`).
 
 ### Services (interfaces)
 
@@ -90,7 +90,7 @@ public interface FooService {
 |----------------|-----------|--------------|-----------|---------------|
 | `[ProviderPort]` | `[operation]` | API-NN | [Provider / Caller] | `[ProviderPortAdapter]` (provider side only) |
 
-> **Convention:** modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process)` contract this module provides or calls; the contract itself is in `06-api-contracts.md` § 9.6. The classes that publish or listen to in-process domain events (`07-event-contracts.md` § 10.6) go in the Service Implementations table, naming the event. A microservices SDD writes "Not applicable - no in-process contracts".
+> **Convention:** modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process)` contract this module provides or calls; the contract itself is in `06-api-contracts.md` § 9.6. The classes that publish or listen to in-process domain events (`07-event-contracts.md` § 10.6) go in the Service Implementations table, naming the event. With no SDD §15 `Internal (in-process)` contract here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules call no port), write "Not applicable - no in-process contracts".
 
 ### Authorization
 
@@ -147,6 +147,8 @@ public interface FooService {
 | Outbox writer | `FooServiceImpl.create` (within tx) | Inserts outbox row inside the same transaction as the aggregate write |
 | Outbox publisher | `OutboxPublisher` (scheduled, one active instance, outside the writer's tx) | Polls unprocessed rows oldest first, publishes each to Kafka, marks it processed only after the broker acknowledges |
 
+> **Other targets:** a provider write, or an in-process event under a durable SDD §14.10 Delivery line, keeps these three roles (`09-cross-cutting.md` § 12.4): the row names its target, the publisher delivers it there, and the row is processed only after the provider's success response or every listener's commit.
+
 **Class diagram:**
 
 ```mermaid
@@ -169,6 +171,8 @@ classDiagram
   FooServiceImpl --> OutboxRepository
   OutboxPublisher --> OutboxRepository
 ```
+
+**Summary:** [1-2 sentences: the role each class plays in the pattern.]
 
 **Pseudocode skeleton:**
 
@@ -228,6 +232,8 @@ classDiagram
   PricingService --> PricingStrategy
 ```
 
+**Summary:** [1-2 sentences: the role each class plays in the pattern.]
+
 **Pseudocode skeleton:**
 
 ```text
@@ -263,6 +269,8 @@ graph TB
   PricingService --> EnterprisePricingStrategy
 ```
 
+**Summary:** [1-2 sentences: what is injected where, and the most connected components.]
+
 ---
 
 ## 7.6 Transaction Boundaries
@@ -291,16 +299,17 @@ graph TB
 
 ## 7.8 Use-Case Workflows
 
-> **Convention:** one subsection per active use case this service owns (SDD §7.3 Owner), headed with the SDD's BRD key and the BRD's ID and title exactly. A merged or removed use case gets no block. Cross-service sagas live in the orchestrator service's file. Each workflow has: the traceability line, control flow, sequence diagram (Mermaid), idempotency points, outbox emission points, retry/timeout choices.
+> **Convention:** one subsection per active use case this service owns (SDD §7.3 Owner), headed with the SDD's BRD key and the BRD's ID and title exactly. A merged or removed use case gets no block. Behaviour the BRD or SDD asks for that no use case covers (a scheduled job, a BRD chunk 09 report, an NFR-driven process) gets a `### Workflow: [name]` block instead (`sdd-to-lld.md` § Use-case traceability). Cross-service sagas live in the orchestrator service's file. Each workflow has: the traceability line, control flow, sequence diagram (Mermaid; none for a one-step workflow or a pure CRUD endpoint, per `mermaid-diagrams.md` § When NOT to draw a diagram), idempotency points, outbox emission points, retry/timeout choices.
 
 <!--
 TRACEABILITY LINE (required, directly under the heading; rules: sdd-to-lld.md § Use-case traceability). Fields in this order, read from their homes, never restated further:
   BRD: the use case link (BRD heading anchor, built from the real heading). SDD: the §7.3 link, the same in every block.
   Owner and Entry points: exactly as SDD §7.3 writes them (method + path, or Schedule: / Event: triggers, with the service named when it is not the owner).
   UAT/BAT: every non-retired BRD chunk 16 case whose Related UC names this use case, one by one, each linked to its feature-area heading; "Pending (BRD 16 not written)" while chunk 16 is locked; "None - BRD coverage gap" when chunk 16 has none.
-  Screens: from 14-frontend.md § 17.3, the MK-NN (linked to 14-todo.md#mockup-coverage; or the screen ID, where the BRD text carries one) and each route that starts the use case; "Not applicable - no UI" when chunk 14 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
+  Screens: from 14-frontend.md § 17.3, the screen reference (the ID of the screen's chunk 14 row, its MK-NN or, in a BRD written before MK-NN, its screen ID, linked to 14-todo.md#mockup-coverage; only a screen ID with no chunk 14 row links to the BRD heading that carries it) and each § 17.3 route whose Use cases cell names the use case; "Not applicable - no UI" when chunk 14 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
 Every BRD ID carries the key from the SDD's Source BRDs register. Paths are relative to this file (../../ reaches the sibling BRD and SDD folders).
 No source BRD, or pure from-code: heading "### Workflow: [Flow name]" and the line "> **Traceability:** Not applicable - no source BRD" (or "- no source SDD"). Never a made-up UC ID.
+Behaviour the BRD or SDD asks for that no use case covers: heading "### Workflow: [Flow name]" and the line "> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the [KEY]/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them]". It gets no 16 § 19.9 row.
 -->
 
 ### [KEY]/UC-01: [Use case title, exactly as the BRD writes it]
@@ -353,9 +362,11 @@ sequenceDiagram
   end
 ```
 
+**Summary:** [1-2 sentences describing the flow in prose.]
+
 > Miro: [optional whiteboard view URL]
 
-**Idempotency points:** [Header `Idempotency-Key` required on POST; (tenant_id, key) is the dedup tuple; TTL 24h on the cached record]
+**Idempotency points:** [Header `Idempotency-Key` required on POST; (tenant_id, key) is the dedup tuple; the cached record kept for the `09-cross-cutting.md` § 12.2 TTL]
 
 **Outbox emission points:** [foo.created event emitted in step 3; topic `foo.lifecycle.created`; key = aggregate ID for per-aggregate ordering]
 
@@ -411,5 +422,7 @@ sequenceDiagram
   Orch->>B: compensate step 2
   Orch->>A: compensate step 1
 ```
+
+**Summary:** [1-2 sentences: the saga's steps and what triggers compensation.]
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 03-architecture.md | NEXT: 05-data-model.md -->

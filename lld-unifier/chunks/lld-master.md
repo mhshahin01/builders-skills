@@ -5,7 +5,7 @@ VERSION: [X.X]
 PART OF: LLD - [Project Name]
 PURPOSE: Navigation graph for AI implementers and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
 FILENAME: Written per project as ./lld-[project-slug]/[project-slug]-lld-master.md. The SDD's Child LLDs row links to this file, and sdd-unifier finds an unregistered LLD through the Related SDD line below.
-VERSIONING: All chunks share the LLD version number. When any chunk is updated, bump the LLD version in this master and in the updated chunk(s).
+VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and 00-metadata.md carry the current LLD version; every other chunk carries the version in which its content last changed.
 MAINTENANCE: When adding or removing services (especially 04-implementation/<service>.md files), update the tables below, the dependency graph, and the reading-order table.
 -->
 
@@ -54,8 +54,8 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 |---------|-------|
 | 7. Per-Service Implementation (one file per service) | [04-implementation/](./04-implementation/) |
 
-<!-- Add one row per service below: -->
-<!-- | 7.1 [Service Name] | [04-implementation/[service-slug].md](./04-implementation/[service-slug].md) | -->
+<!-- Add one row per service below, in alphabetical order by slug (chunking.md § The per-service split), naming the service's SDD section so the two numberings are not confused: -->
+<!-- | 7.N [Service Name] (SDD §17.X) | [04-implementation/[service-slug].md](./04-implementation/[service-slug].md) | -->
 
 ### Per-Service Sub-Sections (within each `04-implementation/<service>.md`)
 

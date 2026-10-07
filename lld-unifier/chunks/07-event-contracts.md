@@ -73,7 +73,7 @@ PART OF: LLD - [Project Name]
 | `foo.lifecycle.created` | `[service-a]` | Yes (mandatory per CLAUDE.md) | `all` | 5 | snappy |
 | `foo.lifecycle.updated` | `[service-a]` | Yes | `all` | 5 | snappy |
 
-> **Outbox is mandatory** for all state-changing integration events (CLAUDE.md); the in-process domain events of § 10.6 do not use it. The producing service writes each event to its outbox table in the same transaction as the state change; a separate publisher sends it to Kafka and marks it processed only after the broker acknowledges (`acks=all`). Delivery is at-least-once. See `09-cross-cutting.md` § 12.4 and `04-implementation/<service>.md` § Pattern: Outbox.
+> **Outbox is mandatory** for all state-changing integration events (CLAUDE.md); the in-process domain events of § 10.6 use it only under a durable Delivery line (§ 10.6). The producing service writes each event to its outbox table in the same transaction as the state change; a separate publisher sends it to Kafka and marks it processed only after the broker acknowledges (`acks=all`). Delivery is at-least-once. See `09-cross-cutting.md` § 12.4 and `04-implementation/<service>.md` § Pattern: Outbox.
 
 ## 10.4 Consumer Specs (per topic)
 
@@ -94,14 +94,16 @@ PART OF: LLD - [Project Name]
 ## 10.6 In-Process Domain Events (SDD §14.10)
 
 <!--
-Modular monolith or hybrid core only: one row per SDD §14.10 event, published by one module and handled in process by others. A microservices SDD writes "Not applicable - no in-process events".
-These events never touch the broker: no topic, consumer group, DLQ, or outbox. An event that must also leave the deployable is an integration event in § 10.1 (SDD §14.5).
+Modular monolith or hybrid core only: one row per SDD §14.10 event, published by one module and handled in process by others. With no SDD §14.10 in-process domain event here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules publish none), write "Not applicable - no in-process events".
+These events never touch the broker: no topic, consumer group, or DLQ, and no outbox unless the Delivery line is durable (Convention below). An event that must also leave the deployable is an integration event in § 10.1 (SDD §14.5).
 -->
+
+> **Delivery:** [Durable / In memory], the value of the SDD §14.10 Delivery line.
 
 | Event | Publisher module | Listener modules | Transaction phase | Payload (DTO) | When |
 |-------|------------------|------------------|-------------------|---------------|------|
 | [`[EventName]`](../sdd-[sdd-slug]/10-events-hub.md#1410-in-process-domain-events-modular-monolith--hybrid-core) | `[module-a]` | `[module-b], [module-c]` | [after commit] | `[EventDto]` | [The state change that raises it, as §14.10 writes it] |
 
-> **Convention:** names, phase, DTO, and When match SDD §14.10 verbatim; the LLD adds only the publishing call and the listener classes in each module's 04 file (in the Spring stack, `ApplicationEventPublisher` and `@TransactionalEventListener` with the listed phase).
+> **Convention:** the Delivery value, names, phase, DTO, and When match SDD §14.10 verbatim; the LLD adds only the publishing call, the listener classes in each module's 04 file (in the Spring stack, `ApplicationEventPublisher` and `@TransactionalEventListener` with the listed phase), and, for a durable delivery, the publication log. A durable delivery records each publication in the publisher's transaction in that log, the outbox of `09-cross-cutting.md` § 12.4, and redelivers it until each listener commits; it never relies on a bare after-commit listener, which loses the event if the process stops before the listener runs.
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 06-api-contracts.md | NEXT: 08-state-and-rules.md -->

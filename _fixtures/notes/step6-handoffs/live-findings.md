@@ -50,3 +50,13 @@ Hardening candidates for the next round (not applied):
 
 - **H1.** `brd-unifier/sow-transformation.md:179`: say that a regulatory point in any PESTLE row (Political included) becomes a 02 constraint, one per implication.
 - **H2.** The BRD consistency check (C10) or chunk 14 step 1: flag a TD row whose Blocks cell names no use case, NFR or chunk section, whose Source names no section or UC ID, or whose Kind is not one of the three values.
+
+Skill-side notes from the README audit against the final skills (next round, not applied; the README itself was corrected):
+
+- **N1.** `brd-unifier/chunking.md:43-44` describes chunks 15 and 16 without the capabilities that have no use case; `delivery-chunks.md:231` and `:292` include them.
+- **N2.** `pre-brd-unifier/xlsx-export.md:13` hardcodes `C:\Users\negat\.claude\skills\pre-brd-unifier\scripts`; the documented command fails on claude.ai or another machine.
+- **N3.** `pre-brd-unifier/xlsx-export.md:6` says "77 live formulas"; openpyxl counts 84 formula cells in the reference workbook. The counting basis is unclear.
+- **N4.** `pre-brd-unifier/chunks/24-open-items-and-assumptions-log.md:75` has a navigation footer; the other pre-BRD skeletons and the README say the pre-BRD has none.
+- **N5.** `pre-brd-unifier/SKILL.md:68` derives tier 5 from "tier-2/3/4 signals", but `frameworks.md` § Tier-5 propagation map takes all five signals from 07, 09, 10 and 11.
+- **N6.** `lld-unifier/transform-detection.md:106` says the LLD reads "the `MK-NN` rows and Figma links"; `sdd-to-lld.md:49` reaches the Figma link through the row.
+- **N7.** `sdd-unifier/brd-to-sdd.md:44` says the LLD row "is the only thing another skill writes into the SDD", but business-reviewer-unifier applies content changes to an SDD (sdd-unifier SKILL.md:373 receives that hand-off).

@@ -42,7 +42,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 | # | Condition | State | What is still open |
 |---|-----------|-------|--------------------|
 | G1 | Step 1 complete: every to-do item `Resolved`; no Open, Deferred, or Decided - pending application item in chunk 13; no clarification marker left in chunks 00-12 | [Met / Not met] | [TD-NN, OI-NN, markers in 06b ...] |
-| G2 | Step 2 complete: check rerun after the last BRD change; every finding has a disposition and none is still waiting on a decision | [Met / Not met] | [CF-NN ...; rerun needed] |
+| G2 | Step 2 complete: check rerun after the last BRD change; every finding has a disposition and none is still waiting on a decision or its application | [Met / Not met] | [CF-NN ...; rerun needed] |
 | G3 | Step 3 complete: grill-me session confirmed; decisions applied | [Met / Not met] | [...] |
 | G4 | Step 4 complete: every mockup approved; review/play-through confirmed; links in UC UI/UX or owning no-UC report/requirement section | [Met / Not met] | [MK-NN ...] |
 | G5 | Step 5 complete: use-case diagrams and flowcharts added; consistency check rerun | [Met / Not met] | [...] |
@@ -75,7 +75,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 ### Open items register
 
-<!-- One row per unresolved question, assumption needing validation, or pending decision. Sorted P1 first. The row links to the source; it does not copy the source's options or recommended answer. Priority: P1 blocks a Main Flow or an acceptance criterion; P2 affects alternate/exception flows, NFR measures, integrations, reports; P3 is wording only. Every priority blocks the delivery gate. Status: Open / Decided - pending application (a third-run decision: the decision, who decided and the date in the Decision or clarification needed cell; still blocks the gate) / Resolved ([where applied]) / Deferred ([why]; still blocks the gate). "Resolved" means a decision is recorded and applied to the BRD. An assumption is Resolved when its owner confirms it, replaces it, removes its dependent scope, or accepts it conditionally with the owner, condition and consequence recorded; if a flow or expected result is still undecidable, the row stays open. -->
+<!-- One row per unresolved question, assumption needing validation, or pending decision. Sorted P1 first. Kind is one of: Open question, Assumption to validate, Pending decision. Source names the chunk and the exact place (for example a section, a UC step or ID, an OI-NN, a CF-NN or DP-NN, an assumption, or a dependency). Blocks names the use cases, NFRs, or chunk sections the row blocks. The row links to the source; it does not copy the source's options or recommended answer. Priority: P1 blocks a Main Flow or an acceptance criterion; P2 affects alternate/exception flows, NFR measures, integrations, reports; P3 is wording only. Every priority blocks the delivery gate. Status: Open / Decided - pending application (a third-run decision: the decision, who decided and the date in the Decision or clarification needed cell; still blocks the gate) / Resolved ([where applied]) / Deferred ([why]; still blocks the gate). "Resolved" means a decision is recorded and applied to the BRD. An assumption is Resolved when its owner confirms it, replaces it, removes its dependent scope, or accepts it conditionally with the owner, condition and consequence recorded; if a flow or expected result is still undecidable, the row stays open. -->
 
 | ID | Priority | Kind | Source (chunk / identifier) | Decision or clarification needed | Blocks | Owner | Status |
 |----|----------|------|-----------------------------|----------------------------------|--------|-------|--------|
@@ -112,7 +112,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 ### Consistency findings
 
-<!-- Disposition is one of: Corrected ([where], [date]) | Open item raised: OI-NN / TD-NN | Deferred for clarification: TD-NN | No change ([who], [why]). Business ambiguities are never resolved silently: they become open items. -->
+<!-- Disposition is one of: Corrected ([where], [date]) | Open item raised: OI-NN / TD-NN | Deferred for clarification: TD-NN | No change ([who], [why]) | Decided - pending application: TD-NN (a third-run correction that the next request applies). Business ambiguities are never resolved silently: they become open items. -->
 
 | ID | Check | Affected chunks and identifiers | Finding | Impact | Recommended correction or decision needed | Disposition | Rechecked |
 |----|-------|---------------------------------|---------|--------|-------------------------------------------|-------------|-----------|

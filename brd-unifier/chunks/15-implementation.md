@@ -8,14 +8,14 @@ PART OF: BRD - [Project Name]
 TYPE: Delivery chunk
 GATE: Locked until 14-todo.md is fully cleared: all five steps Complete with evidence, every to-do item Resolved (Deferred does not count), no override. Never written or refreshed while the gate is shut. A Stale mark and execution tracking are allowed (delivery-chunks.md § The delivery gate, Re-lock, and § Refresh triggers).
 MERGE: Included in the merged / combined BRD. Read by sdd-unifier as input context only.
-PURPOSE: One actionable, dependency-ordered plan that consolidates every 06* use case into implementation tasks other agents can pick up: what to do, in what order, and how completion is assessed.
+PURPOSE: One actionable, dependency-ordered plan that consolidates every 06* use case, and every stated section capability with no use case, into implementation tasks other agents can pick up: what to do, in what order, and how completion is assessed.
 LANGUAGE: Business language only. Tasks describe capabilities to deliver, never technology, architecture, or tooling. The how is owned by the SDD and LLD.
 RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritative; this plan cites it and never adds requirements.
 -->
 
 # Implementation Plan
 
-> **What this is.** Every use case in chunks 06* turned into scoped tasks with stable IDs, ordered so that no task comes before something it depends on. Shared prerequisites and duplicate work are consolidated once.
+> **What this is.** Every use case in chunks 06*, and every stated report, integration or other section capability with no use case, turned into scoped tasks with stable IDs, ordered so that no task comes before something it depends on. Shared prerequisites and duplicate work are consolidated once.
 >
 > **What this is not.** It is not a design. It names what to deliver and how completion is judged; the solution design (SDD) and low-level design (LLD) own the how.
 

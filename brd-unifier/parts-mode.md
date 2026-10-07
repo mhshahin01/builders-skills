@@ -51,7 +51,7 @@ Chunks 05 and `06a` are never collapsed into one file in `parts`, even for a sma
 Show a short part summary:
 
 - The files written, and the chunks of earlier parts that were changed by the back-fill, with the reason.
-- Counts: personas, use cases, Mermaid figures, and the `[NEEDS CLARIFICATION: ...]` markers in this part, split into gaps and proposals to confirm.
+- Counts: personas, use cases, Mermaid figures, and the `[NEEDS CLARIFICATION: ...]` markers in this part, counted by question (SKILL.md step 9) and split into gaps and proposals to confirm.
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 

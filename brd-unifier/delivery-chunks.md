@@ -29,18 +29,20 @@ This file is the rulebook for those four chunks. The skeletons live in `chunks/1
 
 | # | Condition | How to verify (never trust the status cell alone) |
 |---|---|---|
-| G1 | To-do step 1 is `Complete`: every `TD-NN` row is `Resolved` | No `TD-NN` row is `Open` or `Deferred`. No `OI-NN` in chunk 13 is `Open` or `Deferred` (closed means `Accepted - applied`, `Adjusted - applied`, or `Rejected`). No `[NEEDS CLARIFICATION: ...]` marker is left in chunks 00-12, `proposed` markers included: a proposal blocks the gate until the user confirms or replaces it. |
-| G2 | To-do step 2 is `Complete`, and none of its findings is still waiting | A check run is recorded after the last content change to chunks 00-13 (§ Refresh triggers, Version). Every `CF-NN` has a disposition, and none is still waiting on a decision: each is `Corrected`, `No change`, or was raised as an item that is now `Resolved`. (A finding deferred for clarification lets step 2 complete, but its `TD-NN` keeps step 1, and so the gate, open.) |
+| G1 | To-do step 1 is `Complete`: every `TD-NN` row is `Resolved` | No `TD-NN` row is `Open`, `Deferred`, or `Decided - pending application`. No `OI-NN` in chunk 13 is `Open`, `Deferred`, or `Decided - pending application` (closed means `Accepted - applied`, `Adjusted - applied`, or `Rejected`). No `[NEEDS CLARIFICATION: ...]` marker is left in chunks 00-12, `proposed` markers included: a proposal blocks the gate until the user confirms or replaces it. |
+| G2 | To-do step 2 is `Complete`, and none of its findings is waiting on a decision | A check run follows the last relevant content change, proved by ordered evidence (§ Step 2). Every `CF-NN` has a disposition: `Corrected`, `No change`, or an item now `Resolved`. A fact deferred to TD can let step 2 complete, but its open TD keeps step 1 incomplete and the gate shut. |
 | G3 | To-do step 3 is `Complete` | The product manager confirmed the grill-me session (date recorded) and every decision from it is applied. |
-| G4 | To-do step 4 is `Complete` | Every mockup row is `Approved`, the product manager confirmed the review and a play-through of the prototype (dates recorded), and the Figma links are in the use cases' UI/UX sections. |
+| G4 | To-do step 4 is `Complete` | Every mockup row is `Approved`, review and play-through are confirmed and dated. Figma links are in each UC UI/UX section, or in the owning report/requirement section for a screen with no UC; every such frame cites its MK and source section. |
 | G5 | To-do step 5 is `Complete` | The use-case diagrams are in chunk 05, every qualifying use case has its flowchart, every other use case has a skip reason, all Mermaid blocks parse, and the consistency check was rerun after the diagrams. |
 
-**`Deferred` does not count as closed.** A deferred item keeps the gate shut until a decision is taken. `Resolved` means a decision is recorded and applied to the BRD. It does not mean the outside world has delivered: a pending dependency is resolved when the product manager decides how the BRD treats it (confirmed, replaced, or taken out of scope).
+**`Deferred` does not count as closed.** A deferred item keeps the gate shut until a decision is taken. `Resolved` means a decision is recorded and applied to the BRD. It does not mean the outside world has delivered: a pending dependency is resolved when the product manager decides how the BRD treats it (confirmed, replaced, or taken out of scope), or, while it stays pending, confirms its owner and when it is needed (its `Needed before` cell in chunk 02: the build of a use case, `Build of UC-NN`, BAT sign-off, or go-live; the body never names a `TASK-NN`).
+
+**Assumptions.** Resolve an assumption when its owner confirms it, replaces it, removes its dependent scope, or accepts it conditionally with the owner, condition and consequence recorded. If a flow or expected result is still undecidable, its TD stays open. A dependency marked Confirmed means its source, owner and treatment are agreed; it does not prove delivery. Build, BAT sign-off and go-live still require evidence that the dependency is in place at the stated milestone.
 
 **When the gate is shut** (the normal state on a first run, and always while `14-todo.md` does not exist yet)
 
 1. Do not write 15, 16, or 17. Do not write drafts, previews, outlines, or "provisional" versions of them either, **in a file or in the chat**. `Provisional (TD-NN)` is a status for a gap found while writing with the gate open; it is never a way to write early.
-2. In `14-todo.md`, set their rows in Downstream outputs to `Locked` and name the failed conditions.
+2. Set the state of each of them in the three places of Re-lock (below): `Locked` if it does not exist; an existing one keeps its state unless Re-lock makes it `Stale`, so a chunk whose own new item shut the gate stays `Provisional (TD-NN)`. Their rows in Downstream outputs (`14-todo.md`) name the failed conditions.
 3. Tell the user exactly what is still open: the steps that are not `Complete` and the `TD-NN`, `OI-NN`, `CF-NN`, markers, or mockup rows behind each. Name the next action.
 4. If the user asks to generate them anyway, explain the rule and repeat the list. Do not generate. The product manager's own confirmation is valid evidence for steps 3 and 4 (record it with the date); it is not a way around steps 1, 2, or 5.
 
@@ -48,11 +50,11 @@ This file is the rulebook for those four chunks. The skeletons live in `chunks/1
 
 1. Re-verify G1-G5 against the files, then write 15.
 2. **Check the gate again before 16, and again before 17.** If writing a chunk exposed a gap (a missing prerequisite, an expected result the BRD does not state), record it as a `TD-NN`, label only the affected content `Provisional (TD-NN)`, finish the chunk in hand, and stop. The next chunk waits until the new items are `Resolved`.
-3. Update `14-todo.md` last.
+3. Update `14-todo.md` last, and set the state of each chunk written in the three places of Re-lock (below).
 
-**Re-lock.** If chunks 00-13 change, or a new `TD-NN`, `OI-NN`, `CF-NN`, or clarification marker appears after 15-17 were generated, mark the affected outputs `Stale` in Downstream outputs. They are not refreshed until the gate is open again.
+**Re-lock.** If a change to chunks 00-13 changes the source meaning of 15-17, or a new `TD-NN`, `OI-NN`, `CF-NN`, or clarification marker appears after 15-17 were generated, mark each affected chunk that exists `Stale`. A chunk that does not exist stays `Locked`. A chunk's state (`Locked`, `Up to date`, `Provisional (TD-NN)`, or `Stale`) is kept in three places, always the same state (chunk 14 may add the date and basis after `Up to date`) and written in the same run: its status line once the chunk exists (for 15 and 16 in COMBINED mode, the status line of their section), its row in Downstream outputs (chunk 14), and its State cell in the master's Delivery Chunks table (CHUNKS mode; `lld-unifier` reads that cell first). Setting the state is a status mark, not a write: a shut gate allows it, and nothing else in the chunk changes. The chunks are refreshed only when the gate is open again.
 
-**`Provisional` or `Stale`?** `Provisional (TD-NN)`: the item was raised by writing that very chunk, so the chunk names the gap inside itself. `Stale`: anything that happened after the chunk was finished (a BRD edit, a new item from any other source). A chunk can be both; then it shows `Stale`.
+**`Provisional` or `Stale`?** `Provisional (TD-NN)`: the item was raised by writing that very chunk, so the chunk names the gap inside itself. `Stale`: anything that happened after the chunk was finished (a BRD edit that changes its source meaning, a new item from any other source). A chunk can be both; then it shows `Stale`.
 
 **Where they are written**
 
@@ -80,7 +82,7 @@ In COMBINED mode, the two sections are added to the combined file only when the 
    | Recommendation | The skill's suggestion, not a decision | Prefixed `Recommendation:` |
    | Unresolved question | Open `OI-NN`, inline `[NEEDS CLARIFICATION: ...]`, open `CF-NN` | Referenced by its `TD-NN` row |
 
-4. **Status line on 15, 16, 17.** Each opens with one status: `Up to date` (written with the gate open and nothing pending), `Provisional (TD-NN)` (a gap found while writing it; only the affected task, test case, slide, or video carries the label and the TD reference), or `Stale` (a change listed in § Refresh triggers, such as a BRD content change or a new or deferred open item, came after it was written; locked until the gate is open again).
+4. **Status line on 15, 16, 17.** Each opens with one status: `Up to date` (written with the gate open and nothing pending), `Provisional (TD-NN)` (a gap found while writing it; only the affected task, test case, slide, or video carries the label and the TD reference), or `Stale` (a change listed in § Refresh triggers, such as a BRD content change or a new or deferred open item, came after it was written; locked until the gate is open again). Setting `Stale` is a status mark, not a write, so a shut gate allows it (§ The delivery gate, Re-lock).
 5. **Generation is not completion.** Writing chunk 14 completes none of its steps. A checklist step is `Complete` only when its Evidence cell names what was checked, when, and by whom. The gate reads evidence, not status words.
 6. **Stable identifiers.** This is the one list; SKILL.md points here.
 
@@ -112,7 +114,7 @@ In COMBINED mode, the two sections are added to the combined file only when the 
 | `08 / [Partner]`, `09 / [Report]`, `11 / [Standard]` | Integration row, report row, UI/UX standard |
 | `02 / Assumption 4`, `02 / Dependency "[name]"` | Numbered assumption, dependency row |
 
-`BR-n` and `AC-n` are positional (bullet order at the stated BRD version). Count every top-level bullet of the list, in order, including a bullet that only holds a clarification marker or a source reference; sub-bullets are not counted. Always write them with a short label (`UC-04 AC-3: customer is notified`), so a shifted bullet is easy to spot. When a use case gains a rule or a criterion, add it at the end of its list. The consistency check re-verifies these references after any use-case edit.
+`BR-n` and `AC-n` are positional (bullet order at the stated BRD version). Count every top-level bullet of the list, in order, including a bullet that only holds a clarification marker or a source reference; sub-bullets are not counted. Write them with a short label (`UC-04 AC-3: customer is notified`), so a shifted bullet is easy to spot. Chunk 16's `Related UC` cell keeps its fixed form, `UC-04 (E1, AC-3)`, or names the owning section for a capability with no UC, `09 / Daily report` (§ Chunk 16, Format). When a use case gains a rule or a criterion, add it at the end of its list. The consistency check re-verifies these references after any use-case edit.
 
 ---
 
@@ -120,7 +122,7 @@ In COMBINED mode, the two sections are added to the combined file only when the 
 
 A prioritised, living checklist. Five steps, in this fixed order. Every step carries **Status**, **Required inputs**, **Expected output**, **Completion criteria**, and **Evidence**.
 
-**Step status values:** `Not started` / `In progress` / `Blocked` (say by what) / `Pending gate` (steps 4 and 5, while G1-G3 do not hold) / `Complete` (Evidence mandatory). In the step 5 tables, a use case planned as a skip is `Skipped` from the start; every other row is `Pending gate` until the gate opens, then `Drafted`, `Provisional (TD-NN)`, or `Final`.
+**Step status values:** `Not started` / `In progress` / `Blocked` (say by what) / `Pending gate` (only new or unstarted step 4 and 5 rows, while G1-G3 do not hold; a changed row reopens `In progress`, and an unchanged completed row keeps its evidence) / `Complete` (Evidence mandatory). In the step 5 tables, a use case planned as a skip is `Skipped` from the start; every other row is `Pending gate` while it is unstarted and G1-G3 do not hold, `Not started` while the gate is open and the diagram is not drawn yet, then `Drafted`, `Provisional (TD-NN)`, or `Final`.
 
 **Owner and priority cells are never guessed.** The Owner of a to-do row is the person the user named, otherwise the BRD author from chunk 00, written as `Recommendation: [name]`. Mockup priority follows the use case's place on the main journey: `P1` when it sits on the Summarized Workflow of chunk 05, otherwise `P2`.
 
@@ -131,18 +133,20 @@ A prioritised, living checklist. Five steps, in this fixed order. Every step car
 | 1 | Every `TD-NN` row is `Resolved`, each with its pointer (Resolution Log row or Changes Log entry). A `Deferred` row keeps the step open. | Stays `In progress` |
 | 2 | A check run is recorded and every `CF-NN` has a disposition. A finding deferred for clarification stays visible as a `TD-NN`, so it keeps step 1 open. | Stays `In progress` |
 | 3 | The product manager confirms the grill-me session happened and hands back the decision list, and the decisions are applied | The skill cannot observe a session it did not run; never infer it |
-| 4 | The product manager confirms the mockup review and a dated play-through of the prototype, and the Figma links are recorded in each use case's UI/UX section | Never inferred from a link alone |
+| 4 | The product manager confirms review and a dated prototype play-through; links are recorded in UC UI/UX or the owning no-UC report/requirement section | Never inferred from a link alone |
 | 5 | The skill executed it and the completion criteria below hold | - |
 
 ### Step 1 - Resolve open items and clarifications
 
-Consolidate into one **Open items register** (`TD-NN` rows). One row per **distinct question**: when the same question sits in several places (the same clarification marker repeated in ten use cases), it is one row whose Source lists every location. The row links to the source and states the decision needed. It does not copy the item's options or recommended answer (those live in chunk 13).
+Consolidate into one **Open items register** (`TD-NN` rows). One row per **distinct question**: when the same question sits in several places (the same clarification marker repeated in ten use cases), it is one row whose Source lists every location. The proposals of one use case (or one chunk section) may share a row that names each proposal; its priority is the highest among them, and it is `Resolved` when every proposal in it is confirmed or replaced. The row links to the source and states the decision needed. It does not copy the item's options or recommended answer (those live in chunk 13).
+
+Collect every live remainder in a decision/marker record as a TD with its owner and source pointer, including partial acceptance-loop answers. A business choice also gets a full OI; a missing fact stays TD-only. Keep the settled-part history in the companion. Optional reviewer advice becomes a blocking question only when the current BRD cannot be finalised without the choice.
 
 | Kind | Source |
 |---|---|
 | Open question | `OI-NN` with Status `Open` (chunk 13); every inline `[NEEDS CLARIFICATION: ...]` marker (cite chunk + section or UC ID), `proposed` markers included: a proposal (`[NEEDS CLARIFICATION: proposed ...; confirm or replace]`) is collected like any other marker, and the decision needed is to confirm or replace it |
-| Assumption to validate | Chunk 02 assumptions the source did not state as confirmed fact and whose falsity would change a use-case flow, acceptance criterion, or NFR measure; Dependencies whose Status is anything other than confirmed (pending, to be verified, confirmed for one party only). Constraints are not assumptions: leave them out. Leave out items that only concern a later phase, unless they change a use case of this release. |
-| Pending decision | `OI-NN` with Status `Deferred`; findings from step 2 awaiting a decision; a Reviewer Note in chunk 13 that asks for a decision (cite `13 / Reviewer Notes`) |
+| Assumption to validate | Chunk 02 assumptions the source did not state as confirmed fact and whose falsity would change a use-case flow, acceptance criterion, or NFR measure; Dependencies whose Status is anything other than confirmed (pending, to be verified, confirmed for one party only); § The delivery gate says when such a row is `Resolved`. Constraints are not assumptions: leave them out. Leave out items that only concern a later phase, unless they change a use case of this release. |
+| Pending decision | Deferred OIs, consistency findings awaiting a choice, and Reviewer Notes whose choice is required to finalise the current BRD. Optional editorial advice/future suggestions stay notes. |
 
 **Priority** is derived from what the item blocks, never from guessed business value:
 
@@ -152,13 +156,15 @@ Consolidate into one **Open items register** (`TD-NN` rows). One row per **disti
 
 Touching an acceptance criterion is not enough for P1: the criterion must be impossible to build or test without the answer.
 
-Sort P1 first. TD status: `Open` / `Resolved` (with pointer) / `Deferred` (with rationale; stays visible **and keeps the delivery gate shut**). Every priority blocks the gate, P3 included. The `Blocks` column names use cases, NFRs, and chunk sections; add `TASK-NN`, `TC-...`, slides, and `V-NN` only once 15-17 exist.
+Sort P1 first. TD status: `Open` / `Decided - pending application` (below; **keeps the delivery gate shut**) / `Resolved` (with pointer) / `Deferred` (with rationale; stays visible **and keeps the delivery gate shut**). Every priority blocks the gate, P3 included. The `Blocks` column names use cases, NFRs, and chunk sections; add `TASK-NN`, `TC-...`, slides, and `V-NN` only once 15-17 exist.
+
+**Decided - pending application.** A decision on a third-run discovery (§ Step 2) waits in this register for the next request. Its `TD-NN` row (raise one if none exists) takes Status `Decided - pending application`, with the decision, who decided, and the date in its Decision or clarification needed cell. Any `OI-NN` it answers takes the same status in chunk 13. The row keeps the delivery gate shut. The next request that changes this BRD (any update, not a pure merge or re-chunk) applies the decision first, rechecks it, sets the TD to `Resolved` and the OI to `Accepted - applied` or `Adjusted - applied`, and writes the `decision-log.md` record then.
 
 ### Step 2 - Consistency check across all BRD chunks
 
-Run the check during generation and record it as Run 1; rerun it whenever chunks 00-13 change. Prefer a cleared-context subagent (same independence reasoning as SKILL.md step 7); run inline only if the Agent tool is unavailable. The subagent is read-only and returns `CF-NN` rows; the main context applies corrections and records the dispositions.
+Run the check during generation. A new checklist starts at Run 1; an existing checklist appends the next free run number. One request through its handoff is a session, with at most three runs regardless of their stored numbers. Its first run checks chunks 00-13 in full; later runs check accepted corrections, changed chunks and their dependents, and necessary gaps those changes expose. Name that scope; do not start another unrelated adversarial hunt. Separate stated-behaviour gaps from optional scope candidates. Stop when nothing new is raised or after the third run. Newly found third-run corrections are not applied in this request: keep CF/TD items unresolved, record any owner decision offered on them as `Decided - pending application` (§ Step 1), and apply/recheck in the next request. Gate conditions that depend on them remain unmet. Prefer a cleared-context subagent (same independence reasoning as SKILL.md step 7); run inline only if the Agent tool is unavailable. The subagent is read-only and returns `CF-NN` rows; the main context applies corrections, within the third-run boundary above, and records the dispositions.
 
-Run 1 happens before the open items are resolved, so it leaves step 2 `In progress`. Step 2 is `Complete` only when the latest run is dated after the last content change to chunks 00-13 and every finding has a disposition.
+The generation check leaves step 2 `In progress`. Step 2 is `Complete` only when its latest full/scoped run follows the final relevant content change and every finding has a disposition. Record the request, run order, checked content revision/hash or explicit change-then-check sequence, date and checker. Dates alone do not prove same-day order; a pause does not start another request.
 
 | Check | What to look for |
 |---|---|
@@ -177,35 +183,36 @@ Record every finding as a `CF-NN` row: check, affected chunks and identifiers, f
 
 **Dispositions**
 
-- `Corrected ([where], [date])` - only for **confirmed corrections**: the user confirmed it, or it is mechanical with an unambiguous source of truth already fixed by this skill (broken link or filename; a cross-reference whose title identifies the intended target; a matrix cell contradicting the use-case actor fields, where the use case wins (if the actor field itself looks wrong, raise an open item instead); a Use Case Summary title differing from the use-case heading, where the heading wins; a spelling or casing variant of a Glossary term, where the Glossary wins; a wrong count, figure number, table number, or index row, where the counted content wins). Apply the correction to every affected chunk, add a Changes Log entry, and list it in the handoff.
+- `Corrected ([where], [date])` - only for **confirmed corrections**: the user confirmed it (directly, or through an applied decision that the correction only carries to text that still contradicts it or leaves it out; name the decision's ID), or it is mechanical with an unambiguous source of truth already fixed by this skill (broken link or filename; a cross-reference whose title identifies the intended target; a matrix cell contradicting the use-case actor fields, where the use case wins (if the actor field itself looks wrong, raise an open item instead); a Use Case Summary title differing from the use-case heading, where the heading wins; a spelling or casing variant of a Glossary term, where the Glossary wins; a wrong count, figure number, table number, or index row, where the counted content wins). Apply the correction to every affected chunk, and list it in this update's Changes Log row and in the handoff.
 - `Open item raised: OI-NN / TD-NN` - a business ambiguity: there are options and someone must **choose**. Write the `OI-NN` in chunk 13 using its full schema (Options, Recommended Answer, Why) and add the `TD-NN` row. Never resolve a business ambiguity silently.
-- `Deferred for clarification: TD-NN` - a missing **fact**: nobody has to choose, someone has to tell (a number, a name, a date). A `TD-NN` row only, no `OI-NN`. It stays visible as an open item and keeps the delivery gate shut until it is `Resolved`.
+- `Deferred for clarification: TD-NN` - a missing **fact**: nobody has to choose, someone has to tell (a number that already exists, such as a volume or a contract term; a name; a date). A target the business sets (an NFR measure, a time limit) is a choice: raise an open item. A `TD-NN` row only, no `OI-NN`. It stays visible as an open item and keeps the delivery gate shut until it is `Resolved`.
 - `No change ([who], [why])` - accepted as is. The user sets it. The skill sets it alone only when, on a second look, the finding is not an inconsistency (`No change (skill, [why])`).
 
-After corrections, **recheck** and add a run row. Unresolved findings go into the step 3 handoff.
+After corrections, **recheck** with a scoped run within this request's three runs and add the run record. Decisions collected on third-run discoveries stay `Decided - pending application` in their TD rows (§ Step 1) until the next request. Unresolved findings go into the step 3 handoff.
 
 ### Step 3 - Finalise requirements with the grill-me skill
 
 - List what goes into the session: open `TD-NN` rows (P1 first), unresolved `CF-NN` findings, and requirements worth stress-testing even though nothing is flagged (use cases carrying a Business Objective, acceptance criteria with numbers, NFR measures).
 - Provide the ready-to-use handoff prompt from the skeleton with real chunk references filled in.
 - **Recommend** `/grill-me`. It is a user-invoked skill: never claim it was executed, never set this step beyond `Not started` without the product manager's confirmation.
-- When decisions come back: apply confirmed decisions to the affected chunks through the step 8 mechanics (OI status, Resolution Log, Changes Log), rerun step 2, and revisit steps 1-2 if new questions or inconsistencies appear.
+- When decisions come back: apply confirmed decisions to the affected chunks through the step 8 mechanics (OI status, Resolution Log, `decision-log.md` record (§ Marker register for a marker, § Clarification register otherwise), Changes Log; a new or changed decision that matches no `OI-NN` gets its own `TD-NN` row, while a confirmation of an unchanged rule is evidence only, with no `TD-NN`, § Special cases), rerun step 2, and revisit steps 1-2 if new questions or inconsistencies appear.
 
 ### Step 4 - Generate mockups in Figma
 
 - **The standard is the global UI/UX constitution.** Mockups are generated in Figma or, if the user names another tool, in that tool. Either way, before any mockup is generated, read the project's `ui-ux-global-constitution.md` (SKILL.md principle 16; the project's AGENTS.md may point to it; never work from memory): its sections on color and typography tokens, responsive design, mockups and prototypes, and Figma prototypes, cited by name, never by number. Its Figma rules apply in full to a Figma deliverable. For another tool, the responsive and the mockups and prototypes sections apply and the Figma prototype rules are applied in their nearest equivalent (playable flow, frames per breakpoint, states as variants, tokens, labeled simulated data, dated play-through). This step never restates those rules; it points to them, so a change to the constitution changes the step. **No constitution in the project:** do not ask for one and do not block the step. The coverage rules below still apply in full (playable flow, breakpoints, states as variants, labelled simulated data, dated play-through); colors and type come from chunk 11, and step 4 records "No UI/UX constitution found; chunk 11 used".
+- Source scope and confirmed project UI rules govern. Treat unstated table behaviour and breakpoints as proposals; resolve a constitution/source conflict with the owner before generating the affected frames.
 - **Write a mockup brief into step 4 of `14-todo.md`.** A ready-to-use prompt, recommended and never claimed as executed, built from the constitution's reusable generation brief: it names the BRD, the coverage table, the constitution and the sections above, and the tool. It tells the generating tool or agent to read the constitution first.
 - One coverage row per screen or flow, each with its own `MK-NN` (the BRD's screen reference): the use cases it serves, the requirements and decisions it must honour, the states to cover, priority, status, breakpoints delivered, playable, play-through, Figma link. When the source material defined a screen ID, name it in the Screen / flow cell next to the `MK-NN`; never invent one.
 - **Expected coverage:** every use case with an actor-facing interaction has at least one screen; every Main Flow step the actor can observe is visible on a screen; every A/E flow with a user-visible state has that state; role differences follow the matrix (07); global standards follow chunk 11 (loading, empty, and error states included).
 - **Prototype coverage (the constitution's Figma prototypes section):** one named start frame; every Main Flow playable from it to its end with no dead ends; P1 rows have every actor-facing control wired (navigation, overlays, drawers, dialogs, tabs, filters, form validation and error paths, destructive-action confirmation); P2 rows are connected to their neighbouring frames; states are variants, not duplicate static frames.
-- **Responsive coverage (the constitution's responsive section):** frames for mobile, tablet and desktop on P1 rows; desktop and mobile on P2 rows.
-- **Review criteria:** each frame names its `UC-NN`; flows are walkable end to end and playable in play mode with no dead ends; states are covered; visibility matches the matrix; chunk 11 standards hold; variables and text styles map to the constitution's tokens with no raw hex in components; simulated data and demo actions are labelled; the share link has view permission and opens on the start frame; no mockup shows behaviour absent from the BRD (if one does, raise a `TD-NN`, do not absorb it).
+- **Responsive coverage:** deliver the breakpoints stated by the source and confirmed project rules in chunk 11. Unstated breakpoints are proposals requiring owner confirmation; never add a tablet minimum or contradict source scope silently. P1/P2 governs interactivity, not an automatic breakpoint list.
+- **Review criteria:** each frame names its UC, or its MK and owning report/requirement section when no UC exists; flows are walkable end to end and playable in play mode with no dead ends; states and matrix visibility match the source; chunk 11 standards and confirmed breakpoints hold; variables and text styles map to the constitution's tokens (or, with no constitution, to the chunk 11 colors) with no raw hex in components; simulated data is labelled; the share link has view permission and opens on the start frame. A mockup showing unstated behaviour raises a TD, never a silently added requirement.
 - **Gate.** Begin only after steps 1-3 are `Complete` with evidence (G1-G3), the same gate as step 5. Step 5 is not a precondition: steps 4 and 5 run in parallel. If asked for mockups while G1-G3 are unmet, list what is missing and stop.
 - Rows touching an unresolved item are marked `Blocked by TD-NN`.
 
 ### Step 5 - Use-case diagrams and flowcharts
 
-Tracked here, **drawn in chunks 05 and `06*`**. See § The gated diagram step below. At first generation, fill both tracking tables (diagram plan for chunk 05; one row per use case with step count, decision points, and `Required` / `Skip - linear` / `Skip - fewer than 3 steps`) and leave every status `Pending gate`.
+Tracked here, **drawn in chunks 05 and `06*`**. See § The gated diagram step below. At first generation, fill both tracking tables (diagram plan for chunk 05; one row per use case with step count, decision points, and `Required` / `Skip - linear` / `Skip - fewer than 3 steps`). Set planned skips to `Skipped` and every other row to `Pending gate`.
 
 Miro is an optional later step for collaboration or presentation, and only on explicit request (`mermaid-diagrams.md` § Miro on demand).
 
@@ -221,6 +228,7 @@ One actionable plan consolidating every `06*` use case, written so another agent
 
 - Default: one `Use-case delivery` task per use case. Consolidate use cases that cannot be delivered or released independently; split a use case only when one flow is large enough to stand alone. Every `06*` use case must appear in the **Use-case coverage** table with at least one task.
 - `Foundation` and `Cross-cutting` tasks need evidence: a precondition or domain concept (03) shared by two or more use cases, an integration (08) or report (09) used by two or more, access control from the matrix (07), a global UI/UX standard (11), or a cross-cutting NFR (10). Cite the evidence. No tasks the BRD does not imply (no environment, tooling, or technology setup; that is SDD/LLD territory).
+- `Requirement delivery` tasks cover a stated report, integration or other section capability without a UC, even when used by one persona. Cite its source section and actor. Do not mint a UC to satisfy task coverage. These tasks have the same dependency, deliverable, completion and acceptance fields as UC tasks.
 - Duplicate work across use cases is consolidated into one task that names every use case it serves.
 - A shared rule is checked where it shows. When a `Foundation` or `Cross-cutting` task sets up a rule that other tasks show on their own screens (access by role, a UI standard), each of those tasks carries the rule in its completion criteria for its own screens (`07 matrix: roles marked - are refused`). The shared task's own criteria cover what it delivers by itself. If it has nothing of its own to see, they cover the earliest screens that show it. Chunk 16 relates its test cases the same way (§ Chunk 16, Readiness and acceptance).
 
@@ -257,7 +265,7 @@ Every dependency problem raises a `TD-NN`, so it shuts the gate again: finish ch
 
 **`Blocked` or `Provisional`?** `Blocked`: the task's Main Flow cannot be delivered without the answer; it must not be started. `Provisional (TD-NN)`: the task can start; only the part named by the TD is unsettled. A task that depends, directly or through other tasks, on a `Blocked` or not-sequenced task is `Blocked (waits for TASK-NN)` and leaves the waves too. Not-sequenced task blocks are written after the last wave, under a `### Not sequenced` heading, with `Wave` set to `Not sequenced`.
 
-**Every task carries:** Task ID and title; objective and scope (in / out); type; wave; source use-case and requirement references; dependencies by task ID or `None`; tasks it can run in parallel with; status basis (`Confirmed`, `Provisional (TD-NN)`, or `Blocked (...)`); delivery status (`Not started` when first written); expected deliverables; completion criteria grounded in the source (each cites `UC-NN AC-n`, a rule, an NFR, or a standard, with a short label instead of the restated text); assumptions, open questions, and blockers.
+**Every task carries:** Task ID and title; objective and scope (in / out); type; wave; source use-case and requirement references; dependencies by task ID or `None`; tasks it can run in parallel with; status basis (`Confirmed`, `Provisional (TD-NN)`, or `Blocked (...)`); delivery status (`Not started` when first written); expected deliverables; completion criteria grounded in the source (each cites `UC-NN AC-n`, a rule, an NFR, or a standard, with a short label instead of the restated text); assumptions, open questions, and blockers. A chunk 02 dependency whose `Needed before` names a use case is listed under the blockers of the task that delivers that use case (`02 / Dependency "[name]"`) until it is in place.
 
 Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh the affected tasks (see § Refresh triggers).
 
@@ -267,7 +275,7 @@ Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh 
 
 **Written only when the delivery gate is open**, and only after chunk 15 was written without raising a new open item.
 
-**Reference.** The structure, terminology, level of detail, and formatting come from the owner's reference file, `PricePulse/brd-pricepulse/uat-bat-test-cases.md`, encoded in the skeleton `chunks/16-uat-bat-test-cases.md`. Follow the skeleton exactly. If the project holds a newer reference the user points to, read it first.
+**Reference.** The structure, terminology, level of detail, and formatting come from the owner's reference file, encoded in the skeleton `chunks/16-uat-bat-test-cases.md`. Follow the skeleton exactly. If the project holds a newer reference the user points to, read it first.
 
 **UAT and BAT, exactly as the reference uses them. Do not infer any other meaning.**
 
@@ -281,20 +289,21 @@ Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh 
 - Header comment, Owner / Prepared / Baseline / Design reference line, "How to use this document", "Test environment and data prerequisites" (`P1`, `P2`, ...), numbered feature-area sections, Traceability Matrix, Task acceptance, Provisional and blocked scenarios, Coverage gaps, Execution summary, Exit criteria.
 - Section heading: `## N. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])`. `MK-NN` is the screen or flow row of the chunk 14 mockup coverage table; a screen ID appears only where the source material defined one. A feature area is a group of cases that share a screen or a goal. It may cover several use cases, or none (the reference has a dashboard section). Order the sections the way a tester walks the product: access first, then the main journey of chunk 05, then administration, then cross-cutting UI/UX standards, then NFR acceptance.
 - Table columns, in this order: `TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment`. `Related Task` and `Needs` are the two added columns: they tie each case to chunk 15 and say when it can run (§ Readiness and acceptance). `Testing Result` and `Testing Comment` stay empty at generation.
-- `Related UC` names the use case or NFR and, in brackets, what the case proves: `UC-04 (E1, AC-3)`, `UC-07 (BR-2)`, `NFR-03`. Several references are allowed.
+- `Related UC` names the UC and the proved flow/rule/criterion (`UC-04 (E1, AC-3)`), an NFR, or a linked owning requirement section for a no-UC capability (`09 / Daily report`). Several source references are allowed; do not invent a UC for a report.
 - `TC ID` = `TC-[AREA]-NN`. Normally one 3-letter code per section; a section may hold a second code for a distinct sub-area, as the reference does (`NFR` and `LOG`). `TC Description` starts with "Verify". `TC Example` is a concrete action with realistic data. The prerequisites it needs go in `Needs`, not in the example. `Success Criteria` states the observable outcome in business terms.
 - Phased scope uses a tag at the end of the TC Name (the reference uses `(D2)`). Define every tag in the header SCOPE NOTE **and** in the visible `Scope note` line, because the header comment is stripped on merge.
 
-**Exit criteria.** The critical-path sections are those whose use cases carry a Business Objective or sit on the Summarized Workflow of chunk 05. Write the list as a `Recommendation:` for the product manager to confirm; do not present it as decided.
+**Exit criteria.** The critical-path sections are those whose use cases carry a Business Objective or sit on the Summarized Workflow of chunk 05. Write the list as a `Recommendation:` for the product manager to confirm; do not present it as decided. The Exit criteria also name each dependency of chunk 02 whose `Needed before` is BAT sign-off (sign-off needs it in place) or go-live (named with its owner: it must be in place before go-live, not before sign-off).
 
-**Level of detail.** Match the reference: about 3 to 12 cases per use case, one line per cell, concrete data in the example, one observable outcome per case. Read the reference file itself when it is reachable (`PricePulse/brd-pricepulse/uat-bat-test-cases.md` in the owner's eSIM workspace); the skeleton carries its structure when it is not.
+**Level of detail.** Match the reference: about 3 to 12 cases per use case, one line per cell, concrete data in the example, one observable outcome per case.
 
 **Readiness and acceptance.** Readiness is per case. A section groups cases for the tester. It is never a unit of readiness, and no case waits for the rest of its section.
 
 - **`Related Task`** is the task the case counts toward. Name the task that delivers the screen or step the case exercises. A shared rule checked on a later task's screen counts toward that later task: "Customer cannot open the approval queue" is a case of the approval task, not of the access task.
 - **`Needs`** lists what must be ready before the case can run: its Related Task, any other task whose screen, data, or result it uses, and the prerequisites it uses other than those marked `(all cases)`. Tasks come first, then prerequisites: `TASK-05, TASK-02; P4`. Leave out the tasks the Related Task depends on in chunk 15, directly or through other tasks: a task starts only after they reach `Ready for test`.
+- Case-specific data prerequisites belong in `Needs` and the P list, not task-start conditions unless the task actually needs them to build. Confirmed business treatment is not evidence that test data or an outside dependency is physically in place.
 - A case can run as soon as every task in its `Needs` has reached `Ready for test` (chunk 15) and every prerequisite there is in place. Prerequisites marked `(all cases)` are in place before the first case runs.
-- **Later waves stay out.** Every task in `Needs` comes from the Related Task's wave or an earlier one, so a task's acceptance never waits for a later wave. The one exception is a task with nothing of its own to see (a UI standard, a foundation that shows only on other tasks' screens). It is checked on the earliest screens that show it, in a case that names both tasks in `Related Task`. Later screens are checked in their own tasks' cases.
+- **Later waves stay out.** Every task in `Needs` comes from the Related Task's wave or an earlier one (when `Related Task` names more than one task, the latest of their waves), so a task's acceptance never waits for a later wave. The one exception is a task with nothing of its own to see (a UI standard, a foundation that shows only on other tasks' screens). It is checked on the earliest screens that show it, in a case that names both tasks in `Related Task`. Later screens are checked in their own tasks' cases.
 - A task's **required cases** are the cases that name it in `Related Task`, retired cases excluded. The task is `Accepted` when all of them pass. Every task has at least one required case; a task with none is a coverage gap.
 - **Task acceptance** lists every task in chunk 15 with its wave and its required cases, derived from the `Related Task` column. The Delivery status itself is recorded in chunk 15.
 - A case whose Related Task, or a task in its `Needs`, is `Blocked` or not sequenced is a **blocked scenario**: list it under Provisional and blocked scenarios with its `DP-NN` / `TD-NN`. (This is not the `Blocked` testing result, which a tester sets during execution.)
@@ -313,7 +322,9 @@ The flowcharts exist by now (gate condition G5). Cross-check every one: each dec
 
 **Unresolved expectations.** The gate guarantees the known items are resolved, so this only happens when writing the suite exposes a new gap. Raise a `TD-NN` (it shuts the gate for chunk 17). If an expected result cannot be finalised: add `(Provisional)` to the TC Name, state the currently documented expectation followed by `Pending TD-NN`, or `Cannot be finalised - pending TD-NN` when nothing is documented. List every such case in **Provisional and blocked scenarios**. Never invent an expected result.
 
-**Coverage gaps** are explicit: a use case, flow, rule, or NFR with no case is listed in **Coverage gaps** with the reason and its `TD-NN`. Always state the counts that were checked: Main Flows, alternate flows, exception flows, acceptance criteria, numeric rules, NFRs, flowchart branches, and tasks, and how many of each have no case (for a task: no required case). `Total test cases` equals the actual number of TC rows, retired rows excluded: count them.
+**Coverage gaps** are explicit: a use case, flow, rule, or NFR with no case is listed in **Coverage gaps** with the reason and its `TD-NN`. Always state the counts that were checked: Main Flows, alternate flows, exception flows, acceptance criteria, numeric rules, NFRs, section-derived capabilities with no UC, flowchart branches, and tasks, and how many of each have no case (for a task: no required case). `Total test cases` equals the actual number of TC rows, retired rows excluded: count them.
+
+**Numeric-rule count example.** A source limit of 20 requests per day is one numeric rule, not three rules because it has below/at/above cases. A separate 30-minute deadline is a second rule. List the counted source rules with their source references in the coverage audit; count cases separately.
 
 **Legacy file.** If an unnumbered `uat-bat-test-cases.md` exists in the BRD folder, do not overwrite or delete it. Regenerate the suite as `16-uat-bat-test-cases.md` in the same folder, using the legacy file as input: keep its TC IDs and any filled Testing Result / Testing Comment cells. Where a legacy case disagrees with the BRD, the BRD wins and the difference is recorded as a `CF-NN`. Tell the user the legacy file can be retired.
 
@@ -378,7 +389,7 @@ Per video: title, audience, objective, source use-case references; a timed story
 | Destination | Diagram | Rule |
 |---|---|---|
 | Chunk 05, new section `## Use Case Diagrams` after the Use Case Summary | Use-case diagram(s): actors, use cases, system boundary, relationships | One overview diagram if it fits about 30 lines; otherwise one per persona in chunk-05 order. Every `UC-NN` appears in at least one diagram (rows marked `Merged into` or `Removed` excepted). |
-| Chunks `06*`, new sub-section `### Flowchart` directly after `### Alternate & Exception Flows` of the use case | One flowchart per qualifying use case: main flow, decision points, alternate paths, exception paths as documented | **Required** when the use case has 3 or more Main Flow steps **and** at least one decision point (an A-flow, an E-flow, or a business rule that changes the path). **Skipped** when it has fewer than 3 steps or is linear; the skip reason is recorded in the todo tracking table and nothing is added to the chunk. |
+| Chunks `06*`, new sub-section `### Flowchart` after `### Alternate & Exception Flows` | One logical flowchart per qualifying UC, with connected numbered views when needed | Required for 3 or more Main Flow steps and at least one documented decision point. Otherwise record the skip reason in the to-do; add nothing to the UC. Preserve the original figure anchor, assign stable IDs to extra views, label continuation nodes, and check the union of nodes/edges against the narrative. |
 
 Notation and syntax rules: `mermaid-diagrams.md` § Use-case diagrams and § Use-case flowcharts.
 
@@ -390,7 +401,7 @@ Notation and syntax rules: `mermaid-diagrams.md` § Use-case diagrams and § Use
 - **Do not invent behaviour to close a gap** (for example an alternate flow that never says where it rejoins). Record a `TD-NN`, mark that diagram `Provisional` in the tracking table, and finalise it after the answer.
 - An exception the narrative does not tie to a step starts from its own start node (for example "At any time before the decision"). Never pick a step for it.
 - Every diagram is a numbered figure with the mandatory **Summary** line and a Figures index row in chunk 00. New figures take the next free number; existing figures are never renumbered.
-- Bump the BRD version and add a Changes Log row. Rerun the consistency check (C9 included). If chunks 15-17 already exist, mark them `Stale`; they are refreshed once the gate is open again.
+- Apply the semantic version rule below: changed meaning bumps once per update; editorial layout/splits preserving every rule, actor and path bump nothing. Rerun the consistency check (C9 included, against the union of views). Mark downstream outputs Stale only when their source meaning changed; metadata-only index/link updates do not invalidate them.
 
 **Diagrams that already exist.** A transformed source, or a BRD written before this rule, may already hold use-case diagrams or flowcharts. Keep them; never delete source content. List each in the step 5 tracking tables as `Pre-existing - re-verify at step 5`, and re-verify it against the narrative when step 5 runs. The rule is that no **new** use-case diagram or flowchart is drawn before the gate.
 
@@ -400,7 +411,7 @@ Notation and syntax rules: `mermaid-diagrams.md` § Use-case diagrams and § Use
 
 ## Refresh triggers
 
-Later confirmed changes must reach the downstream outputs. IDs stay stable; statuses and links are updated; chunk 14 is always updated last.
+Later confirmed changes must reach the downstream outputs. IDs stay stable; statuses and links are updated; chunk 14 is always updated last. The state of 15-17 is always set in the three places of § The delivery gate, Re-lock.
 
 **Chunk 14 is refreshed at any time. Chunks 15, 16, and 17 are refreshed only while the delivery gate is open.** A change that reopens the to-do marks them `Stale` instead.
 
@@ -408,7 +419,7 @@ Later confirmed changes must reach the downstream outputs. IDs stay stable; stat
 |---|---|---|
 | An open item is accepted, adjusted, or rejected | TD status, `Blocks`, step status, evidence | Nothing yet if they do not exist. If they exist: refresh what cited the item, once the gate is open. |
 | An open item is deferred, or a new one appears | TD row stays or is added; step 1 returns to `In progress` | `Stale` and locked |
-| A use case changes (flows, rules, acceptance criteria, actors) | Matrix (step 6a), consistency check rerun, step 5 tracking row; a changed diagrammed use case reopens step 5, and its mockup rows reopen step 4 | `Stale` until the to-do is clear again, then refresh the affected tasks, test cases and traceability, slides and videos |
+| A use case changes (flows, rules, acceptance criteria, actors) | Recheck matrix/consistency and affected diagrams. Reopen only mockup rows whose actor-visible flow, state, rule, role or content changed; record the before/after impact evidence when keeping approval | Stale until the gate is clear, then refresh affected task/test/slide/video content |
 | A use case is added or removed | All of the above | As above, plus Use-case coverage (15), Traceability Matrix and totals (16), series overview (17) |
 | Scope, NFR, integration, report, or UI/UX standard changes | Consistency check rerun | `Stale`, then refresh the tasks, acceptance cases, and slides citing it |
 | Mockups change after approval | Step 4 returns to `In progress` | `Stale`, then refresh visuals and reference inputs in 17 |
@@ -416,14 +427,16 @@ Later confirmed changes must reach the downstream outputs. IDs stay stable; stat
 | The project's `ui-ux-global-constitution.md` changes, appears, or is removed | Step 4 returns to `In progress` when the Figma or responsive rules changed | 17 `Stale`, then refresh Deck settings, the Design standard line, and the continuity guide |
 | A logo is provided or replaced | Nothing | Refresh the Logo row and end cards in 17 (not a content change) |
 
-**A `Complete` step falls back to `In progress` when its inputs change:** a new `Open` or `Deferred` TD (step 1), any content change to chunks 00-13 after the last check run (step 2), a new decision to confirm (step 3), a decision that changes a screen or a change to the constitution's Figma or responsive rules (step 4), an edit to a diagrammed use case (step 5). Because steps 4 and 5 run in parallel, a use-case change made for one reopens the affected rows of the other, and the consistency check is rerun once both are back to `Complete`.
+**A `Complete` step returns to `In progress` when its own inputs change.** Reopen steps 1/2 for new items/content, step 3 for new choices, affected step 4 rows for changed actor-visible flow/state/rule/role/content or confirmed visual rules, and affected step 5 rows for changed narrative paths. Keep unchanged row approvals/completion evidence. An editorial diagram split does not reopen mockups when a recorded impact comparison proves no screen behaviour changed. If G1-G3 fail, pause new downstream work: unstarted rows say `Pending gate`, changed rows reopen `In progress`, unchanged completed rows retain their evidence. After content work rerun step 2, then verify G1-G5; completed rows never override a failed overall gate.
 
 **Delivery progress on a refresh.** A refresh of 15 or 16 keeps every Delivery status and every test result, except where it changes what was tested or what must be built. When a refresh changes what a case checks (its description, example, or success criteria), clear its Testing Result and Testing Comment. Then compare each affected task's **Expected deliverables** and scope in chunk 15 before and after the refresh:
 
 - **Unchanged:** the delivery team's confirmation still covers the task. When a required case of an `Accepted` task changed, or the task gained a new required case, set it back to `Ready for test` until the case passes.
 - **Changed or added deliverables:** the confirmation no longer covers them. Set an `Accepted` or `Ready for test` task back to `In progress` until the delivery team confirms again that every current deliverable is built. Its dependents lose that met dependency; the refresh names any that have already started.
 
-**Version.** Only a **content change** bumps the version: a change to what chunks 00-13 say about the product. It means one minor step per run (1.0 to 1.1), one Changes Log row, and the new VERSION in chunk 00, in `[project-slug]-brd-master.md`, and in each chunk that was changed.
+**Version.** One update, one version. An update is one request, from its first change to its handoff; the first build (every part, the review, the acceptance loop, and the to-do) is one update, at 1.0. Moving a BRD that already has versions from another format or an older template into this one is one update of that BRD: one minor step above its last version. Only a **content change** bumps the version: a change to what chunks 00-13 say about the product. The update's first content change bumps the version one minor step (1.0 to 1.1, 1.9 to 1.10; a major step only when the user asks for one) and opens one Changes Log row. Every later change in the update goes into that row, also after a pause: accepted open items, applied decisions, and consistency corrections. The row ends with `Chunks:` and the number of every chunk whose content changed (a combined BRD names the changed sections; the first build's row ends with `Chunks: none (initial build)`). The new VERSION goes in chunk 00, in `[project-slug]-brd-master.md`, and in each changed chunk; every other chunk keeps the version in which its content last changed, and chunks 15-17 keep the version they were written at (their basis line). No two rows share a version.
+
+**Version bookkeeping.** Date an update row by the request's first content change, and the first build's Initial draft row by the day the first build completes (in `parts`, when part 3 completes); record later event dates in their own logs. Write `Chunks: none (initial build)` on the first row. Include only semantic content changes: routine cover/version/index/footer synchronization is not another changed-content chunk. Figma link-only updates in UC UI/UX or a report section and diagram layout/splits preserving every rule, actor and path are editorial. Changed branch/rule labels or outcomes are content changes. A rewritten companion header carries the current parent version; decision/process tracking or header synchronization alone bumps nothing.
 
 These are **not** content changes. They bump nothing, do not reopen step 2, and make nothing `Stale`:
 
@@ -431,7 +444,13 @@ These are **not** content changes. They bump nothing, do not reopen step 2, and 
 - Table of Contents, index, and `[project-slug]-brd-master.md` rows for the delivery chunks (chunk 00's Table of Contents lists 14 always, 15-17 once written);
 - PREV / NEXT footers;
 - an open item that a delivery chunk raises about itself (it reopens step 1 and labels that chunk `Provisional`);
-- a task's Delivery status in 15, and a case's Testing Result and Testing Comment in 16: execution tracking, recorded at any time, whether the gate is open or shut.
+- a task's Delivery status in 15, and a case's Testing Result and Testing Comment in 16: execution tracking, recorded at any time, whether the gate is open or shut;
+- a merge or re-chunk (`chunking.md`): the layout changes, not what the BRD says;
+- a Figma link-only update in a use case's UI/UX section or a report section;
+- a diagram layout change or split that keeps every rule, actor and path (C9 still checks it against the narrative);
+- editorial rewording that changes no fact, number, rule, actor, identifier, or meaning (a Summary line put in plain language, for example). When unsure, treat the edit as a content change.
+
+**Cover status.** A content change to an `Approved` BRD sets the cover's Status to `In Review` and its Date to the change date. Status becomes `Approved`, and the approver's name goes in the Reviewed/Approved By cell of the latest Changes Log row, only when the user names the approver; until then that cell stays empty.
 
 At the start of every run, compare the basis line of 15-17 (`Basis:` in 15 and 17, `Baseline:` in 16) with the current BRD version: an older basis means `Stale`.
 
@@ -442,9 +461,10 @@ User phrases such as "refresh the delivery chunks", "update the todo", "regenera
 ## Special cases
 
 - **No chunk 13.** A BRD written before the reviewer pass existed has no Open Items chunk. Run SKILL.md steps 7-8 first. If the user declines, say so in step 1 of the to-do and build the register from the inline markers and chunk 02 only.
-- **Open items raised after the acceptance loop.** The consistency check and the writing of 15-17 can raise new `OI-NN` entries. Write them in chunk 13 with the full schema, add "(raised by consistency check CF-NN)" or "(raised while writing chunk NN)" to their `Where` field, and walk the user through them with the same acceptance loop (SKILL.md step 8) before anything is applied. Name their count in the handoff.
-- **Decisions with no open item.** A grill-me decision that matches no `OI-NN` gets its own `TD-NN` row, status `Resolved`, pointing at the Changes Log entry.
+- **Open items raised after the acceptance loop.** The consistency check, the writing of 15-17, and a live remainder in a decision or marker record that needs a business choice (§ Step 1; for a business review record, SKILL.md step 10) can raise new `OI-NN` entries. Write them in chunk 13 with the full schema, add "(raised by consistency check CF-NN)", "(raised while writing chunk NN)", or "(raised by business review [point ID])" to their `Where` field (reuse an existing item only when it covers the same question from the same review point and tracker; otherwise raise a new item), add the `TD-NN` row, and walk the user through them with the same acceptance loop (SKILL.md step 8) before anything is applied. Applying them is a content change: the rerun it needs counts toward the session's three runs (§ Step 2). Third-run discoveries follow § Step 2: a decision on one is recorded as `Decided - pending application` in its `TD-NN` row (§ Step 1), then applied and rechecked in the next request. Name unresolved counts and the next action in the handoff.
+- **Decisions with no open item.** A new or changed grilling choice with no OI gets a resolved TD, Changes Log pointer and companion decision record. Confirmation of an unchanged settled rule is evidence/history only, with its source and confirmer; it creates no TD or content bump.
 - **Delivery chunks from an earlier version of this skill.** Chunks 15-17 that sit next to a `14-todo.md` with no Delivery gate block were written before the gate existed. Mark them `Stale`; they are refreshed only once the gate is open. In a transform, source material of this kind (test cases, delivery plans, slide decks) goes to the Appendix (12) as reference files: it is input for 15-17 once the gate opens, never 15-17 itself.
+- **Migration history.** Bundle a read-only source snapshot under the output tree and link it from Appendix. Keep available old OI fields and label incomplete historical records; never fabricate options or Why. Revalidate old gate evidence against current rules. Preserve TASK/TC IDs and filled results/comments in source delivery material, with explicit mappings for real ID collisions. Retained results are historical evidence, not acceptance of changed requirements.
 - **15 and 16 written before per-case readiness.** A chunk 15 with no Delivery status, or a chunk 16 with no `Needs` column, still carries the old rule that a section runs only after its tasks are complete. That rule can block every task. Refresh both to the current skeletons the next time the gate is open. Keep every `TASK-NN` and `TC-...` ID and every filled Testing Result and Testing Comment. Add the `Needs` cells and the Task acceptance table. Set each Delivery status from the evidence: `Accepted` when every required case shows `Success`, `In progress` or `Ready for test` when the delivery team confirms it, otherwise `Not started`. This is a format change, not a content change: it bumps no version.
 - **Collapsed layout.** When chunking.md's low-count rule merged 05 and `06*` into `05-user-journeys-and-use-cases.md`, read "`06*`" in this file as the Detailed Use Cases part of that chunk.
 
@@ -453,7 +473,7 @@ User phrases such as "refresh the delivery chunks", "update the todo", "regenera
 - The BRD is one file, `../BRD-[ProjectName]-v[X.X].md`. Every link that would point at a chunk points at that file, with the section name or the identifier in the link text: `[UC-04 (Detailed Use Cases)](../BRD-Refunds-v1.2.md)`.
 - There is no `[project-slug]-brd-master.md`. The grill-me handoff prompt says "Read ../BRD-[ProjectName]-v[X.X].md first, then 14-todo.md".
 - The footer becomes `<!-- BRD: ../BRD-[ProjectName]-v[X.X].md | PREV: none | NEXT: 17-for-ppt.md -->` in 14, and the mirror of it in 17.
-- The combined file name carries the version. After every version bump, repoint the links in 14 and 17.
+- The combined file name carries the version. After every version bump, repoint the links in 14 and 17. Like a Stale mark, a link repoint is not a write, so a shut gate allows it in 17.
 - Inside the combined file, sections 15 and 16 cite use cases and NFRs by identifier in plain text. Only their links to `./brd-[project-slug]/14-todo.md` are file links.
 
 ---
@@ -467,18 +487,18 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 - [ ] Chunk 14 keeps the fixed order: resolve open items -> consistency check -> grill-me -> Figma mockups -> use-case diagrams and flowcharts, with Miro optional afterwards.
 - [ ] Every step has Status, Required inputs, Expected output, Completion criteria, Evidence. No step is `Complete` without evidence. Steps 3 and 4 are not `Complete` without the product manager's confirmation.
 - [ ] Step 4 points to the constitution's token, responsive, mockups and prototypes, and Figma prototypes sections, by name, when the project has one, or records "No UI/UX constitution found; chunk 11 used", carries the mockup brief, and its coverage table has the Playable, Breakpoints delivered and Play-through columns.
-- [ ] Steps 4 and 5 are `Pending gate` unless G1-G3 hold, and neither is blocked by the other. No new use-case diagram or flowchart was drawn in 05 / `06*` before the gate.
+- [ ] G1-G3 were checked before new step 4/5 work. When shut, unstarted rows are Pending gate, changed rows reopen In progress, and unchanged completed rows retain valid evidence. The overall gate remains shut; neither step overrides it. No new UC diagram or flowchart was drawn before the gate.
 - [ ] If step 5 ran: every Mermaid block parses, agrees with its narrative, and has a Summary line and a Figures index row.
 - [ ] Every `CF-NN` has traceable references and a disposition; unresolved ones are visible as `TD-NN` / `OI-NN`.
 - [ ] CHUNKS mode: `[project-slug]-brd-master.md` indexes chunk 14 and lists chunks 15-17 as `Locked` (plain text, no link) until they exist.
-- [ ] **Delivery gate:** if any of G1-G5 fails, chunks 15, 16, and 17 were not written or refreshed, no draft or preview of them exists, their Downstream outputs rows say `Locked` (or `Stale`) with the failed conditions, and the handoff lists what is still open.
+- [ ] **Delivery gate:** if any of G1-G5 fails, chunks 15, 16, and 17 were not written or refreshed, no draft or preview of them exists, their state reads `Locked`, `Stale`, or `Provisional (TD-NN)` in all three places of § The delivery gate, Re-lock, their Downstream outputs rows name the failed conditions, and the handoff lists what is still open.
 
 **Only when 15-17 were written (gate open)**
 
 - [ ] G1-G5 were verified against the files before 15, again before 16, and again before 17.
-- [ ] Every `06*` use case appears in the Use-case coverage table of chunk 15.
+- [ ] Every `06*` use case appears in the Use-case coverage table of chunk 15. A stated report, integration or other section capability without a UC has a `Requirement delivery` task citing its source section and actor; no UC was minted for it.
 - [ ] No task appears before its prerequisites; cycles, missing prerequisites, and blockers are in Dependency problems, not in the waves.
-- [ ] Every test case traces to a use case or NFR and to a task; Coverage gaps and Provisional scenarios are explicit; the total equals the row count.
+- [ ] Every test case traces to a UC, NFR or owning requirement section, and a task. No UC was invented for section-only capabilities. Gaps/provisional cases are explicit; totals equal actual rows.
 - [ ] Every task has a Delivery status (`Not started` when first written). None is `Ready for test` without the delivery team's confirmation, no confirmation predates a refresh that changed the task's Expected deliverables, and none is `Accepted` while one of its required cases has not passed.
 - [ ] Every test case has a `Needs` cell that holds its Related Task. No task in `Needs` comes from a later wave than the Related Task, except in the earliest-screen case of a task with nothing of its own to see. No readiness rule is written per section or per wave.
 - [ ] Task acceptance lists every task in chunk 15, each with at least one required case, and matches the `Related Task` column.

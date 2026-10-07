@@ -86,7 +86,7 @@ Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run
 - [ ] The matrix (07) is derived from the actor fields by the SKILL.md step 6a rules, checked both ways.
 - [ ] The Use Case Summary (05) matches the detailed headings and actors after the back-fill.
 - [ ] No new use-case flowchart was drawn (gated to to-do step 5).
-- [ ] No decision-process narration in content chunks (search for `Resolved on`, `The user selected/answered`, `remains partial`, `option A/B` as narrative). Clarifications raised or decided in this part are recorded in `decision-log.md` with working rule-home links.
+- [ ] No decision-process narration in content chunks (search for `Resolved on`, `The user selected/answered`, `remains partial`, `option A/B` as narrative). Clarifications decided in this part are recorded in `decision-log.md` with working rule-home links.
 
 **Part 3**
 
@@ -119,7 +119,7 @@ Parts mode keeps its state in `[project-slug]-brd-master.md`, so any later sessi
 - Status is `Pending`, `In progress ([last step done])`, or `Complete`. Part 3 has several steps, so record each one as it finishes: `08-12 written`, `13 written`, `acceptance loop done`. It becomes `Complete` when chunk 14 is written.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
 - Chunk 00 shows `**Status:** Draft - part N of 3` until part 3 is complete, then `Draft`.
-- During the first build, the version does not change between parts. The Changes Log keeps one "Initial draft" row, dated when part 3 completes; the acceptance loop in part 3 then adds its own row as usual (SKILL.md step 8). After part 3 is complete, any content change follows `delivery-chunks.md` § Refresh triggers, Version.
+- During the first build, the version stays 1.0 and the Changes Log keeps one "Initial draft" row, dated when part 3 completes. The review, the acceptance loop, the consistency check, and the to-do of part 3 belong to that build: they bump nothing and add no row. After part 3 is complete, any content change follows `delivery-chunks.md` § Refresh triggers, Version.
 - PREV / NEXT footers may point at a chunk that does not exist yet. That is expected until its part is written.
 - When part 3 is complete, remove nothing: keep the table with all three parts `Complete`. It is the record of how the BRD was built.
 
@@ -142,6 +142,6 @@ When the skill is invoked on a folder whose `[project-slug]-brd-master.md` shows
 
 **The user asks for a later part while an earlier one is pending.** Explain the order and offer the next pending part. Do not skip.
 
-**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 13 that points into the part, and keep the diagrams added at to-do step 5 (they are re-verified at step 5). Then, for every later part that is already complete: rerun its back-fill and exit checklist, and tell the user what no longer fits (for example, detailed use cases whose persona was removed). If part 3 was complete, this is a content change: bump the version (`delivery-chunks.md` § Refresh triggers, Version), update chunk 13 by status only (the independent reviewer runs again only if the user asks), refresh chunk 14 (steps whose inputs changed fall back to `In progress`), and mark chunks 15-17 `Stale` if they exist.
+**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 13 that points into the part, and keep the diagrams added at to-do step 5 (they are re-verified at step 5). Then, for every later part that is already complete: rerun its back-fill and exit checklist, and tell the user what no longer fits (for example, detailed use cases whose persona was removed). If part 3 was complete, this is a content change: bump the version (`delivery-chunks.md` § Refresh triggers, Version), update chunk 13 by status only (the independent reviewer runs again only if the user asks), rerun the consistency check (SKILL.md step 7, On an update), refresh chunk 14 (steps whose inputs changed fall back to `In progress`), and mark chunks 15-17 `Stale` if they exist and their source meaning changed (`delivery-chunks.md` § The delivery gate, Re-lock).
 
 **The user switches to `whole` midway.** Write all remaining parts in one run, with no more checkpoints, and record `Generation: parts, completed whole from part N`.

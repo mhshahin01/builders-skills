@@ -6,7 +6,7 @@ VERSION: [X.X]
 DEPENDS_ON: 02, 03, 05, 06a+ (every use-case chunk), 07, 08, 09, 10, 11, 13, 14
 PART OF: BRD - [Project Name]
 TYPE: Delivery chunk
-GATE: Locked until 14-todo.md is fully cleared: all five steps Complete with evidence, every to-do item Resolved (Deferred does not count), no override. Never written or refreshed while the gate is shut.
+GATE: Locked until 14-todo.md is fully cleared: all five steps Complete with evidence, every to-do item Resolved (Deferred does not count), no override. Never written or refreshed while the gate is shut. A Stale mark and execution tracking are allowed (delivery-chunks.md § The delivery gate, Re-lock, and § Refresh triggers).
 MERGE: Included in the merged / combined BRD. Read by sdd-unifier as input context only.
 PURPOSE: One actionable, dependency-ordered plan that consolidates every 06* use case into implementation tasks other agents can pick up: what to do, in what order, and how completion is assessed.
 LANGUAGE: Business language only. Tasks describe capabilities to deliver, never technology, architecture, or tooling. The how is owned by the SDD and LLD.
@@ -72,10 +72,10 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 |---|---|
 | **Objective** | [What is delivered and for whom, one or two sentences] |
 | **Scope** | In: [what this task covers]. Out: [what it leaves to other tasks, by TASK-NN]. |
-| **Type** | [Foundation / Use-case delivery / Cross-cutting] |
+| **Type** | [Foundation / Use-case delivery / Requirement delivery / Cross-cutting] |
 | **Wave** | [1] |
-| **Source use cases** | [06a / UC-01](./06a-use-cases-[persona-slug].md), [06b / UC-06](./06b-use-cases-[persona-slug].md) |
-| **Source requirements** | [UC-01 BR-1; NFR-04 (10); 07 matrix; 08 / [Partner]; 11 / [Standard]] |
+| **Source use cases** | [UC links, or None - section-derived capability; cite its source in Source requirements] |
+| **Source requirements** | [UC rules, NFR, matrix, or linked owning section: 08 / Partner, 09 / Report, 11 / Standard] |
 | **Dependencies** | [None / TASK-NN, TASK-NN] |
 | **Can run in parallel with** | [TASK-02] |
 | **Status basis** | [Confirmed / Provisional (TD-NN) / Blocked (DP-NN, TD-NN) / Blocked (waits for TASK-NN)] |

@@ -4,10 +4,10 @@ TITLE: UAT/BAT Test Cases
 PROJECT: [Project Name]
 VERSION: [X.X] (baselined against BRD v[X.X])
 DATE: [YYYY-MM-DD]
-DEPENDS_ON: 05, 06a+ (every use-case chunk), 07, 08, 09, 10, 11, 14, 15
+DEPENDS_ON: 02, 05, 06a+ (every use-case chunk), 07, 08, 09, 10, 11, 14, 15
 PART OF: BRD - [Project Name]
 TYPE: Delivery chunk
-GATE: Locked until 14-todo.md is fully cleared (all five steps Complete with evidence, every to-do item Resolved, Deferred does not count, no override) and chunk 15 was written without raising a new open item. Never written or refreshed while the gate is shut.
+GATE: Locked until 14-todo.md is fully cleared (all five steps Complete with evidence, every to-do item Resolved, Deferred does not count, no override) and chunk 15 was written without raising a new open item. Never written or refreshed while the gate is shut. A Stale mark and execution tracking are allowed (delivery-chunks.md § The delivery gate, Re-lock, and § Refresh triggers).
 MERGE: Included in the merged / combined BRD. Read by sdd-unifier as input context only.
 PURPOSE: Business-level acceptance test cases (UAT/BAT) derived from the BRD use cases (UC-01..UC-NN), NFRs (NFR-01..NFR-NN), and the UI/UX expectations (chunk 11). Technical test cases (API contracts, data schemas, performance harnesses) are owned by the SDD test plan, not this file.
 SCOPE NOTE: [Default execution scope. Define any scope tag used in TC Names here, e.g. "Test cases marked (D2) activate with Deliverable 2." State which cases need another team's cooperation.]
@@ -26,7 +26,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 
 - **Testing Result** is filled during execution with one of: `Success`, `Failed`, `Blocked` (cannot execute due to environment/dependency), `Not Run`.
 - **Testing Comment** records evidence on failure (what was observed vs expected, screen, day, data used) and any deviation accepted by the business.
-- Every test case traces to a use case (UC-NN) or NFR, and to the task (TASK-NN) it counts toward: its **Related Task**, the task that delivers the screen or step it checks. The traceability matrix confirms the coverage, and anything not covered is listed under Coverage gaps.
+- Every test case traces to a UC, NFR or linked owning requirement section, and its Related Task. A report with no UC cites `09 / [Report]`; never invent a UC for it. The traceability matrix and Coverage gaps include section-derived capabilities.
 - A test case passes only when its **Success Criteria** is fully met; partial behaviour is `Failed` with a comment.
 - **Needs** lists what must be ready before the case can run: the tasks that must have reached `Ready for test` in [15-implementation.md](./15-implementation.md), then the prerequisites below that are not marked (all cases). Those marked (all cases) must be in place before the first case runs. Run each case as soon as its Needs are ready. Do not wait for the rest of its section or for a later wave: sections only group cases for the tester.
 - A task is `Accepted` (complete) when every case that names it in Related Task passes (see Task acceptance). Record it in the task's Delivery status in chunk 15. `Ready for test` alone is not complete.
@@ -54,6 +54,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 | TC-XXX-03 | [Short name - negative] | Verify [exception flow E1, a validation failure, or access refused for a role the matrix excludes] | [Concrete example] | [What the user sees and can do next; what did not change] | UC-NN (E1) | TASK-NN | TASK-NN; P4 | | |
 | TC-XXX-04 | [Short name - boundary] | Verify [a numeric or time-based rule at, below, and above its limit] | [Values on each side of the limit] | [Outcome on each side] | UC-NN (BR-2) | TASK-NN | TASK-NN | | |
 | TC-XXX-05 | [Short name] (Provisional) | Verify [behaviour whose expected result is not final] | [Concrete example] | [Documented expectation so far]. Pending TD-NN | UC-NN (E2) | TASK-NN | TASK-NN | | |
+| TC-RPT-01 | [Report check] | Verify [the stated report outcome] | [Concrete report action] | [Source-defined outcome] | [09 / Report](./09-reporting-and-analytics.md) | TASK-NN | TASK-NN; P3 | | |
 
 ## 2. [Feature area] ([UC-NN, ...])
 
@@ -87,6 +88,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 |---------------|-----------|
 | UC-01 [Use case title] | TC-XXX-01..05, TC-UIX-01 |
 | UC-02 [Use case title] | TC-YYY-01..NN |
+| 09 / [Report title] | TC-RPT-01 |
 | NFR-01 [Quality] | TC-NFR-01 |
 
 ## Task acceptance
@@ -111,7 +113,9 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 
 <!-- A use case, flow, business rule, acceptance criterion, or NFR with no test case, and a task with no required case. Always fill the "Checked" line with real counts, also when there are no gaps. -->
 
-**Checked:** [n] Main Flows, [n] alternate flows, [n] exception flows, [n] acceptance criteria, [n] numeric or time-based rules, [n] NFRs, [n] flowchart branches, [n] tasks. **Without a case:** [n].
+**Checked:** [n] Main Flows, [n] alternate flows, [n] exception flows, [n] acceptance criteria, [n] numeric or time-based rules, [n] NFRs, [n] section-derived capabilities with no UC, [n] flowchart branches, [n] tasks. **Without a case:** [n].
+
+**Counted numeric rules:** [source reference + limit for each distinct rule]. Below/at/above cases do not multiply the rule count. Example: 20 requests/day and a 30-minute deadline = 2 rules.
 
 | BRD Reference | Gap | Reason | To-do item / action |
 |---------------|-----|--------|---------------------|
@@ -127,6 +131,6 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 | Blocked | |
 | Not Run | |
 
-**Exit criteria (BAT sign-off):** all Critical-path cases pass (Recommendation: sections [list], chosen because their use cases carry a Business Objective or sit on the main journey; the product manager confirms the list); no open Failed case without a business-accepted deviation; no `(Provisional)` case left unresolved; [any acceptance evidence the NFRs name, validated by the named persona].
+**Exit criteria (BAT sign-off):** all Critical-path cases pass (Recommendation: sections [list], chosen because their use cases carry a Business Objective or sit on the main journey; the product manager confirms the list); no open Failed case without a business-accepted deviation; no `(Provisional)` case left unresolved; [any acceptance evidence the NFRs name, validated by the named persona]; [each dependency of chunk 02 needed before BAT sign-off, by name, in place]; [each dependency needed before go-live, by name and owner, listed for the go-live decision].
 
 <!-- MASTER: [project-slug]-brd-master.md | PREV: 15-implementation.md | NEXT: 17-for-ppt.md -->

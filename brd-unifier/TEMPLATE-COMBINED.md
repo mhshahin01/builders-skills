@@ -1,7 +1,7 @@
 # [Project Name] - Business Requirements & High-Level Design
 
 **Version:** [X.X]
-**Author:** [Author Name]
+**Author:** [Author Name, as the source or the user gives it; never invented. None given: `[NEEDS CLARIFICATION: Who is the BRD author?]`]
 **Date:** [YYYY-MM-DD]
 **Status:** [Draft | In Review | Approved]
 
@@ -15,13 +15,17 @@
 
 | Version | Updated Date | Updated By | Reviewed/Approved By | Update Summary |
 |---------|-------------|------------|---------------------|----------------|
-| 1.0     | YYYY-MM-DD  | [Name]     |                     | Initial draft. |
+| 1.0 | YYYY-MM-DD | [Actual editor/runtime] | | Initial draft. Chunks: none (initial build) |
+
+<!-- Date: an update row takes the date of its request's first content change; the Initial draft row takes the date the first build completes (in parts, when part 3 completes). Updated By: actual editor/runtime; approver only when user-named. Chunks lists semantic changes, not routine cover/index/footer sync. Table/figure numbers stay stable; new ones take the next free number. -->
+
+<!-- One row per update that changes content (delivery-chunks.md § Refresh triggers, Version). Status follows sign-off (delivery-chunks.md § Refresh triggers, Cover status): Approved, with the approver's name in Reviewed/Approved By, only when the user names the approver. -->
 
 ---
 
 ## Table of Contents
 
-<!-- Auto-generated or manually maintained. Include Figures and Tables indices if the document is large. -->
+<!-- One link per # and ## heading, in order, then ./brd-[project-slug]/14-todo.md, 17-for-ppt.md once written, and decision-log.md once it exists (chunking.md § Merge handling, step 4). The Figures and Tables indices are always present, empty until the first figure or table (chunking.md § Skip rules). -->
 
 **Figures**
 
@@ -116,11 +120,11 @@ Core capabilities:
 
 # Dependencies
 
-<!-- External systems, teams, data sources, third-party services. Use "NA" if none. -->
+<!-- External systems, teams, data sources, third-party services. Use "NA" if none. Status Confirmed means the source, owner and treatment are agreed; it does not prove delivery. -->
 
-| Dependency | Type | Owner | Status | Notes |
-|-----------|------|-------|--------|-------|
-| [System/Team] | [Hard/Soft] | [Owner] | [Confirmed/Pending] | [Description] |
+| Dependency | Type | Owner | Status | Needed before | Notes |
+|-----------|------|-------|--------|---------------|-------|
+| [System/Team] | [Hard/Soft] | [Owner] | [Confirmed/Pending] | [Build of UC-NN / BAT sign-off / Go-live] | [Description] |
 
 ---
 
@@ -222,7 +226,7 @@ All detailed use cases follow this structure:
 - **Preconditions**: What must be true before the use case can start.
 - **Main Flow**: Numbered detailed steps - actor action, system response, alternating.
 - **Alternate & Exception Flows**: What happens when the path branches or fails, in business terms.
-- **Flowchart** (branching use cases only, added once the requirements are final): The main, alternate, and exception paths in one diagram, derived from the narrative.
+- **Flowchart** (branching use cases only, added once the requirements are final): The main, alternate, and exception paths in one diagram (or in connected numbered views for a large use case), derived from the narrative.
 - **Business Rules & Constraints**: Rules, limits, and conditions that govern the use case.
 - **Acceptance Criteria**: Testable conditions that confirm the use case is complete.
 - **Future Enhancements**: Low-complexity follow-ups that could ship next.
@@ -266,7 +270,7 @@ All detailed use cases follow this structure:
 - **A1 - [Branching condition]:** At step [N], [what happens instead, in business terms].
 - **E1 - [Failure condition]:** The system informs [Actor] that [what they see and what they can do next].
 
-<!-- FLOWCHART SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-3 are confirmed complete, add a "##### Flowchart" sub-section at this position when the use case has 3 or more Main Flow steps and at least one decision point. Linear or shorter use cases get none; the skip reason is recorded in 14-todo.md. Notation and example: mermaid-diagrams.md § Use-case flowcharts. -->
+<!-- FLOWCHART SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated file. After to-do steps 1-3 are confirmed complete, add a "##### Flowchart" sub-section at this position when the use case has 3 or more Main Flow steps and at least one decision point. Linear or shorter use cases get none; the skip reason is recorded in 14-todo.md. The caption is a heading, `###### Figure N - Flowchart: UC-NN [Title]`; a large use case may use connected numbered views in this sub-section, the first keeping this caption. Notation and example: mermaid-diagrams.md § Use-case flowcharts. -->
 
 ##### Business Rules & Constraints
 
@@ -368,10 +372,10 @@ All detailed use cases follow this structure:
 <!-- Global UI/UX standards that apply across all pages, from the user's point of view. -->
 
 - **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once). Never an invented value.]
-- **Data Tables**: [Sorting, pagination: default 20 rows/page, export (csv & excel), filtering standards]
+- **Data Tables**: [Source or confirmed sorting, pagination, export and filtering rules. Unstated behaviour is a labelled proposal for owner confirmation; examples such as 20 rows/page or CSV/XLSX export are not automatic requirements.]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
-- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum. [With a UI/UX constitution only, add: "It follows the breakpoints and behaviour in the [section name] section of the global UI/UX constitution." Without one, the first sentence stands alone.]
+- **Responsive Design**: [Source and confirmed project breakpoints and behaviour, with the constitution section cited when used. Unstated breakpoints are proposals requiring confirmation; no automatic desktop/tablet/mobile minimum.]
 - **Language & Locale**: [Supported languages; date/number/currency formats per audience. Add right-to-left support only when a right-to-left language such as Arabic is in scope; omit it for English-only products.]
 - [Other global UX rules]
 
@@ -407,7 +411,7 @@ All detailed use cases follow this structure:
 # Open Items & Clarifications
 
 <!--
-Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every item carries a Recommended Answer - a concrete, ready-to-apply resolution. After this section is written, the skill walks the user through each item for acceptance; accepted answers are reflected into the body; every decided item (applied, deferred, or rejected) is logged in the Resolution Log.
+Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every unapplied item carries a Recommended Answer and Why. Walk the owner through each item; apply accepted answers to the body and record each outcome in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to its Resolution Log row. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
 This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay inline. This section is the reviewer's external findings.
 -->
 
@@ -422,7 +426,7 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 | **Options** | Concrete choices, each with a one-line tradeoff. At least 2 where a choice exists. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content. This is what gets injected into the body when accepted. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives: the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. |
+| **Status** | Open / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. |
 
 ## Open Items
 
@@ -440,11 +444,13 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 
 <!-- Repeat OI block for each open item. -->
 
+<!-- Applied-item stub: keep the OI heading and anchor, then Status: Accepted - applied / Adjusted - applied, and Resolution: [row](#resolution-log). The Resolution Log row names the rule home in Resolved In; the full decision record is in `decision-log.md`. -->
+
 ## Resolution Log
 
 | ID | Resolution Date | Resolved In | Outcome |
 |----|----------------|-------------|---------|
-| [OI-XX] | [YYYY-MM-DD] | [Section / UC ID] | [Accepted recommendation / Adjusted: short note / Deferred / Rejected] |
+| [OI-XX] | [YYYY-MM-DD] | [Section / UC ID] | [Accepted recommendation / Adjusted: short note / Deferred / Rejected / Settled by business review [point ID]] |
 
 ## Reviewer Notes
 
@@ -460,6 +466,8 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 | Security / privacy | [...] | [...] | [...] |
 | Data lifecycle | [...] | [...] | [...] |
 
+<!-- Optional new scope: label Scope proposal here with source, recommendation and tradeoff; not a blocking Open OI until owner-adopted. Required gaps keep the normal OI schema. -->
+
 <!-- Optional. Free-form notes that did not crystallise into a numbered open item. -->
 
 - [Note 1]
@@ -470,6 +478,7 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 <!--
 DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 - GUARDRAIL: the two sections below (15 Implementation Plan, 16 UAT/BAT Test Cases) are NOT written on a first run. They are appended only once the delivery gate is open: every action item in 14-todo.md closed (all five steps Complete with evidence, every item Resolved, Deferred counts as open, no override). Until then this file ends with Open Items & Clarifications.
+- Once written, they are never refreshed while the gate is shut. Stale marks on Plan status and Suite status, and execution tracking, are allowed (delivery-chunks.md § The delivery gate, Re-lock, and § Refresh triggers).
 - Their full block structure is in chunks/15-implementation.md and chunks/16-uat-bat-test-cases.md; use the same blocks with the COMBINED mode adaptations of delivery-chunks.md (cite use cases and NFRs by identifier in plain text; only links to 14-todo.md are file links).
 - 14 (Product Manager To-Do) and 17 (Presentation & Video Brief) are NEVER part of this file. 14 is written at the end of every generation as ./brd-[project-slug]/14-todo.md; 17 is written as ./brd-[project-slug]/17-for-ppt.md once the gate is open.
 -->
@@ -508,6 +517,8 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 <!-- Task block exactly as in chunks/15-implementation.md: header table (Objective, Scope, Type, Wave, Source use cases, Source requirements, Dependencies, Can run in parallel with, Status basis, Delivery status), Expected deliverables, Completion criteria, Assumptions / open questions / blockers. Repeat per task, in execution order. -->
 
+<!-- Type: Foundation / Use-case delivery / Requirement delivery / Cross-cutting. A section-derived task has Source use cases: None, with its owning section and actor in Source requirements. No fabricated UC. -->
+
 ---
 
 # UAT/BAT Test Cases
@@ -520,17 +531,21 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 <!-- Sections exactly as in chunks/16-uat-bat-test-cases.md (chunk 15 cited as the Implementation Plan section above, in plain text): How to use this document; Test environment and data prerequisites; one numbered section per feature area with the ten-column table; Cross-Cutting UI/UX Standards; NFR Acceptance; Traceability Matrix; Task acceptance; Provisional and blocked scenarios; Coverage gaps; Execution summary; Exit criteria (BAT sign-off). -->
 
+<!-- Related UC also accepts a stated no-UC requirement section (09 / Report); cite it in plain text here and include it in the traceability matrix. No invented UC. -->
+
 ## 1. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])
 
 | TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
 |-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|
 | TC-XXX-01 | [Short name] | Verify [...] | [Concrete example] | [Observable outcome] | UC-NN (AC-1) | TASK-NN | TASK-NN | | |
+| TC-RPT-01 | [Report check] | Verify [the stated report outcome] | [Concrete report action] | [Source-defined outcome] | 09 / Report | TASK-NN | TASK-NN; P3 | | |
 
 ## Traceability Matrix
 
 | BRD Reference | Covered By |
 |---------------|-----------|
 | UC-01 [Use case title] | TC-XXX-01..NN |
+| 09 / [Report title] | TC-RPT-01 |
 
 ## Task acceptance
 
@@ -545,7 +560,9 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 ## Coverage gaps
 
-**Checked:** [n] Main Flows, [n] alternate flows, [n] exception flows, [n] acceptance criteria, [n] numeric or time-based rules, [n] NFRs, [n] flowchart branches, [n] tasks. **Without a case:** [n].
+**Checked:** [n] Main Flows, [n] alternate flows, [n] exception flows, [n] acceptance criteria, [n] numeric or time-based rules, [n] NFRs, [n] section-derived capabilities with no UC, [n] flowchart branches, [n] tasks. **Without a case:** [n].
+
+**Counted numeric rules:** [source reference + limit for each distinct rule]. Below/at/above cases do not multiply the rule count. Example: 20 requests/day and a 30-minute deadline = 2 rules.
 
 | BRD Reference | Gap | Reason | To-do item / action |
 |---------------|-----|--------|---------------------|
@@ -560,4 +577,4 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 | Blocked | |
 | Not Run | |
 
-**Exit criteria (BAT sign-off):** [all Critical-path cases pass; no open Failed case without a business-accepted deviation; no `(Provisional)` case left unresolved].
+**Exit criteria (BAT sign-off):** [all Critical-path cases pass; no open Failed case without a business-accepted deviation; no `(Provisional)` case left unresolved; each dependency needed before BAT sign-off (Dependencies), by name, in place; each needed before go-live, by name and owner, listed for the go-live decision].

@@ -15,7 +15,8 @@ description: >-
 
 Run an adversarial, multi-persona review of a business document chain, merge
 the findings into a persistent tracker, walk the user through each point with
-full context, apply decisions chain-wide, then verify and version.
+full context, apply decisions chain-wide (one version bump per changed
+document), then verify and hand the changed documents back to their skills.
 
 ---
 
@@ -69,7 +70,8 @@ not as a deferred batch, unless the user asks to decide everything first.
 5. **Merge duplicates before walkthrough.** Overlapping findings across
    personas are merged under one ID; the user resolves each concern once.
 6. **Chain-wide consistency.** A decision is not Applied until every affected
-   document reflects it: counts, IDs, citations, supersession notes.
+   document the review may edit reflects it (counts, IDs, citations,
+   supersession notes) and the rest is named in a hand-off.
 7. **The SME is domain-bound, never defaulted.** See Intake. A product
    category (PropTech, FinTech, HealthTech) is an invalid SME domain.
 8. **One point in flight at a time** during walkthrough, presented with full
@@ -131,9 +133,12 @@ Zero-findings rule applies per reviewer (Core principle 1).
 ### 3. Merge and tracker creation
 
 Merging is YOUR job, not an agent's. Dedupe overlapping findings across
-personas (record "merged with X-NN" on both sides), assign `<ROLE>-NN` IDs,
-write the tracker per `tracker-schema.md`. Present the tracker summary:
-total findings, merges, per-reviewer counts.
+personas (the surviving row notes "merged with X-NN"), assign `<ROLE>-NN` IDs,
+write the tracker and its companion `review-panel-findings.md` per
+`tracker-schema.md`. Present the tracker summary: total findings, merges,
+per-reviewer counts, and how many findings each reviewer left out. Before
+the walkthrough, the user may ask a reviewer for more
+(`panel-orchestration.md` § Merge rules, rule 6).
 
 ### 4. Walkthrough (point-by-point)
 
@@ -142,6 +147,8 @@ Follow `walkthrough-protocol.md` exactly. Summary of the contract:
 - One point at a time, titled **"Point N (ID): full description"**, never a
   bare number.
 - Tracker table restated at each step (ID, concern, status).
+- Read the point's raw findings in `review-panel-findings.md` before
+  presenting it.
 - Full prose per point, in chat: 1) the issue and exactly which document and
   section it lives in, 2) why it matters, 3) options table with trade-offs,
   4) explicit recommendation. Then ask for acceptance.
@@ -175,8 +182,8 @@ Versioning block in the tracker. Then write the Hand-offs block: the owning
 skills re-check the changed documents in chain order (`apply-and-verify.md`
 § Hand-off).
 Present the close-out summary: points by status, structural decisions list,
-skill changes requested, files touched, new versions, and the hand-offs with
-the request to give each skill. Offer to start the first hand-off; each runs
+skill changes requested, the files the session touched, new versions, and the
+hand-offs with the request to give each skill. Offer to start the first hand-off; each runs
 only on the user's word.
 
 ---
@@ -184,6 +191,9 @@ only on the user's word.
 ## Output conventions
 
 - Tracker file: `./review-comments-tracker.md` (project root, persistent).
+- Panel findings file: `./review-panel-findings.md` (next to the tracker,
+  written at the merge and closed when the walkthrough starts;
+  `tracker-schema.md`).
 - Finding IDs: `<ROLE>-NN` (BO-01, SME-03, PM-06, PA-12, DC-05).
 - Status vocabulary: Pending | Decided | Applied | Partially applied |
   Rejected | Deferred.
@@ -206,8 +216,9 @@ only on the user's word.
 - Never batches tracker updates to the end of the session.
 - Never changes the template structure of a pre-BRD, BRD, or SDD (the list
   in `apply-and-verify.md`, Apply rule 6), and never edits an LLD or a gated
-  chunk: a decision that needs a structural change becomes a skill change
-  for the user, and what the owning skill updates goes to the hand-off.
+  chunk's content (its Stale mark follows `apply-and-verify.md`, Apply rule
+  7): a decision that needs a structural change becomes a skill change for
+  the user, and what the owning skill updates goes to the hand-off.
 - Never leaves a document whose content changed at its old version, and
   never closes a session without the hand-offs to the owning skills in the
   tracker.
@@ -217,11 +228,11 @@ only on the user's word.
 ## Reference files
 
 - `reviewer-personas.md`: charters for the five default personas, the SME
-  charter template, and optional add-on personas.
+  domain rules for the orchestrator, and optional add-on personas.
 - `panel-orchestration.md`: subagent dispatch, finding schema,
   zero-findings re-dispatch, merge rules.
 - `tracker-schema.md`: tracker file structure, columns, status vocabulary,
-  footer sections.
+  footer sections, and the companion panel findings file.
 - `walkthrough-protocol.md`: the point-presentation contract.
 - `apply-and-verify.md`: chain-wide application rules (content within the
   owning skill's structure, versions at the first change), verification

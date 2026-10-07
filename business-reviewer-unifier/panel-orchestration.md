@@ -46,10 +46,13 @@ direction lines are seeds for the walkthrough options, not decisions.
 >
 > [charter text]
 >
-> Return 5 to 12 findings using exactly this schema per finding: [schema].
-> Do not echo or summarize the documents. Do not praise. Every finding
-> must cite an exact document and section. Your final message is raw data
-> for an orchestrator, not a message to a human.
+> Return 5 to 12 findings, the most material first, using exactly this
+> schema per finding: [schema]. End with one line,
+> `Left out: <N> (<areas>)`: how many more findings you left out, and
+> their areas (`Left out: 0` when none). Do not echo or summarize the
+> documents. Do not praise. Every finding must cite an exact document and
+> section. Your final message is raw data for an orchestrator, not a
+> message to a human.
 
 ## Zero-findings rule
 
@@ -58,19 +61,29 @@ re-dispatched ONCE with stronger framing: "Assume the documents contain at
 least five material gaps in your area. Find them. If after genuine effort
 an area is clean, name the area and state what evidence makes it clean."
 If the second pass still returns nothing, record that explicitly in the
-tracker notes; never invent findings to fill the gap.
+tracker's Panel notes line; never invent findings to fill the gap.
 
 ## Merge rules (orchestrator work, not an agent)
 
 1. Read all findings across personas before assigning IDs.
 2. Two findings merge when they would be resolved by the same decision.
-   Keep the more senior framing as the primary; note "merged with X-NN"
-   in both concerns (the absorbed ID still appears in the tracker row of
-   the primary).
+   The primary is the finding that covers most of the merged set (on a
+   tie, the persona listed first in SKILL.md); note "merged with X-NN" in
+   the surviving row's Concern cell; an absorbed finding gets no row of
+   its own. A finding with a part that another point's decision resolves
+   goes under the point of its main part, and that row's Concern cell
+   adds "<part> part: see X-NN".
 3. Assign IDs `<ROLE>-NN` in each reviewer's own sequence (BO-01, BO-02,
    SME-01, ...). Merged-away findings keep their ID only as a reference
    inside the surviving row.
 4. Order the tracker by reviewer, then sequence. Walkthrough order may
-   differ (user's choice); the tracker order is stable.
-5. Report after merge: total raw findings, merges performed, final point
-   count, per-reviewer counts.
+   differ (`walkthrough-protocol.md`, item 1); the tracker order is stable.
+5. Write the companion `review-panel-findings.md` with the tracker
+   (`tracker-schema.md`).
+6. Report after merge: total raw findings, merges performed, final point
+   count, per-reviewer counts, and each reviewer's `Left out` line, so the
+   user can ask for more. A reviewer asked for more is re-dispatched once,
+   before the walkthrough starts, for the areas its `Left out` line names,
+   with its earlier findings listed so it does not repeat them; the new
+   findings are merged under these rules and added to the tracker and to
+   `review-panel-findings.md`.

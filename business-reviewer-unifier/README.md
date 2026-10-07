@@ -30,8 +30,8 @@ Single-pass reviews confirm what is already written; they rarely hunt for what i
 - **Every finding is actionable.** Each one cites the exact document and section, and carries options with trade-offs plus an explicit recommendation.
 - **Findings survive the session.** The tracker (`review-comments-tracker.md` in the project root) is the single source of truth and is updated after every applied point, never in a batch at the end.
 - **One concern, resolved once.** Overlapping findings across personas are merged under one ID before the walkthrough, so the user never answers the same question twice.
-- **Decisions stick chain-wide.** A point is not Applied until every affected document reflects it, including downstream BRD and SDD chunks that cite the changed content. A cleared-context verification pass then hunts stale remnants (counts, references, superseded phrasing).
-- **The chain stays whole.** A BRD or SDD made by `brd-unifier` or `sdd-unifier` keeps its template structure (tables, status values, gates, lineage, contract registries): a decision changes content, and a needed structural change is listed as a skill change instead. LLDs and gated chunks are never edited. A document's version is bumped at its first change in the session, and the close hands the chain back to the owning skills, which re-check what depends on the change (the BRD's consistency check and delivery gate, the SDD's reconciliation and lineage, each LLD's refresh). The panel itself does not check §7.3 or registry consistency; `sdd-unifier` re-checks them at the hand-off.
+- **Decisions stick chain-wide.** A point is not Applied until every affected document the review may edit reflects it, including downstream BRD and SDD chunks that cite the changed content; LLDs and gated chunks follow through the hand-offs. A cleared-context verification pass then hunts stale remnants (counts, references, superseded phrasing).
+- **The chain stays whole.** A BRD or SDD made by `brd-unifier` or `sdd-unifier` keeps its template structure (tables, status values, gates, lineage, contract registries): a decision changes content, and a needed structural change is listed as a skill change instead. LLDs and the content of gated chunks are never edited (a gated chunk's Stale mark follows `apply-and-verify.md`, Apply rule 7). A document's version is bumped at its first change in the session, and the close hands the chain back to the owning skills, which re-check what depends on the change (the BRD's consistency check and delivery gate, the SDD's reconciliation, lineage, and delta review, each LLD's refresh and delta review). The panel itself does not check §7.3 or registry consistency; `sdd-unifier` re-checks them at the hand-off.
 - **Nothing is applied silently.** A recommendation is not an approval; partial acceptance is recorded as Partially applied with the declined parts named.
 
 ## How
@@ -56,23 +56,24 @@ Invocation prefix depends on the agent: `/business-reviewer-unifier panel` in Cl
 
 1. **Intake.** At most three questions: which documents are in scope (default: the whole chain), the SME domain (mandatory, the customer's business, never a product category), and the panel composition (default five personas). A pre-BRD is reviewed when the project has one; otherwise it is never mentioned. LLDs are not reviewed; each child LLD's version record goes to the reviewers as lineage context, so a lineage finding compares both ends.
 2. **Panel dispatch.** One cleared-context subagent per persona, in parallel, each with the full document chain, the lineage context, its charter, and the finding schema.
-3. **Merge and tracker.** Duplicates across personas are merged under one ID, findings get `<ROLE>-NN` IDs, and `review-comments-tracker.md` is written per `tracker-schema.md`.
+3. **Merge and tracker.** Duplicates across personas are merged under one ID, findings get `<ROLE>-NN` IDs, and `review-comments-tracker.md` and its companion `review-panel-findings.md` are written per `tracker-schema.md`; the merge report also shows how many findings each reviewer left out, and you can ask a reviewer for more before the walkthrough starts.
 4. **Walkthrough.** One point at a time, presented in chat with full prose: the issue and its exact location, why it matters, an options table with trade-offs, and an explicit recommendation. The tracker table is restated at each step.
 5. **Apply.** Immediately after each decision, the change is applied to every affected document, within the structure its owning skill defines, and the tracker row is updated. A document's first change in the session bumps its version and opens one Changes Log row naming the review.
 6. **Verify.** A fresh cleared-context agent re-reviews for stale remnants of the changes, structures that drifted from the owning skill's templates, and lineage rows that disagree with the other end; fixes are applied and the pass is scored in the tracker.
-7. **Close and hand off.** The Changes Log rows take the verify fixes, files are renamed where the version is in the filename, and the tracker lists the hand-offs in chain order: `brd-unifier` "update the todo" for each changed BRD, then `sdd-unifier` "BRD `KEY` has a new version" (or "the business review changed this SDD"), then `lld-unifier` "the SDD has a new version" for each child LLD (plus "refresh the trace" when a BRD's use cases, test cases, or screens changed). The close-out summary names each hand-off with its request; each runs on the user's word.
+7. **Close and hand off.** The Changes Log rows take the verify fixes, files are renamed where the version is in the filename, and the tracker lists the hand-offs in chain order: `brd-unifier` "update the todo" for each changed BRD, then `sdd-unifier` "BRD `KEY` has a new version" (or "the business review changed this SDD"), then `lld-unifier` "the SDD has a new version" for each child LLD (its version check also offers the trace refresh a changed BRD needs, in the same update). The close-out summary names each hand-off with its request; each runs on the user's word.
 
 ### Outputs
 
 - `review-comments-tracker.md` in the project root: persistent, survives the session, updated after every point. It also records the version bumps, the hand-offs to the owning skills, and any skill changes the decisions needed.
+- `review-panel-findings.md` next to the tracker: every raw panel finding, with its Why and Direction, grouped under the point it ended in. Written at the merge (with any re-dispatch you ask for before the walkthrough) and linked from the tracker; the walkthrough reads a point's findings before presenting it.
 - Updated documents across the chain, with version bumps and changelog entries.
 
 ### Reference files
 
 | File | Contents |
 | ---- | -------- |
-| `reviewer-personas.md` | Charters for the five default personas, the SME charter template, optional add-ons |
+| `reviewer-personas.md` | Charters for the five default personas, the SME domain rules for the orchestrator, optional add-ons |
 | `panel-orchestration.md` | Subagent dispatch, finding schema, zero-findings re-dispatch, merge rules |
-| `tracker-schema.md` | Tracker structure, columns, status vocabulary, footer sections |
+| `tracker-schema.md` | Tracker structure, columns, status vocabulary, footer sections, the companion panel findings file |
 | `walkthrough-protocol.md` | The point-presentation contract |
 | `apply-and-verify.md` | Chain-wide application rules (content within the owning skill's structure, versions at the first change), verification pass brief, close checklist, hand-offs to the owning skills |

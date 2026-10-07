@@ -52,13 +52,13 @@ A consolidated view: every column is read from its home and never states a mappi
   Use case (BRD), Title: the BRD Use Case Summary (title exactly as the BRD writes it).
   Status: derived from the marker that opens the use case's Description cell in that summary: no marker gives Active; "Merged into UC-NN." gives Merged into [KEY]/UC-NN (keyed); "Removed: [reason]." gives Removed (the reason stays in the BRD).
   Owner: chunk 09 "Use cases (BRD)" column, the home of ownership (exactly one owner per active use case).
-  Entry points: the named service's List of APIs (13x), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]).
+  Entry points: the named service's List of APIs (13x), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]) from that service's Input table.
   Flows: the "Use cases:" lines in chunk 05.
   APIs: chunk 11 §15.2 "Use case ref".
-  Events: the "when" citations in chunk 10 §14.5 and the When column of §14.10 (in-process domain events).
+  Events: the "when" citations in chunk 10 §14.5 and the When column of §14.10 (in-process domain events); an event the use case only handles is an Entry points trigger (Event: [EVENT_NAME]).
 Links: each UC ID links to its heading in the BRD (file + anchor). The owner links to its 13x chunk once that chunk exists (plain text before). Rules: brd-to-sdd.md § Use-case traceability.
 Parts: part 1 fills Use case, Title, Owner, Flows, and Status; Entry points, APIs, and Events read "Pending (part 2)" until part 2 fills them.
-Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATION: ...] in that cell; these markers keep the e2e gate shut. Flows, APIs, and Events may be "-". Merged or removed rows show "-" in every mapping column.
+Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATION: ...] in that cell; such a marker is always an E3 dependency (service ownership and entry points), so it blocks the e2e gate (SKILL.md step 8b). Flows, APIs, and Events may be "-". Merged or removed rows show "-" in every mapping column.
 -->
 
 | Use case (BRD) | Title | Owner (§17.X) | Entry points | Flows (§8.4 / §8.5) | APIs (§15) | Events (§14) | Status |

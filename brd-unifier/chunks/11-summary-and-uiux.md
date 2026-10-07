@@ -21,10 +21,10 @@ LANGUAGE: Business language only. UI/UX expectations describe what users experie
 <!-- Global UI/UX standards that apply across all pages, from the user's point of view. -->
 
 - **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once). Never an invented value.]
-- **Data Tables**: [Sorting, pagination: default 20 rows/page, export (csv & excel), filtering standards]
+- **Data Tables**: [Source or confirmed sorting, pagination, export and filtering rules. Unstated behaviour is a labelled proposal for owner confirmation; examples such as 20 rows/page or CSV/XLSX export are not automatic requirements.]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
-- **Responsive Design**: The product must be usable on desktop, tablet and mobile screen sizes as a minimum. [With a UI/UX constitution only, add: "It follows the breakpoints and behaviour in the [section name] section of the global UI/UX constitution." Without one, the first sentence stands alone.]
+- **Responsive Design**: [Source and confirmed project breakpoints and behaviour, with the constitution section cited when used. Unstated breakpoints are proposals requiring confirmation; no automatic desktop/tablet/mobile minimum.]
 - **Language & Locale**: [Supported languages; date/number/currency formats per audience. Add right-to-left support only when a right-to-left language such as Arabic is in scope; omit it for English-only products.]
 - [Other global UX rules]
 

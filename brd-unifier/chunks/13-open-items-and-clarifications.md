@@ -5,17 +5,17 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 DEPENDS_ON: all preceding chunks (00 through 12)
 PART OF: BRD - [Project Name]
-PURPOSE: Output of the post-generation adversarial review. Captures gaps, missing scenarios, corner cases, and ambiguities flagged by a fresh-context reviewer. Every item carries a concrete Recommended Answer, ready to be applied to the BRD body once the user accepts it.
+PURPOSE: Output of the post-generation adversarial review. Captures gaps, missing scenarios, corner cases, and ambiguities flagged by a fresh-context reviewer. Every unapplied item carries a concrete Recommended Answer and Why, ready to be applied to the BRD body once the user accepts it. Applied items keep their stable OI heading, Status and Resolution Log pointer; their decision narrative lives in `decision-log.md`.
 GENERATED_BY: brd-unifier post-generation reviewer (cleared-context subagent run after the main BRD body is complete).
-WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, or defer the Recommended Answer. Accepted answers are applied to the referenced chunk(s) as plain requirement text, the item gets a Resolution Log row, and the Changes Log is bumped. Deferred and rejected items get a Resolution Log row too.
-REGISTER: When an item is accepted and applied, the decision narrative (the question, options, choice, date, rationale) is recorded in `decision-log.md`, the companion register, with a `Rule home:` link to the section now carrying the settled rule. This chunk keeps only the item's current status line and the Resolution Log row; no decision storytelling here or in the body chunks.
-LATER ITEMS: The consistency check (14-todo.md step 2) and the writing of chunks 15-17 can add open items after the first review. They use the same schema, say where they came from in their Where field, e.g. "(raised by consistency check CF-03)", and go through the same acceptance loop before anything is applied.
-DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or Deferred. Closed means Accepted - applied, Adjusted - applied, or Rejected.
+WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, or defer the Recommended Answer. Accepted answers are applied to the referenced chunk(s) as plain requirement text, the item gets a Resolution Log row, and it is added to this update's Changes Log row (delivery-chunks.md § Refresh triggers, Version). Deferred and rejected items get a Resolution Log row too.
+REGISTER: An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to its Resolution Log row. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
+LATER ITEMS: The consistency check (14-todo.md step 2), the writing of chunks 15-17, and a live remainder in a decision or marker record that needs a business choice (a business review point included) can add open items after the first review; a missing fact stays a to-do (TD) item only. They use the same schema, say where they came from in their Where field, e.g. "(raised by consistency check CF-03)", and go through the same acceptance loop before anything is applied.
+DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open, Deferred, or Decided - pending application. Closed means Accepted - applied, Adjusted - applied, or Rejected.
 -->
 
 # Open Items & Clarifications
 
-> **What this section is.** A structured backlog of concerns identified after the main BRD was authored, by a reviewer running with cleared context (so the review is independent rather than confirmatory). Each item comes with a **Recommended Answer** - a concrete, ready-to-apply resolution. Items are decisions awaiting your acceptance: accept the recommendation (or adjust it), and it gets reflected into the BRD body.
+> **What this section is.** A structured backlog of concerns identified after the main BRD was authored, by a reviewer running with cleared context (so the review is independent rather than confirmatory). Every unapplied item carries a concrete Recommended Answer and Why. Items are decisions awaiting your acceptance: accept the recommendation (or adjust it), and it gets reflected into the BRD body. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to its Resolution Log row. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
 >
 > **What this section is not.** It is not a list of `[NEEDS CLARIFICATION: ...]` markers found inside the body - those remain inline. This section is the reviewer's *external* findings: gaps the body did not mark, scenarios the body did not consider, corner cases the body did not test for.
 
@@ -32,7 +32,7 @@ DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or 
 | **Options** | Concrete choices, each with a one-line tradeoff. At least 2 options per item where a choice exists. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content (the exact rule, step, row, or wording that would close the item). This is what gets injected into the body when you accept. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives: the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open (awaiting your decision) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. |
+| **Status** | Open (awaiting your decision) / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. |
 
 ---
 
@@ -69,6 +69,8 @@ DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or 
 
 <!-- Repeat the OI block for each open item. -->
 
+<!-- Applied-item stub: keep the OI heading and anchor, then Status: Accepted - applied / Adjusted - applied, and Resolution: [row](#resolution-log). The Resolution Log row names the rule home in Resolved In; the full decision record is in `decision-log.md`. -->
+
 ---
 
 ## Resolution Log
@@ -77,7 +79,7 @@ DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or 
 
 | ID | Resolution Date | Resolved In | Outcome |
 |----|----------------|-------------|---------|
-| [OI-XX] | [YYYY-MM-DD] | [Chunk and section, e.g., "06a / UC-04 Exception Flows"] | [Accepted recommendation / Adjusted: short note / Deferred / Rejected] |
+| [OI-XX] | [YYYY-MM-DD] | [Chunk and section, e.g., "06a / UC-04 Exception Flows"] | [Accepted recommendation / Adjusted: short note / Deferred / Rejected / Settled by business review [point ID]] |
 
 ---
 
@@ -94,6 +96,8 @@ DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open or 
 | Integrations | [...] | [...] | [...] |
 | Security / privacy | [...] | [...] | [...] |
 | Data lifecycle | [...] | [...] | [...] |
+
+<!-- Optional new scope: label Scope proposal here with source, recommendation and tradeoff; not a blocking Open OI until owner-adopted. Required gaps keep the normal OI schema. -->
 
 <!--
 Optional. Free-form notes from the reviewer that did not crystallise into a numbered open item.

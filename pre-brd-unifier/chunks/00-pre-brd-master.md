@@ -9,15 +9,7 @@ PART OF: PRE-BRD Master
 
 A pre-BRD (pre Business Requirements Document) is the discovery layer that runs before a full BRD is authored. It validates that an idea is worth building by working through five tiers of analysis: idea definition, market and competition, prioritization, strategy and planning, and a final go / no-go synthesis.
 
-This master indexes every framework in the pre-BRD as a separate Markdown file. Each linked file is a blank, fill-ready template: it keeps the framework definition, the section structure, and any scoring or calculation rules, but carries no sample values. A separate fill-skill is responsible for populating the answer slots.
-
-## Fill contract (for the fill-skill author)
-
-- Every value the skill must supply lives in an empty cell of an **Answer** column (descriptive frameworks) or an empty value cell of a scoring table. Guidance / description columns are read-only context for the agent and must not be overwritten.
-- Calculation rules and formulas are stated in prose inside each file. The skill computes derived cells (weighted scores, RICE scores, relative market share, composite scores) from the values it enters.
-- Frameworks with a fixed row set (PESTLE, Porter's, SWOT, MoSCoW, Ansoff, Product Lifecycle) keep their rows. Frameworks with a variable row set (EFAS, IFAS, VRIO, BCG, RICE, OKRs, Market Comparison, Roadmap) ship with header-only tables; the skill adds rows.
-- Per-persona frameworks (Value Proposition Canvas, Empathy Map) are filled once per persona; replicate the table block per persona.
-- Files are self describing: the comment block at the top of each chunk identifies its number, title, and tier.
+This master indexes every framework in the pre-BRD as a separate Markdown file. Each linked file keeps the framework definition, the section structure, and the scoring or calculation rules, with its Answer slots filled.
 
 ## How the files are organized
 

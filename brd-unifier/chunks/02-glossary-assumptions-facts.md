@@ -53,10 +53,10 @@ PART OF: BRD - [Project Name]
 
 # Dependencies
 
-<!-- External systems, teams, data sources, third-party services. Use "NA" if none. -->
+<!-- External systems, teams, data sources, third-party services. Use "NA" if none. Status Confirmed means the source, owner and treatment are agreed; it does not prove delivery. -->
 
-| Dependency | Type | Owner | Status | Notes |
-|-----------|------|-------|--------|-------|
-| [System/Team] | [Hard/Soft] | [Owner] | [Confirmed/Pending] | [Description] |
+| Dependency | Type | Owner | Status | Needed before | Notes |
+|-----------|------|-------|--------|---------------|-------|
+| [System/Team] | [Hard/Soft] | [Owner] | [Confirmed/Pending] | [Build of UC-NN / BAT sign-off / Go-live] | [Description] |
 
 <!-- MASTER: [project-slug]-brd-master.md | PREV: 01-executive-summary-and-context.md | NEXT: 03-definitions-and-domain-concepts.md -->

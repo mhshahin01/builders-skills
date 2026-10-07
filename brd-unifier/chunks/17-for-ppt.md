@@ -6,7 +6,7 @@ VERSION: [X.X]
 DEPENDS_ON: 01, 02, 04, 05, 06a+ (every use-case chunk), 07, 08, 09, 10, 11, 13, 14, 15
 PART OF: BRD - [Project Name]
 TYPE: Delivery chunk
-GATE: Locked until 14-todo.md is fully cleared (all five steps Complete with evidence, every to-do item Resolved, Deferred does not count, no override) and chunks 15 and 16 were written without raising a new open item. Never written or refreshed while the gate is shut.
+GATE: Locked until 14-todo.md is fully cleared (all five steps Complete with evidence, every to-do item Resolved, Deferred does not count, no override) and chunks 15 and 16 were written without raising a new open item. Never written or refreshed while the gate is shut; only its status line may change, to Stale (delivery-chunks.md § The delivery gate, Re-lock), and in COMBINED mode its links to the renamed BRD file (delivery-chunks.md § COMBINED mode adaptations).
 MERGE: Excluded. Never part of the merged or combined BRD. Not an input to sdd-unifier.
 PURPOSE: (A) a presentation-ready brief of the Statement of Work and the use cases, usable as input to a deck-generating agent; (B) a coherent series of 30-second use-case videos with storyboards and generation prompts.
 RULES: delivery-chunks.md in the brd-unifier skill. Nothing here adds or changes a requirement. An item raised while writing this brief is labelled Provisional with its TD reference.

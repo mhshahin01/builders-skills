@@ -8,7 +8,7 @@ PART OF: LLD - [Project Name]
 
 # 12. Cross-Cutting Concerns
 
-> **Convention:** these are platform-wide rules. Per-service overrides live in `04-implementation/<service>.md`. If a service deviates from a default here, it must justify the override in its own file and link back to this section.
+> **Convention:** these are platform-wide rules. Per-service overrides live in `04-implementation/<service>.md`, except per-instance resilience settings, which live in the § 12.3 instance table with their source. If a service deviates from another default here, it must justify the override in its own file and link back to this section.
 
 ## 12.1 Authentication & Tenant Resolution
 
@@ -29,7 +29,7 @@ PART OF: LLD - [Project Name]
 | Header | `Idempotency-Key` (max 64 chars) |
 | Required on | All write endpoints touching money / wallet / notifications / external providers (CLAUDE.md) |
 | Dedup tuple | `(tenant_id, idempotency_key)` |
-| TTL | 24 hours |
+| TTL | [The SDD's dedup window (its §15 contract Behaviour row, or the owner's `13x` API Standards) when it states one, with one value per contract where they differ; otherwise 24 hours, an LLD default flagged `> Confirm:`] |
 | Storage | `idempotency_record` table per service |
 | Conflict response | 409 + RFC 9457 ProblemDetails (`type: idempotency/conflict`) |
 | In-flight handling | Wait + retry (caller pattern); server returns 409 immediately |
@@ -45,16 +45,22 @@ PART OF: LLD - [Project Name]
 | Circuit breaker | 50% failure rate over 20-call sliding window, 30s open state | Per-instance `CircuitBreakerConfig` bean |
 | Bulkhead | Per downstream provider, 10 concurrent calls | Per-provider `BulkheadConfig` |
 
+**Instances:** one row per Resilience4j instance; `Default` where a cell equals the defaults above.
+
+| Instance | Caller (service, API ID) | Timeout | Retry | Circuit breaker | Bulkhead | Source |
+|----------|--------------------------|---------|-------|-----------------|----------|--------|
+| `[instanceName]` | `[service-a]`, [API-NN](../sdd-[sdd-slug]/11-api-contracts.md#[api-nn-heading-slug]) | Default | Default | [50% over 10 calls, 60s open] | Default | [SDD §17.X Integrations / LLD default] |
+
 > **Convention:** retries on idempotent calls only. Non-idempotent calls (without an idempotency key) must not be retried automatically.
 
-## 12.4 Outbox Pattern (mandatory for state-changing integration events)
+## 12.4 Outbox Pattern (mandatory for side effects that must follow a state change)
 
-- **Scope:** integration events on the broker (07 § 10.1-10.5). The in-process domain events of 07 § 10.6 are published in process at their transaction phase and use no outbox.
-- **Table:** `outbox` per service schema (see `05-data-model.md`).
-- **Writer:** inserts the outbox row in the same local transaction as the aggregate write, so both commit or neither does. The write path never sends to Kafka directly, inside the transaction or after commit.
+- **Scope:** every side effect that must follow a state change and must not be lost: integration events on the broker (07 § 10.1-10.5), writes to an external provider, and the in-process domain events of 07 § 10.6 whose SDD §14.10 Delivery line is durable (the outbox is then their publication log). In-memory § 10.6 events are published in process at their transaction phase and use no outbox.
+- **Table:** `outbox` per service schema (see `05-data-model.md`). When the SDD names the outbox table, the publication log, or their columns (in a `13x` DB Modeling, for example `outbox_event.published_at`, or for the publication log of a durable §14.10 Delivery line in SDD §11.1), use the SDD names everywhere in this LLD; `outbox` and `processed_at` apply only when it names none.
+- **Writer:** inserts the outbox row in the same local transaction as the aggregate write, so both commit or neither does. The write path never delivers a side effect in scope directly (a Kafka send, a provider call), inside the transaction or after commit.
 - **Publisher:** separate scheduled job with one active instance per service (scheduler lock or leader election), every 1s, batch up to 100 rows, oldest first. A second concurrent publisher would re-send rows and break per-key order.
-- **Processed only after acknowledgement:** the publisher waits up to `OUTBOX_SEND_TIMEOUT_MS` for the broker acknowledgement (`acks=all`) and only then sets `processed_at`. A failed or timed-out send leaves `processed_at` NULL, so the next poll retries the row; the poll stops at that row to keep per-key order.
-- **At-least-once delivery:** if the broker acknowledges but the `processed_at` update fails (database error, or a crash before the update), the next poll publishes the row again. A failed or timed-out send may also have reached the broker. The payload, including `eventId`, is fixed when the row is written, and consumer dedup is mandatory (`07-event-contracts.md` § 10.4).
+- **Processed only after acknowledgement:** the publisher waits up to `OUTBOX_SEND_TIMEOUT_MS` for the target's acknowledgement (the broker's `acks=all`, the provider's success response, or every listener's commit) and only then sets `processed_at`. A failed or timed-out send leaves `processed_at` NULL, so the next poll retries the row; the poll stops at that row to keep per-key order.
+- **At-least-once delivery:** if the target acknowledges but the `processed_at` update fails (database error, or a crash before the update), the next poll delivers the row again. A failed or timed-out send may also have reached its target. The payload, including `eventId`, is fixed when the row is written, and every receiver dedupes the re-send (broker consumers: `07-event-contracts.md` § 10.4).
 - **Monitoring:** `OutboxBacklog` alert on backlog size and oldest-row age (`10-operations.md` § 13.7).
 
 ## 12.5 Saga Pattern (cross-service transactions)
@@ -73,7 +79,7 @@ PART OF: LLD - [Project Name]
 | `status` | int | HTTP status code |
 | `detail` | string | Specific to this occurrence |
 | `instance` | string | The path that produced the error |
-| `errorCode` (extension) | string | From an SDD: the SDD §15.1 standard code or the contract's domain code, verbatim (`VALIDATION_FAILED`, `PAYOUT_REFUSED`); from code with no SDD: the code the service returns |
+| `errorCode` (extension) | string | From an SDD: the SDD §15.1 standard code or the contract's domain code, verbatim (`VALIDATION_FAILED`, `[DOMAIN_CODE]`); from code with no SDD: the code the service returns |
 | `traceId` (extension) | string | OpenTelemetry trace ID |
 | `errors` (extension) | array | For validation failures: list of field-level errors |
 
@@ -86,7 +92,7 @@ PART OF: LLD - [Project Name]
 | Concern | Choice |
 |---------|--------|
 | Format | JSON (structured) |
-| Mandatory fields | `ts`, `level`, `service`, `traceId`, `spanId`, `tenantId` (never PII), `event`, `attrs` |
+| Mandatory fields | The SDD §11.4 Logging fields, verbatim; when it names none: `ts`, `level`, `service`, `traceId`, `spanId`, `correlationId`, `event`, `attrs`. No PII at INFO; the tenant ID only at DEBUG (Level for tenant context) |
 | Use-case field | `use_case`: the keyed BRD use case ID(s) of the entry point handling the request (`REFUNDS/UC-04`), from the log MDC (§ 12.8). Absent on platform endpoints. |
 | Level for tenant context | DEBUG (never INFO per CLAUDE.md) |
 | Level for `use_case` | Any level, INFO included: a use case ID is not tenant data or PII |
@@ -109,10 +115,10 @@ PART OF: LLD - [Project Name]
 |---------|--------|--------|
 | Attribute | `use_case` on the server or consumer span of every entry point SDD §7.3 lists for an in-scope use case, and the same key in the log MDC | [LLD convention / SDD §11.4] |
 | Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`). An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`) | SDD §7.3 |
-| Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (`UC-01` would match `UC-010`) | LLD convention |
+| Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (it also matches a longer ID that contains the one searched for) | LLD convention |
 | Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
 | Not set | Platform endpoints (health, actuator, sign-in) | LLD convention |
-| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (`14-frontend.md` § 17.3); `use_case` joins the route's `useCases` in the Value form | LLD convention |
+| Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (`14-frontend.md` § 17.3); `use_case` joins the route's `useCases` in the Value form when present; a screen-only Workflow route has no `use_case` | LLD convention |
 
 > Confirm: `use_case` is an LLD convention; the SDD does not settle a use case attribute (drop this flag when SDD §11.4 or a 13x Observability section names one).
 

@@ -87,6 +87,27 @@ for uc, row in s73.items():
         problems.append(f"{uc} {key} UAT/BAT should be Pending")
     blocks[uc]["screens_field"] = fields.get("Screens", "")
 
+# ---- Workflow blocks (### Workflow: [name]): behaviour the BRD or SDD asks for that no use case covers (L2-6)
+workflows = []
+for fn in sorted(os.listdir(os.path.join(LLD, "04-implementation"))):
+    lines = read(os.path.join(LLD, "04-implementation", fn)).splitlines()
+    for i, line in enumerate(lines):
+        m = re.match(r"^### Workflow: (.+)$", line)
+        if m:
+            end = next((k for k in range(i + 1, len(lines)) if re.match(r"^#{1,3} ", lines[k])), len(lines))
+            trace = next((l for l in lines[i + 1:i + 4] if l.startswith("> **Traceability:**")), None)
+            workflows.append(dict(file=fn, name=m.group(1).strip(), trace=trace, body="\n".join(lines[i:end])))
+for w in workflows:
+    t = w["trace"] or ""
+    if not t.startswith("> **Traceability:** No BRD use case - realises ") or "](" not in t:
+        problems.append(f"04 {w['file']} Workflow '{w['name']}': traceability line is not 'No BRD use case - realises [link ...]': {(w['trace'] or 'none')[:100]}")
+    ids = sorted(set(re.findall(r"(?:(?:REFUNDS|LOYALTY)/)?UC-\d\d", w["name"] + " " + t)))
+    if ids:
+        problems.append(f"04 {w['file']} Workflow '{w['name']}' carries use case ID(s): {', '.join(ids)}")
+    ucs = sorted(set(re.findall(r"@UseCase\([\"']?((?:(?:REFUNDS|LOYALTY)/)?UC-\d\d)", w["body"])))
+    if ucs:
+        problems.append(f"04 {w['file']} Workflow '{w['name']}' carries @UseCase: {', '.join(ucs)}")
+
 # ---- 14 17.3 routes
 routes = []
 fe = read(os.path.join(LLD, "14-frontend.md"))
@@ -103,18 +124,25 @@ for uc, b in blocks.items():
     if sorted(exp_routes) != sorted(got_routes):
         problems.append(f"{uc} screens field routes {got_routes} vs 17.3 {exp_routes}")
 for r in routes:
-    if not r[1] and "None - platform page" not in r[3]:
-        problems.append(f"route {r[0]} has no screen and is not a platform page")
+    if r[1] or "None - platform page" in r[3]:
+        continue
+    if r[3].startswith("None - no BRD screen ("):
+        if "](" not in r[3]:
+            problems.append(f"route {r[0]}: Workflow route screen cell has no link: {r[3][:80]}")
+        continue
+    problems.append(f"route {r[0]} has no screen and is not a platform page")
 
 # route data matches rows
 for r in routes:
     if not r[1]:
         continue
     path = r[0].lstrip("/")
-    m = re.search(r"path: '" + re.escape(path) + r"'.*?data: \{ screen: '([^']+)', useCases: \[([^\]]*)\] \}", fe, re.S)
+    # Bound the match to this route, so a missing data field cannot borrow the next one.
+    route = re.search(r"\{\s*path:\s*'" + re.escape(path) + r"'(?:(?!\{\s*path:|```)[\s\S])*", fe)
+    m = re.search(r"data:\s*\{\s*screen:\s*'([^']+)'(?:,\s*useCases:\s*\[([^\]]*)\])?\s*\}", route.group(0)) if route else None
     if not m:
         problems.append(f"route {r[0]}: no route data"); continue
-    scr = m.group(1); ucs = re.findall(r"'([^']+)'", m.group(2))
+    scr = m.group(1); ucs = re.findall(r"'([^']+)'", m.group(2) or "")
     if [scr] != r[1] or sorted(ucs) != sorted(r[2]):
         problems.append(f"route {r[0]} data {scr} {ucs} vs row {r[1]} {r[2]}")
 
@@ -147,15 +175,31 @@ for key, rows in mockups.items():
         notes.append(f"{key} BRD chunk 14 Mockup coverage rows without an MK-NN ID: {odd}")
 for r in routes:
     for key, ident, target in SCREEN_REF.findall(r[3]):
-        if ident.startswith("MK-"):
-            if ident not in mockups[key]:
-                problems.append(f"route {r[0]}: {key}/{ident} is not a row of BRD chunk 14 Mockup coverage")
-            elif {u.split("/")[1] for u in r[2] if u.startswith(key + "/")} != mockups[key][ident]:
-                problems.append(f"route {r[0]}: use cases {r[2]} vs {key}/{ident} row {sorted(mockups[key][ident])}")
+        if ident in mockups[key]:
             if not target.endswith("14-todo.md#mockup-coverage"):
                 problems.append(f"route {r[0]}: {key}/{ident} links to {target}, not 14-todo.md#mockup-coverage")
+            if not r[4].startswith("None - no BRD use case (") and {u.split("/")[1] for u in r[2] if u.startswith(key + "/")} != mockups[key][ident]:
+                problems.append(f"route {r[0]}: use cases {r[2]} vs {key}/{ident} row {sorted(mockups[key][ident])}")
+        elif ident.startswith("MK-"):
+            problems.append(f"route {r[0]}: {key}/{ident} is not a row of BRD chunk 14 Mockup coverage")
         elif not re.search(r"(?<![\w-])" + re.escape(ident) + r"(?![\w-])", texts[key]):
             problems.append(f"route {r[0]}: screen ID {key}/{ident} is not in the {key} BRD text")
+
+# Workflow route forms (14-frontend.md §17.3 column descriptions; L2-6, C6)
+for r in routes:
+    if r[3].startswith("None - no BRD screen ("):
+        if not (r[4].startswith("None - no BRD screen (") and "](" in r[4]):
+            problems.append(f"route {r[0]}: a Workflow route reads 'None - no BRD screen ([link])' in both BRD columns, not {r[4][:80]!r}")
+        if re.search(r"path: '" + re.escape(r[0].lstrip("/")) + r"'[^}]*data:", fe):
+            problems.append(f"route {r[0]}: a Workflow route carries no route data")
+    if r[4].startswith("None - no BRD use case ("):
+        refs = SCREEN_REF.findall(r[3])
+        if not refs:
+            problems.append(f"route {r[0]}: 'None - no BRD use case' but the Screen cell names no screen reference")
+        elif refs[0][1] not in mockups[refs[0][0]]:
+            problems.append(f"route {r[0]}: 'None - no BRD use case' needs a screen with a chunk 14 row; {refs[0][0]}/{refs[0][1]} is not a row")
+        if "](" not in r[4]:
+            problems.append(f"route {r[0]}: Workflow route Use cases cell has no link: {r[4][:80]}")
 for uc, b in blocks.items():
     got = set()
     for part in re.split(r"(?=\[(?:REFUNDS|LOYALTY)/)", b.get("screens_field", "")):
@@ -198,23 +242,98 @@ for line in idx.splitlines():
         if any(c != "-" for c in cells[3:8]):
             problems.append(f"index {uc} merged row has mapping values")
 
-# ---- @UseCase tables vs 7.3
-for fn in sorted({r["owner"] + ".md" for r in s73.values() if r["status"] == "Active"}):
-    path = os.path.join(LLD, "04-implementation", fn)
-    if not os.path.isfile(path):
+# ---- @UseCase per 7.3 entry point, read from 04 7.2
+UC_ID = re.compile(r"(?:REFUNDS|LOYALTY)/UC-\d\d")
+REST = re.compile(r"^(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) /")
+
+
+def norm(ep):
+    return re.sub(r"\s+", " ", ep).strip()
+
+
+active_eps = {uc: [norm(e) for e in re.findall(r"`([^`]+)`", r["entry"])] for uc, r in s73.items() if r["status"] == "Active"}
+
+
+def anchors_7_2(txt):
+    m = re.search(r"^## 7\.2\b.*$", txt, re.M)
+    sec = txt[m.end():] if m else ""
+    n = re.search(r"^## ", sec, re.M)
+    lines = (sec[:n.start()] if n else sec).splitlines()
+    traced, rows = {}, []
+    for i, line in enumerate(lines):
+        if not line.startswith("|") or (i and lines[i - 1].startswith("|")) or i + 1 >= len(lines) or not re.match(r"^\|\s*:?-{3}", lines[i + 1]):
+            continue
+        head = [c.strip() for c in line.strip().strip("|").split("|")]
+        ep_col = next((h for h in head if h.startswith("Entry point")), None)
+        uc_col = next((h for h in head if "@UseCase" in h), None)
+        for row in lines[i + 2:]:
+            if not row.startswith("|"):
+                break
+            c = dict(zip(head, [x.strip() for x in row.strip().strip("|").split("|")]))
+            if ep_col and uc_col:
+                for ep in re.findall(r"`([^`]+)`", c.get(ep_col, "")):
+                    traced.setdefault(norm(ep), []).extend(UC_ID.findall(c.get(uc_col, "")))
+            elif head[:2] == ["Class", "Endpoints"]:
+                notes, cell = c.get("Notes", ""), c.get("Endpoints", "")
+                eps = [norm(p) for t in re.findall(r"`([^`]+)`", cell) for p in re.split(r",\s*(?=[A-Z]+ /)", t)]
+                listed = re.search(r"`@UseCase` values?:?\s*(.+?)\s+in that order", notes)
+                values = re.findall(r"`([^`]+)`", listed.group(1)) if listed else re.findall(r'@UseCase\("([^"]*)"\)', notes)
+                rows.append(dict(cls=c.get("Class", ""), text=" ".join((c.get("Class", ""), cell, notes)),
+                                 rest=[e for e in eps if REST.match(e)], values=values, ordered=bool(listed)))
+    return traced, rows
+
+
+anchors = {fn: anchors_7_2(read(os.path.join(LLD, "04-implementation", fn))) for fn in sorted(os.listdir(os.path.join(LLD, "04-implementation")))}
+how = {"one by one": 0, "by Controllers row only": 0, "not found": 0}
+checked = set()
+for uc, eps in active_eps.items():
+    fn = s73[uc]["owner"] + ".md"
+    if fn not in anchors:
+        problems += [f"no @UseCase for {uc} {e}: no 04 file {fn}" for e in eps]
         continue
-    txt = read(path)
-    for m in re.finditer(r"^\| `([A-Z]+ [^`]+)` \| `[^`]+` \| `((?:REFUNDS|LOYALTY)/UC-\d\d)` \|", txt, re.M):
-        ep, uc = m.group(1), m.group(2)
-        if f"`{ep}`" not in s73[uc]["entry"]:
-            problems.append(f"@UseCase {uc} on {ep} not in 7.3 entry points")
-all_eps = [(uc, e) for uc, r in s73.items() for e in re.findall(r"`([^`]+)`", r["entry"])]
-for uc, e in all_eps:
-    owner_file = os.path.join(LLD, "04-implementation", s73[uc]["owner"] + ".md")
-    owner_txt = read(owner_file) if os.path.isfile(owner_file) else ""
-    row = re.search(r"^\| `" + re.escape(e) + r"` \| `[^`]+` \| `" + re.escape(uc) + r"` \|", owner_txt, re.M)
-    if not row and not (f'@UseCase("{uc}")' in owner_txt and e in owner_txt):
-        problems.append(f"no @UseCase for {uc} {e} in {s73[uc]['owner']}.md")
+    traced, rows = anchors[fn]
+    for e in eps:
+        if e in traced:
+            got, where = traced[e], "its traced entry point row"
+        else:
+            if REST.match(e):
+                hit = [r for r in rows if e in r["rest"]]
+            else:
+                name = e.split(":", 1)[-1].strip()
+                hit = [r for r in rows if re.search(r"(?<![\w-])" + re.escape(name) + r"(?![\w-])", r["text"])]
+            one = [r for r in hit if REST.match(e) and (len(r["rest"]) == 1 or (r["ordered"] and len(r["values"]) == len(r["rest"])))]
+            if not hit:
+                how["not found"] += 1
+                problems.append(f"no @UseCase for {uc} {e} in {fn}: no §7.2 row lists this entry point")
+                continue
+            if not one:
+                how["by Controllers row only"] += 1
+                carried = sorted({t for r in hit for v in r["values"] for t in UC_ID.findall(v)})
+                if uc not in carried:
+                    problems.append(f"no @UseCase for {uc} {e} in {fn}: its §7.2 row ({', '.join(r['cls'] for r in hit)}) carries {carried or 'none'}")
+                continue
+            r = one[0]
+            got = UC_ID.findall(r["values"][r["rest"].index(e)] if r["ordered"] and len(r["values"]) == len(r["rest"]) else ",".join(r["values"]))
+            where = f"§7.2 {r['cls']}"
+        how["one by one"] += 1
+        want = [u for u, x in active_eps.items() if e in x]
+        if uc not in got:
+            problems.append(f"no @UseCase for {uc} {e} in {fn}: {where} carries {got or 'none'}")
+        elif got != want and (fn, e) not in checked:
+            problems.append(f"@UseCase on {e} in {fn} is {','.join(got)}; §7.3 lists it under {','.join(want)}")
+        checked.add((fn, e))
+for fn, (traced, rows) in anchors.items():
+    for e, got in traced.items():
+        for t in got:
+            if (fn, e) not in checked and e not in active_eps.get(t, []):
+                problems.append(f"@UseCase {t} on {e} in {fn}: §7.3 does not list it under {t}")
+    for r in rows:
+        for t in sorted({t for v in r["values"] for t in UC_ID.findall(v)}):
+            if t not in active_eps:
+                problems.append(f"@UseCase {t} in {fn} §7.2 {r['cls']}: not an Active §7.3 use case")
+            elif r["rest"] and not set(r["rest"]) & set(active_eps[t]):
+                problems.append(f"@UseCase {t} in {fn} §7.2 {r['cls']}: §7.3 lists none of its endpoints under {t}")
+print("@UseCase anchors in 04 §7.2, per §7.3 use case and entry point:", ", ".join(f"{n} {k}" for k, n in how.items()))
 
 # ---- 13 16.8 specs vs chunk 16
 t13 = read(os.path.join(LLD, "13-testing.md"))
@@ -289,7 +408,7 @@ for i, line in enumerate(lines):
             problems.append(f"06 §9.1 {' '.join(key)}: token {mine!r} vs SDD {token!r}")
         if "API ID (§15)" in head and re.findall(r"API-\d\d", c.get("API ID (§15)", "")) != apis:
             problems.append(f"06 §9.1 {' '.join(key)}: API ID {c.get('API ID (§15)')!r} vs SDD {apis}")
-tokens = set(re.findall(r"^\| `([a-z]+\.[a-z]+\.[a-z\-]+)` \|", read(os.path.join(SDD, "12-centralized-user-roles.md")), re.M))
+tokens = set(re.findall(r"^\| `([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)` \|", read(os.path.join(SDD, "12-centralized-user-roles.md")), re.M))
 for fn in sorted(os.listdir(os.path.join(LLD, "04-implementation"))):
     lines = read(os.path.join(LLD, "04-implementation", fn)).splitlines()
     if not any(line.startswith("| Entry point | Kind |") for line in lines):
@@ -305,7 +424,7 @@ for fn in sorted(os.listdir(os.path.join(LLD, "04-implementation"))):
         for row in lines[i + 2:]:
             if not row.startswith("|"):
                 break
-            for t in re.findall(r"`([a-z]+\.[a-z]+\.[a-z\-]+)`", dict(zip(head, split_row(row))).get(col, "")):
+            for t in re.findall(r"`([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)`", dict(zip(head, split_row(row))).get(col, "")):
                 if t not in tokens:
                     problems.append(f"04 {fn}: token {t} not in SDD §16.11")
 if any(re.match(r"^\| API-\d\d \|", l) and split_row(l)[4:5] == ["Internal"] for l in c11.splitlines()):

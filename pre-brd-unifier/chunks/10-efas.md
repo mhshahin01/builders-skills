@@ -13,13 +13,17 @@ Part of the SWOT analysis. EFAS focuses on identifying external opportunities an
 
 - Type: Opportunity (O) or Threat (T).
 - Weight: importance of the factor, from 0 to 1. The sum of all factor weights must equal 1.
-- Rating: how strong the factor is or how likely it is to occur, from 1 (poor / weak) to 5 (strong).
+- Rating: how well the product's strategy responds to the factor, from 1 (poor response) to 5 (strong response). Rate threats the same way: a threat the strategy handles well gets a high rating.
 - Weighted score = Weight x Rating, computed per factor.
 - Total score = sum of all weighted scores.
 
-Add one row per external factor.
+List exactly 5 external factors, one per row, with at least one opportunity.
 
 | External factor (opportunity or threat) | Type (O/T) | Weight (0 to 1) | Rating (1=Poor to 5=Strong) | Weighted score | Comments |
 |---|---|---|---|---|---|
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
 |  |  |  |  |  |  |
 |  | **Total** |  |  |  |  |

@@ -6,6 +6,14 @@ One tracker is one review session (`apply-and-verify.md`). It is also the
 record of what the session versioned and what it handed to the owning
 skills.
 
+Its companion, `./review-panel-findings.md`, keeps every raw finding in
+the finding schema (`panel-orchestration.md`), so the reviewers' Why and
+Direction survive the session. Each finding sits under the point it ended
+in, one heading per point (`## <ID>: <short concern>`). The file is
+written at the merge, takes the findings of any re-dispatch the user
+asks for before the walkthrough (`panel-orchestration.md` § Merge rules,
+rule 6), and is never edited after the walkthrough starts.
+
 ## Template
 
 ```markdown
@@ -17,6 +25,8 @@ skills.
 Principal Architect (PA), Document Consistency (DC)[, add-ons]
 **SME domain:** <confirmed domain, e.g., residential compound and community operations>
 **Status values:** Pending | Decided | Applied | Partially applied | Rejected | Deferred
+**Panel findings:** [review-panel-findings.md](review-panel-findings.md)
+**Panel notes:** <a reviewer whose re-dispatch still returned nothing: the persona, the areas it named clean, and the evidence; omit the line when there is none>
 
 | ID | Reviewer | Concern (short) | Target doc(s) | Status | Decision |
 |----|----------|-----------------|---------------|--------|----------|
@@ -26,7 +36,8 @@ Principal Architect (PA), Document Consistency (DC)[, add-ons]
 
 **Versioning (YYYY-MM-DD):** <per-doc version bumps (old to new, the Changes Log row), renames, citation updates>
 
-**Verification pass (YYYY-MM-DD):** <score, remnants found and fixed>
+**Verification pass (YYYY-MM-DD):** <score, before the fixes>; <N> remnants: <fixed>, <left for the hand-off>, <rejected>
+1. <remnant> (<point ID>): <the fix, the hand-off that takes it, or why it was rejected>
 
 **Hand-offs (YYYY-MM-DD):**
 1. <skill>: "<request>" on <document> - To run | Done
@@ -47,9 +58,11 @@ Principal Architect (PA), Document Consistency (DC)[, add-ons]
   separately.
 - **Concern (short)**: one line, readable without the source documents.
 - **Target doc(s)**: doc ids + sections, comma-separated; update if apply
-  reveals more affected docs than the reviewer cited.
+  or a verify fix reveals more affected docs than the reviewer cited.
 - **Status**: exactly one of the six values. Decided means the user chose
-  but edits are not yet made; Applied means every affected doc reflects it.
+  but edits are not yet made; Applied means every affected doc the review
+  may edit reflects it, and the rest is named in a hand-off
+  (`apply-and-verify.md`, Apply rule 6).
 - **Decision**: filled at decision time; states what was ACTUALLY decided
   (which may exceed or fall short of the recommendation). For Partially
   applied, name the declined parts, or the part recorded under Skill
@@ -72,4 +85,6 @@ Principal Architect (PA), Document Consistency (DC)[, add-ons]
   each with that skill and the point ID. `None` when there are none.
 - **Major structural decisions** lists only decisions that changed the
   shape of the plan (phase moves, reclassifications, deployment-model
-  corrections), not every applied edit.
+  corrections, or a use case, service, event, or objective added, removed,
+  or narrowed), not every applied edit, and not a template structure (that
+  goes under Skill changes requested).

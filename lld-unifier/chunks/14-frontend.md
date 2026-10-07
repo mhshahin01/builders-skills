@@ -43,8 +43,8 @@ NOTE: This chunk is OMITTED when the LLD scope has no UI surface. Do not stub it
 
 <!--
 Every route has a row (sdd-to-lld.md § Use-case traceability). This table is the home of route -> screen; a screen's use cases are read from the BRD, never guessed from the route.
-  Screen (BRD): the MK-NN of the screen or flow the route implements, from BRD chunk 14 Mockup coverage (one row per screen or flow, the screen reference), linked to 14-todo.md#mockup-coverage; or the screen ID, only where the BRD text carries one from its source (brd-unifier never defines one), linked to the heading that carries it; else "None - platform page" (sign-in, not found, the shell).
-  Use cases (BRD): the use cases the BRD gives that screen (its MK-NN row, or the UI/UX sections that name it), linked to their BRD headings; "None - platform page" for platform pages.
+  Screen (BRD): the ID of the BRD chunk 14 Mockup coverage row (one row per screen or flow, the screen reference) of the screen or flow the route implements, linked to 14-todo.md#mockup-coverage: its MK-NN, or in a BRD written before MK-NN the screen ID that keys the row. The chunk 14 row wins; only a screen ID with no chunk 14 row, where the BRD text carries one from its source (brd-unifier never defines one), links to the heading that carries it. Else "None - platform page" (sign-in, not found, the shell), or "None - no BRD screen ([link])" for a route that serves a Workflow block (behaviour no use case covers, such as a BRD chunk 09 report). When that screen has a chunk 14 row, the row wins: cite its ID here.
+  Use cases (BRD): the use cases the BRD gives that screen (its chunk 14 row, or for a screen ID with no row the UI/UX sections that name it), linked to their BRD headings; "None - platform page" for platform pages; "None - no BRD screen ([link])" for a Workflow route, which carries no route data; "None - no BRD use case ([link])" for a Workflow route whose screen has a chunk 14 row, whose route data carries the screen only.
 Every BRD ID carries the key from the SDD's Source BRDs register. Every active use case with a screen the actor sees has at least one route; a use case with neither a screen ID nor an MK-NN gets "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN".
 Route paths and components are this LLD's design choice (from-sdd: "> Confirm:"). With no source BRD, the two BRD columns read "Not applicable - no source BRD".
 -->
@@ -55,7 +55,7 @@ Route paths and components are this LLD's design choice (from-sdd: "> Confirm:")
 | `/foo/:id` | `FooDetailComponent` | [[KEY]/MK-02](../brd-[brd-slug]/14-todo.md#mockup-coverage) | [[KEY]/UC-02](../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-02-[title-slug]) | `authGuard`, `tenantGuard` | Yes |
 | `/login` | `LoginComponent` | None - platform page | None - platform page | - | Yes |
 
-**Use-case context at runtime.** Every route that implements a BRD screen carries it in its route data, so a frontend error report names the screen and the use case:
+**Use-case context at runtime.** Every route that implements a BRD screen carries it in its route data. It carries use cases only when the BRD names them for that route. A Workflow route with no BRD use case carries `screen` only. The route configuration lists each such route with its own `data` entry, one per table row with a BRD screen; a sentence that summarises the rest does not count:
 
 ```ts
 {
@@ -65,7 +65,7 @@ Route paths and components are this LLD's design choice (from-sdd: "> Confirm:")
 }
 ```
 
-The global `ErrorHandler` and the frontend telemetry read the data of the deepest active route and attach `screen` and `use_case` to every error report and RUM span (`09-cross-cutting.md` § 12.8). Platform pages carry no such data.
+The global `ErrorHandler` and the frontend telemetry read the data of the deepest active route and attach its `screen` to every error report and RUM span; they attach `use_case` only when that route has `useCases` (`09-cross-cutting.md` § 12.8). Platform pages carry no such data.
 
 ## 17.4 PrimeNG Components Used
 

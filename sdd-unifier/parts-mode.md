@@ -54,7 +54,7 @@ Inside part 2, keep the contract generation order from SKILL.md step 6: draft th
 Show a short part summary:
 
 - The files written, and the chunks of earlier parts that were changed by the back-fill, with the reason.
-- Counts: services, ADRs, Mermaid figures, `[NEEDS CLARIFICATION: ...]` markers in this part. Derive-from-BRD: the source BRDs with their keys (part 1: say the keys are now fixed), the cross-BRD conflicts found, and per BRD the use cases with an owner vs flagged in §7.3. In part 2 also: topics, events, roles, API contracts (`Defined`, `TBD - external`, `Flagged`), and the number of contract divergences flagged.
+- Counts: services, ADRs, Mermaid figures, `[NEEDS CLARIFICATION: ...]` markers in this part. Derive-from-BRD: the source BRDs with their keys (part 1: say the keys are now fixed, and name any source BRD whose cover is not `Approved`), the cross-BRD conflicts found, and per BRD the use cases with an owner vs flagged in §7.3. In part 2 also: topics, events, roles, API contracts (`Defined`, `TBD - external`, `Flagged`), and the number of contract divergences flagged; derive-from-BRD, the endpoints proposed for the §7.3 entry points (method and path), named as proposals to review.
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 
@@ -68,7 +68,7 @@ When the user gives corrections: apply them to the existing chunks first, rerun 
 
 ### End of part 3
 
-Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 18), the open items acceptance loop (step 8), the e2e gate check (step 8b: chunk 19 is written only if E1-E4 are met, otherwise it stays `Locked` and the handoff lists what is open), the final `[project-slug]-sdd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on chunks 00-17.
+Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 18), the open items acceptance loop (step 8), the e2e gate check (step 8b: chunk 19 is written only if E1-E4 are met, otherwise it stays `Locked` and the handoff lists what is open), the final `[project-slug]-sdd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on chunks 00-17. Later updates run the delta review (SKILL.md step 7, On an update).
 
 ---
 
@@ -93,19 +93,20 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 - [ ] Every active service row in 09 has a `13x` chunk at the bar of `sdd-quality.md`; no `13x` chunk exists without a 09 row.
 - [ ] Contract reconciliation (SKILL.md step 6a) has run: topic and event names match chunk 10 character-for-character; every consumed event has exactly one producer; consumer lists agree from both sides; every payload field a consumer relies on exists in §14.9; role names and permission tokens match chunk 12.
 - [ ] Modular monolith or hybrid core: every in-process domain event a module publishes or handles matches §14.10 by name, publisher module, listener modules, and DTO fields, from both sides.
-- [ ] Every synchronous integration has an `API-NN` in chunk 11: an HTTP contract with method, URI, headers, parameters, body, responses, HTTP error codes, security, and auth; an `Internal (in-process)` contract (module to module through a port) with its port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), and its permission token instead. The §15.4 coverage matrix has no uncovered row; method and URI in each `13x` List of APIs match chunk 11 (HTTP contracts only); external contracts are `TBD - external` with nothing invented.
+- [ ] Every synchronous integration (domain or provider; standard operational infrastructure is not one: SKILL.md step 6a) has an `API-NN` in chunk 11: an HTTP contract with method, URI, headers, parameters, body, responses, HTTP error codes, security, and auth; an `Internal (in-process)` contract (module to module through a port) with its port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), its permission token, and its behaviour (idempotency and transaction) instead. The §15.4 coverage matrix has no uncovered row; method and URI in each `13x` List of APIs match chunk 11 (HTTP contracts only); external contracts are `TBD - external` with nothing invented.
+- [ ] The data-model check of SKILL.md step 6a has run on every `13x` DB Modeling, and what it found is fixed or flagged.
 - [ ] Every divergence that could not be fixed is flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12 with Status `Open`, and every row in those registers has a Status (`Open` / `Fixed in vX.X`).
 - [ ] Per-service authorization notes agree with the BRD Users & Use Cases Matrix (derive-from-BRD), or the difference is flagged.
 - [ ] Derive-from-BRD: §7.3 Entry points, APIs, and Events are filled, every Owner links to its `13x` chunk, and the use-case traceability check of step 6a passes (every owned use case is cited in its owner's Business Logic; no active use case lacks an entry point, or it is flagged).
 - [ ] 09, 04, 05, and 08 match the service chunks after the back-fill.
-- [ ] No per-service DB model, API list, or Event Model was invented from the BRD alone; missing architect input is flagged.
+- [ ] No per-service DB model, API list, or Event Model was invented from the BRD alone; missing architect input is flagged. Derive-from-BRD: an endpoint proposed for a §7.3 entry point carries only its method and path, its fields are flagged, and the part summary names it as a proposal.
 - [ ] No decision-process narration in content chunks. Clarifications raised or decided in this part are recorded in `decision-log.md` with working rule-home links.
 
 **Part 3**
 
 - [ ] Every BRD NFR is quantified into a technical target in 14, or flagged; no target, capacity number, or version pin was invented.
 - [ ] Every environment in 15 and every runbook procedure in 16 is concrete (the good-procedure bar of `sdd-quality.md`), or flagged.
-- [ ] Chunk 18 exists and every OI has a decision or is listed as open in the handoff; chunk 19 is written only when the e2e gate is open, and then its counts, names, and edges trace to 09 / 10 / 11 / 12 / 13x with nothing owned by those chunks restated.
+- [ ] Chunk 18 exists and every OI has a decision or is listed as open in the handoff; chunk 19 is written only when the e2e gate is open, and then its counts, names, edges, and claims trace to chunks 02 to 13x with nothing owned by those chunks restated, and its faithfulness check (SKILL.md step 8b) has run, with every mismatch fixed in chunk 19.
 - [ ] The back-fill of 00, 01, 06, 07, and 09 is done.
 - [ ] No decision-process narration in content chunks. Accepted open items are applied as plain design text; their narrative is in `decision-log.md` with working rule-home links.
 
@@ -125,22 +126,23 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 | Part | Chunks | Status | Completed |
 |------|--------|--------|-----------|
 | 1 | 00-09 | Complete | 2026-09-27 |
-| 2 | 13x, 10, 12, 11 | Complete (reconciled 2026-09-28) | 2026-09-28 |
+| 2 | 13x, 10, 12, 11 | Complete (reconciled: see the Reconciled entry) | 2026-09-28 |
 | 3 | 14-18, 19 (gated) | In progress (14-17 written; reviewer next) | - |
 
-**Reconciled:** 2026-09-28
+**Reconciled:** 2026-09-28, step 6a by the author, part 2 request, run after the last part 2 edit (§7.3 filled)
 **E2E gate (chunk 19):** Locked - E1 (chunk 18 not written yet)
+**E2E basis:** None (chunk 19 not written)
 ```
 
 - Write the **Source** line in part 1: the path of every source file (every source BRD's master or combined file), or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
 - Status is `Pending`, `In progress ([last step done])`, or `Complete`. Parts 2 and 3 have several steps, so record each one as it finishes. Part 2: `13x written`, `10 written`, `12 written`, `11 written`, `7.3 filled` (derive-from-BRD), `reconciled`. Part 3: `14-17 written`, `18 written`, `acceptance loop done`, `19 written` or `19 Locked (gate shut)`. Part 3 becomes `Complete` when the gate check has run: chunk 19 is then either written or `Locked`, and a later request refreshes it through SKILL.md step 8b.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
 - Chunk 00 shows `**Status:** Draft - part N of 3` until part 3 is complete, then `Draft`.
-- During the first build, the version does not change between parts. The Changes Log keeps one "Initial draft" row, dated when part 3 completes; the acceptance loop in part 3 then adds its own row as usual (SKILL.md step 8).
+- During the first build, the version stays 1.0 and the Changes Log keeps one "Initial draft" row, dated when part 3 completes. The review, the acceptance loop, and the e2e gate check of part 3 belong to that build: they bump nothing and add no row. After part 3 is complete, any content change follows SKILL.md § Output conventions, Versions.
 - PREV / NEXT footers may point at a chunk that does not exist yet. That is expected until its part is written.
 - When part 3 is complete, remove nothing: keep the table with all three parts `Complete`. It is the record of how the SDD was built.
 
-In `whole` runs, **Generation:** reads `whole` and the Part table is left out; the Intent, Source, Reconciled, and E2E gate lines stay.
+In `whole` runs, **Generation:** reads `whole` and the Part table is left out; the Intent, Source, Reconciled, E2E gate, and E2E basis lines and the E3 marker inventory stay. The Changes Log's Initial draft row, dated when the run completes, is the record of its completion.
 
 ---
 
@@ -159,6 +161,6 @@ When the skill is invoked on a folder whose `[project-slug]-sdd-master.md` shows
 
 **The user asks for a later part while an earlier one is pending.** Explain the order and offer the next pending part. Do not skip.
 
-**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 18 that points into the part, and keep every ADR and ecosystem decision recorded in `decision-log.md` unless the user reverses it. Then, for every later part that is already complete: rerun its back-fill and exit checklist (for part 2, rerun step 6a), and tell the user what no longer fits (for example, a service chunk whose service was merged away, or events whose producer changed). If part 3 was complete, this is a content change: bump the version and add a Changes Log row, update chunk 18 by status only (the independent reviewer runs again only if the user asks), and mark chunk 19 `Stale` (refresh only through SKILL.md step 8b).
+**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 18 that points into the part, and keep every ADR and ecosystem decision recorded in `decision-log.md` unless the user reverses it. Then, for every later part that is already complete: rerun its back-fill and exit checklist (for part 2, rerun step 6a), and tell the user what no longer fits (for example, a service chunk whose service was merged away, or events whose producer changed). If part 3 was complete, this is a content change: bump the version and add a Changes Log row, update chunk 18 by status only (the delta review of SKILL.md step 7 covers the redone part), and mark chunk 19 `Stale` if it exists (refresh only through SKILL.md step 8b).
 
 **The user switches to `whole` midway.** Write all remaining parts in one run, with no more checkpoints, and record `Generation: parts, completed whole from part N`.

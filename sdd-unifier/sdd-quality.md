@@ -1,6 +1,6 @@
 # SDD Quality
 
-The SDD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones — Architecture Style, Architectural Decisions, per-service Business Logic, Cross-Cutting Concerns, and Operations Runbook.
+The SDD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones: Architecture Style, Architectural Decisions, per-service Business Logic, Cross-Cutting Concerns, and Operations Runbook.
 
 The principle is the same as `use-case-quality.md` in brd-unifier: substantive content, not template-shaped filler.
 
@@ -128,16 +128,16 @@ Each service must have:
 - Peak RPS (the level the service must handle without degradation).
 - p50, p95, p99 latency targets at sustained load.
 
-If any of these are unknown, that's a `[NEEDS CLARIFICATION: ...]` — not "TBD" and not a hand-wave.
+If any of these are unknown, that's a `[NEEDS CLARIFICATION: ...]`, not "TBD" and not a hand-wave.
 
 ### Peak Scenarios
 
 For each peak scenario:
 
-- The trigger (specific event — "month-end batch", "marketing campaign launch", "supplier outage retry storm").
+- The trigger (specific event: "month-end batch", "marketing campaign launch", "supplier outage retry storm").
 - The expected multiplier on baseline load (3x, 10x, 50x).
 - The duration (15 minutes, 4 hours, 24 hours).
-- The mitigation (autoscale, throttle, queue, degrade gracefully — be specific).
+- The mitigation (autoscale, throttle, queue, degrade gracefully; be specific).
 
 **Bad:** "System should handle peak loads with appropriate scaling."
 
@@ -157,7 +157,7 @@ Restart wallet-core service (single replica)
 2. Identify the failing pod: `kubectl get pods -n prod -l app=wallet-core --field-selector=status.phase!=Running`.
 3. Capture last 200 log lines for post-incident: `kubectl logs <pod-name> -n prod --tail=200 > /tmp/wallet-core-incident-<timestamp>.log`.
 4. Delete the pod: `kubectl delete pod <pod-name> -n prod`. Kubernetes will reschedule.
-5. Verify health: `curl https://wallet-core.prod.internal/actuator/health` — expect `{"status":"UP"}` within 30 seconds.
+5. Verify health: `curl https://wallet-core.prod.internal/actuator/health`. Expect `{"status":"UP"}` within 30 seconds.
 6. If health does not return UP, escalate to the on-call architect; check #wallet-incidents for context.
 ```
 
@@ -176,19 +176,19 @@ Restart wallet-core service (single replica)
 
 ## §14 Centralized Event Hub (and §15 API Contracts, §16 Roles, §24 E2E)
 
-The platform catalogues are only useful if they are **reconciled** — a catalogue that drifts from the per-service chunks is worse than none, because implementers will trust it.
+The platform catalogues are only useful if they are **reconciled**: a catalogue that drifts from the per-service chunks is worse than none, because implementers will trust it.
 
 **Test (event hub):** pick any event in a §17.X consumed table. Is it in the §14.5 catalog with the same name, on the same topic, published by exactly one service, with every payload field the consumer relies on present in §14.9? Pick any producer's published table: does its consumer list equal the union of the consumers' consumed tables? In a modular monolith or hybrid core, pick any event in a module's in-process table: does it match §14.10 by name, publisher module, listener modules, and DTO fields, from both sides? If any check fails and the divergence is not flagged in §14.8 with Status `Open`, the chunk is below the bar.
 
-**Test (roles):** pick any permission token in a §17.X authorization note — is it in the §16.11 grid with the same spelling and the same role set? Does every capability row trace to a BRD UC or an ADR (§16.10)?
+**Test (roles):** pick any permission token in a §17.X authorization note. Is it in the §16.11 grid with the same spelling and the same role set? Does every capability row trace to a BRD UC or an ADR (§16.10)?
 
-**Test (API contracts):** pick any synchronous row in a §17.X Integrations table. Does it carry an `API-NN` that exists in §15.2? For an HTTP contract: are method and URI identical to the service's List of APIs, and does the contract state URI, version, security and auth (a §16 permission token on an internal contract, per §15.1 Authorization by contract type), headers, parameters, body with a sample, responses, error codes with retryability, and behaviour (idempotency, timeout, retries)? For an `Internal (in-process)` contract: does it state the port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), and the permission token, with no invented method or URI? For an external system: are the provider-owned fields `TBD` with a `[TBD - EXTERNAL: ...]` marker instead of plausible invented values?
+**Test (API contracts):** pick any synchronous domain or provider row (not standard operational infrastructure, SKILL.md step 6a) in a §17.X Integrations table. Does it carry an `API-NN` that exists in §15.2? For an HTTP contract: are method and URI identical to the service's List of APIs, and does the contract state URI, version, security and auth (a §16 permission token on an internal contract, per §15.1 Authorization by contract type), headers, parameters, body with a sample, responses, error codes with retryability, and behaviour (idempotency, timeout, retries)? For an `Internal (in-process)` contract: does it state the port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), the permission token, and its behaviour (idempotency and transaction), with no invented method or URI? For an external system: are the provider-owned fields `TBD` with a `[TBD - EXTERNAL: ...]` marker instead of plausible invented values?
 
 **Good API contract:** "API-04 `POST /v1/wallets/{walletId}/debits`, OAuth2 client credentials, token `wallet:debit`; `Idempotency-Key` required; body `amount` (decimal, > 0, scale 2), `currency` (ISO 4217); 201 returns `debitId`; 409 `CONFLICT` on key reuse, 422 `INSUFFICIENT_FUNDS` (not retryable); timeout 800 ms, 2 retries on 503/504 with jitter."
 
 **Bad API contract:** "Payment service calls wallet service to debit the wallet via REST." No URI, no auth, no body, no errors: an OI, not a contract.
 
-**Test (e2e):** do the counts in §24 "Counts at a glance" match §13 (services), §14.4 (topics), and §14.9 coverage (events) exactly? Is every deliberate simplification listed under "no silent caps"?
+**Test (e2e):** do the counts in §24 "Counts at a Glance" match §13 (services), §14.4 (topics), §14.9 coverage (events), and §14.10 (in-process domain events) exactly? Is every deliberate simplification listed under "no silent caps"? Do §24.2 and §24.3 cite §8.2 and §8.3 and draw only what those do not show?
 
 **Bad:** a §14.5 catalog that lists only the events the author remembered, with consumer columns copied from producer chunks without checking the consumers' own tables.
 
@@ -219,6 +219,6 @@ Traceability is only useful if a reader can follow it both ways without searchin
 
 ## When to defer to flags vs to write
 
-If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. The architecture questionnaire settles §8.1 and the ADRs it covers, which meet the bar above; the decisions still open come out as `[NEEDS CLARIFICATION: ...]` markers — *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
+If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. The architecture questionnaire settles §8.1 and the ADRs it covers, which meet the bar above; the decisions still open come out as `[NEEDS CLARIFICATION: ...]` markers, *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
 
 If the SDD is being **generated fresh** or **transformed from another SDD format**, the quality bar above applies in full.

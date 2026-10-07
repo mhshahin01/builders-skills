@@ -25,7 +25,7 @@ PART OF: LLD - [Project Name]
 | - | `PATCH` | `/v1/foo/{id}` | Update foo | Required | `foo:write` | 200, 400, 404, 409, 422 |
 | - | `DELETE` | `/v1/foo/{id}` | Delete foo (soft) | Required | `foo:write` | 204, 404 |
 
-> **Convention:** every write endpoint touching money/wallet/notifications/external-providers requires an `Idempotency-Key` header (CLAUDE.md). The dedup tuple is `(tenant_id, idempotency_key)` with TTL 24h.
+> **Convention:** every write endpoint touching money/wallet/notifications/external-providers requires an `Idempotency-Key` header (CLAUDE.md). The dedup tuple and the TTL are in `09-cross-cutting.md` § 12.2.
 >
 > **API ID:** the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked to its block; `-` for an endpoint no §15 contract covers (for example one only the frontend calls). The owner's 04 file names the controller (provider side) or client (caller side). Permission tokens are SDD §16 tokens, verbatim.
 
@@ -121,13 +121,13 @@ post:
 ## 9.6 In-Process Port Contracts (SDD §15)
 
 <!--
-Modular monolith or hybrid core only: one row per SDD §15 contract of Type `Internal (in-process)`, a module-to-module call through a port. A microservices SDD writes "Not applicable - no in-process contracts".
-Names match SDD §15 verbatim and link its contract block; the DTO fields and error list stay in the SDD. No HTTP method, path, headers, status codes, or resilience config: the call never leaves the process.
+Modular monolith or hybrid core only: one row per SDD §15 contract of Type `Internal (in-process)`, a module-to-module call through a port. With no SDD §15 `Internal (in-process)` contract here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules call no port), write "Not applicable - no in-process contracts".
+Names match SDD §15 verbatim and link its contract block; the DTO fields and error list stay in the SDD. Idempotency and Transaction are the contract's Behaviour rows, as SDD §15 writes them. No HTTP method, path, headers, status codes, or resilience config: the call never leaves the process.
 -->
 
-| API ID (§15) | Port interface | Operation | Request / response DTO records | Raised errors (`errorCode`) | Permission token (SDD §16) | Implementing adapter |
-|--------------|----------------|-----------|--------------------------------|-----------------------------|----------------------------|----------------------|
-| [API-03](../sdd-[sdd-slug]/11-api-contracts.md#[api-03-heading-slug]) | `[ProviderPort]` | `[operation]` | `[RequestDto]` / `[ResponseDto]` | `[DomainError]` (`[DOMAIN_CODE]`) | `[token]` | `[ProviderPortAdapter]` in `[provider-module]` |
+| API ID (§15) | Port interface | Operation | Request / response DTO records | Raised errors (`errorCode`) | Idempotency | Transaction | Permission token (SDD §16) | Implementing adapter |
+|--------------|----------------|-----------|--------------------------------|-----------------------------|-------------|-------------|----------------------------|----------------------|
+| [API-03](../sdd-[sdd-slug]/11-api-contracts.md#[api-03-heading-slug]) | `[ProviderPort]` | `[operation]` | `[RequestDto]` / `[ResponseDto]` | `[DomainError]` (`[DOMAIN_CODE]`) | [The key; what a repeat returns] | [Joins the caller's transaction / Runs in its own] | `[token]` | `[ProviderPortAdapter]` in `[provider-module]` |
 
 > **Convention:** the provider module's `04-implementation/<module>.md` § 7.2 lists the port and its adapter, and its Authorization table checks the token at the port (Kind Port). Caller modules depend on the port interface only.
 

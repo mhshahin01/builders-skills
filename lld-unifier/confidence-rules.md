@@ -1,4 +1,4 @@
-# Confidence Rules — Tiered Inference Emission
+# Confidence Rules: Tiered Inference Emission
 
 The skill emits content at three confidence tiers. Every tier behaves consistently across direction (from-code / from-sdd / hybrid).
 
@@ -6,7 +6,7 @@ The skill emits content at three confidence tiers. Every tier behaves consistent
 
 ## The three tiers
 
-### High confidence — emit clean, no flag
+### High confidence: emit clean, no flag
 
 The claim is grounded in:
 
@@ -22,7 +22,7 @@ Examples:
 
 **Emission:** clean content. No flag.
 
-### Medium confidence — emit + `> Confirm:` flag
+### Medium confidence: emit + `> Confirm:` flag
 
 The claim is grounded in:
 
@@ -37,7 +37,7 @@ Examples:
 - "Caching tier is in-process Caffeine, sized 10k entries." (Inferred from `@Cacheable` annotation; size from `application.yml`.)
 - "GET /v1/foo p99 latency target is 100ms." (Inferred: SDD §18 didn't pin per-endpoint targets but mentioned 100ms as a service-level target.)
 
-**Emission:** content + `> Confirm: [reason for medium confidence — what to verify]`.
+**Emission:** content + `> Confirm: [reason for medium confidence - what to verify]`.
 
 Example:
 
@@ -45,7 +45,7 @@ Example:
 > Confirm: Strategy pattern detected via structural heuristic (interface FooStrategy + 3 implementations + context FooService). Verify the runtime selection logic matches the documented per-tenant-tier rationale.
 ```
 
-### Low confidence — emit + `> TODO: <best-guess> — verify` flag
+### Low confidence: emit + `> TODO: <best-guess> - verify` flag
 
 The claim is grounded in:
 
@@ -56,9 +56,9 @@ The claim is grounded in:
 Examples:
 - "Business rule: `foo.amount` cannot exceed `tenant.daily_limit`." (Inferred from a `if (amount > tenant.dailyLimit) throw new ValidationException(...)` block; the SDD didn't state the rule.)
 - "Peak scenario: month-end batch reconciliation, 5x sustained RPS for 4 hours." (No SDD §18.3 entry; best guess based on a similar service.)
-- "PII column: `customer_email` requires masking in non-prod." (Best guess — the SDD didn't enumerate PII columns.)
+- "PII column: `customer_email` requires masking in non-prod." (Best guess: the SDD didn't enumerate PII columns.)
 
-**Emission:** best-guess content + `> TODO: <best-guess> — verify or replace`.
+**Emission:** best-guess content + `> TODO: <best-guess> - verify or replace`.
 
 Example:
 
@@ -83,11 +83,11 @@ Example:
 | Cross-service saga step ordering | Medium | An orchestrator class with explicit step methods → upgrade to High |
 | Idempotency point identification | High if `Idempotency-Key` is read; Medium if natural-key dedup is inferred | (varies) |
 | Business rule narrative | Low | Test exists asserting the rule → upgrade to Medium; ADR or doc cites the rule → upgrade to High |
-| SLO targets | Low | (none — rarely in code) |
+| SLO targets | Low | (none: rarely in code) |
 | Threat notes | Low | Comments mention threat reasoning → upgrade to Medium |
 | Entry point → use case (SDD given), same service + method + normalized path (or event / schedule) as §7.3 | High | (none) |
 | Entry point matching §7.3 in everything but the service, or with its service unknown (SDD given) | Medium (`> Confirm:`) | (none) |
-| Entry point with no §7.3 match, not a platform endpoint (SDD given) | Medium (`> Confirm:`) | (none; an open question, never a new UC) |
+| Entry point with no §7.3 match, not a platform endpoint, that nothing in the BRD or SDD asks for (SDD given) | Medium (`> Confirm:`) | (none; an open question, never a new UC) |
 | Route → BRD screen (SDD given) | High via route `data.screen`; Medium (`> Confirm:`) by name only | (none) |
 
 **Override rule:** if a claim is supported by a passing unit/integration test that exercises it, upgrade by one tier. Tests are stronger evidence than source code structure for *why* something is the way it is.
@@ -99,9 +99,9 @@ Example:
 | Claim type | Default tier | Override conditions |
 |------------|--------------|---------------------|
 | Section directly carried from SDD (verbatim or paraphrased) | High | (none) |
-| Pattern application driven by CLAUDE.md hard rule (Outbox, Idempotency on money, RFC 9457) | High | (none — CLAUDE.md hard rules are unconditional) |
+| Pattern application driven by CLAUDE.md hard rule (Outbox, Idempotency on money, RFC 9457) | High | (none: CLAUDE.md hard rules are unconditional) |
 | Pattern application driven by CLAUDE.md guideline (Strategy, Factory, Mediator) | Medium | SDD prose explicitly names the pattern → upgrade to High |
-| Concrete class names per CLAUDE.md naming conventions | Medium | (none — names are conventions, not facts) |
+| Concrete class names per CLAUDE.md naming conventions | Medium | (none: names are conventions, not facts) |
 | Method-level pseudocode | Medium | SDD `13x` Business Logic is detailed enough to dictate the algorithm → upgrade to High |
 | Concrete API request/response shapes | Medium | SDD pins shape (rare) → upgrade to High |
 | Concrete event payload shapes | Medium | SDD pins shape (rare) → upgrade to High |
@@ -126,7 +126,7 @@ Example:
 
 In hybrid mode, every section has both a from-sdd and a from-code value. The unified emission's confidence is **the higher of the two contributing confidences**, with one exception:
 
-- If the two values **disagree** (drift case), the emission's confidence is **High** for the *fact of drift* itself (we know they disagree because we can compare both), regardless of the contributing tiers. The drift note's *resolution suggestion* may be lower confidence — annotate accordingly.
+- If the two values **disagree** (drift case), the emission's confidence is **High** for the *fact of drift* itself (we know they disagree because we can compare both), regardless of the contributing tiers. The drift note's *resolution suggestion* may be lower confidence: annotate accordingly.
 
 Example:
 
@@ -147,13 +147,13 @@ Example:
 Every flag emitted anywhere in the LLD MUST appear as a row in `15-open-questions.md`:
 
 - Drift markers → § 18.1 Drift Markers.
-- `> TODO: <best-guess> — verify` → § 18.2 Low-Confidence Inferences.
+- `> TODO: <best-guess> - verify` → § 18.2 Low-Confidence Inferences.
 - `> Confirm:` → § 18.3 Medium-Confidence Inferences.
 - `⚠ policy` → § 18.6 Policy Findings.
 
 When a chunk is regenerated, the index is regenerated too. The skill enforces this by walking each chunk and grepping for the flag patterns, then emitting the index file.
 
-The summary table in § 18.5 (counts per section) is updated on each regeneration.
+The summary table in § 18.5 (the open `> Confirm:` and `> TODO:` flags counted per section, for every section) is updated on each regeneration.
 
 ---
 
@@ -166,8 +166,8 @@ The summary table in § 18.5 (counts per section) is updated on each regeneratio
 | CLAUDE.md hard rule applies | applied content (no flag, with attribution) |
 | Pattern detected via structural heuristic | content + `> Confirm:` |
 | Pattern proposed via CLAUDE.md guideline | content + `> Confirm:` (unless SDD names the pattern) |
-| Best-guess from variable names / branches | content + `> TODO: <best-guess> — verify` |
-| Best-guess for SLO / threat / peak scenario | content + `> TODO: <best-guess> — verify` |
-| Section neither code nor SDD covers | section heading + `> TODO: not derivable from inputs — please specify` |
+| Best-guess from variable names / branches | content + `> TODO: <best-guess> - verify` |
+| Best-guess for SLO / threat / peak scenario | content + `> TODO: <best-guess> - verify` |
+| Section neither code nor SDD covers | section heading + `> TODO: not derivable from inputs - please specify` |
 | Use case, test case, `MK-NN`, or screen ID the BRD / SDD states | cited with its key and link (no flag) |
 | Upstream piece missing (BRD chunk 16 not written, no `MK-NN` row for a screen) | the gap text (`Pending (BRD 16 not written)` or `> Confirm:`) per `sdd-to-lld.md` § Use-case traceability › Upstream gaps; never a made-up ID |

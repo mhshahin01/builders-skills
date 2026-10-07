@@ -1,4 +1,4 @@
-# Direction Detection — From-Code / From-SDD / Hybrid / Partial
+# Direction Detection: From-Code / From-SDD / Hybrid / Partial
 
 The skill always asks for the direction at the start of any invocation. This file gives the prompt rules and the resolution logic.
 
@@ -6,13 +6,7 @@ The skill always asks for the direction at the start of any invocation. This fil
 
 ## The mandatory prompt
 
-After confirming output shape (chunks / combined), ask:
-
-> **Direction?** [from-code / from-sdd / hybrid]
->
-> - **`from-code`** — reverse-engineer an LLD from existing source code. Point me at a path. Uses code-explorer + docs-architect agents.
-> - **`from-sdd`** — forward-design an LLD from an SDD (and BRD if linked). Greenfield, before any code exists.
-> - **`hybrid`** — both inputs available, code is complete. Two-pass: generate the from-sdd view, generate the from-code view, then unify into a single LLD with inline drift markers.
+After confirming output shape (chunks / combined), ask the direction question of SKILL.md step 2, word for word. The shorthands and the suggested defaults follow.
 
 **Acceptable shorthands:**
 
@@ -32,14 +26,14 @@ After confirming output shape (chunks / combined), ask:
 | Both code path and SDD path | hybrid |
 | Neither | from-sdd (the most common greenfield case); ask the user to provide an SDD |
 
-**Project Type override.** Resolve the Project Type — recorded in the SDD §1 at SDD intake (legacy chains: SDD `15-specs.md` § 4 / combined `# 19. Specs`, or BRD `12-specs.md`) — and apply this override BEFORE the smart defaults above (it later lands in this LLD's own `17-specs.md` § 4):
+**Project Type override.** Resolve the Project Type, recorded in the SDD §1 at SDD intake (legacy chains: SDD `15-specs.md` § 4 / combined `# 19. Specs`, or BRD `12-specs.md`), and apply this override BEFORE the smart defaults above (it later lands in this LLD's own `17-specs.md` § 4):
 
 | Project Type | Effect on direction default |
 |---|---|
-| **Greenfield** | If neither code path nor SDD path provided, default suggestion stays from-sdd. If only code path provided, the user is doing reverse-engineering of a greenfield-built service — keep from-code default but flag in handoff: "Greenfield project type per the recorded Project Type, but code is being reverse-engineered. Confirm intent." |
-| **Brownfield** | If only an SDD is provided, surface a friction prompt: "Brownfield project type per the recorded Project Type — was the existing codebase intentionally excluded? Direction `from-sdd` will document the *target* design without reflecting the *current* code. Consider `hybrid` (provide both) or `from-code` (point at current code) for accurate documentation." Default suggestion becomes `hybrid` if both inputs available, else keep `from-sdd` and capture the friction in the handoff. |
+| **Greenfield** | If neither code path nor SDD path provided, default suggestion stays from-sdd. If only code path provided, the user is doing reverse-engineering of a greenfield-built service. Keep from-code default but flag in handoff: "Greenfield project type per the recorded Project Type, but code is being reverse-engineered. Confirm intent." |
+| **Brownfield** | If only an SDD is provided, surface a friction prompt: "Brownfield project type per the recorded Project Type: was the existing codebase intentionally excluded? Direction `from-sdd` will document the *target* design without reflecting the *current* code. Consider `hybrid` (provide both) or `from-code` (point at current code) for accurate documentation." Default suggestion becomes `hybrid` if both inputs available, else keep `from-sdd` and capture the friction in the handoff. |
 
-This override never silently picks the direction — it adjusts the suggested default and surfaces friction. The user still confirms.
+This override never silently picks the direction: it adjusts the suggested default and surfaces friction. The user still confirms.
 
 ---
 
@@ -62,14 +56,14 @@ When the user picks `from-code` or `hybrid` and the skill detects that the code 
 
 ---
 
-## Hybrid mode — both inputs, complete code
+## Hybrid mode: both inputs, complete code
 
 When the user picks `hybrid`:
 
 1. The skill runs an internal FROM-SDD pass producing a "designed" view of each section.
 2. The skill runs an internal FROM-CODE pass producing a "built" view of each section.
 3. The skill diffs section by section per `hybrid-drift.md`.
-4. The output is a single unified LLD with inline drift markers — not separate `designed/` and `built/` folders.
+4. The output is a single unified LLD with inline drift markers, not separate `designed/` and `built/` folders.
 
 If the code is detected as *partial* in hybrid mode, the skill falls back to the partial-code rules (above) and notes the fallback in the handoff summary.
 
@@ -113,7 +107,7 @@ A BRD is a secondary input, reached through the SDD: its Source BRDs register (c
 
 ### SoW / Statement of Work
 
-Same as in sdd-unifier — SoW is **not** a direct input to lld-unifier. If the user provides only a SoW:
+Same as in sdd-unifier: SoW is **not** a direct input to lld-unifier. If the user provides only a SoW:
 
 > An LLD usually derives from an SDD, not directly from a SoW. The SDD captures the design (architecture, services, contracts) and is the input the LLD operationalises. Want me to first generate a BRD via `brd-unifier`, then an SDD via `sdd-unifier`, then an LLD here? Or do you have an SDD already?
 
@@ -124,7 +118,7 @@ Same as in sdd-unifier — SoW is **not** a direct input to lld-unifier. If the 
 1. Dispatch `feature-dev:code-explorer` agent. Brief it with the target path and explicit asks (entry points, call graph, dependencies, schemas, topics, structural pattern detection). See `agent-orchestration.md`.
 2. Dispatch `code-documentation:docs-architect` agent with Phase 1 findings + this skill's section schema. Request per-service narratives, sequence stories, design-pattern rationale.
 3. Template-fit the synthesised output into the chunks.
-4. Apply confidence weighting per `confidence-rules.md` — structural high, semantic medium, etc.
+4. Apply confidence weighting per `confidence-rules.md`: structural high, semantic medium, etc.
 5. With an SDD given for cross-reference: match entry points and routes to SDD §7.3 and the BRD screens (`code-extraction.md` § Tracing to BRD use cases). Without one, there is no use-case trace, and no workflow is numbered as a use case.
 6. Index every flag in `15-open-questions.md`.
 
@@ -138,7 +132,7 @@ See `code-extraction.md` for the full from-code workflow.
 2. Read the BRD(s) the SDD names: the use case, screen, mockup, and test case IDs the trace cites, plus supplementary purpose / scope / glossary content.
 3. Apply CLAUDE.md pattern rules per `pattern-rules.md` aggressively.
 4. Trace every BRD use case per `sdd-to-lld.md` § Use-case traceability.
-5. For sections the SDD + CLAUDE.md cannot together fill (SLOs, threat notes, peak scenario multipliers): emit `> TODO: <best-guess> — verify`.
+5. For sections the SDD + CLAUDE.md cannot together fill (SLOs, threat notes, peak scenario multipliers): emit `> TODO: <best-guess> - verify`.
 6. Index every flag in `15-open-questions.md`.
 
 See `sdd-to-lld.md` for the full mapping table.
@@ -170,7 +164,7 @@ Treat as targeted regeneration:
 
 - Identify which chunks the user wants changed.
 - Regenerate only those.
-- Bump version in Changes Log.
+- Bump the version once for the request (SKILL.md § Output conventions, Versions).
 
 ### "Add a service to this LLD"
 
@@ -178,7 +172,7 @@ Treat as targeted add:
 
 - In CHUNKS shape: add a new `04-implementation/<service-slug>.md`; update the `[project-slug]-lld-master.md` index; cross-check `05-data-model.md`, `06-api-contracts.md`, `07-event-contracts.md` for new tables/endpoints/topics.
 - Trace the use cases the new service owns (SDD §7.3): their 04 workflow blocks, 14 §17.3 routes, 13 §16.8 specs, and 16 §19.9 index rows. Update the Scope of this LLD's row in the SDD's Child LLDs table.
-- Bump version.
+- Bump the version (SKILL.md § Output conventions, Versions).
 
 ### Source is in a non-English language
 
@@ -186,4 +180,4 @@ Translate facts; preserve names. Flag in handoff summary.
 
 ### Mixed SDD+code with intentional drift (the architect tolerates the drift)
 
-Run hybrid; let the user resolve drift markers in `15-open-questions.md` per row (resolution = "tolerated by design — see ADR-NN" rather than "fix code" or "fix SDD").
+Run hybrid; let the user resolve drift markers in `15-open-questions.md` per row (resolution = "tolerated by design - see ADR-NN" rather than "fix code" or "fix SDD").

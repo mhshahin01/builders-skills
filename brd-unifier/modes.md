@@ -1,4 +1,4 @@
-# Modes — Chunks vs Combined
+# Modes: Chunks vs Combined
 
 The skill produces output in one of two shapes. The shape is determined either by the argument passed to the skill (`brd-unifier chunks` / `brd-unifier combined`) or, when no argument is passed, by the interactive mode prompt.
 
@@ -10,7 +10,7 @@ This file describes what each mode is, when to prefer which, and how the modes r
 
 **Output:** A folder of `.md` files, one per logical template-section grouping, written to `./brd-[project-slug]/`.
 
-**Skeleton source:** `chunks/*.md` (embedded in this skill folder). Each file in `chunks/` is a section-scoped template skeleton — copy its structure, fill it with project-specific content, and save it in the output folder under its output name from the `chunking.md` map (`06a-use-cases-detailed.md` becomes one `06a-use-cases-[persona-slug].md` per persona; `brd-master.md` becomes `[project-slug]-brd-master.md`).
+**Skeleton source:** `chunks/*.md` (embedded in this skill folder). Each file in `chunks/` is a section-scoped template skeleton: copy its structure, fill it with project-specific content, and save it in the output folder under its output name from the `chunking.md` map (`06a-use-cases-detailed.md` becomes one `06a-use-cases-[persona-slug].md` per persona; `brd-master.md` becomes `[project-slug]-brd-master.md`).
 
 **File list (canonical):**
 
@@ -58,7 +58,7 @@ See `chunking.md` for chunking strategy, deviation rules, the heading map, and m
 **When to prefer:**
 
 - Teams will edit different sections in parallel (PMs, architects, designers each owning different sections).
-- The BRD is large (>500 lines) — a single file becomes hard to navigate.
+- The BRD is large (>500 lines): a single file becomes hard to navigate.
 - Sections will be regenerated independently as requirements evolve.
 - The user wants to share a specific section (e.g., one persona's detailed use cases) without exposing the whole BRD.
 
@@ -95,13 +95,13 @@ See `chunking.md` for chunking strategy, deviation rules, the heading map, and m
 21. UI/UX Expectations
 22. Appendix (incl. Technical Inputs for the SDD, if any)
 23. Wishlist
-24. Open Items & Clarifications (post-generation reviewer output; every item carries a Recommended Answer with its Why)
+24. Open Items & Clarifications (post-generation reviewer output; every unapplied item carries a Recommended Answer with its Why; applied items keep the OI heading/status/Resolution Log pointer)
 25. Implementation Plan (delivery chunk 15, as a section; appended only once the delivery gate is open)
 26. UAT/BAT Test Cases (delivery chunk 16, as a section; appended only once the delivery gate is open)
 
 **Never inside the combined file:** the Product Manager To-Do, the Presentation & Video Brief, and the decision register (`decision-log.md`, linked from the combined file's Table of Contents as `./brd-[project-slug]/decision-log.md`). In COMBINED mode they are separate files: `./brd-[project-slug]/14-todo.md` (every generation unless the user skips it; create the folder if needed) and `./brd-[project-slug]/17-for-ppt.md` (only once the delivery gate is open). Their links to the BRD target `../BRD-[ProjectName]-v[X.X].md` with the section name or identifier in the link text; the combined file links to them as `./brd-[project-slug]/14-todo.md`. Details: `delivery-chunks.md` § COMBINED mode adaptations.
 
-**No chunk comment blocks** in combined mode — the file is a single artefact. (The two separate delivery files keep their comment blocks.)
+**No chunk comment blocks** in combined mode: the file is a single artefact. (The two separate delivery files keep their comment blocks.)
 
 **When to prefer:**
 
@@ -118,20 +118,20 @@ The two modes are reversible.
 
 ### Chunks → Combined (merge)
 
-When the user says "merge", "consolidate", "single file", "full doc" after a chunks-mode generation:
+When the user says "merge", "consolidate", "single file", "full doc" after a chunks-mode generation (a summary: `chunking.md` § Merge handling holds the full rule and wins):
 
 1. Read all `brd-[slug]/NN-*.md` files in numeric order (00, 01, 02, 03, 03a, 03b, 04, 05, 06a, 06b, …, 07, 08, 09, 10, 11, 12, 13, then 15 and 16 when they exist). **Skip `14-todo.md` and `17-for-ppt.md`** (header `MERGE: Excluded`); they are never part of the merged BRD.
 2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block and its `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer comment.
 3. Apply `chunking.md` § Heading map (chunks and combined): the `06*` chunks become `### Use Cases - [Persona]` groups under one `## Detailed Use Cases` section, with every other heading demoted by two levels; links between merged chunks become same-file anchors. All other headings stay as they are.
-4. Concatenate with a single blank line between chunks.
+4. Concatenate with a single blank line between chunks, and a `---` line before each chunk that starts with a `# ` heading (`chunking.md` § Merge handling).
 5. Regenerate the Table of Contents in the cover section against the merged heading outline.
 6. Regenerate the Figures and Tables indices.
 7. Write to `./brd-[slug]/BRD-[ProjectName]-v[X.X]-MERGED.md`.
-8. Keep the original chunks — the merged file is a consolidated view, not a replacement.
+8. Keep the original chunks: the merged file is a consolidated view, not a replacement.
 
 ### Combined → Chunks (re-chunk)
 
-When the user says "split into chunks", "chunk this BRD", "re-chunk this":
+When the user says "split into chunks", "chunk this BRD", "re-chunk this" (a summary: `chunking.md` § Re-chunk handling holds the full rule and wins):
 
 1. Read the combined file fully.
 2. Identify section boundaries by the `# ` headings of the template, and split `## Detailed Use Cases` at each `### Use Cases - [Persona]` heading (one `06*` chunk per persona).

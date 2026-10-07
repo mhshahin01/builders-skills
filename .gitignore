@@ -10,3 +10,7 @@ arch-wiki/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Tool output written into the working tree (Playwright MCP snapshots and logs)
+.playwright-mcp/
+_fixtures/runs-wip/

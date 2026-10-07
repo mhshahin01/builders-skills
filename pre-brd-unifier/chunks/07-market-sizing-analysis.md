@@ -13,9 +13,17 @@ TAM, SAM, and SOM, sized two ways and cross-checked. Top-down starts from the re
 
 | Item | Definition | Answer |
 |---|---|---|
-| TAM (Total Addressable Market) | The total demand for the product globally. |  |
+| TAM (Total Addressable Market) | The total demand for the product in the target segment and region, as sized in sections 1 to 3. |  |
 | SAM (Serviceable Available Market) | The portion of TAM serviceable based on business model and geography. |  |
 | SOM (Serviceable Obtainable Market) | The realistic share of SAM that can be captured initially. |  |
+
+## Canonical figures
+
+Shared magnitudes cited by more than one chunk, and the exchange rate to USD when the pre-BRD uses another currency. Other chunks use these values and link here.
+
+| Figure | Value | Scope and year | Source |
+|---|---|---|---|
+|  |  |  |  |
 
 ## 1. Top-down (from the relevant industry software market)
 
@@ -25,7 +33,7 @@ TAM, SAM, and SOM, sized two ways and cross-checked. Top-down starts from the re
 | Region share of market |  |  |
 | Regional market (TAM, all segments) |  | = Global x region share |
 | % relevant to the target segment |  | Assumption: the segment slice of the total market |
-| Serviceable TAM (segment, region) |  | Top-down TAM for the niche |
+| Serviceable TAM (segment, region) |  | = Regional market x % relevant (top-down TAM for the niche) |
 
 ## 2. Bottom-up (from addressable customer count)
 
@@ -41,7 +49,7 @@ TAM, SAM, and SOM, sized two ways and cross-checked. Top-down starts from the re
 
 | Item | Value | Basis |
 |---|---|---|
-| TAM |  | Average of top-down and bottom-up |
+| TAM |  | = average of top-down and bottom-up TAM |
 | SAM % |  | % of TAM in launch footprint |
 | SAM value |  | = TAM x SAM % |
 | SOM % |  | % of SAM captured early (year 1 to 3) |

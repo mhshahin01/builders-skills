@@ -18,7 +18,7 @@ All detailed use cases follow this structure:
 - **Preconditions**: What must be true before the use case can start.
 - **Main Flow**: Numbered detailed steps - actor action, system response, alternating.
 - **Alternate & Exception Flows**: What happens when the path branches or fails, in business terms.
-- **Flowchart** (branching use cases only, added once the requirements are final): The main, alternate, and exception paths in one diagram, derived from the narrative.
+- **Flowchart** (branching use cases only, added once the requirements are final): The main, alternate, and exception paths in one diagram (or in connected numbered views for a large use case), derived from the narrative.
 - **Business Rules & Constraints**: Rules, limits, and conditions that govern the use case.
 - **Acceptance Criteria**: Testable conditions that confirm the use case is complete.
 - **Future Enhancements**: Low-complexity follow-ups that could ship next.
@@ -59,7 +59,7 @@ All detailed use cases follow this structure:
 - **A1 - [Branching condition, e.g., "Partial refund requested"]:** At step [N], [what happens instead, in business terms].
 - **E1 - [Failure condition, e.g., "Refund window has passed"]:** The system informs [Actor] that [what they see and what they can do next].
 
-<!-- FLOWCHART SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated chunk. After to-do steps 1-3 are confirmed complete, add a "### Flowchart" sub-section at this position when the use case has 3 or more Main Flow steps and at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). Linear use cases and use cases with fewer than 3 steps get no flowchart; the skip reason is recorded in 14-todo.md. The flowchart is a numbered figure: inline Mermaid (flowchart TD) plus the mandatory Summary line. Step nodes name their Main Flow step ("Step 3: ..."), branch edges carry their A1 / E1 identifier, and nothing appears that the narrative does not state. Notation and example: mermaid-diagrams.md § Use-case flowcharts. -->
+<!-- FLOWCHART SLOT (to-do step 5 in 14-todo.md). Emit nothing here at first generation, and do not copy this comment into the generated chunk. After to-do steps 1-3 are confirmed complete, add a "### Flowchart" sub-section at this position when the use case has 3 or more Main Flow steps and at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). Linear use cases and use cases with fewer than 3 steps get no flowchart; the skip reason is recorded in 14-todo.md. The flowchart is a numbered figure: a caption heading `#### Figure N - Flowchart: UC-NN [Title]`, then inline Mermaid (flowchart TD) and the mandatory Summary line; a large use case may use connected numbered views in this sub-section, the first keeping this caption. The Figures index links the caption heading. Step nodes name their Main Flow step ("Step 3: ..."), branch edges carry their A1 / E1 identifier, and nothing appears that the narrative does not state. Notation and example: mermaid-diagrams.md § Use-case flowcharts. -->
 
 ### Business Rules & Constraints
 

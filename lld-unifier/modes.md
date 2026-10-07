@@ -1,9 +1,9 @@
-# Modes — Output shape and Direction
+# Modes: Output shape and Direction
 
 This skill has **two orthogonal mode dimensions**:
 
-1. **Output shape** (CHUNKS / COMBINED) — the file layout of the deliverable.
-2. **Direction** (FROM-CODE / FROM-SDD / HYBRID / PARTIAL) — the source of truth for the content.
+1. **Output shape** (CHUNKS / COMBINED): the file layout of the deliverable.
+2. **Direction** (FROM-CODE / FROM-SDD / HYBRID / PARTIAL): the source of truth for the content.
 
 The skill always asks for the direction at the start of any invocation. The shape is determined by argument or interactive prompt with CHUNKS as default.
 
@@ -39,7 +39,7 @@ lld-[project-slug]/
 ├── 11-security.md
 ├── 12-performance.md
 ├── 13-testing.md
-├── 14-frontend.md                   # CONDITIONAL — only if UI exists
+├── 14-frontend.md                   # CONDITIONAL: only if UI exists
 ├── 15-open-questions.md
 ├── 16-references.md
 ├── 17-specs.md
@@ -68,7 +68,7 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 - Teams editing different sections in parallel.
 - The LLD is large (>800 lines is typical for multi-service systems).
 - Per-service chunks need to be regenerated as services evolve.
-- AI implementer downstream — single-file-per-service makes context loading clean.
+- AI implementer downstream: single-file-per-service makes context loading clean.
 
 ### COMBINED shape
 
@@ -78,7 +78,7 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 
 **Structure follows the template top-to-bottom** (sections 1–21 per `TEMPLATE-COMBINED.md`).
 
-**No chunk comment blocks** in combined shape — the file is a single artefact.
+**No chunk comment blocks** in combined shape: the file is a single artefact.
 
 **When to prefer COMBINED:**
 
@@ -91,9 +91,9 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 
 The two shapes are reversible.
 
-**Chunks → Combined (merge)** — see `chunking.md` § Merge handling.
+**Chunks → Combined (merge)**: see `chunking.md` § Merge handling.
 
-**Combined → Chunks (re-chunk)** — see `chunking.md` § Re-chunk handling.
+**Combined → Chunks (re-chunk)**: see `chunking.md` § Re-chunk handling.
 
 ---
 
@@ -103,8 +103,8 @@ The two shapes are reversible.
 
 The user points the skill at an existing source-code path. The skill orchestrates two specialist agents:
 
-1. **`feature-dev:code-explorer`** — discovers entry points, call graph, dependencies, data tables touched, Kafka topics produced/consumed, structural pattern detection.
-2. **`code-documentation:docs-architect`** — synthesises per-service narratives, sequence stories, design-pattern rationale.
+1. **`feature-dev:code-explorer`**: discovers entry points, call graph, dependencies, data tables touched, Kafka topics produced/consumed, structural pattern detection.
+2. **`code-documentation:docs-architect`**: synthesises per-service narratives, sequence stories, design-pattern rationale.
 
 See `code-extraction.md` for the agent dispatch templates and `agent-orchestration.md` for the briefing patterns.
 

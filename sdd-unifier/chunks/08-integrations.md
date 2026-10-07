@@ -9,7 +9,7 @@ PART OF: SDD - [Project Name]
 
 # 12. Integrations
 
-<!-- High-level table of all external integrations. One row per integrated system. Every synchronous integration also has an API contract in §15 (chunk 11); name its API-NN in Notes. External contracts stay `TBD - external` there until the user supplies the provider documentation. -->
+<!-- High-level table of all external integrations. One row per integrated system. Every synchronous domain or provider integration also has an API contract in §15 (chunk 11; standard operational infrastructure is not one: SKILL.md step 6a); name its API-NN in Notes. External contracts stay `TBD - external` there until the user supplies the provider documentation. -->
 
 | Integration ID | What (System) | Purpose | How (Protocol / Mode) | When (Trigger) | Auth | Timeout | Rate Limit | Retries & Backoff | Fallback | Notes |
 |----------------|---------------|---------|------------------------|----------------|------|---------|------------|--------------------|-----------| ------|

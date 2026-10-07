@@ -14,8 +14,8 @@ The five tiers:
 | ---- | ------ | ---------- |
 | 1. Idea definition | 01-05 | Concept Sheet, Product Charter, Lean Canvas, Value Proposition Canvas, Empathy Map |
 | 2. Market and competition | 06-12 | Market Comparison, Market Sizing, PESTLE, Porter's Five Forces, EFAS, IFAS, SWOT |
-| 3. Prioritization | 13-14 | RICE, MoSCoW |
-| 4. Strategy and planning | 15-21 | OKRs, BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle, Roadmap and Project Plan |
+| 3. Prioritization | 13-15 | RICE, MoSCoW, OKRs |
+| 4. Strategy and planning | 16-21 | BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle, Roadmap and Project Plan |
 | 5. Synthesis | 22 | Executive Summary Scoreboard with composite score and go/no-go thresholds |
 
 Output is Markdown, either as a chunked folder (the default) or one combined file. A styled `.xlsx` export is produced only on explicit request, after the user approves the Markdown.
@@ -29,7 +29,7 @@ Most idea docs are static templates filled from intuition. This skill exists to 
 - **Two independent verdicts.** The mechanical Scoreboard (22) is checked by a skeptical investor agent (23) that scores seven aspects, computes a weighted composite, and must reconcile its Go/No-Go with the Scoreboard. Enterprise and internal initiatives get a business-case lens instead of a venture lens.
 - **Adversarial review built in.** A cleared-context reviewer reviews chunks 01-23, hunting unsourced numbers, cross-chunk figure inconsistencies, and weak go/no-go logic. Zero findings triggers a re-dispatch with stronger framing.
 - **Coherent synthesis.** Tier 5 must follow from the tier 2/3/4 signals, and shared facts (UVP, revenue levers, target segment) are stated once in their home chunk and cross-referenced elsewhere, never restated.
-- **Excel on approval only.** The export clones the embedded reference workbook (styling, sample columns, 81 live formulas) and writes Answer cells only, per a whitelisted cell map.
+- **Excel on approval only.** The export clones the embedded reference workbook (styling, sample columns, 77 live formulas) and writes Answer cells only, per a whitelisted cell map.
 
 ## How
 

@@ -4,7 +4,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: BRD - [Project Name]
 PURPOSE: Navigation graph for AI agents and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
-VERSIONING: All chunks share the BRD version number. A content change to chunks 00-13 bumps the BRD version in this master, in chunk 00, and in each changed chunk; status, link, and delivery-tracking updates bump nothing (delivery-chunks.md § Refresh triggers, Version).
+VERSIONING: One update, one version (delivery-chunks.md § Refresh triggers, Version). This master and chunk 00 carry the current BRD version; every other chunk carries the version in which its content last changed, and 15-17 the version they were written at. Status, link, and delivery-tracking updates bump nothing.
 MAINTENANCE: When adding or removing chunks, update the tables below, the dependency graph, and the reading-order table.
 PARTS: In parts generation this file is written in part 1 and updated at the end of every part. A chunk that is not written yet is listed as plain text followed by "Pending (part N)"; it becomes a link when it is written.
 DELIVERY CHUNKS: 14-17 are derived from the BRD body (00-13) and never add requirements. 14 is written at the end of every generation (part 3 in parts generation). 15, 16, and 17 are locked until every action item in 14 is closed (Deferred counts as open; no override). 14 and 17 are never part of the merged / combined BRD.
@@ -110,9 +110,11 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 | Section | Chunk |
 |---------|-------|
 | Open Items & Clarifications | [13-open-items-and-clarifications.md](./13-open-items-and-clarifications.md) |
-| Decision history & clarification Q&A (companion register) | [decision-log.md](./decision-log.md) once it exists; created on the first decided clarification |
+| Decision history & clarification Q&A (companion register) | decision-log.md (not created yet) |
 
-> Generated *after* the main BRD by a cleared-context reviewer. Captures gaps, missing scenarios, corner cases the body did not flag inline. Every item carries a **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply; the skill walks the user through each item for acceptance, then reflects accepted answers into the body and logs them in the Resolution Log.
+<!-- Turn decision-log.md into a link ([decision-log.md](./decision-log.md)) once it exists: it is created with its first record (a decision, or a business review point). -->
+
+> Generated *after* the main BRD by a cleared-context reviewer. Captures gaps, missing scenarios, corner cases the body did not flag inline. Every unapplied item carries a **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply; the skill walks the user through each item for acceptance, then reflects accepted answers into the body and logs them in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to its Resolution Log row. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
 
 ## Delivery Chunks
 
@@ -123,7 +125,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 | UAT/BAT Test Cases | 16-uat-bat-test-cases.md | [Locked / Up to date / Provisional (TD-NN) / Stale] | Yes | Context only |
 | Presentation & Video Brief (executive deck brief, 30-second use-case videos) | 17-for-ppt.md | [Locked / Up to date / Provisional (TD-NN) / Stale] | No | No |
 
-<!-- Turn 15, 16, 17 into links once the files exist: [15-implementation.md](./15-implementation.md). -->
+<!-- Turn 15, 16, 17 into links once the files exist: [15-implementation.md](./15-implementation.md). State matches the chunk's status line and its Downstream outputs row in 14-todo.md; that row may add the date and basis after Up to date (delivery-chunks.md § The delivery gate, Re-lock). -->
 
 > Derived from chunks 00-13, in the order 14 -> 15 -> 16 -> 17. They cite the BRD by ID and link and never add requirements: if a delivery chunk and the BRD body disagree, the body wins.
 >

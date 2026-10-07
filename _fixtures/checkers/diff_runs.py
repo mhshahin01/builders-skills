@@ -6,8 +6,7 @@ from collections import Counter
 HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 LINK = re.compile(r"\]\(([^)\s]+)\)")
 IDS = re.compile(r"(?<![\w/-])(?:[A-Z][A-Z-]*/)?(?:UC|TC-[A-Z]{3}|SCR|MK|LP|NFR|BR|TD|TASK|API|INT|ADR|OI|R)-\d{2,}(?![\w])")
-EVENT = re.compile(r"`([A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+)`")
-TOKEN = re.compile(r"`([a-z]+\.[a-z]+\.[a-z][a-z-]*)`")
+TOKEN = re.compile(r"`([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)`")
 LIMIT = 12
 LEVELS = 6
 
@@ -27,6 +26,23 @@ def prose(text):
             yield line
 
 
+def catalog_events(lines):
+    """Read event-naming columns, rather than treating error codes as events."""
+    events = set()
+    col = None
+    for line in lines:
+        if not line.startswith("|"):
+            col = None
+            continue
+        row = [c.strip() for c in line.strip().strip("|").split("|")]
+        header = next((i for i, c in enumerate(row) if c.lower() in ("event", "event name")), None)
+        if header is not None:
+            col = header
+        elif col is not None and len(row) > col:
+            events.update(re.findall(r"`([A-Z][A-Za-z0-9_]*)`", row[col]))
+    return events
+
+
 def facts(path):
     text = read(path)
     lines = list(prose(re.sub(r"<!--.*?-->", "", text, flags=re.S)))
@@ -42,7 +58,7 @@ def facts(path):
         "headings": headings,
         "tables": tables,
         "ids": set(IDS.findall(text)),
-        "events": set(EVENT.findall(text)),
+        "events": catalog_events(lines),
         "tokens": set(TOKEN.findall(text)),
         "counts": Counter({
             "mermaid": text.count("```mermaid"),

@@ -12,12 +12,16 @@ close, even when the walkthrough resumes on another day.
 2. **Edit all affected docs in the same step.** Counts (services, phases,
    batches, milestones), ID lists, tables, and cross-citations must be
    consistent chain-wide before the point is marked Applied.
-3. **Supersession notes.** When a decision overrides an earlier statement
-   in another doc, state the supersession on BOTH sides rather than
-   silently editing one. In a document made by brd-unifier or sdd-unifier,
-   the chunks state only the settled content. The story (what was
-   replaced, and why) goes in that document's `decision-log.md`, in a
-   record that names the point ID and the tracker. A pre-BRD has no
+3. **The story of each decision.** In a document made by brd-unifier or
+   sdd-unifier, the chunks state only the settled content. Each point
+   that changes the document gets one record in its `decision-log.md`,
+   § Business review register (the log is created on first use, as that
+   skill says): the point ID, the tracker, what was decided, what it
+   replaced, and a `Rule home:` link to the section that now states it. A
+   record that replaces an earlier one says so, and the
+   earlier record stays as it is. In any other document, a decision that
+   overrides an earlier statement in another doc states the supersession
+   on BOTH sides rather than silently editing one. A pre-BRD has no
    decision log: its story stays in the tracker.
 4. **Update the tracker row in the same step**: Status (Applied /
    Partially applied / Rejected / Deferred) and the Decision cell stating
@@ -47,12 +51,16 @@ close, even when the walkthrough resumes on another day.
      its row and its status; nothing is deleted.
    - A BRD stays in business language. Technical content from a decision
      goes to the BRD's Appendix § Technical Inputs for the SDD, or into the
-     SDD.
+     SDD. References too: outside Appendix § Technical Inputs, the BRD's
+     chunks never cite SDD IDs (such as `API-NN` or `ADR-NN`) or the SDD's
+     design values; where the link matters, the BRD's `decision-log.md`
+     records it.
    - The lineage rows, the owner's own open items (`OI-NN`, `TD-NN`), the
      gated chunks (BRD 15-17, SDD 19), and the BRD's use-case diagrams and
-     flowcharts (to-do step 5) belong to the owning skill. The hand-off
-     updates them (§ Hand-off). The decision record names the owner's item
-     it answers.
+     flowcharts (to-do step 5) belong to the owning skill. Their owners
+     update them after the hand-off (§ Hand-off); the review only sets a
+     gated chunk's Stale mark (rule 7). The decision record names the
+     owner's item it answers.
    - An LLD is never edited. Its hand-off carries the change.
    - A pre-BRD (pre-brd-unifier), when the chain has one, keeps its
      framework chunks, headings, and tables. A decision writes Answer cells
@@ -68,35 +76,56 @@ close, even when the walkthrough resumes on another day.
    for the user to take to that skill, and mark the point Partially
    applied, naming that part. The options say so before the decision
    (`walkthrough-protocol.md`). A point whose remaining part is a hand-off
-   is Applied; its Decision cell names that hand-off.
+   is Applied; its Decision cell names that hand-off. A question the
+   decision leaves for the document's owner is such a part: the decision
+   record states it as its open remainder, and the hand-off asks the owner
+   to record it under its own rules: an open item in an SDD or LLD; in a
+   BRD, a to-do item with its owner and source, plus an open item when it
+   needs a business choice. For a pre-BRD, which has no decision log, the
+   tracker's Decision cell states it, and the BRD hand-off (item 1)
+   records it in the BRD made from that pre-BRD.
 7. **Version at the first change.** The first content change a review
    session makes to a document bumps that document's version once and
    opens one Changes Log row naming the session and the tracker.
-   - The bump follows the document's own rule: its master's VERSIONING line
-     or its skill's rule for a targeted update. A document no skill
-     versions (a business document) gets its in-document version bumped and
-     a changelog entry in its header. A pre-BRD has no version and no
-     changelog, so nothing is added to it: the tracker's Versioning block
-     lists the pre-BRD chunks the session changed.
-   - Every chunk the session changes, then or later, takes the new version.
-     The version is not bumped again in the same session. Status, link, and
-     Stale marks alone bump nothing.
-   - The Changes Log row lists each point ID with the chunks or sections it
-     changed, so the next skill down the chain knows what to refresh.
+   - The bump is one minor step and follows the owning skill's version
+     rule (BRD: brd-unifier's `delivery-chunks.md` § Refresh triggers,
+     Version; SDD: sdd-unifier's SKILL.md § Output conventions, Versions).
+     A BRD whose cover Status reads `Approved` also gets Status
+     `In Review` and the change date on its cover (same file, § Refresh
+     triggers, Cover status).
+     A document no skill versions (a business document) gets its
+     in-document version bumped and a changelog entry in its header. A
+     pre-BRD has no version and no changelog, so nothing is added to it:
+     the tracker's Versioning block lists the pre-BRD chunks the session
+     changed.
+   - Every chunk whose content the session changes, then or later, takes
+     the new version. Every other chunk keeps its version, a gated chunk
+     included. The version is not bumped again in the same session.
+     Status, link, and Stale marks alone bump nothing.
+   - The Changes Log row lists each point ID with the chunks it changed
+     (sections only in a combined document) and ends with the owning
+     skill's `Chunks:` list, so the next skill down the chain knows what to
+     refresh. Its Reviewed By and Approved By cells (Reviewed/Approved By
+     in a BRD) stay empty until the document's owner reviews and approves
+     the new version.
    - When the version is in the file name (a combined BRD or SDD), rename
      the file with the bump, and update the citations to it in the
-     documents the session may edit. The owning skills repoint the lineage
-     links at the hand-off.
+     documents the session may edit, the links in a combined BRD's
+     `14-todo.md` and `17-for-ppt.md` included (a link is not content, so
+     a gated chunk's links change like its Stale mark). The owning skills
+     repoint the lineage links at the hand-off.
    - Record the bump in the tracker's Versioning block.
-   - A gated chunk is never edited by the review, whether its gate is open
-     or shut. Apply the decision at its source and mark the gated chunk
-     Stale where its skill records that. The owner refreshes it through its
-     gated step after the hand-off.
-     - BRD 15-17: the chunk's status line, the Downstream outputs rows of
-       chunk 14, and the State cell of its row in the master's Delivery
-       Chunks table.
+   - A gated chunk's content is never edited by the review, whether its
+     gate is open or shut. Apply the decision at its source. If the gated
+     chunk exists, set its state to Stale where its skill keeps that state;
+     that is a status mark, not an edit, and nothing else in the chunk
+     changes except the links a file rename repoints (above). The owner
+     refreshes it through its gated step after the hand-off.
+     - BRD 15-17: the chunk's status line, its Downstream outputs row in
+       chunk 14, and its State cell in the master's Delivery Chunks table
+       (brd-unifier's `delivery-chunks.md` § The delivery gate, Re-lock).
      - SDD 19: the E2E gate line in the master, or in the cover of a
-       combined SDD.
+       combined SDD; chunk 19 itself is not touched.
 
 ## Verify (after all points are closed)
 
@@ -132,12 +161,20 @@ Brief:
 > chain consistency out of 10. Do not re-litigate the decisions
 > themselves.
 
-Fix every confirmed remnant, except lineage rows, the owner's open items,
-and gated chunks: those go to the hand-off (Apply rule 6). Then append the
-**Verification pass** block to the tracker: date, score, remnant count,
-one line per fix. If the agent returns zero remnants on a session with
-structural changes, treat it as suspect and re-dispatch once with the
-stale-remnant categories spelled out.
+Fix every confirmed remnant under the Apply rules, as part of its point's
+apply, except lineage rows and the owner's open items, which go to the
+hand-off (Apply rule 6), and gated chunks, which keep their Stale mark and a
+note in the close-out (Apply rule 7). A remnant of the same kind found while
+confirming is fixed the same way and marked as found while confirming. A
+remnant with two possible fixes that would make a document say different
+things is put to the user with the options and a recommendation, as in the
+walkthrough (SKILL.md, Core principle 4). Then append the **Verification
+pass** block to the tracker: date, the hunt's score (taken before the
+fixes; there is no second hunt), remnant count, one line per remnant (its
+fix, the hand-off that takes it, the close-out note of a gated chunk, or
+why it was rejected). If the agent returns zero remnants on a session with
+major structural decisions (tracker), treat it as suspect and re-dispatch
+once with the stale-remnant categories spelled out.
 
 ## Close checklist (after verification)
 
@@ -150,7 +187,7 @@ stale-remnant categories spelled out.
 - [ ] Complete the **Versioning** block in the tracker.
 - [ ] Write the **Hand-offs** block (§ Hand-off).
 - [ ] Present the close-out summary: points by status, structural
-      decisions list, skill changes requested, files touched, new
+      decisions list, skill changes requested, the files the session touched, new
       versions, and the hand-offs with the request to give each skill.
 
 ## Hand-off (the owning skills take the chain back)
@@ -158,8 +195,9 @@ stale-remnant categories spelled out.
 The review changes content. The skills that own the documents re-check what
 depends on it:
 - the BRD's consistency check and delivery gate;
-- the SDD's contract registries, §7.3, lineage, and e2e gate;
-- each LLD's refresh.
+- the SDD's contract registries, §7.3, lineage, and e2e gate, and a
+  delta review of the changed chunks;
+- each LLD's refresh, which ends with a delta review.
 
 Write one row per request below, in this order. Skip a row whose document
 did not change; write `None` when no document changed.
@@ -170,26 +208,38 @@ did not change; write `None` when no document changed.
    gets this row too, naming the pre-BRD chunks that changed, even if the
    BRD itself did not change. pre-brd-unifier has no update request of its
    own, so this is the pre-BRD's only hand-off.
-   - It checks the decisions already applied and closes the owner's open
-     items they answer.
+   - It checks the decisions already applied, closes the owner's open
+     items they answer, and records each open remainder their decision
+     records state (for a pre-BRD point, its Decision cell) as a to-do
+     item with its owner and source, plus an open item when it needs a
+     business choice.
    - It reruns the consistency check and refreshes `14-todo.md` and the
      delivery gate; a changed diagrammed use case reopens to-do step 5.
-   - It marks chunks 15-17 Stale if they exist.
+   - It keeps chunks 15-17 that exist Stale in all three places (the
+     review set the mark, Apply rule 7) until their gate is open again.
 2. **Each SDD whose content or source BRDs changed (sdd-unifier):**
-   - when source BRDs changed: "BRD [KEY] has a new version", naming every
-     changed source BRD in one request, so the SDD takes them in one update
-     and one version;
+   - when source BRDs changed: "BRD [KEY] has a new version, after the
+     business review of [the tracker's Created date] ([tracker path])",
+     naming every changed source BRD in one request. The SDD takes them
+     in one update with at most one more version; that update also runs
+     the checks for the changes the review made to the SDD itself, whose
+     bump stands;
    - when only the SDD changed: "the business review changed this SDD".
 
    Either request reruns the contract reconciliation (step 6a, §7.3
-   included). It checks the Child LLDs table, where a child that read an
-   older SDD version is marked out of date. It marks chunk 19 Stale where
-   its rules say so.
-3. **Each child LLD (lld-unifier):** "the SDD has a new version". It
-   refreshes the LLD chunks mapped from the SDD chunks the Changes Log
-   names; a plain run also finds the newer SDD, through its SDD version
-   check. When a source BRD's use cases, test cases, or screens changed,
-   also "refresh the trace".
+   included). It reads the tracker, closes the SDD's open items the
+   review's decisions answer, and raises an open item for each open
+   remainder their decision records state. It checks the Child LLDs table,
+   where a child that reflects an older SDD version is marked out of date. It
+   keeps chunk 19's Stale mark (Apply rule 7) and sets it for its own
+   changes where its rules say so.
+3. **Each child LLD (lld-unifier):** "the SDD has a new version". Its
+   SDD and BRD version check (step 3c) reads the `Chunks:` lists of the
+   SDD Changes Log rows since the version the LLD recorded, and the
+   source BRD versions, and makes one offer: the LLD chunks mapped from
+   those SDD chunks, plus the trace when a source BRD's use cases, test
+   cases, or screens changed. It is one update with one version. A
+   plain run finds the same changes through that check.
 
 Gated chunks (BRD 15-17, SDD 19) refresh through their owners once their
 gates are open again. They are a note in the close-out, not a hand-off row.
@@ -197,7 +247,8 @@ gates are open again. They are a note in the close-out, not a hand-off row.
 Each row starts as `To run` and turns `Done` on the user's word, or on the
 owner's own record:
 - BRD: a consistency check run recorded in chunk 14 after the review.
-- SDD: a Reconciled date after the review.
+- SDD: a Reconciled entry after the review, with its step 6a order
+  evidence (a date alone does not prove the order).
 - LLD: 16 §19.1 naming the new SDD version.
 
 Offer to start the first row. Each row runs only on the user's word, as that

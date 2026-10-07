@@ -1,4 +1,4 @@
-# Transform vs Generate — Intent Detection
+# Transform vs Generate: Intent Detection
 
 The skill produces output in either GENERATE intent (author a BRD from scratch / from conversation / from a SoW) or TRANSFORM intent (re-shape an existing document into this template). This file gives the rules for deciding which.
 
@@ -38,7 +38,7 @@ Is there a source document attached, pasted, or referenced by path?
 Signs:
 
 - Has section headings matching `Executive Summary`, `Business Objectives`, `Glossary`, `User Journeys & Use Cases`, `Users & Use Cases Matrix`, `Non-Functional Requirements`, etc., in the order the template defines.
-- Use-case blocks use the `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX` structure. (An older revision of this template used FR blocks with `What / Why / How / Constraints / Future Enhancements / UI/UX` — treat that as "stale, template evolved" and migrate to use cases.)
+- Use-case blocks use the `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX` structure. (An older revision of this template used FR blocks with `What / Why / How / Constraints / Future Enhancements / UI/UX`: treat that as "stale, template evolved" and migrate to use cases.)
 - Has a Changes Log.
 - Has tables for Glossary, Dependencies, Integrations, NFRs, and the Users & Use Cases Matrix.
 
@@ -83,7 +83,7 @@ Signs:
 - Mixed concerns in the same paragraph (objectives, FRs, NFRs interleaved).
 - Often a Notion page export, a Confluence page, or a markdown brain-dump.
 
-Treat the same as SoW transformation but skip SoW-specific mappings (no commercial section to ignore, no vendor-obligation rewriting). Heavier classification work — every paragraph must be sorted into a target section.
+Treat the same as SoW transformation but skip SoW-specific mappings (no commercial section to ignore, no vendor-obligation rewriting). Heavier classification work: every paragraph must be sorted into a target section.
 
 ### Meeting notes / Slack thread / email chain
 
@@ -93,13 +93,15 @@ Signs:
 - Conversational tone, jumps between topics.
 - Decisions and action items mixed with discussion.
 
-Do NOT treat as a transform target. Treat as raw context for GENERATE — extract decisions and facts, but the BRD is being authored fresh, not reshaped.
+Do NOT treat as a transform target. Treat as raw context for GENERATE: extract decisions and facts, but the BRD is being authored fresh, not reshaped.
 
 ---
 
 ## Transform and the generation option
 
-A transform from a source that needs authoring (SoW, pre-BRD, a BRD in another format, a loose spec) uses the generation option like a fresh generation: `parts` by default in CHUNKS mode (`parts-mode.md`). Pure conversions (merge, re-chunk) and targeted updates of an existing BRD always run `whole`: there is nothing to review between parts.
+A transform from a source that needs authoring (SoW, pre-BRD, a BRD in another format, a loose spec) uses the generation option like a fresh generation: `parts` by default in CHUNKS mode (`parts-mode.md`). Pure conversions (merge, re-chunk) and targeted updates of an existing BRD always run `whole`: there is nothing to review between parts. A pure conversion runs only SKILL.md step 10 and `chunking.md` § Merge handling or § Re-chunk handling: no `sow-transformation.md` mapping or sanity checks, no reviewer pass, and no version bump.
+
+A substantive older-template migration follows the review-coverage trigger in SKILL.md step 7. A pure shape conversion does not. Record the coverage comparison so the author does not infer that old review evidence covers new risk areas.
 
 ---
 
@@ -124,8 +126,8 @@ Treat as TRANSFORM with targeted regeneration:
 
 - Identify which sections the user wants changed.
 - Regenerate only those (chunks: rewrite the affected chunk files; combined: rewrite the affected sections in place).
-- Bump the version in the Changes Log with a one-line description of what changed.
-- Refresh `14-todo.md` per `delivery-chunks.md` § Refresh triggers, keeping every identifier stable. If chunks 15-17 exist, mark them `Stale`; they are refreshed only while the delivery gate is open (SKILL.md step 8c). If the BRD predates the delivery chunks, generate `14-todo.md` (step 8a); a BRD with no chunk 13 gets the reviewer pass first (steps 7-8).
+- Bump the version in the Changes Log with a one-line description of what changed (one update, one version: `delivery-chunks.md` § Refresh triggers, Version).
+- Rerun the consistency check (SKILL.md step 7, On an update). Refresh `14-todo.md` per `delivery-chunks.md` § Refresh triggers, keeping every identifier stable. If chunks 15-17 exist and their source meaning changed, mark them `Stale` (`delivery-chunks.md` § The delivery gate, Re-lock); they are refreshed only while the delivery gate is open (SKILL.md step 8c). If the BRD predates the delivery chunks, generate `14-todo.md` (step 8a); a BRD with no chunk 13 gets the reviewer pass first (steps 7-8).
 
 ### "Combine these into one BRD" (multiple source docs)
 

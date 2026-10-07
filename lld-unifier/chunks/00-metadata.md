@@ -37,9 +37,11 @@ PART OF: LLD - [Project Name]
 
 ## Changes Log
 
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count. -->
+
 | Version | Date | Author | Mode | Change Summary |
 |---------|------|--------|------|----------------|
-| [X.X] | [YYYY-MM-DD] | [Author] | [mode] | Initial LLD draft via lld-unifier. |
+| [X.X] | [YYYY-MM-DD] | [Author] | [mode] | Initial LLD draft via lld-unifier. Chunks: none (initial build) |
 
 ---
 

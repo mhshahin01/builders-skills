@@ -13,25 +13,23 @@ PART OF: LLD - [Project Name]
 
 ## 8.1 Entity Relationship (system-wide)
 
+<!-- Entities, keys (PK, FK), and relationships only, as the SDD's ERD draws them, with no line cap; every other column lives in § 8.2 (sdd-to-lld.md § Field mapping table, 13a DB Modeling). -->
+
 ```mermaid
 erDiagram
   FOO ||--o{ FOO_LINE_ITEM : has
   FOO {
     uuid id PK "UUIDv7"
     uuid tenant_id FK
-    text status
-    timestamptz created_at
-    timestamptz updated_at
-    bigint version "optimistic lock"
   }
   FOO_LINE_ITEM {
     uuid id PK
     uuid foo_id FK
     uuid tenant_id FK
-    text description
-    numeric amount
   }
 ```
+
+**Summary:** [1-2 sentences: the main entities and their key relationships.]
 
 > Miro: [optional whiteboard view URL]
 
@@ -39,27 +37,29 @@ erDiagram
 
 ### Service: `[service-a]` - schema `app_[service_a]`
 
-| Table | Column | Type | Constraints | Notes |
-|-------|--------|------|-------------|-------|
-| `foo` | `id` | `uuid` | PK | UUIDv7, generated at service layer |
-| `foo` | `tenant_id` | `uuid` | NOT NULL, indexed | Required for multi-tenant queries |
-| `foo` | `status` | `text` | NOT NULL, CHECK in (...) | Domain-state column |
-| `foo` | `version` | `bigint` | NOT NULL, default 0 | Optimistic locking |
-| `foo` | `created_at` | `timestamptz` | NOT NULL | UTC always |
-| `foo` | `updated_at` | `timestamptz` | NOT NULL | UTC always |
-| `outbox` | `id` | `uuid` | PK | UUIDv7 |
-| `outbox` | `aggregate_type` | `text` | NOT NULL | e.g. "foo" |
-| `outbox` | `aggregate_id` | `uuid` | NOT NULL | Used as Kafka key |
-| `outbox` | `event_type` | `text` | NOT NULL | e.g. "foo.created" |
-| `outbox` | `target_topic` | `text` | NOT NULL | Kafka topic name |
-| `outbox` | `payload` | `jsonb` | NOT NULL | Event payload, including `eventId`; fixed at write time |
-| `outbox` | `created_at` | `timestamptz` | NOT NULL | Insert time |
-| `outbox` | `processed_at` | `timestamptz` | NULL | Set by the publisher only after the broker acknowledges the send; NULL = pending or retryable |
-| `idempotency_record` | `tenant_id` | `uuid` | PK part 1 | Composite PK |
-| `idempotency_record` | `idempotency_key` | `text` | PK part 2 | From `Idempotency-Key` header |
-| `idempotency_record` | `status` | `text` | NOT NULL | IN_PROGRESS / COMPLETED / FAILED |
-| `idempotency_record` | `cached_response` | `jsonb` | NULL | Set on COMPLETED |
-| `idempotency_record` | `created_at` | `timestamptz` | NOT NULL | TTL 24h via partial cleanup |
+| Table | Column | Type | Constraints | Notes | Source |
+|-------|--------|------|-------------|-------|--------|
+| `foo` | `id` | `uuid` | PK | UUIDv7, generated at service layer | [SDD §17.X Tables Design] |
+| `foo` | `tenant_id` | `uuid` | NOT NULL, indexed | Required for multi-tenant queries | [SDD §17.X Tables Design] |
+| `foo` | `status` | `text` | NOT NULL, CHECK in (...) | Domain-state column | [SDD §17.X Tables Design] |
+| `foo` | `version` | `bigint` | NOT NULL, default 0 | Optimistic locking | [SDD §17.X Tables Design / LLD] |
+| `foo` | `created_at` | `timestamptz` | NOT NULL | UTC always | [SDD §17.X Tables Design] |
+| `foo` | `updated_at` | `timestamptz` | NOT NULL | UTC always | [SDD §17.X Tables Design] |
+| `outbox` | `id` | `uuid` | PK | UUIDv7 | [SDD §17.X Tables Design / LLD] |
+| `outbox` | `aggregate_type` | `text` | NOT NULL | e.g. "foo" | [SDD §17.X Tables Design / LLD] |
+| `outbox` | `aggregate_id` | `uuid` | NOT NULL | Used as Kafka key | [SDD §17.X Tables Design / LLD] |
+| `outbox` | `event_type` | `text` | NOT NULL | e.g. "foo.created" | [SDD §17.X Tables Design / LLD] |
+| `outbox` | `target_topic` | `text` | NOT NULL | The target: the Kafka topic; for a provider write or a durable in-process event, the target it names (`09-cross-cutting.md` § 12.4) | [SDD §17.X Tables Design / LLD] |
+| `outbox` | `payload` | `jsonb` | NOT NULL | Event payload, including `eventId`; fixed at write time | [SDD §17.X Tables Design / LLD] |
+| `outbox` | `created_at` | `timestamptz` | NOT NULL | Insert time | [SDD §17.X Tables Design / LLD] |
+| `outbox` | `processed_at` | `timestamptz` | NULL | Set by the publisher only after the target acknowledges the row (`09-cross-cutting.md` § 12.4); NULL = pending or retryable | [SDD §17.X Tables Design / LLD] |
+| `idempotency_record` | `tenant_id` | `uuid` | PK part 1 | Composite PK | [SDD §17.X Tables Design / LLD] |
+| `idempotency_record` | `idempotency_key` | `text` | PK part 2 | From `Idempotency-Key` header | [SDD §17.X Tables Design / LLD] |
+| `idempotency_record` | `status` | `text` | NOT NULL | IN_PROGRESS / COMPLETED / FAILED | [SDD §17.X Tables Design / LLD] |
+| `idempotency_record` | `cached_response` | `jsonb` | NULL | Set on COMPLETED | [SDD §17.X Tables Design / LLD] |
+| `idempotency_record` | `created_at` | `timestamptz` | NOT NULL | Deleted after the `09-cross-cutting.md` § 12.2 TTL | [SDD §17.X Tables Design / LLD] |
+
+> **Source:** from an SDD, each row restates the SDD row it comes from and links it (a `13x` Tables Design row, or SDD §11.1 for the publication log); `LLD` marks a table or column the LLD adds (its Notes name the pattern that needs it). A value that differs from the SDD is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3). From code with no SDD: the migration that creates it.
 
 ### Service: `[service-b]` - schema `app_[service_b]`
 
@@ -103,7 +103,7 @@ erDiagram
 |-------|---------------|---------------------|-------------|
 | `foo` | Indefinite | N/A (operational) | N/A |
 | `outbox` | 7 days after `processed_at`; unprocessed rows are never deleted | Cleanup job (delete) | N/A |
-| `idempotency_record` | 24 hours | Cleanup job (delete) | N/A |
+| `idempotency_record` | The `09-cross-cutting.md` § 12.2 TTL | Cleanup job (delete) | N/A |
 | `audit_log` (if any) | 90 days hot | S3-compatible cold storage | 24h |
 
 ## 8.7 Encryption

@@ -4,7 +4,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: SDD - [Project Name]
 PURPOSE: Navigation graph for AI agents and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
-VERSIONING: All chunks share the SDD version number. When any chunk is updated, bump the SDD version in this master and in the updated chunk(s).
+VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and chunk 00 carry the current SDD version; every other chunk carries the version in which its content last changed, and chunk 19 the version it was written at.
 MAINTENANCE: When adding or removing chunks (especially 13x service chunks), update the tables below, the dependency graph, and the reading-order table.
 -->
 
@@ -16,13 +16,13 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 > **Specs note:** The constitution-grade `Specs` chunk (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with each child LLD (`../lld-[lld-slug]/17-specs.md`), synthesised from this SDD's body. The SDD carries no Specs chunk.
 
-> **Decision history:** [decision-log.md](./decision-log.md) holds the architecture questionnaire record, the ecosystem selection record, the clarification Q&A, and how each decision was reached. The chunks below state only the settled design. (Link it once the register exists; it is created on first use and never merged.)
+> **Decision history:** [decision-log.md](./decision-log.md) holds the architecture questionnaire record, the ecosystem selection record, the clarification Q&A, the settled markers, the business review records, and how each decision was reached. The chunks below state only the settled design. (Link it once the register exists; it is created on first use and never merged.)
 
 ---
 
 ## Generation Progress
 
-<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: set **Generation:** to whole and leave out the Part table; the Intent, Source, Reconciled, and E2E gate lines stay. -->
+<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: set **Generation:** to whole and leave out the Part table; the Intent, Source, Reconciled, E2E gate, and E2E basis lines and the E3 marker inventory stay. -->
 
 **Generation:** parts
 **Intent:** [generate | transform | derive-from-BRD]
@@ -34,8 +34,19 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 | 2 | 13x, 10, 12, 11 | [Pending / In progress (last step) / Complete] | - |
 | 3 | 14-18, 19 (gated) | [Pending / In progress (last step) / Complete] | - |
 
-**Reconciled:** [YYYY-MM-DD of the last clean step 6a run]
+**Reconciled:** [Date, checker, request and checked content revision/hash or explicit final-edit-then-check order]
 **E2E gate (chunk 19):** [Locked | Open - Up to date | Stale] - [open conditions E1-E4, if any]
+**E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
+
+### E3 marker inventory
+
+<!-- Row format (CHUNKS): link the source filename and anchor, then a colon and the exact remaining question text. One classification per distinct question/file; moving a marker requires updating its source pointer. Blocks E3 reads exactly `Yes` or `No: <reason>`: Yes names its dependent claim; No always gives the nonblocking reason. Claims/reasons require human source review. -->
+
+<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. -->
+
+| Marker source / question | Owner | Dependent E2E claim / reference path | Blocks E3 / reason | Next action |
+|---|---|---|---|---|
+| [Source section](./NN-chunk.md#section-anchor): [exact open question] | [Named owner] | [Claim and dependency path, or None] | [Yes, or No: reason] | [Owner action, or None when nonblocking] |
 
 ---
 
@@ -113,7 +124,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 |---------|-------|
 | 13. Services Decomposition (summary table) | [09-services-summary.md](./09-services-summary.md) |
 | 14. Centralized Event Hub (Platform Event Catalog & Payload Contracts) | [10-events-hub.md](./10-events-hub.md) |
-| 15. Service Integration API Contracts (HTTP: URI, headers, body, error codes, security, auth; in-process: port, DTOs, errors, permission) | [11-api-contracts.md](./11-api-contracts.md) |
+| 15. Service Integration API Contracts (HTTP: URI, headers, body, error codes, security, auth; in-process: port, DTOs, errors, permission, behaviour) | [11-api-contracts.md](./11-api-contracts.md) |
 | 16. Centralized User Roles & Authorities (platform-wide) | [12-centralized-user-roles.md](./12-centralized-user-roles.md) |
 | 17.1 [Service 1 Name] - Detailed Spec | [13a-service-[slug].md](./13a-service-[slug].md) |
 
@@ -157,6 +168,7 @@ Each `13x` service chunk contains these sub-sections in order:
 | 18.2 Throughput Targets | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
 | 18.3 Peak Scenarios | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
 | 18.4 Stress Testing Strategy | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
+| 18.5 NFR Targets (each BRD NFR: technical target, where realised) | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
 | 19. Environments (Dev/SIT/UAT/Prod) | [15-environments.md](./15-environments.md) |
 | 20.1 Common Operations (runbook procedures) | [16-operations-runbook.md](./16-operations-runbook.md) |
 | 20.2 Diagnostics Cheatsheet | [16-operations-runbook.md](./16-operations-runbook.md) |
@@ -183,7 +195,7 @@ Each `13x` service chunk contains these sub-sections in order:
 |---------|-------|
 | 24. End-to-End System Design (services · topics · producers · consumers) | 19-e2e-system-design.md - [Locked until chunk 18 is cleared] |
 
-> Chunk 19 is written LAST and only when the e2e gate is open (SKILL.md step 8b): every open item in chunk 18 resolved (`Deferred` counts as open), no open contract divergence, no clarification marker in chunks 09-13x or in 03 §7.3, and the reconciliation rerun after the last change. It consolidates chunks 09, 10, 11, 12, and 13x into one self-contained system map. Link it here once written.
+> Chunk 19 is written last only when E1-E4 are met: no open/deferred OI or divergence; no unresolved value required by an E2E claim after following source references, regardless of marker location; final relevant sources reconciled with ordered evidence. Use the E3 inventory above and the external black-box exception. It consolidates chunks 02-13x, citing context/layers and adding fan-out/saga views. Link it once written; keep an already-current body after verifying its sources/gate.
 
 ---
 
@@ -212,7 +224,7 @@ Each `13x` service chunk contains these sub-sections in order:
 +-- 16-operations-runbook.md ............ procedures, diagnostics, on-call
 +-- 17-appendix-and-wishlist.md ......... references + future platform enhancements
 +-- 18-open-items-and-clarifications.md . reviewer findings with recommended answers (post-generation)
-+-- 19-e2e-system-design.md ............. end-to-end system map (gated: only after 18 is cleared; consolidates 09-13x)
++-- 19-e2e-system-design.md ............. end-to-end system map (gated: only after 18 is cleared; consolidates 02-13x)
 ```
 
 ### Reading Order by Task

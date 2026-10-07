@@ -1,6 +1,6 @@
 # LLD Quality Bar
 
-The LLD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones — Per-Service Implementation, Use-Case Workflows, Design Pattern Application, Cross-Cutting Concerns, and Operations Runbook.
+The LLD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones: Per-Service Implementation, Use-Case Workflows, Design Pattern Application, Cross-Cutting Concerns, and Operations Runbook.
 
 The principle is the same as `sdd-quality.md` in `sdd-unifier`: substantive content, not template-shaped filler.
 
@@ -77,7 +77,7 @@ The single biggest source of "looks structured but is empty" in LLDs.
 We use outbox pattern. See CLAUDE.md.
 ```
 
-**Test:** Can a developer implement this pattern from the subsection alone — knowing which classes participate, what each contributes, and what the pseudocode for each is? If not, rewrite.
+**Test:** Can a developer implement this pattern from the subsection alone, knowing which classes participate, what each contributes, and what the pseudocode for each is? If not, rewrite.
 
 **Outbox test:** the writer inserts the row in the aggregate's transaction, and the publisher skeleton shows the acknowledgement check before `markProcessed`, leaves failed or timed-out rows unprocessed, and names the duplicate case (`pattern-rules.md` § Outbox, Delivery contract). In from-code mode the skeleton matches the code; if the code marks rows processed without a successful acknowledgement, that stays visible and carries the HIGH anti-pattern flag (`pattern-rules.md` § Anti-patterns to flag).
 
@@ -85,7 +85,7 @@ We use outbox pattern. See CLAUDE.md.
 
 Apply unconditionally if conditions match:
 
-1. Outbox (if service emits state-change integration events; the in-process domain events of a modular monolith, `07-event-contracts.md` § 10.6, use none).
+1. Outbox (if a state change must be followed by a side effect that must not be lost: an integration event, a provider write, or an in-process domain event under a durable SDD §14.10 Delivery line; in-memory events of `07-event-contracts.md` § 10.6 use none).
 2. Idempotency (if service exposes write endpoints touching money / wallet / notifications / external providers).
 3. RFC 9457 error model (always for REST services).
 4. Saga (if service participates in cross-service business transactions).
@@ -99,7 +99,7 @@ Apply discretionarily:
 9. Template Method (if stable structure with variable steps).
 10. Facade (if simplified interface to subsystem).
 
-If a discretionary pattern is named in the section but the conditions don't match, that's over-engineering — remove it.
+If a discretionary pattern is named in the section but the conditions don't match, that's over-engineering: remove it.
 
 ---
 
@@ -113,7 +113,7 @@ Each workflow is where the LLD earns its keep for the implementer.
 - Names the trigger (REST endpoint / event consumer / schedule).
 - Lists pre- and post-conditions.
 - Step-by-step control flow with explicit numbered steps.
-- Sequence diagram (Mermaid) with all participants.
+- Sequence diagram (Mermaid) with all participants, unless `mermaid-diagrams.md` § When NOT to draw a diagram says none.
 - Idempotency points named.
 - Outbox emission points named.
 - Retry / timeout policy stated.
@@ -190,7 +190,7 @@ Drain outbox backlog (wallet-core)
 
 Trigger: Alert `OutboxBacklog` (outbox_unprocessed_count > 1000 for 5m OR oldest_age > 30s for 5m).
 
-1. Confirm backlog: query Grafana panel `wallet-core / outbox unprocessed`. If <1000 and trending down, alert is closing — observe for 2 min before acting.
+1. Confirm backlog: query Grafana panel `wallet-core / outbox unprocessed`. If <1000 and trending down, alert is closing: observe for 2 min before acting.
 2. Identify the publisher pod:
    kubectl get pods -n prod -l app=wallet-core
 3. Check publisher health: kubectl logs <pod> -n prod | grep -i "OutboxPublisher" | tail -20
@@ -223,7 +223,7 @@ Caches are the easiest place to add accidental bugs (stale data, cross-tenant le
 - Eviction (LRU / time / none).
 - TTL.
 - Invalidation triggers (which events invalidate which keys).
-- Tenant scoping (key includes `tenant_id` — non-negotiable per CLAUDE.md).
+- Tenant scoping (key includes `tenant_id`, non-negotiable per CLAUDE.md).
 
 Bad: "Use Redis cache where appropriate."
 
@@ -233,7 +233,7 @@ Good: Per-cache table row with all five columns above.
 
 ## When to defer to flags vs to write
 
-If the LLD is being **derived from an SDD** (per `sdd-to-lld.md`), the SDD often won't pin every detail. In that case, sections come out with `> Confirm:` (medium confidence) or `> TODO: <best-guess> — verify` (low confidence) markers — *not* as low-quality filler.
+If the LLD is being **derived from an SDD** (per `sdd-to-lld.md`), the SDD often won't pin every detail. In that case, sections come out with `> Confirm:` (medium confidence) or `> TODO: <best-guess> - verify` (low confidence) markers, *not* as low-quality filler.
 
 Empty-with-flag is correct; thin-with-words is not.
 

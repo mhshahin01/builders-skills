@@ -1,4 +1,4 @@
-# Source Transformation — SoW, Existing SDD, or Loose Spec → Unified SDD
+# Source Transformation: SoW, Existing SDD, or Loose Spec → Unified SDD
 
 This file defines how to translate a non-BRD source document into the unified SDD template.
 
@@ -18,7 +18,7 @@ For deciding **which** intent to use (transform vs derive vs generate), see `tra
 
 ---
 
-## Field-by-field mapping (SoW source — note: not the recommended path)
+## Field-by-field mapping (SoW source; note: not the recommended path)
 
 A SoW alone is **not** a strong source for an SDD. SDDs depend on architectural decisions; SoWs typically don't have those. This skill recommends running `brd-unifier` first (SoW → BRD), then `sdd-unifier` (BRD → SDD) per `brd-to-sdd.md`.
 
@@ -26,14 +26,14 @@ If the user insists on going directly from a SoW to an SDD, treat the SoW as raw
 
 ---
 
-## Field-by-field mapping (existing-SDD source — different format / template)
+## Field-by-field mapping (existing-SDD source, different format / template)
 
 This is the main TRANSFORM path. The source is already an SDD but in a different format (vendor template, IEEE 1016, TOGAF, prior in-house "HLD" format).
 
 ### Approach
 
 1. **Build a section crosswalk first.** Map each source section to a target template section. Note any source sections with no target.
-2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs — they must use the sub-sections of `chunks/13a-service-detailed-template.md`, in order: `What / Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / Multi-Tenancy Specifications / API Standards / Event-Driven Architecture / Constraints / Error Handling / Observability & Monitoring / Developer Notes / Service-Level Diagrams / Compliance / Deployment Strategy / Future Enhancements`).
+2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs; they must use the sub-sections of `chunks/13a-service-detailed-template.md`, in order: `What / Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / Multi-Tenancy Specifications / API Standards / Event-Driven Architecture / Constraints / Error Handling / Observability & Monitoring / Developer Notes / Service-Level Diagrams / Compliance / Deployment Strategy / Future Enhancements`).
 3. **Stub missing sections** with `[NEEDS CLARIFICATION: ...]`.
 4. **Drop irrelevant sections** silently (vendor sign-off blocks, commercial appendices) and note in the handoff.
 
@@ -54,7 +54,7 @@ This is the main TRANSFORM path. The source is already an SDD but in a different
 When the source has no clear structure (Notion brain-dump, design memo, scattered notes):
 
 1. **Read everything first.** Identify dominant content types: architecture statements (→ §8), service descriptions (→ §13), tech choices (→ §6), risks (→ §4), decisions (→ §10).
-2. **Classify paragraph by paragraph.** Heavier classification work — source isn't pre-sorted.
+2. **Classify paragraph by paragraph.** Heavier classification work: source isn't pre-sorted.
 3. **Expect many gaps.** Loose specs typically have no per-service detailed specs, no ADR table, no NFR targets. Each missing piece is a `[NEEDS CLARIFICATION: ...]` marker.
 4. **The Glossary will need active construction.** Identify terms used in the source and either define them or flag.
 
@@ -62,7 +62,7 @@ When the source has no clear structure (Notion brain-dump, design memo, scattere
 
 ## Voice and audience
 
-SDDs target the engineering team — architects, senior developers, SREs, on-call engineers.
+SDDs target the engineering team: architects, senior developers, SREs, on-call engineers.
 
 | Source voice | Target voice |
 |---|---|
@@ -95,6 +95,6 @@ Don't soften this recommendation. An SDD with 30+ open clarifications is a struc
 - [ ] Cross-cutting concerns (§11) defaults are filled OR per-service overrides are explicitly stated.
 - [ ] Every Mermaid figure has a prose Summary and a Figures-index entry in §0.
 - [ ] No invented version pins, no fabricated technology choices.
-- [ ] Every synchronous integration has an API contract in §15 (chunk 11); external contracts the source does not document are `TBD - external`.
+- [ ] Every synchronous domain or provider integration has an API contract in §15 (chunk 11; standard operational infrastructure is not one: SKILL.md step 6a); external contracts the source does not document are `TBD - external`.
 - [ ] Operations Runbook (§20) has at minimum the standard procedure headings (Restart, Clear Cache, Replay DLQ, Rotate Secrets, DB Failover, Tenant Incident).
 - [ ] Changes Log entry written.

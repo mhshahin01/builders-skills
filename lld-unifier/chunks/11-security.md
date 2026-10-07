@@ -25,7 +25,7 @@ PART OF: LLD - [Project Name]
 |---------|-------|--------|----------------|------------|---------------------|
 | `[service-a]` | `[table]` | `[column]` | PII | [pgcrypto / column-level / disk-level only] | [Yes / No - strategy] |
 
-> `> Confirm: PII inventory is complete - verify with security review`
+<!-- Unless SDD §17.X lists the PII columns (confidence-rules.md), write: > Confirm: PII inventory is complete - verify with security review -->
 
 ## 14.3 Secrets Management
 
@@ -60,7 +60,7 @@ PART OF: LLD - [Project Name]
 | SQL injection via dynamic filter | Use parameterised queries / RSQL parser with allow-list | All services |
 | Idempotency-key reuse across tenants | Dedup tuple is `(tenant_id, key)`, not `key` alone | All services |
 
-> `> TODO: full threat model - verify or replace with link to threat model doc`
+<!-- Unless a threat model document exists (link it in 16-references.md § 19.6), write: > TODO: full threat model - verify or replace with link to threat model doc -->
 
 ## 14.6 Compliance
 
@@ -71,6 +71,6 @@ PART OF: LLD - [Project Name]
 | ISO 27001 / SOC 2 | [Yes / No] | [Controls applicable] |
 | Local regulations | [List] | [Approach] |
 
-> `> Confirm: compliance applicability per project - verify with legal/compliance`
+<!-- Unless the SDD settles each regulation's applicability, write: > Confirm: compliance applicability per project - verify with legal/compliance -->
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 10-operations.md | NEXT: 12-performance.md -->

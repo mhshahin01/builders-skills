@@ -3,14 +3,14 @@
 Excel is produced only when the user explicitly approves the reviewed Markdown and asks for the sheet ("export excel" / "looks good, generate the sheet"). Never from the mode argument; never before review.
 
 ## How it works
-The export clones `reference/PRE-BRD-v1.1.xlsx` and writes generated values into Answer cells only. The workbook's 77 live formulas, READ-ONLY sample columns, Calibri 11 styling, dark-blue header bands, and Executive Summary control panel are preserved. Writable cells are whitelisted in `reference/cell-map.json`; the engine (`scripts/export_xlsx.py`) refuses to write anywhere else.
+The export clones `reference/PRE-BRD-v1.1.xlsx` and writes generated values into Answer cells only. The workbook's formulas, READ-ONLY sample columns, Calibri 11 styling, dark-blue header bands, and Executive Summary control panel are preserved. It holds 77 formula cells, the READ-ONLY samples included. The seven `= ...` notes in column C of `Market Sizing & analysis` describe a formula: they are text, not formulas. Writable cells are whitelisted in `reference/cell-map.json`; the engine (`scripts/export_xlsx.py`) refuses to write anywhere else.
 
 ## Procedure
 1. Build the payload (below) from the approved Markdown chunks: for each framework, read the Answer values and map them to the cells the cell map declares writable.
-2. Run the engine:
+2. Run the engine. It needs Python 3 with `openpyxl`. Replace `<skill-folder>` with the absolute path of the folder that holds this file. Give `<payload.json>` and `<dst>` (an existing output folder) as absolute paths too. On Windows, give each path with its drive letter (`C:/...`), in Git Bash too: Windows Python does not read `/c/...` paths. The same line works in PowerShell and in bash:
 
-```powershell
-python -c "import sys,json; sys.path.insert(0,r'C:\Users\negat\.claude\skills\pre-brd-unifier\scripts'); import export_xlsx as ex; ex.export(json.load(open(r'<payload.json>',encoding='utf-8')), r'<dst>\PRE-BRD-<ProjectName>-v1.1.xlsx')"
+```text
+python -c "import sys,json; sys.path.insert(0,r'<skill-folder>/scripts'); import export_xlsx as ex; ex.export(json.load(open(r'<payload.json>',encoding='utf-8')), r'<dst>/PRE-BRD-<ProjectName>-v1.1.xlsx')"
 ```
 
 3. Report the output path and tell the user to open it in Excel (formulas recompute on open; the control-panel switch is set to YES so the scoreboard computes).

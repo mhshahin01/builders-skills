@@ -31,7 +31,7 @@
 
 ## Changes Log
 
-<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count. -->
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, and so do §18 flag rows and the §19.1 upstream state (SKILL.md § Output conventions, Versions). -->
 
 | Version | Date | Author | Mode | Change Summary |
 |---------|------|--------|------|----------------|
@@ -566,7 +566,7 @@ Open `> Confirm:` and `> TODO:` flags counted per section, with a row for every 
 
 ## 19.1 Source Documents
 
-<!-- One row per source BRD, keyed as in the SDD's Source BRDs register. The use-case trace rows record the upstream state the trace was built from, so a later run can see what changed (sdd-to-lld.md § Use-case traceability). -->
+<!-- One row per source BRD, keyed as in the SDD's Source BRDs register. The use-case trace rows record the upstream state the trace was built from, so a later run can see what changed (sdd-to-lld.md § Use-case traceability). The Related SDD version is what SKILL.md step 3c compares with the SDD's current version on the next run. Each version cell holds the upstream version this LLD last read, at its build or its last accepted refresh. It is not the version in which that part last changed, so the §7.3 row repeats the Related SDD version. -->
 
 | Document | Path / URL | Version / state | Notes |
 |----------|------------|-----------------|-------|
@@ -692,7 +692,7 @@ This section complements (does not replace) §18, which is the author-generated 
 
 ## 21.4 Reviewer Notes
 
-<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service, plus the three `global` rows. Zero findings is valid for a surface that was checked. -->
+<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service, plus the three `global` rows. Zero findings is valid for a surface that was checked. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed section: its Service cell reads `[YYYY-MM-DD] delta: section N` or `[YYYY-MM-DD] delta: global`, and its Risk surface cell names the surfaces checked. A scoped application check (SKILL.md step 7, Answers in the same update) adds one dated row per applied item: its Service cell reads `[YYYY-MM-DD] application check: OI-NN`, and its What was checked cell names each section the item changed. The brackets are part of each label: `[2026-10-07] delta: section 16`, `[2026-10-07] application check: OI-14`. -->
 
 | Service | Risk surface | Checked | Findings | What was checked |
 |---------|--------------|---------|----------|------------------|

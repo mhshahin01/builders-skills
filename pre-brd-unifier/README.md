@@ -28,8 +28,8 @@ Most idea docs are static templates filled from intuition. This skill exists to 
 - **Compute, do not hardcode.** RICE, TAM/SAM/SOM (with a top-down vs bottom-up cross-check), EFAS/IFAS weighted scores, Porter's averages, and the Tier-5 composite all come from stated formulas in `frameworks.md`.
 - **Two independent verdicts.** The mechanical Scoreboard (22) is checked by a skeptical investor agent (23) that scores seven aspects, computes a weighted composite, and must reconcile its Go/No-Go with the Scoreboard. Enterprise and internal initiatives get a business-case lens instead of a venture lens.
 - **Adversarial review built in.** A cleared-context reviewer reviews chunks 01-23, hunting unsourced numbers, cross-chunk figure inconsistencies, and weak go/no-go logic. Zero findings triggers a re-dispatch with stronger framing.
-- **Coherent synthesis.** Tier 5 must follow from the tier 2/3/4 signals, and shared facts (UVP, revenue levers, target segment) are stated once in their home chunk and cross-referenced elsewhere, never restated.
-- **Excel on approval only.** The export clones the embedded reference workbook (styling, sample columns, 77 live formulas) and writes Answer cells only, per a whitelisted cell map.
+- **Coherent synthesis.** The Scoreboard scores its five signals from tier 2 only (07, 09, 10, 11), chunks 22 and 23 never contradict chunks 01-21, and shared facts (UVP, revenue levers, target segment) are stated once in their home chunk and cross-referenced elsewhere, never restated.
+- **Excel on approval only.** The export clones the embedded reference workbook (styling, sample columns, and its 77 formula cells) and writes Answer cells only, per a whitelisted cell map.
 
 ## How
 

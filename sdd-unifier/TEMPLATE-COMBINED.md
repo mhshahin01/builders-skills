@@ -9,8 +9,8 @@
 **Date:** [YYYY-MM-DD]
 **Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
 **Reconciled:** [Date, checker, request and checked content revision/hash or explicit final-edit-then-check order]
-**E2E gate (§24):** [Locked | Open - Up to date | Stale] - [open conditions E1-E4, if any]
-**E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
+**E2E gate (§24):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
+**E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
 
 ### E3 marker inventory
 
@@ -50,7 +50,7 @@
 
 ## Changes Log
 
-<!-- Initial row: Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count; companion headers reflect current parent without a separate bump. -->
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, a new coverage record row included when the update changes other content (coverage rows alone bump nothing); companion headers reflect current parent without a separate bump. -->
 
 | Version | Updated Date | Updated By | Reviewed By | Approved By | Update Summary |
 |---------|--------------|------------|-------------|-------------|----------------|
@@ -1798,7 +1798,7 @@ sequenceDiagram
 
 ## Reviewer Notes
 
-<!-- Coverage record first (required): one row per risk surface in the review brief (SKILL.md step 7), each either "checked: N findings (OI IDs)" or "checked: no issue found", with what was checked. A zero-finding review is valid. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed section; a scoped application check adds one dated row per checked item, labelled `[date] application check: §NN (OI-NN)`. Then optional free-form notes that did not crystallise into a numbered open item. -->
+<!-- Coverage record first (required): one row per risk surface in the review brief (SKILL.md step 7), each either "checked: N findings (OI IDs)" or "checked: no issue found", with what was checked. A zero-finding review is valid. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed section, labelled `[YYYY-MM-DD] delta: section N`; a scoped application check adds one dated row per checked item, labelled `[YYYY-MM-DD] application check: OI-NN`, whose Checked cell names every section the item changed (`sections 6 and 15`). The brackets are part of each label: `[2026-10-07] delta: section 17`, `[2026-10-07] application check: OI-45`. An update that only applies pending items (SKILL.md step 7, On an update) starts with application check rows. Then optional free-form notes that did not crystallise into a numbered open item. -->
 
 | Risk surface | Checked | Findings | Notes |
 |---|---|---|---|
@@ -1806,6 +1806,7 @@ sequenceDiagram
 | [Observability] | [What was checked] | [No issue found] | [Notes] |
 
 <!-- Optional new scope: label Scope proposal here with source, recommendation and tradeoff; not a blocking Open OI until owner-adopted. Required gaps keep the normal OI schema. -->
+<!-- A source problem the chunk 19 faithfulness check found and neither fixed nor raised (SKILL.md step 8b item 3): a note here with its source, its owner, and why no chunk 19 claim depends on it. -->
 
 - [Note 1]
 - [Note 2]

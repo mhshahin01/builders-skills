@@ -32,7 +32,7 @@ This step runs in the main context, not as an agent, so cross-chunk coherence is
 2. Write chunks 06–11 from each agent's returned bundle, applying the reconciled canonical figures.
 3. Compute derived totals: Porter's average (from 09), EFAS/IFAS weighted sums (from 10, 11).
 4. **Consolidate chunk 12 (SWOT)** from the EFAS (10) and IFAS (11) outputs - SWOT is derived here, never fetched by an agent.
-5. Carry the propagation map in `frameworks.md` into the **Tier-5 Executive Summary (22)**, keeping it consistent with the tier-2/3/4 signals.
+5. Carry the propagation map in `frameworks.md` into the **Tier-5 Executive Summary (22)**. Its five signals come from tier 2 only (07, 09, 10, 11), and nothing in 22 may contradict chunks 01-21.
 
 Tiers 1, 3, 4 are authored from intake + the research bundle (they are framing/prioritization, not new web research).
 

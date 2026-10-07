@@ -7,7 +7,7 @@ PART OF: PRE-BRD Master
 
 # Investor Assessment
 
-An independent investor-lens evaluation of the whole pre-BRD. Where the Executive Summary Scoreboard (22) is a mechanical weighted composite of the analysis tiers, this chunk is a judgment: an investor reads the filled chunks and scores the opportunity across seven aspects out of 10, then issues a **Go** / **No-Go** verdict with a strong, evidence-backed Why. It is authored by a dedicated investor agent after chunks 01 to 22 are filled. The reviewer pass runs after it and reviews this chunk with the rest.
+An independent investor-lens evaluation of the whole pre-BRD. Where the Executive Summary Scoreboard (22) is a mechanical weighted composite of five tier 2 signals, this chunk is a judgment: an investor reads the filled chunks and scores the opportunity across seven aspects out of 10, then issues a **Go** / **No-Go** verdict with a strong, evidence-backed Why. It is authored by a dedicated investor agent after chunks 01 to 22 are filled. The reviewer pass runs after it and reviews this chunk with the rest.
 
 **Active lens:** [Venture-return | Business-case] - venture-return for a fundable startup; business-case for an internal product, enterprise initiative, or cost-center bet. The lens reinterprets the aspects (e.g. "Financial viability & return" = investor return/exit vs. ROI/payback/TCO vs. internal hurdle rate; "Go-to-market" = acquisition vs. adoption/rollout) while keeping the same seven aspects, weights, scale, and verdict bands.
 

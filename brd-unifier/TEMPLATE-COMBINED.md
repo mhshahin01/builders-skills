@@ -371,7 +371,7 @@ All detailed use cases follow this structure:
 
 <!-- Global UI/UX standards that apply across all pages, from the user's point of view. -->
 
-- **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once). Never an invented value.]
+- **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once, with the open items in SKILL.md step 8). Never an invented value.]
 - **Data Tables**: [Source or confirmed sorting, pagination, export and filtering rules. Unstated behaviour is a labelled proposal for owner confirmation; examples such as 20 rows/page or CSV/XLSX export are not automatic requirements.]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
@@ -485,7 +485,7 @@ DELIVERY CHUNKS. Order 14 -> 15 -> 16 -> 17. Rules: delivery-chunks.md.
 
 # Implementation Plan
 
-> **What this is.** Every use case turned into scoped tasks with stable IDs, ordered so that no task comes before something it depends on. It names what to deliver and how completion is judged; the SDD and LLD own the how.
+> **What this is.** Every use case, and every stated report, integration or other section capability with no use case, turned into scoped tasks with stable IDs, ordered so that no task comes before something it depends on. It names what to deliver and how completion is judged; the SDD and LLD own the how.
 
 **Plan status:** [Up to date / Provisional (TD-NN) / Stale] | **Basis:** BRD v[X.X] | **Gate verified:** [YYYY-MM-DD] (see [14-todo.md](./brd-[project-slug]/14-todo.md)) | **Flowcharts used:** [Figures N-M] | **New items raised while writing this plan:** [0, or TD-NN ...]
 

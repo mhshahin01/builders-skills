@@ -157,8 +157,8 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 +-- 13-open-items-and-clarifications.md .... reviewer findings with recommended answers
 +-- 14-todo.md .... product-manager checklist (living; every generation; not merged)
     |  [delivery gate: opens only when every to-do item is closed]
-    +-- 15-implementation.md .... dependency-ordered implementation tasks (from 06a+)
-        +-- 16-uat-bat-test-cases.md .... UAT/BAT test cases traced to use cases, NFRs, tasks
+    +-- 15-implementation.md .... dependency-ordered implementation tasks (from 06a+ and capabilities with no use case)
+        +-- 16-uat-bat-test-cases.md .... UAT/BAT test cases traced to use cases or owning sections, NFRs, tasks
             +-- 17-for-ppt.md .... presentation brief and 30-second videos (not merged)
 ```
 

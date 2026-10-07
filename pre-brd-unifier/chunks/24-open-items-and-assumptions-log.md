@@ -71,5 +71,3 @@ GENERATED_BY: pre-brd-unifier post-generation reviewer (cleared-context subagent
 ## Reviewer Notes
 
 - [Note 1]
-
-<!-- MASTER: 00-pre-brd-master.md | PREV: 23-investor-assessment.md | NEXT: none -->

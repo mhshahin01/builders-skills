@@ -1,6 +1,6 @@
 # Live-check findings, 2026-10-07 (next-round input)
 
-The skills were frozen on 2026-10-07 at 09:15 after the last live runs. Nothing below is applied. Sources: the reports of the SDD 1.7 run ("apply the pending decision and refresh the e2e") and the LLD 1.3 run ("the SDD has a new version"), both on `_fixtures/runs-wip/step6-R/review/` (saved as `chain/run-2026-10-07-review/`). The findings of the earlier gate rerun and of the SDD 1.6 run were fixed the same day (stage rows GATE, FIX2 and SDD16 in `../step6-plan.md`).
+The skills were frozen on 2026-10-07 at 09:15 after the last live runs. Nothing below was applied in step 6; step 7 applies items 1 to 16, H1, H2 and N1 to N7 (UNIFIER-ENHANCEMENTS.md § Step 7; triage in `../step7-triage/`). Sources: the reports of the SDD 1.7 run ("apply the pending decision and refresh the e2e") and the LLD 1.3 run ("the SDD has a new version"), both on `_fixtures/runs-wip/step6-R/review/` (saved as `chain/run-2026-10-07-review/`). The findings of the earlier gate rerun and of the SDD 1.6 run were fixed the same day (stage rows GATE, FIX2 and SDD16 in `../step6-plan.md`).
 
 ## Skill text
 
@@ -44,14 +44,14 @@ The skills were frozen on 2026-10-07 at 09:15 after the last live runs. Nothing 
 Codex's own follow-up review found two defects in the S3 output (`_fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/`); the Claude Code review confirmed both. The skill rules exist; the run did not follow them. The saved output stays as run evidence and is not corrected by hand.
 
 - **S3-1. A regulatory constraint is dropped.** Pre-BRD 08 Political point 4 (`run/pre-brd-clinic-reminders/08-pestle-analysis.md:15`) says SMS goes only through an NTRA-licensed aggregator and hosting in Egypt only with a licensed provider. The BRD carries the SMS half (02:63, 08:16, 12:59) but not the hosting half: chunk 02 has no such constraint, and 12:59 cites hosting only to the Legal row. Rule: `brd-unifier/sow-transformation.md:179` (a legal or regulatory PESTLE factor becomes a 02 constraint).
-- **S3-2. The to-do register does not follow the template.** In `14-todo.md:60-113`, all 54 rows have the same Blocks text ("Linked requirement, objective or acceptance outcome"), every Source cites a chunk file but no section or UC ID, and every Kind is "Owner clarification", which is not one of the three template values. TD-16 (`14-todo.md:75`) merges the WhatsApp sender-model question (02:77, 04:62, 06b:280, 06c:176, 08:38, 12:79) with the residency hand-off and words it as an SDD hand-off; the incorporation question (02:62) has no named decision. Rules: `brd-unifier/delivery-chunks.md:143`, `:148` and `:155`; `brd-unifier/chunks/14-todo.md:80-84`. The step 3 register (`run/brd-clinic-reminders/14-todo.md`) met them.
+- **S3-2. The to-do register does not follow the template.** In `14-todo.md:60-113`, all 54 rows have the same Blocks text ("Linked requirement, objective or acceptance outcome"), every Source cites a chunk file but no section or UC ID, and every Kind is "Owner clarification", which is not one of the three template values. TD-16 (`14-todo.md:75`) merges the WhatsApp sender-model question (02:77, 04:62, 06b:280, 06c:176, 08:38, 12:79) with the residency hand-off and words it as an SDD hand-off; the incorporation question (02:62) has no named decision. Rules: `brd-unifier/delivery-chunks.md:141`, `:147` and `:159`; `brd-unifier/chunks/14-todo.md:80-85`. The step 3 register (`run/brd-clinic-reminders/14-todo.md`) met them.
 
-Hardening candidates for the next round (not applied):
+Hardening candidates for the next round (applied in step 7):
 
 - **H1.** `brd-unifier/sow-transformation.md:179`: say that a regulatory point in any PESTLE row (Political included) becomes a 02 constraint, one per implication.
 - **H2.** The BRD consistency check (C10) or chunk 14 step 1: flag a TD row whose Blocks cell names no use case, NFR or chunk section, whose Source names no section or UC ID, or whose Kind is not one of the three values.
 
-Skill-side notes from the README audit against the final skills (next round, not applied; the README itself was corrected):
+Skill-side notes from the README audit against the final skills (applied in step 7; the README itself was corrected in step 6):
 
 - **N1.** `brd-unifier/chunking.md:43-44` describes chunks 15 and 16 without the capabilities that have no use case; `delivery-chunks.md:231` and `:292` include them.
 - **N2.** `pre-brd-unifier/xlsx-export.md:13` hardcodes `C:\Users\negat\.claude\skills\pre-brd-unifier\scripts`; the documented command fails on claude.ai or another machine.

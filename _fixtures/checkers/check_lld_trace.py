@@ -142,7 +142,7 @@ def lineage(lld_dir, sdd_dir, master):
     if header != CHILD_COLUMNS:
         problems.append(f"Child LLDs columns {header}, expected {CHILD_COLUMNS}")
     sdd_ver = first_match(c00, r"^\*\*Version:\*\*\s*v?([0-9]+(?:\.[0-9]+)*)")
-    lld_ver = first_match(os.path.join(lld_dir, "00-metadata.md"), r"^\|\s*\*\*Version\*\*\s*\|\s*v?([0-9]+(?:\.[0-9]+)*)")
+    lld_ver = first_match(os.path.join(lld_dir, "00-metadata.md"), r"^\|\s*(?:\*\*)?Version(?:\*\*)?\s*\|\s*v?([0-9]+(?:\.[0-9]+)*)")
     target = os.path.normpath(os.path.join(lld_dir, master)) if master else None
     own = None
     for line in lines[2:]:
@@ -290,6 +290,9 @@ def main():
     route_rows = table_rows(section(read(front), r"17\.3")) if os.path.isfile(front) else []
     test = os.path.join(lld_dir, "13-testing.md")
     spec_rows = table_rows(section(read(test), r"16\.8")) if os.path.isfile(test) else []
+    idx_rows = [r for r in idx_rows if re.match(r"^\|\s*\[[A-Z][A-Z-]*/UC-\d+\]", r)]
+    spec_files = {m.group(1) for r in spec_rows for m in re.finditer(r"`([^`]+\.spec\.ts)`", cells(r)[0])}
+    route_header = next((r for r in section(read(front), r"17\.3") if r.startswith("| Route")), "") if os.path.isfile(front) else ""
 
     result = {
         "lld_dir": lld_dir,
@@ -299,8 +302,8 @@ def main():
         "uc_block_headings": [h for _, h in uc_blocks],
         "index_rows_19_9": len(idx_rows),
         "route_rows_17_3": len(route_rows),
-        "route_header_cols": (section(read(front), r"17\.3")[2] if os.path.isfile(front) and len(section(read(front), r"17\.3")) > 2 else ""),
-        "spec_rows_16_8": len(spec_rows),
+        "route_header_cols": route_header,
+        "spec_rows_16_8": len(spec_files),
         "broken_links": broken,
         "unkeyed_ids": unkeyed,
         "unknown_ids": unknown_ids,

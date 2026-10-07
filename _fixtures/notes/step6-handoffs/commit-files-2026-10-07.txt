@@ -1,0 +1,645 @@
+Pending step 6 files for Claude Code review and commit splitting, 2026-10-07.
+This includes earlier uncommitted skill/checker work. The five skill folders were unchanged by S1-CLEAN.
+Source: read-only git status --porcelain=v1 --untracked-files=all, optional locks disabled.
+No runs-wip entry. M = modified; ?? = untracked.
+
+ M .gitignore
+ M README.md
+ M UNIFIER-ENHANCEMENTS.md
+ M _fixtures/README.md
+ M _fixtures/checkers/_linkcheck.py
+ M _fixtures/checkers/check_e2e.py
+ M _fixtures/checkers/check_lld_trace.py
+ M _fixtures/checkers/check_mermaid.py
+ M _fixtures/checkers/check_sdd.py
+ M _fixtures/checkers/check_trace.py
+ M _fixtures/checkers/check_uc_keys.py
+ M _fixtures/checkers/diff_runs.py
+ M brd-unifier/SKILL.md
+ M brd-unifier/TEMPLATE-COMBINED.md
+ M brd-unifier/chunking.md
+ M brd-unifier/chunks/00-cover-and-changelog.md
+ M brd-unifier/chunks/02-glossary-assumptions-facts.md
+ M brd-unifier/chunks/06a-use-cases-detailed.md
+ M brd-unifier/chunks/11-summary-and-uiux.md
+ M brd-unifier/chunks/13-open-items-and-clarifications.md
+ M brd-unifier/chunks/14-todo.md
+ M brd-unifier/chunks/15-implementation.md
+ M brd-unifier/chunks/16-uat-bat-test-cases.md
+ M brd-unifier/chunks/17-for-ppt.md
+ M brd-unifier/chunks/brd-master.md
+ M brd-unifier/decision-log.md
+ M brd-unifier/delivery-chunks.md
+ M brd-unifier/mermaid-diagrams.md
+ M brd-unifier/modes.md
+ M brd-unifier/parts-mode.md
+ M brd-unifier/sow-transformation.md
+ M brd-unifier/transform-detection.md
+ M brd-unifier/use-case-quality.md
+ M business-reviewer-unifier/README.md
+ M business-reviewer-unifier/SKILL.md
+ M business-reviewer-unifier/apply-and-verify.md
+ M business-reviewer-unifier/panel-orchestration.md
+ M business-reviewer-unifier/reviewer-personas.md
+ M business-reviewer-unifier/tracker-schema.md
+ M business-reviewer-unifier/walkthrough-protocol.md
+ M lld-unifier/README.md
+ M lld-unifier/SKILL.md
+ M lld-unifier/TEMPLATE-COMBINED.md
+ M lld-unifier/agent-orchestration.md
+ M lld-unifier/chunking.md
+ M lld-unifier/chunks/00-metadata.md
+ M lld-unifier/chunks/02-context.md
+ M lld-unifier/chunks/03-architecture.md
+ M lld-unifier/chunks/04-implementation-template.md
+ M lld-unifier/chunks/05-data-model.md
+ M lld-unifier/chunks/06-api-contracts.md
+ M lld-unifier/chunks/07-event-contracts.md
+ M lld-unifier/chunks/08-state-and-rules.md
+ M lld-unifier/chunks/09-cross-cutting.md
+ M lld-unifier/chunks/10-operations.md
+ M lld-unifier/chunks/11-security.md
+ M lld-unifier/chunks/12-performance.md
+ M lld-unifier/chunks/14-frontend.md
+ M lld-unifier/chunks/15-open-questions.md
+ M lld-unifier/chunks/16-references.md
+ M lld-unifier/chunks/17-specs.md
+ M lld-unifier/chunks/18-open-items-and-clarifications.md
+ M lld-unifier/chunks/lld-master.md
+ M lld-unifier/code-extraction.md
+ M lld-unifier/confidence-rules.md
+ M lld-unifier/hybrid-drift.md
+ M lld-unifier/lld-quality.md
+ M lld-unifier/mermaid-diagrams.md
+ M lld-unifier/modes.md
+ M lld-unifier/pattern-rules.md
+ M lld-unifier/sdd-to-lld.md
+ M lld-unifier/transform-detection.md
+ M pre-brd-unifier/README.md
+ M pre-brd-unifier/SKILL.md
+ M pre-brd-unifier/chunks/00-pre-brd-master.md
+ M pre-brd-unifier/chunks/06-market-comparison.md
+ M pre-brd-unifier/chunks/07-market-sizing-analysis.md
+ M pre-brd-unifier/chunks/10-efas.md
+ M pre-brd-unifier/chunks/11-ifas.md
+ M pre-brd-unifier/chunks/16-bcg-matrix.md
+ M pre-brd-unifier/chunks/22-executive-summary-scoreboard.md
+ M pre-brd-unifier/chunks/23-investor-assessment.md
+ M pre-brd-unifier/frameworks.md
+ M pre-brd-unifier/modes.md
+ M pre-brd-unifier/reference/PRE-BRD-v1.1.xlsx
+ M pre-brd-unifier/reference/cell-map.json
+ M pre-brd-unifier/research-orchestration.md
+ M pre-brd-unifier/scripts/export_xlsx.py
+ M pre-brd-unifier/scripts/tests/test_export_xlsx.py
+ M pre-brd-unifier/xlsx-export.md
+ M sdd-unifier/README.md
+ M sdd-unifier/SKILL.md
+ M sdd-unifier/TEMPLATE-COMBINED.md
+ M sdd-unifier/architecture-questionnaire.md
+ M sdd-unifier/brd-to-sdd.md
+ M sdd-unifier/chunking.md
+ M sdd-unifier/chunks/00-cover-and-changelog.md
+ M sdd-unifier/chunks/03-users-and-use-cases.md
+ M sdd-unifier/chunks/07-cross-cutting-concerns.md
+ M sdd-unifier/chunks/08-integrations.md
+ M sdd-unifier/chunks/10-events-hub.md
+ M sdd-unifier/chunks/11-api-contracts.md
+ M sdd-unifier/chunks/13a-service-detailed-template.md
+ M sdd-unifier/chunks/14-performance-and-capacity.md
+ M sdd-unifier/chunks/18-open-items-and-clarifications.md
+ M sdd-unifier/chunks/19-e2e-system-design.md
+ M sdd-unifier/chunks/sdd-master.md
+ M sdd-unifier/decision-log.md
+ M sdd-unifier/mermaid-diagrams.md
+ M sdd-unifier/modes.md
+ M sdd-unifier/parts-mode.md
+ M sdd-unifier/sdd-quality.md
+ M sdd-unifier/source-transformation.md
+ M sdd-unifier/transform-detection.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/06a-use-cases-member.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/06b-use-cases-loyalty-administrator.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/08-integrations.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/10-nfrs.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/14-todo.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/15-implementation.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/16-uat-bat-test-cases.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/decision-log.md
+?? _fixtures/chain/run-2026-10-06-final/brd-loyalty-points/loyalty-points-brd-master.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/06a-use-cases-customer.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/06b-use-cases-branch-manager.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/08-integrations.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/10-nfrs.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/14-todo.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/15-implementation.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/16-uat-bat-test-cases.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/decision-log.md
+?? _fixtures/chain/run-2026-10-06-final/brd-refunds-portal/refunds-portal-brd-master.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/00-metadata.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/01-purpose-and-scope.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/02-context.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/03-architecture.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/04-implementation/customer-accounts.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/04-implementation/loyalty-points.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/04-implementation/notifications.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/04-implementation/payouts.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/04-implementation/refund-requests.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/05-data-model.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/06-api-contracts.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/07-event-contracts.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/08-state-and-rules.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/09-cross-cutting.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/10-operations.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/11-security.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/12-performance.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/13-testing.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/14-frontend.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/15-open-questions.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/16-references.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/17-specs.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/decision-log.md
+?? _fixtures/chain/run-2026-10-06-final/lld-refunds-platform/refunds-platform-lld-master.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/01-executive-summary-scope-risks.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/02-ecosystem-overview.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/03-users-and-use-cases.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/04-architecture-style-and-diagrams.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/05-workflows-and-sequences.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/06-principles-and-decisions.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/07-cross-cutting-concerns.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/08-integrations.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/09-services-summary.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/10-events-hub.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/11-api-contracts.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/12-centralized-user-roles.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/13a-service-customer-accounts.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/13b-service-refund-requests.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/13c-service-payouts.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/13d-service-notifications.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/13e-service-loyalty-points.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/14-performance-and-capacity.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/15-environments.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/16-operations-runbook.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/17-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/19-e2e-system-design.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/decision-log.md
+?? _fixtures/chain/run-2026-10-06-final/sdd-refunds-platform/refunds-platform-sdd-master.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/06a-use-cases-member.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/08-integrations.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/10-nfrs.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/14-todo.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-loyalty-points/loyalty-points-brd-master.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/06a-use-cases-customer.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/06b-use-cases-branch-manager.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/08-integrations.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/10-nfrs.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/14-todo.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/15-implementation.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/16-uat-bat-test-cases.md
+?? _fixtures/chain/run-2026-10-06-final/source/brd-refunds-portal/refunds-portal-brd-master.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/06a-use-cases-member.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/06b-use-cases-loyalty-administrator.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/08-integrations.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/10-nfrs.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/14-todo.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/15-implementation.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/16-uat-bat-test-cases.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/decision-log.md
+?? _fixtures/chain/run-2026-10-07-review/brd-loyalty-points/loyalty-points-brd-master.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/06a-use-cases-customer.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/06b-use-cases-branch-manager.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/08-integrations.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/10-nfrs.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/14-todo.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/15-implementation.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/16-uat-bat-test-cases.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/decision-log.md
+?? _fixtures/chain/run-2026-10-07-review/brd-refunds-portal/refunds-portal-brd-master.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/00-metadata.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/01-purpose-and-scope.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/02-context.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/03-architecture.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/04-implementation/customer-accounts.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/04-implementation/loyalty-points.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/04-implementation/notifications.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/04-implementation/payouts.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/04-implementation/refund-requests.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/05-data-model.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/06-api-contracts.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/07-event-contracts.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/08-state-and-rules.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/09-cross-cutting.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/10-operations.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/11-security.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/12-performance.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/13-testing.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/14-frontend.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/15-open-questions.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/16-references.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/17-specs.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/decision-log.md
+?? _fixtures/chain/run-2026-10-07-review/lld-refunds-platform/refunds-platform-lld-master.md
+?? _fixtures/chain/run-2026-10-07-review/review-comments-tracker.md
+?? _fixtures/chain/run-2026-10-07-review/review-panel-findings.md
+?? _fixtures/chain/run-2026-10-07-review/review-walkthrough.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/01-executive-summary-scope-risks.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/02-ecosystem-overview.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/03-users-and-use-cases.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/04-architecture-style-and-diagrams.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/05-workflows-and-sequences.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/06-principles-and-decisions.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/07-cross-cutting-concerns.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/08-integrations.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/09-services-summary.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/10-events-hub.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/11-api-contracts.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/12-centralized-user-roles.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/13a-service-customer-accounts.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/13b-service-refund-requests.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/13c-service-payouts.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/13d-service-notifications.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/13e-service-loyalty-points.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/14-performance-and-capacity.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/15-environments.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/16-operations-runbook.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/17-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/19-e2e-system-design.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/decision-log.md
+?? _fixtures/chain/run-2026-10-07-review/sdd-refunds-platform/refunds-platform-sdd-master.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/06a-use-cases-member.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/08-integrations.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/10-nfrs.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/14-todo.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-loyalty-points/loyalty-points-brd-master.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/00-cover-and-changelog.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/01-executive-summary-and-context.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/02-glossary-assumptions-facts.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/03-definitions-and-domain-concepts.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/04-scope-and-personas.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/05-user-journeys-overview.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/06a-use-cases-customer.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/06b-use-cases-branch-manager.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/07-users-use-cases-matrix.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/08-integrations.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/09-reporting-and-analytics.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/10-nfrs.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/11-summary-and-uiux.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/12-appendix-and-wishlist.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/13-open-items-and-clarifications.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/14-todo.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/15-implementation.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/16-uat-bat-test-cases.md
+?? _fixtures/chain/run-2026-10-07-review/source/brd-refunds-portal/refunds-portal-brd-master.md
+?? _fixtures/checkers/_e2e_gate.py
+?? _fixtures/checkers/check_versions.py
+?? _fixtures/checkers/tests/test_chk_regressions.py
+?? _fixtures/checkers/tests/test_e2e_gate_inventory.py
+?? _fixtures/notes/step6-consistency/brd.md
+?? _fixtures/notes/step6-consistency/briefs/brd.md
+?? _fixtures/notes/step6-consistency/briefs/cross-skill.md
+?? _fixtures/notes/step6-consistency/briefs/lld.md
+?? _fixtures/notes/step6-consistency/briefs/sdd.md
+?? _fixtures/notes/step6-consistency/cross.md
+?? _fixtures/notes/step6-consistency/decisions.md
+?? _fixtures/notes/step6-consistency/lld.md
+?? _fixtures/notes/step6-consistency/sdd.md
+?? _fixtures/notes/step6-decisions.md
+?? _fixtures/notes/step6-handoffs/B-briefs.md
+?? _fixtures/notes/step6-handoffs/B-findings.md
+?? _fixtures/notes/step6-handoffs/R-briefs.md
+?? _fixtures/notes/step6-handoffs/R-findings.md
+?? _fixtures/notes/step6-handoffs/after-codex.md
+?? _fixtures/notes/step6-handoffs/check_readme.py
+?? _fixtures/notes/step6-handoffs/ck-checkers.md
+?? _fixtures/notes/step6-handoffs/ck-log.md
+?? _fixtures/notes/step6-handoffs/codex-log.md
+?? _fixtures/notes/step6-handoffs/commit-files-2026-10-07.txt
+?? _fixtures/notes/step6-handoffs/consistency-recheck.md
+?? _fixtures/notes/step6-handoffs/findings-triage.md
+?? _fixtures/notes/step6-handoffs/handoff-manifest-2.txt
+?? _fixtures/notes/step6-handoffs/handoff-manifest.txt
+?? _fixtures/notes/step6-handoffs/live-findings.md
+?? _fixtures/notes/step6-handoffs/make_manifest.py
+?? _fixtures/notes/step6-handoffs/manifest2.py
+?? _fixtures/notes/step6-handoffs/readme-sync-log.md
+?? _fixtures/notes/step6-handoffs/readme-sync.md
+?? _fixtures/notes/step6-handoffs/recheck-brd.md
+?? _fixtures/notes/step6-handoffs/recheck-cross.md
+?? _fixtures/notes/step6-handoffs/recheck-lld.md
+?? _fixtures/notes/step6-handoffs/recheck-sdd.md
+?? _fixtures/notes/step6-handoffs/resume-codex-2.md
+?? _fixtures/notes/step6-handoffs/resume-codex.md
+?? _fixtures/notes/step6-plan.md
+?? _fixtures/notes/step6-triage/brd.md
+?? _fixtures/notes/step6-triage/checkers.md
+?? _fixtures/notes/step6-triage/families.md
+?? _fixtures/notes/step6-triage/lld.md
+?? _fixtures/notes/step6-triage/pre-brd.md
+?? _fixtures/notes/step6-triage/reviewer.md
+?? _fixtures/notes/step6-triage/sdd-core.md
+?? _fixtures/notes/step6-triage/sdd-templates.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/00-cover-and-changelog.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/01-executive-summary-and-context.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/02-glossary-assumptions-facts.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/03-definitions-and-domain-concepts.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/04-scope-and-personas.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/05-user-journeys-overview.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/06a-use-cases-customer.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/06b-use-cases-branch-manager.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/07-users-use-cases-matrix.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/08-integrations.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/09-reporting-and-analytics.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/10-nfrs.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/11-summary-and-uiux.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/12-appendix-and-wishlist.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/13-open-items-and-clarifications.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/14-todo.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/15-implementation.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/16-uat-bat-test-cases.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/BRD-RefundsPortal-v1.0-MERGED.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/merged/refunds-portal-brd-master.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/00-cover-and-changelog.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/01-executive-summary-and-context.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/02-glossary-assumptions-facts.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/03-definitions-and-domain-concepts.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/04-scope-and-personas.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/05-user-journeys-overview.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/06a-use-cases-customer.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/06b-use-cases-branch-manager.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/07-users-use-cases-matrix.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/08-integrations.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/09-reporting-and-analytics.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/10-nfrs.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/11-summary-and-uiux.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/12-appendix-and-wishlist.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/13-open-items-and-clarifications.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/14-todo.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/15-implementation.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/16-uat-bat-test-cases.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/BRD-RefundsPortal-v1.0-MERGED.md
+?? _fixtures/scenarios/brd-heading-map/rerun-2026-10-07/rechunked/brd-refunds-portal/refunds-portal-brd-master.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/00-cover-and-changelog.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/01-executive-summary-and-context.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/02-glossary-assumptions-facts.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/03-definitions-and-domain-concepts.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/04-scope-and-personas.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/05-user-journeys-overview.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/06a-use-cases-clinic-owner.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/06b-use-cases-receptionist.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/06c-use-cases-patient.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/07-users-use-cases-matrix.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/08-integrations.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/09-reporting-and-analytics.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/10-nfrs.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/11-summary-and-uiux.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/12-appendix-and-wishlist.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/13-open-items-and-clarifications.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/14-todo.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/clinic-reminders-brd-master.md
+?? _fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07/brd-clinic-reminders/decision-log.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/00-cover-and-changelog.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/01-executive-summary-and-context.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/02-glossary-assumptions-facts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/03-definitions-and-domain-concepts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/04-scope-and-personas.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/05-user-journeys-overview.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/06a-use-cases-member.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/07-users-use-cases-matrix.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/08-integrations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/09-reporting-and-analytics.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/10-nfrs.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/11-summary-and-uiux.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/12-appendix-and-wishlist.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/13-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/14-todo.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-loyalty-points/loyalty-points-brd-master.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/00-cover-and-changelog.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/01-executive-summary-and-context.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/02-glossary-assumptions-facts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/03-definitions-and-domain-concepts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/04-scope-and-personas.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/05-user-journeys-overview.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/06a-use-cases-customer.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/06b-use-cases-branch-manager.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/07-users-use-cases-matrix.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/08-integrations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/09-reporting-and-analytics.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/10-nfrs.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/11-summary-and-uiux.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/12-appendix-and-wishlist.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/13-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/14-todo.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/15-implementation.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/16-uat-bat-test-cases.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/brd-refunds-portal/refunds-portal-brd-master.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/00-metadata.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/01-purpose-and-scope.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/02-context.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/03-architecture.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/04-implementation/loyalty-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/04-implementation/notification-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/04-implementation/payout-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/04-implementation/refund-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/05-data-model.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/06-api-contracts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/07-event-contracts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/08-state-and-rules.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/09-cross-cutting.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/10-operations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/11-security.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/12-performance.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/13-testing.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/14-frontend.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/15-open-questions.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/16-references.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/17-specs.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/lld-refunds-platform/refunds-platform-lld-master.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/00-cover-and-changelog.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/01-executive-summary-scope-risks.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/02-ecosystem-overview.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/03-users-and-use-cases.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/04-architecture-style-and-diagrams.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/05-workflows-and-sequences.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/06-principles-and-decisions.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/07-cross-cutting-concerns.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/08-integrations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/09-services-summary.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/10-events-hub.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/11-api-contracts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/12-centralized-user-roles.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/13a-service-refund.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/13b-service-payout.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/13c-service-notification.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/13d-service-loyalty.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/14-performance-and-capacity.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/15-environments.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/16-operations-runbook.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/17-appendix-and-wishlist.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/decision-log.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-lld/sdd-refunds-platform/refunds-platform-sdd-master.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/00-cover-and-changelog.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/01-executive-summary-and-context.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/02-glossary-assumptions-facts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/03-definitions-and-domain-concepts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/04-scope-and-personas.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/05-user-journeys-overview.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/06a-use-cases-member.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/07-users-use-cases-matrix.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/08-integrations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/09-reporting-and-analytics.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/10-nfrs.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/11-summary-and-uiux.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/12-appendix-and-wishlist.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/13-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/14-todo.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-loyalty-points/loyalty-points-brd-master.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/00-cover-and-changelog.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/01-executive-summary-and-context.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/02-glossary-assumptions-facts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/03-definitions-and-domain-concepts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/04-scope-and-personas.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/05-user-journeys-overview.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/06a-use-cases-customer.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/06b-use-cases-branch-manager.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/07-users-use-cases-matrix.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/08-integrations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/09-reporting-and-analytics.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/10-nfrs.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/11-summary-and-uiux.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/12-appendix-and-wishlist.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/13-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/14-todo.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/15-implementation.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/16-uat-bat-test-cases.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/brd-refunds-portal/refunds-portal-brd-master.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/00-metadata.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/01-purpose-and-scope.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/02-context.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/03-architecture.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/04-implementation/loyalty-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/04-implementation/notification-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/04-implementation/payout-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/04-implementation/refund-service.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/05-data-model.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/06-api-contracts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/07-event-contracts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/08-state-and-rules.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/09-cross-cutting.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/10-operations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/11-security.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/12-performance.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/13-testing.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/14-frontend.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/15-open-questions.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/16-references.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/17-specs.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/lld-refunds-platform/refunds-platform-lld-master.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/00-cover-and-changelog.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/01-executive-summary-scope-risks.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/02-ecosystem-overview.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/03-users-and-use-cases.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/04-architecture-style-and-diagrams.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/05-workflows-and-sequences.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/06-principles-and-decisions.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/07-cross-cutting-concerns.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/08-integrations.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/09-services-summary.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/10-events-hub.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/11-api-contracts.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/12-centralized-user-roles.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/13a-service-refund.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/13b-service-payout.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/13c-service-notification.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/13d-service-loyalty.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/14-performance-and-capacity.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/15-environments.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/16-operations-runbook.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/17-appendix-and-wishlist.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/18-open-items-and-clarifications.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/decision-log.md
+?? _fixtures/scenarios/sdd-version-tracking/rerun-2026-10-07/after-sdd/sdd-refunds-platform/refunds-platform-sdd-master.md

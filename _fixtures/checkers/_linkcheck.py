@@ -74,6 +74,9 @@ for f in files:
         print("CRLF", os.path.relpath(f, LLD))
     if "\u2014" in raw:
         print("EMDASH", os.path.relpath(f, LLD))
-    if not raw.lstrip().startswith("<!--"):
+    required_header = bool(re.match(r"^\d{2}[a-z]?-", os.path.basename(f)) or
+                           os.path.basename(f).endswith("-master.md") or
+                           os.path.basename(os.path.dirname(f)) == "04-implementation")
+    if required_header and not raw.lstrip().startswith("<!--"):
         print("NO HEADER BLOCK", os.path.relpath(f, LLD))
 print("FILES", len(files))

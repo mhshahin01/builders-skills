@@ -112,9 +112,10 @@ for fn in files:
         if "\u2014" in line:
             problems.append(f"{fn}:{i}: em dash")
 
-# 5. Section 7.3 entry points in owner List of APIs
+# 5. Section 7.3 entry points in owner List of APIs (a Schedule:/Event: trigger, in the owner's Input table)
 c03 = read(os.path.join(SDD, "03-users-and-use-cases.md"))
 api_lists = {}
+inputs = {}
 for fn in files:
     if fn.startswith("13"):
         body = read(os.path.join(SDD, fn))
@@ -124,6 +125,18 @@ for fn in files:
             if m:
                 rows.add(f"{m.group(1)} {m.group(2).strip()}")
         api_lists[fn] = rows
+        ev, sc = set(), set()
+        itab = body.split("### Input", 1)[1] if "### Input" in body else ""
+        itab = re.split(r"\n#{2,3} ", itab, maxsplit=1)[0]
+        for line in itab.splitlines():
+            c = [x.strip() for x in line.strip().strip("|").split("|")]
+            if line.startswith("|") and len(c) >= 2 and c[0] != "Type" and "---" not in c[0]:
+                names = set(re.findall(r"`([^`]+)`", " ".join(c[1:])))
+                if "event" in c[0].lower():
+                    ev |= names
+                if "schedule" in c[0].lower():
+                    sc |= names
+        inputs[fn] = {"event": ev, "schedule": sc}
 for line in c03.splitlines():
     m = re.match(r"^\| \[(REFUNDS|LOYALTY)/UC-\d\d\]\([^)]*\) \| ([^|]*) \| ([^|]*) \| ([^|]*) \|", line)
     if not m:
@@ -133,7 +146,11 @@ for line in c03.splitlines():
     eps = re.findall(r"`([^`]+)`", entry_cell)
     if om:
         for ep in eps:
-            if ep not in api_lists.get(om.group(1), set()):
+            tm = re.match(r"(Schedule|Event):\s*(.+?)\s*$", ep)
+            if tm:
+                if tm.group(2) not in inputs.get(om.group(1), {}).get(tm.group(1).lower(), set()):
+                    problems.append(f"03 §7.3: entry point {ep} not in the Input table of {om.group(1)}")
+            elif ep not in api_lists.get(om.group(1), set()):
                 problems.append(f"03 §7.3: entry point {ep} not in {om.group(1)}")
     elif eps:
         problems.append(f"03 §7.3: entry points without owner: {line[:80]}")
@@ -149,20 +166,41 @@ for fn in files:
             if m.group(1) not in hub_names:
                 problems.append(f"{fn}: event {m.group(1)} not in chunk 10")
 
-# 7. API IDs in 13x exist in chunk 11 index
+# 7. API IDs exist in chunk 11 index (chunk 18 proposals excepted)
+def without_proposals(fn, text):
+    if not fn.startswith("18-"):
+        return text
+    lines = text.split("\n")
+    for s in [k for k, l in enumerate(lines) if re.match(r"^#{2,4} OI-\d+", l)]:
+        e = next((k for k in range(s + 1, len(lines)) if re.match(r"^#{1,4} ", lines[k]) or lines[k].strip() == "---"), len(lines))
+        applied = any(re.match(r"^- \*\*Status:\*\*\s*Accepted - applied", l) for l in lines[s:e])
+        field = None
+        for k in range(s + 1, e):
+            m = re.match(r"^- \*\*([^*]+?):\*\*", lines[k])
+            if m:
+                field = m.group(1)
+            if field in ("Options", "Why") or (field == "Recommended Answer" and not applied):
+                lines[k] = ""
+    return "\n".join(lines)
+
+
 c11 = read(os.path.join(SDD, "11-api-contracts.md"))
 index_ids = set(re.findall(r"^\| (API-\d\d) \|", c11, flags=re.M))
 for fn in files:
-    for m in re.finditer(r"API-\d\d", read(os.path.join(SDD, fn))):
+    for m in re.finditer(r"API-\d\d", without_proposals(fn, read(os.path.join(SDD, fn)))):
         if m.group(0) not in index_ids:
             problems.append(f"{fn}: {m.group(0)} not in §15.2")
 
 # 8. Permission tokens in 13x exist in chunk 12
 c12 = read(os.path.join(SDD, "12-centralized-user-roles.md"))
-tokens = set(re.findall(r"^\| `([a-z]+\.[a-z]+\.[a-z\-]+)` \|", c12, flags=re.M))
+tokens = set(re.findall(r"^\| `([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)` \|", c12, flags=re.M))
+c10_path = os.path.join(SDD, "10-events-hub.md")
+topics = set(re.findall(r"^\| \d+ \| `([a-z0-9][a-z0-9.-]*)` \|", read(c10_path), flags=re.M)) if os.path.isfile(c10_path) else set()
 for fn in files:
     if fn.startswith("13"):
-        for m in re.finditer(r"`((?:refund|loyalty|payout|notification)\.[a-z]+\.[a-z\-]+)`", read(os.path.join(SDD, fn))):
+        for m in re.finditer(r"`([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)`", read(os.path.join(SDD, fn))):
+            if m.group(1).endswith(".dlq") and m.group(1).split(".")[0] in topics:
+                continue
             if m.group(1) not in tokens:
                 problems.append(f"{fn}: token {m.group(1)} not in §16.11")
 
@@ -201,17 +239,17 @@ for fn in files:
             if "Permission token (§16)" in head:
                 cell = c.get("Permission token (§16)", "")
                 found = re.findall(r"`([^`]+)`", cell)
-                if not found and cell != "-":
+                if not found and cell not in ("-", "None - public"):
                     problems.append(f"{fn}: {ep}: permission token cell {cell!r} names no token")
                 for token in found:
-                    if token not in tokens and not re.fullmatch(r"(?:refund|loyalty|payout|notification)\.[a-z]+\.[a-z\-]+", token):
+                    if token not in tokens:
                         problems.append(f"{fn}: {ep}: permission token {token} not in §16.11")
             for api in re.findall(r"API-\d\d", c.get("API ID (§15)", "")):
                 if uri_col is not None and api in index and "TBD" not in index[api][uri_col] and norm_ep(index[api][uri_col]) != ep:
                     problems.append(f"{fn}: {ep}: {api} is {norm_ep(index[api][uri_col])!r} in §15.2")
 for line in c11.splitlines():
     if line.startswith("| Authorization |"):
-        for token in re.findall(r"`([a-z]+\.[a-z]+\.[a-z\-]+)`", line):
+        for token in re.findall(r"`([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)`", line):
             if token not in tokens:
                 problems.append(f"11: contract Authorization token {token} not in §16.11")
 

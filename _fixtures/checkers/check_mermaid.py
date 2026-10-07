@@ -1,6 +1,21 @@
 import os, re, sys
 
 LLD = sys.argv[1]
+
+# Folder kind, told by the master file name first, then the folder name prefix.
+def folder_kind(d):
+    names = [f for f in os.listdir(d) if f.endswith(".md")]
+    if any(f.endswith("-sdd-master.md") for f in names) or os.path.basename(os.path.normpath(d)).startswith("sdd-"):
+        return "sdd"
+    if any(f.endswith("-lld-master.md") for f in names) or os.path.basename(os.path.normpath(d)).startswith("lld-"):
+        return "lld"
+    return "other"
+
+KIND = folder_kind(LLD)
+# Size-cap exemptions, one place per folder kind (sdd-unifier / lld-unifier mermaid-diagrams.md):
+# which dialects never hit the ~30-line guideline, and under which headings (SDD: the §8.3 and §24.3 layered views; LLD: the §6.1 Component Topology layered view).
+UNCAPPED_KINDS = {"sdd": {"erDiagram"}, "lld": {"erDiagram"}, "other": set()}
+UNCAPPED_HEADS = {"sdd": re.compile(r"^#{1,6}\s*(?:8\.3|24\.3)\b"), "lld": re.compile(r"^#{1,6}\s*6\.1\b"), "other": None}
 issues = []
 count = 0
 for dp, _, fs in os.walk(LLD):
@@ -10,7 +25,10 @@ for dp, _, fs in os.walk(LLD):
         p = os.path.join(dp, fn)
         lines = open(p, encoding="utf-8").read().splitlines()
         i = 0
+        head = ""
         while i < len(lines):
+            if re.match(r"^#{1,6}\s", lines[i]):
+                head = lines[i]
             if lines[i].strip() == "```mermaid":
                 j = i + 1
                 block = []
@@ -19,7 +37,9 @@ for dp, _, fs in os.walk(LLD):
                 count += 1
                 kind = block[0].strip().split()[0] if block else ""
                 where = f"{os.path.relpath(p, LLD)}:{i+1} ({kind})"
-                if len(block) > 34:
+                # SDD caps workflows and sequences, not context or other architecture views.
+                capped = KIND != "sdd" or kind == "sequenceDiagram" or bool(re.search(r"\b8\.4(?:\.|\b)|\bWorkflow\b", head, re.I))
+                if capped and len(block) > 34 and kind not in UNCAPPED_KINDS[KIND] and not (UNCAPPED_HEADS[KIND] and UNCAPPED_HEADS[KIND].match(head)):
                     issues.append(f"{where}: {len(block)} lines (guideline ~30)")
                 if kind == "sequenceDiagram":
                     depth = 0

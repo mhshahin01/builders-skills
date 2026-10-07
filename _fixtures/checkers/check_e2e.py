@@ -1,4 +1,5 @@
 import glob, os, re, sys
+from _e2e_gate import evaluate_inventory
 
 SDD = sys.argv[1]
 
@@ -115,15 +116,40 @@ n73 = sect(c03, "## 7.3").count(MARKER)
 if n73:
     e3["03 §7.3"] = n73
 master = read(next(f for f in os.listdir(SDD) if f.endswith("-sdd-master.md")))
-rec = re.search(r"\*\*Reconciled:\*\*\s*(\S+)", master)
+body = {}
+for fn in sorted(glob.glob(os.path.join(SDD, "*.md"))):
+    name = os.path.basename(fn)
+    if re.match(r"^(0[0-9]|1[0-7])(?:[a-z])?-", name):
+        text = read(name)
+        if name.startswith("00-"):
+            text = text.replace(sect(text, "## Changes Log"), "")
+        body[name] = text
+inventory = evaluate_inventory(body, master)
+if inventory["mode"] == "inventory":
+    e3 = inventory["blockers"]
+    problems.extend(inventory["problems"])
+    print("E3 policy: owner-classified inventory; claim dependencies/nonblocking reasons still require human source review")
+else:
+    print(f"E3 policy: legacy physical scope; semantic E3 not verified ({inventory['unclassified']} live body markers need classification)")
+    notes.append("Legacy fixture: physical-scope E3 only. New authoring requires the semantic marker inventory; zero parser problems is not semantic gate approval.")
+rec = re.search(r"\*\*Reconciled:\*\*\s*(\d{4}-\d\d-\d\d)", master)
 c00 = read("00-cover-and-changelog.md")
-log_dates = re.findall(r"^\|\s*\d+\.\d+\s*\|\s*(\d{4}-\d\d-\d\d)\s*\|", c00, re.M)
-e4 = rec and log_dates and rec.group(1) >= max(log_dates)
+log = [r for r in table(sect(c00, "## Changes Log"), "| Version") if re.match(r"\d{4}-\d\d-\d\d", r.get("Updated Date", ""))]
+log_dates = [r["Updated Date"][:10] for r in log]
+reruns = [i for i, r in enumerate(log) if re.search(r"step 6a|\b6a rerun|reconciled again|contract reconciliation", r.get("Update Summary", ""), re.I)]
+e4 = bool(rec and log_dates and rec.group(1) >= max(log_dates))
+e4_why = ""
+if e4 and rec.group(1) == max(log_dates):
+    if not reruns:
+        e4_why = " (by date only: no Changes Log row records a step 6a rerun, so the same-day order is not recorded)"
+    elif reruns[-1] != len(log) - 1:
+        e4 = False
+        e4_why = f" (same day: Changes Log row {log[-1]['Version']} comes after row {log[reruns[-1]]['Version']}, the last one that records a step 6a rerun)"
 gate = re.search(r"\*\*E2E gate \(chunk 19\):\*\*\s*(.+)$", master, re.M)
 print(f"E1 open items not closed: {len(e1)} {e1[:5]}")
 print(f"E2 open divergence rows: {len(e2)} {e2[:5]}")
 print(f"E3 markers: {sum(e3.values())} {e3}")
-print(f"E4 reconciled {rec.group(1) if rec else None} vs last Changes Log date {max(log_dates) if log_dates else None}: {'met' if e4 else 'NOT met'}")
+print(f"E4 reconciled {rec.group(1) if rec else None} vs last Changes Log date {max(log_dates) if log_dates else None}: {'met' if e4 else 'NOT met'}{e4_why}")
 print(f"master gate line: {gate.group(1).strip() if gate else None}")
 
 f19 = sorted(glob.glob(os.path.join(SDD, "19-*.md")))
@@ -133,9 +159,13 @@ if not f19:
         problems.append("gate line says Open but chunk 19 does not exist")
 else:
     c19 = read(os.path.basename(f19[0]))
-    if e1 or e2 or e3 or not e4:
+    shut = bool(e1 or e2 or e3 or not e4)
+    stale_shut = shut and bool(gate) and gate.group(1).strip().startswith("Stale")
+    if stale_shut:
+        notes.append("chunk 19 is Stale behind a shut gate, as step 8b requires; refresh it once the gate opens")
+    elif shut:
         problems.append("chunk 19 exists but the gate conditions are not all met")
-    if not gate or not gate.group(1).strip().startswith("Open - Up to date"):
+    if not stale_shut and (not gate or not gate.group(1).strip().startswith("Open - Up to date")):
         problems.append(f"master gate line is {gate.group(1).strip() if gate else None!r}, not 'Open - Up to date'")
     if not re.search(r"\]\((?:\./)?" + re.escape(os.path.basename(f19[0])) + r"\)", master):
         problems.append("master does not link chunk 19")
@@ -156,6 +186,7 @@ else:
         "Services": [len(s13), len([s for s in s13 if s["status"].startswith("Active")])],
         "Topics": [len(topics)],
         "Distinct published events": [len(cov)],
+        "In-process domain events": [len(inproc)],
         "Synchronous HTTP edges": [len([r for r in r247 if not r["inproc"]])],
         "In-process port calls": [len([r for r in r247 if r["inproc"]])],
         "Sagas documented": [len(sagas)],
@@ -178,7 +209,8 @@ else:
         n = plain(r["Service"])
         s = next((x for x in s13 if x["name"] == n), None)
         row = " ".join(r.values())
-        if s and "module" in s["type"] and "module" not in row:
+        module_context = bool(re.search(r"\bNo module publishes to or consumes from a topic\b", sect(c19, "## 24.1")))
+        if s and "module" in s["type"] and "module" not in row and not module_context:
             problems.append(f"§24.1 {n}: §13 Type is {s['type']!r} but the row never says module")
         pub = set(re.findall(r"`([^`]+)`", r.get("Publishes to", "")))
         con = set(re.findall(r"`([^`]+)`", r.get("Consumes from", "")))
@@ -230,9 +262,19 @@ else:
     sec245 = sect(c19, "## 24.5")
     label, edges = graph(sec245)
     universal = sect(c19, "### 24.5.3")
+    # An omitted subscriber needs both an explicit declaration and its source binding.
+    binding = sect(c10, "## 14.7")
+    universal_names = set(re.findall(r"^- \*\*([^*]+)\*\*", universal, re.M))
+    binding_events = {name: set(re.findall(r"`([^`]+)`", line))
+                      for name in universal_names for line in binding.splitlines()
+                      if re.match(r"^- \*\*" + re.escape(name) + r"\*\*", line)}
+    def omitted_subscriber(name, event):
+        return name in universal_names and event in binding_events.get(name, set())
+    def normalized_node(name):
+        return re.sub(r"\s+\(([^)]+)\)$", r" - \1", plain(name).split(",", 1)[0]).lower()
     def nodes(name):
-        n = name.lower()
-        return {k for k, v in label.items() if n in plain(v).lower()} | ({name} if name in label else set())
+        n = normalized_node(name)
+        return {k for k, v in label.items() if n == normalized_node(v)} | ({name} if name in label else set())
     faith = sect(c19, "### Faithfulness")
     for e in events:
         pn, tn = nodes(e["producer"]), nodes(e["topic"])
@@ -242,7 +284,7 @@ else:
         if not any(a in pn and b in tn for a, _, b in edges):
             problems.append(f"§24.5 no edge {e['producer']} -> {e['topic']}")
         for c in e["consumers"]:
-            if c in universal:
+            if omitted_subscriber(c, e["event"]):
                 continue
             cn = nodes(c)
             hit = [l for a, l, b in edges if a in tn and b in cn]
@@ -252,6 +294,8 @@ else:
     for e in inproc:
         pn = nodes(e["publisher"])
         for l in e["listeners"]:
+            if omitted_subscriber(l, e["event"]):
+                continue
             ln = nodes(l)
             if not any(a in pn and b in ln and "in-process" in lab and e["event"] in lab for a, lab, b in edges):
                 problems.append(f"§24.5 {e['event']}: no edge {e['publisher']} -> {l} labelled 'in-process: {e['event']}'")
@@ -270,11 +314,15 @@ else:
             problems.append(f"§24.7 {c['id']} edge {row['edge']!r} vs §15.2 {c['caller']} -> {c['callee']}")
         if ("in-process" in c["type"]) != row["inproc"]:
             problems.append(f"§24.7 {c['id']} in-process label does not match §15.2 Type {c['type']!r}")
-    for a in ids247 - {c["id"] for c in internal}:
+    for a in sorted(ids247 - {c["id"] for c in internal}):
         problems.append(f"§24.7 cites {a}, which is not an internal contract in §15.2")
 
-    # §24.2 external systems
+    # §24.2 external systems (a §24.2 that cites §8.2 instead of redrawing it shows them through it: W2)
     s242 = sect(c19, "## 24.2")
+    if re.search(r"§\s*8\.2\b|04-[^\s)]*\.md#82-", s242):
+        f04 = sorted(glob.glob(os.path.join(SDD, "04-*.md")))
+        if f04:
+            s242 += "\n" + sect(read(os.path.basename(f04[0])), "## 8.2")
     for c in external:
         ext = c["callee"] if c["type"].startswith("External outbound") else c["caller"]
         alts = [ext, ext.split(" (")[0]] + re.findall(r"\(([^)]+)\)", ext)
@@ -302,7 +350,9 @@ else:
         h = "| " + " | ".join(hd) + " |"
         if h.startswith(("| # | Topic | Owner", "| Field | Type | Meaning", "| Event | Consumers", "| API ID | Operation")):
             problems.append(f"chunk 19 restates a registry table: {h[:60]}")
-    if "10-events-hub.md" not in sect(c19, "## 24.4"):
+    s244 = sect(c19, "## 24.4")
+    no_integration = not topics and not events and not cov and bool(re.search(r"no integration events", s244, re.I))
+    if "10-events-hub.md" not in s244 and not no_integration:
         problems.append("§24.4 does not point to §14.2.1 in 10-events-hub.md")
     if re.search(r"^\|", sect(c19, "## 24.9"), re.M):
         problems.append("§24.9 holds a table (pointer section only)")

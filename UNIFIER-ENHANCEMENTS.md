@@ -20,11 +20,12 @@ The readiness plan for the five unifier skills (pre-brd-unifier, brd-unifier, sd
 | 5 | Business reviewer on the chain; close its Known gap | Done: option (c) chosen and implemented | `test/business-reviewer-chain` 5516e05 (skill) and bdbf5e4 (run), merged into main as de3baec | 2026-10-01 |
 | 6 | Fix round; fixture BRD upgrade decision; rerun the chain; README; baseline; memory | Done | `fix/unifier-fix-round` (from de3baec): skills c830fd6, 71599c6, c4b9397, 3d3a26f, a250223; test 0c652c4; docs 8395250; merged into main as 548bf5d and pushed | 2026-10-07 |
 | 7 | Next skill round: the 16 live findings, the S3 hardening (H1, H2), and the README-audit notes (N1-N7) | Done: fixes, 18 accepted decisions, consistency check, proof reruns, the 32 wording notes and the Band resync (all checks 0) | `fix/unifier-live-findings` (from 548bf5d): skills 1d8db77, c8bdab9, 73111e5, eec7784; test d60e6e7; docs 55a35b3; merged into main as 8506a9b and pushed | 2026-10-07 |
-| 8 | Proof round: run the final step 7 text once (S3, the SDD and LLD scenario S4, the export) and score each rule | Done: the four runs verified and scored, the triage with 14 accepted decisions, and the Band resync (all checks 0); commits wait for the user's word | `test/unifier-proof-round` (from 8506a9b): another session's 12 audit fixes as 6cc2f93; the rest uncommitted | 2026-10-08 |
+| 8 | Proof round: run the final step 7 text once (S3, the SDD and LLD scenario S4, the export) and score each rule | Done: the four runs verified and scored, the triage with 14 accepted decisions, and the Band resync (all checks 0) | `test/unifier-proof-round` (from 8506a9b): audit fixes 6cc2f93; skills 695e9a3 (brd), 2bdbb90 (sdd), 7cb4b2e (lld); test 472d892; docs 321ee2d; merged into main as 3feafd2 and pushed | 2026-10-08 |
+| 9 | Second and last proof round (exit rule in § Step 9): settle D1 and D2, then run the step 8 text once with plants (S3, the SDD and LLD runs C1 and C3, the optional C2 and C4) and score each rule | Not run: the user chose a short close-out instead. D1 A and D2 A applied, the step 8 records closed, the unproven items in the README Known gaps; the plan is Done | On main (the permission check blocks branch creation for agents): skills b4d6821 (brd), c8ef911 (lld); test 92fd1c9; then, on the user's word, the docs commit and the push | 2026-10-08 |
 
-**Git:** main is pushed to origin (8506a9b, 2026-10-07). The branches `test/unifier-fixtures`, `test/chain-rerun`, `test/known-gap-scenarios`, `test/e2e-gate-and-loyalty-uat`, `test/business-reviewer-chain`, and `fix/unifier-fix-round` are merged but not deleted. Step 7 was committed on `fix/unifier-live-findings` (from 548bf5d), merged into main as 8506a9b, and pushed by the user; the branch is kept. Step 8 runs on `test/unifier-proof-round`, branched from main 8506a9b: 6cc2f93 holds another session's 12 audit fixes, and the rest of step 8 waits for the user's word.
+**Git:** main is pushed to origin (3feafd2, 2026-10-08). The branches `test/unifier-fixtures`, `test/chain-rerun`, `test/known-gap-scenarios`, `test/e2e-gate-and-loyalty-uat`, `test/business-reviewer-chain`, and `fix/unifier-fix-round` are merged but not deleted. Step 7 was committed on `fix/unifier-live-findings` (from 548bf5d), merged into main as 8506a9b, and pushed by the user; the branch is kept. Step 8 was committed on `test/unifier-proof-round` (from 8506a9b), merged into main as 3feafd2, and pushed by the user; the branch is kept. The close-out was committed straight onto main on the user's word, since the permission check blocks branch creation for agents: skills b4d6821 (brd), c8ef911 (lld); test 92fd1c9. The permission check blocked the docs commit until the user gave the word; the docs commit and the push follow.
 
-The six Band files in `C:\Users\negat\Downloads\` were last synced in step 8 (`_fixtures/notes/step8-band/band-audit.md`); they are outside the repo.
+The six Band files in `C:\Users\negat\Downloads\` were last synced at the close-out (`_fixtures/notes/step9-band/band-audit.md`); they are outside the repo.
 
 ## Context (all steps)
 
@@ -292,7 +293,34 @@ SAVE copied all 129 reviewed files, including source and three review records, t
 
 **Band files (2026-10-08).** A read-only audit against the step 8 skill diff found 19 places (7 Medium, 12 Low). Each was checked against its skill line and applied in four files; the product strategist and review lead files are unchanged, and the Room rules block keeps its hash (`_fixtures/notes/step8-band/band-audit.md`).
 
-**Commits.** 6cc2f93 holds another session's 12 audit fixes. The rest waits for the user's word: `fix(brd-unifier)`, `fix(sdd-unifier)`, `fix(lld-unifier)`, `test:` for `_fixtures/`, and `docs:` for README.md and this file, with the root README matrix rename.
+**Commits (2026-10-08).** 6cc2f93 holds another session's 12 audit fixes, committed on their own. On the user's word: skills 695e9a3 (brd), 2bdbb90 (sdd), 7cb4b2e (lld); test 472d892; docs 321ee2d, with the root README matrix rename; merged into main as 3feafd2; the user pushed main (8506a9b..3feafd2).
+
+## Step 9: second and last proof round (Not run; short close-out)
+
+**Close-out (2026-10-08).** On the user's word, step 9 was not run. Instead: D1 A and D2 A were applied without a rerun, as the exit rule allows; the step 8 records were closed; the Band files were resynced for D1 (two lines, `_fixtures/notes/step9-band/band-audit.md`); and the README Known gaps list what stays unproven. The plan is Done. `_fixtures/notes/step9-plan.md` stays as a ready plan, in case real use shows trouble in these areas.
+
+**Why.** Step 8 changed the skills after its runs (14 design decisions, five optional wordings, the M and S fixes), and no run has exercised them. Four change rules a step 8 run measured: 8-B3 and 8-B5 (S3), 8-L2 and 8-L3 (S4b). Three cases no run has triggered: step 7's R1 "coverage rows alone" branch, a BRD Reviewer Note needed to finish the BRD (7-B9), and an LLD flag outside the chunks a change maps to (lld 15). Two design questions are open. Briefs, plants and the scorecard: [step9-plan.md](_fixtures/notes/step9-plan.md); the fresh-agent prompt: [step9-handoff.md](_fixtures/notes/step9-handoff.md).
+
+1. **Setup.** Close the step 8 records (ask the user first: the permission check blocked that edit in step 8); run `diff_runs.py` on the step 7 and step 8 outputs; bring D1 and D2 to the user; build the inputs and plants; hash the repository. Stop for the user's go.
+2. **Design questions.** D1: brd-unifier takes a business review's hand-off again (recommended: mirror sdd-unifier's check, 8-S3a). D2: SDD §11.4 Metrics and Dashboards reach no LLD section (recommended: the chunk 07 row also sends them to 10 §13.3 and §13.6).
+3. **Runs.** Each is a background agent with fixed answers; stop and report after each.
+   - S3: brd-unifier `chunks whole` from the saved pre-BRD, with one plant where two source parts disagree.
+   - C1: SDD 1.12 from `chain/run-2026-10-07-s8/`, with an edit made outside the skill. Request 1 applies OI-60 and OI-61 and adds §20 procedures for the seven alerts LLD TODO-42 names; request 2 repeats the step 6 review hand-off.
+   - C2 (optional): a planted second business review, its hand-off, and a repeat.
+   - C3: LLD 1.4 takes the final SDD, with a planted flag outside the mapped chunks.
+   - C4 (optional, if D1 is accepted): a repeated "update the todo" hand-off on the REFUNDS BRD.
+4. **Verify, triage, save.** As in step 8, under the exit rule below.
+5. **Commits.** Only on the user's word.
+
+**Exit rule (the user's word, 2026-10-08).** Step 9 is the last proof round. There is no step 10.
+- **Close when no rule fails.** If every scored rule passes or is not exercised, the plan closes after step 9. The triage's M and S fixes are applied and checked, with no further proof round.
+- **One targeted rerun for what matters.** A failed rule, or an accepted design item that changes a core rule (the delivery and e2e gates, versions and Changes Log rows, the hand-offs between the skills, the review passes, the use-case trace), gets one scoped rerun inside step 9, on the smallest input that exercises it. Its result is final for this plan: a pass closes the item, and a failure goes to the README Known gaps with its evidence.
+- **Everything else is an accepted limit.** Any other design item is decided by the user and applied without a rerun, or recorded in the README Known gaps with its reason. So is each rule scored not exercised.
+- **Then the plan is Done.** Mark Status row 9, this heading and the Done when table. Later findings come from real projects: log them, and fix them in batches with the checkers as regression tests. The LLD from-code and hybrid directions and the fixture backlog are a separate plan, started only if the user wants them.
+
+The tradeoff: some edge cases stay unproven. They are recorded as known gaps rather than chased round after round.
+
+**Effort.** About 7 to 9 h of agent time and about 5 h wall clock, with S3 parallel to C1; verification, triage and records take about 2 to 3 h more.
 
 ## Findings to carry into step 6
 
@@ -467,6 +495,7 @@ The full log, with IDs, is `_fixtures/notes/step5-findings.md` (I1-I2, K1-K6, L1
 | SDD chunk 19 written with the gate genuinely open | Met for fixture evidence at SDD 1.7: E1-E4 met, 67-row semantic inventory, zero blockers; named-owner fixture answers and documented faithfulness limits still apply. |
 | Reviewer ran on the chain and its gap closed | Met for the exercised chain: R3a review and R3b-d owner handoffs, then Claude verification and corrections. No independent-context claim for the Codex passes. |
 | README Known gaps empty or only accepted remaining items | Updated with the brief's accepted fixture limits, unrun directions, explained scenario limitations and frozen next-round findings. It does not claim those findings are fixed or approved production behaviour. Step 7 then fixed the findings in the skills; Known gaps now names what no run has exercised yet. |
+| The hardening rounds (steps 7 to 9) end | Met by the short close-out (2026-10-08): step 9 was not run; D1 and D2 are applied, and what stays unproven is in the README Known gaps. |
 
 ## Rules
 
@@ -529,3 +558,8 @@ The full log, with IDs, is `_fixtures/notes/step5-findings.md` (I1-I2, K1-K6, L1
 | 2026-10-08 | S4b verified and saved with S4a. The S3 and S4 evidence, reports and triage records are saved in `_fixtures`, and the README Known gaps covers steps 7 and 8. LLD triage: L1, L5 and L7 applied, with the S5 lld half and B11. L2, L3, L4, L6 and L8a are with the user. The handoff prompt for a fresh agent is in `_fixtures/notes/step8-handoff.md`. Nothing committed beyond 6cc2f93. |
 | 2026-10-08 | The user accepted the five LLD design recommendations (L2 B, L3 B with the sdd mirror, L4 A, L6 A with the README clause, L8a A) and the extras L9 and L8b. All are applied in lld-unifier, sdd-unifier, brd-unifier (L8b) and the root README: references 261/0, README 0, 59 tests and 7 subtests, the 16 and 15 unit tests, links 451/0. L2 and L3 go to step 9 as unproven. L4's optional confidence-rules row waits for the user. Nothing committed beyond 6cc2f93. |
 | 2026-10-08 | Band files resynced to the step 8 skill text: 19 audit findings applied in four files, the Room rules block unchanged (`_fixtures/notes/step8-band/band-audit.md`). Step 8 records closed; commits wait for the user's word. |
+| 2026-10-08 | On the user's word, step 8 committed: skills 695e9a3 (brd), 2bdbb90 (sdd), 7cb4b2e (lld); test 472d892; docs 321ee2d; merged into main as 3feafd2; the user pushed main (8506a9b..3feafd2). |
+| 2026-10-08 | Step 9 (second proof round) planned: D1 and D2 for the user; runs S3, C1 and C3, the optional C2 and C4, plants T1 to T5, and a per-rule scorecard (`_fixtures/notes/step9-plan.md`). The fresh-agent prompt is `_fixtures/notes/step9-handoff.md`. Waiting for the user's go. |
+| 2026-10-08 | On the user's word, an exit rule makes step 9 the last proof round: the plan closes when no rule fails; a failed rule or a core-rule design item gets one targeted rerun inside step 9; everything else is applied or goes to the README Known gaps. No step 10. |
+| 2026-10-08 | Short close-out on the user's word, instead of the step 9 runs: D1 A and D2 A applied (references 262/0, README 0); the step 8 records closed; the Band files resynced for D1 (two lines, Room rules unchanged); the README Known gaps list what stays unproven. The plan is Done. The close-out is uncommitted. |
+| 2026-10-08 | On the user's word, Claude Code committed the close-out straight onto main (the permission check blocks branch creation for agents): skills b4d6821 (brd), c8ef911 (lld); test 92fd1c9. The permission check then blocked the docs commit until the user said "Commit the docs and push main"; the docs commit and the push follow. |

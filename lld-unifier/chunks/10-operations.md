@@ -79,13 +79,15 @@ PART OF: LLD - [Project Name]
 
 ## 13.7 Alerts
 
-| Alert | Threshold | Severity | Action |
-|-------|-----------|----------|--------|
-| `OutboxBacklog` | `outbox_unprocessed_count > 1000 for 5m` OR `outbox_oldest_age_seconds > 30 for 5m` | Page | See runbook §[X] |
-| `DLQ rows` | `kafka_messages_in_total{topic=~".+\\.dlq"} > 10 in 1h` | Page | See runbook §[X] |
-| `DB pool saturation` | `db_pool_active / db_pool_max > 0.9 for 5m` | Warn | Investigate query lockups |
-| `5xx rate` | `rate(http_server_requests_seconds_count{status=~"5.."}[5m]) > 0.01` | Page | See runbook §[X] |
-| `p99 latency SLO` | per-service target from `12-performance.md` § SLOs | Warn | Investigate slow path |
+| Alert | Threshold | Severity | Action | Source |
+|-------|-----------|----------|--------|--------|
+| `OutboxBacklog` | `outbox_unprocessed_count > 1000 for 5m` OR `outbox_oldest_age_seconds > 30 for 5m` | Page | See runbook §[X] | LLD (`09-cross-cutting.md` § 12.4) |
+| `DLQ rows` | `kafka_messages_in_total{topic=~".+\\.dlq"} > 10 in 1h` | Page | See runbook §[X] | [SDD §11.4 Alerting] |
+| `DB pool saturation` | `db_pool_active / db_pool_max > 0.9 for 5m` | Warn | Investigate query lockups | LLD |
+| `5xx rate` | `rate(http_server_requests_seconds_count{status=~"5.."}[5m]) > 0.01` | Page | See runbook §[X] | [SDD §11.4 Alerting] |
+| `p99 latency SLO` | per-service target from `12-performance.md` § SLOs | Warn | Investigate slow path | [SDD §11.4 Alerting] |
+
+> **Source:** each alert the SDD raises links the place that raises it (SDD §11.4 Alerting, or the §12 integration row, §15 error row, or `13x` section that raises it); its Threshold is the metric and threshold that implement the SDD condition, and its Action links the SDD §20 procedure it triggers, or is a `> TODO:` when §20 has none. `LLD` marks an alert the LLD adds. An alert that differs from its SDD condition is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3).
 
 ## 13.8 Runbook Procedures
 

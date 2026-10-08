@@ -19,11 +19,12 @@ The readiness plan for the five unifier skills (pre-brd-unifier, brd-unifier, sd
 | 4 | Open the SDD e2e gate once; write LOYALTY chunk 16; refresh the LLD trace | Done | `test/e2e-gate-and-loyalty-uat` d16e939, merged into main as 8568446 | 2026-10-01 |
 | 5 | Business reviewer on the chain; close its Known gap | Done: option (c) chosen and implemented | `test/business-reviewer-chain` 5516e05 (skill) and bdbf5e4 (run), merged into main as de3baec | 2026-10-01 |
 | 6 | Fix round; fixture BRD upgrade decision; rerun the chain; README; baseline; memory | Done | `fix/unifier-fix-round` (from de3baec): skills c830fd6, 71599c6, c4b9397, 3d3a26f, a250223; test 0c652c4; docs 8395250; merged into main as 548bf5d and pushed | 2026-10-07 |
-| 7 | Next skill round: the 16 live findings, the S3 hardening (H1, H2), and the README-audit notes (N1-N7) | Done: fixes, 18 accepted decisions, consistency check, proof reruns, the 32 wording notes and the Band resync (all checks 0) | `fix/unifier-live-findings` (from 548bf5d): skills 1d8db77, c8bdab9, 73111e5, eec7784; test d60e6e7; then the docs commit, the merge into main and the push, on the user's word | 2026-10-07 |
+| 7 | Next skill round: the 16 live findings, the S3 hardening (H1, H2), and the README-audit notes (N1-N7) | Done: fixes, 18 accepted decisions, consistency check, proof reruns, the 32 wording notes and the Band resync (all checks 0) | `fix/unifier-live-findings` (from 548bf5d): skills 1d8db77, c8bdab9, 73111e5, eec7784; test d60e6e7; docs 55a35b3; merged into main as 8506a9b and pushed | 2026-10-07 |
+| 8 | Proof round: run the final step 7 text once (S3, the SDD and LLD scenario S4, the export) and score each rule | Done: the four runs verified and scored, the triage with 14 accepted decisions, and the Band resync (all checks 0); commits wait for the user's word | `test/unifier-proof-round` (from 8506a9b): another session's 12 audit fixes as 6cc2f93; the rest uncommitted | 2026-10-08 |
 
-**Git:** main is pushed to origin (548bf5d, 2026-10-07). The branches `test/unifier-fixtures`, `test/chain-rerun`, `test/known-gap-scenarios`, `test/e2e-gate-and-loyalty-uat`, `test/business-reviewer-chain`, and `fix/unifier-fix-round` are merged but not deleted. Step 7 is committed on `fix/unifier-live-findings`, branched from main 548bf5d; its merge into main and the push follow the docs commit.
+**Git:** main is pushed to origin (8506a9b, 2026-10-07). The branches `test/unifier-fixtures`, `test/chain-rerun`, `test/known-gap-scenarios`, `test/e2e-gate-and-loyalty-uat`, `test/business-reviewer-chain`, and `fix/unifier-fix-round` are merged but not deleted. Step 7 was committed on `fix/unifier-live-findings` (from 548bf5d), merged into main as 8506a9b, and pushed by the user; the branch is kept. Step 8 runs on `test/unifier-proof-round`, branched from main 8506a9b: 6cc2f93 holds another session's 12 audit fixes, and the rest of step 8 waits for the user's word.
 
-The six Band files in `C:\Users\negat\Downloads\` were last synced in step 7 (`_fixtures/notes/step7-band/band-audit.md`); they are outside the repo.
+The six Band files in `C:\Users\negat\Downloads\` were last synced in step 8 (`_fixtures/notes/step8-band/band-audit.md`); they are outside the repo.
 
 ## Context (all steps)
 
@@ -264,6 +265,35 @@ SAVE copied all 129 reviewed files, including source and three review records, t
 
 **Band files (2026-10-07).** A read-only audit of the six Band role files against the step 7 working tree found 25 places (3 High, 10 Medium, 12 Low), each checked against the cited skill lines and applied: 20 lines in five files, the review-lead file unchanged, LF endings and the shared Room rules block kept (`_fixtures/notes/step7-band/band-audit.md`). The audit also raised R1, a skill question held for the user: the W3 wording makes a review's coverage row a chunk 18 content change, so an SDD re-check after a business review always bumps the version, although its row says it bumps only when it changes content itself. The user chose R1 A: a review's coverage rows alone bump nothing (like the faithfulness note); chunk 18 is listed for them only when the update changes other content. Applied in `sdd-unifier/SKILL.md` (Versions, Version bookkeeping, the business review row), both SDD template comments, the root README and two Band lines.
 
+**Commits (2026-10-07).** On the user's word: skills 1d8db77 (pre-brd), c8bdab9 (brd), 73111e5 (sdd), eec7784 (lld); test d60e6e7; docs 55a35b3; merged into main as 8506a9b; the user pushed main (548bf5d..8506a9b).
+
+## Step 8: proof round (Done)
+
+**Why.** Step 7 changed the skills after its proof runs (23 wording fixes, nine wording decisions, R1), and five of its rules have not been run at all: sdd 1 (an update that only applies pending decisions), 6 (a confirmed faithfulness fix), 9 (the carry rule), lld 14 (the retention mapping) and 15 (flags outside the mapped chunks). Step 8 runs the final text once, scores each rule, and fixes only what the runs show. Briefs, plants and the scorecard: [step8-plan.md](_fixtures/notes/step8-plan.md).
+
+1. **Setup.** Close the step 7 records; build the run inputs and the S4 plants in the session scratchpad; hash the repository. The skills stay frozen until the runs end. Stop for the user's go.
+2. **Runs.** Each is a background agent with fixed answers; stop and report after each.
+   - S3 (brd-unifier `chunks whole` from the saved pre-BRD) and S4a run in parallel.
+   - S4a: SDD 1.8 with three plants. Its requests: apply a planted pending decision; a direct instruction that settles the 13e retention cases behind LLD CONFIRM-23 and CONFIRM-24; and, as an optional probe, a repeated business-review hand-off for R1.
+   - S4b follows: LLD 1.3 takes S4a's SDD.
+   - X runs the documented export command.
+3. **Verify.** Check every claim against the files; run every checker and `diff_runs.py` against the step 7 outputs; score each rule as pass, fail or not exercised, with file:line evidence.
+4. **Triage.** M and S findings are applied; D findings go to the user. A fix that changes a measured rule gets a scoped rerun, or goes to step 9.
+5. **Save.** S3 goes to `scenarios/pre-brd-to-brd/rerun-<date>-s8/`, and S4 to `chain/run-<date>-s8/` (evidence, not the baseline). Reports go to `_fixtures/notes/step8-runs/`. Then update the README Known gaps, and the Band files if a skill changed.
+6. **Commits.** Only on the user's word.
+
+**Not in step 8 unless the user adds them.** The step 7 optional extras (a `check_todo.py` checker for the H2 to-do checks, the workbook's stray `EFAS!H7` formula, the exporter edge case, the pre-BRD chunk 24 tier label); the from-code and hybrid directions; the fixture design backlog.
+
+**Effort.** About 7 to 8 h of agent time and about 6 h wall clock, with S3 parallel to S4a; Claude's verification and records take about 2 h more.
+
+**Runs and scores (2026-10-07 and 08).** S3, S4a, S4b and X ran on the final step 7 text and were verified against the files; the per-rule scores are in [step8-plan.md](_fixtures/notes/step8-plan.md) § Results so far. Saved: S3 as `scenarios/pre-brd-to-brd/rerun-2026-10-07-s8/`, S4a and S4b as `chain/run-2026-10-07-s8/` (evidence, not the baseline), and the reports in `_fixtures/notes/step8-runs/`. On the user's word, `check_todo.py` joined the checkers, with 14 tests.
+
+**Triage and decisions (2026-10-08).** Read-only triage per skill (`_fixtures/notes/step8-triage/`): BRD 13 items (M 1, S 4, D 6, N 2), SDD 8 (S 3, D 3, N 3), LLD 9 (S 3, D 5, N 2; L8 split in two). Every M and S fix is applied. The user accepted all 14 design recommendations (B3 A, B4 B, B5 C, B7 A, B10 A, B13 A, S3(a) A, S4 B, S5 A, L2 B, L3 B, L4 A, L6 A, L8a A) and five optional wordings (B8, S6, `In progress`, L9, L8b); L4's optional confidence-rules row followed on the user's word. Unproven, to step 9: B3 and B5 change rules S3 measured, and L2 and L3 extend rules S4b measured.
+
+**Band files (2026-10-08).** A read-only audit against the step 8 skill diff found 19 places (7 Medium, 12 Low). Each was checked against its skill line and applied in four files; the product strategist and review lead files are unchanged, and the Room rules block keeps its hash (`_fixtures/notes/step8-band/band-audit.md`).
+
+**Commits.** 6cc2f93 holds another session's 12 audit fixes. The rest waits for the user's word: `fix(brd-unifier)`, `fix(sdd-unifier)`, `fix(lld-unifier)`, `test:` for `_fixtures/`, and `docs:` for README.md and this file, with the root README matrix rename.
+
 ## Findings to carry into step 6
 
 ### Step 2, SDD (`chain/run-2026-09-30`)
@@ -490,3 +520,12 @@ The full log, with IDs, is `_fixtures/notes/step5-findings.md` (I1-I2, K1-K6, L1
 | 2026-10-07 | The user accepted all nine wording recommendations; applied and checked (references 255/0, README 0, 45 tests); README Known gaps updated for step 7. Next: the six Band files, then the commit proposal. |
 | 2026-10-07 | Band files resynced (25 audit findings applied, five files; Room rules unchanged). R1 (a review coverage row and the SDD version) raised for the user. Nothing committed. |
 | 2026-10-07 | The user chose R1 A and approved commit, merge and push. R1 applied; step 7 committed: skills 1d8db77 (pre-brd), c8bdab9 (brd), 73111e5 (sdd), eec7784 (lld); test d60e6e7; then docs. |
+| 2026-10-07 | Docs 55a35b3; merged into main as 8506a9b; the user pushed main. Step 8 (proof round) planned on `test/unifier-proof-round`: runs S3, S4a, S4b, X and a per-rule scorecard (`_fixtures/notes/step8-plan.md`); waiting for the user's go. |
+| 2026-10-07 | The user said go, with the S4a request 3 probe and a `check_todo.py` checker. Setup done (inputs, plants P1 to P3, skill state hashed); S3 and S4a launched in parallel. |
+| 2026-10-07 | X passed: the documented export command runs as written in both shells, and the workbook holds 77 formula cells. `check_todo.py` added with 13 tests. It reports 1 problem on the step 7 S3 output (TD-88 Blocks), a finding for the triage. |
+| 2026-10-07 | S3 and S4a done and verified; scores in `_fixtures/notes/step8-plan.md` § Results so far. At 19:45 the user's other session landed 12 consistency fixes in 9 skill files mid-run; a read-only review found none touches a measured rule. S4b launched 23:36. |
+| 2026-10-07 | On the user's word, the 12 audit fixes were committed on their own as 6cc2f93, with change 6 finished (the matrix name in the brd and sdd READMEs). The read-only triage of the S3 and S4a notes is running. |
+| 2026-10-08 | The BRD triage (13 notes) and SDD triage (8 notes) are done; every M and S fix is applied. The user accepted all nine design recommendations (B3, B4, B5, B7, B10, B13, S3(a), S4, S5) plus three optional wordings; all are applied except the lld-unifier half of S5 and B11, which wait for S4b. B3 and B5 go to step 9 as unproven. |
+| 2026-10-08 | S4b verified and saved with S4a. The S3 and S4 evidence, reports and triage records are saved in `_fixtures`, and the README Known gaps covers steps 7 and 8. LLD triage: L1, L5 and L7 applied, with the S5 lld half and B11. L2, L3, L4, L6 and L8a are with the user. The handoff prompt for a fresh agent is in `_fixtures/notes/step8-handoff.md`. Nothing committed beyond 6cc2f93. |
+| 2026-10-08 | The user accepted the five LLD design recommendations (L2 B, L3 B with the sdd mirror, L4 A, L6 A with the README clause, L8a A) and the extras L9 and L8b. All are applied in lld-unifier, sdd-unifier, brd-unifier (L8b) and the root README: references 261/0, README 0, 59 tests and 7 subtests, the 16 and 15 unit tests, links 451/0. L2 and L3 go to step 9 as unproven. L4's optional confidence-rules row waits for the user. Nothing committed beyond 6cc2f93. |
+| 2026-10-08 | Band files resynced to the step 8 skill text: 19 audit findings applied in four files, the Room rules block unchanged (`_fixtures/notes/step8-band/band-audit.md`). Step 8 records closed; commits wait for the user's word. |

@@ -433,7 +433,7 @@ flowchart LR
 | | |
 | --- | --- |
 | You provide | An SDD folder or combined file (from-sdd), a code path (from-code), or both (hybrid). The BRDs are found through the SDD's lineage. |
-| It asks you | The output shape if not given; the direction (always, with a suggested default); at most three intake questions; the Project Type when the SDD lacks it; roadmap phases when the SDD has no natural breaks; on an existing LLD, one offer covering changed SDD chunks, BRD versions, test-case state, and mockup rows. A missing version pin is flagged in §6.3 and routed to SDD §6 through `sdd-unifier`, never asked here. |
+| It asks you | The output shape if not given (an existing LLD keeps its own); the direction (always, with a suggested default); at most three intake questions; the Project Type when the SDD lacks it; roadmap phases when the SDD has no natural breaks; on an existing LLD, one offer covering changed SDD chunks, BRD versions, test-case state, and mockup rows. A missing version pin is flagged in §6.3 and routed to SDD §6 through `sdd-unifier`, never asked here. |
 | It stops | When the SDD is unfinished (a part still pending, or §7.3 still `Pending (part 2)`). |
 | It never | Picks a direction silently; invents class names, columns, topics, or version pins (it flags them); creates a use case, test case, or screen ID; writes into the SDD beyond its own Child LLDs row. |
 | Done when | The body, the Specs, and chunk 18 (or their combined sections) exist, and the handoff reports flag and drift counts, the use-case trace per BRD when applicable, and the Child LLDs row when an SDD lineage table exists. On an existing LLD, it also names the SDD and BRD versions the LLD reflects and which chunks were refreshed or left. |

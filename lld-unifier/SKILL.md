@@ -71,7 +71,7 @@ Interpretation rules:
 - `combined` / `c` / `single` / `one file` / `merged` → **COMBINED shape**.
 - Anything else → re-prompt once; if still unclear, default to CHUNKS and note the fallback.
 
-If the user has already implied a shape ("give me the full LLD as one file" → `combined`; "split it into chunks" → `chunks`), do NOT ask: proceed with the implied shape and confirm in one short line.
+If the user has already implied a shape ("give me the full LLD as one file" → `combined`; "split it into chunks" → `chunks`), do NOT ask: proceed with the implied shape and confirm in one short line. An existing LLD implies its own shape: a request on an existing `lld-[project-slug]/` folder or `LLD-*.md` file (an update, a refresh, or a re-run) keeps that shape without asking and says so in the same short line; only an explicit merge or split (step 9) changes it.
 
 ---
 

@@ -104,7 +104,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 <!-- Scope: 00-13 for a full run; for a scoped run, the chunks it checked: those changed since the run before, and the chunks that link to them (delivery-chunks.md § Step 2). -->
 
-<!-- Run 1 starts a new checklist; an existing checklist appends the next free number. At most three runs in one request. Third-run discoveries stay pending application until the next request (TD Status Decided - pending application, register above); a pause does not reset the cap. -->
+<!-- Run 1 starts a new checklist; an existing checklist appends the next free number. At most three runs in one request. Third-run corrections to chunks 00-13 stay pending application until the next request (TD Status Decided - pending application, register above); a mechanical correction that changes only chunk 14 or a companion record is applied at once (delivery-chunks.md § Step 2); a pause does not reset the cap. Trigger names what started the run; for a business review hand-off, the review's date and tracker path (SKILL.md step 10 reads it to take a hand-off once). -->
 
 | Run | Date | Trigger | Scope | Findings | Still open after run |
 |-----|------|---------|-------|----------|----------------------|

@@ -5,7 +5,7 @@ This skill has **two orthogonal mode dimensions**:
 1. **Output shape** (CHUNKS / COMBINED): the file layout of the deliverable.
 2. **Direction** (FROM-CODE / FROM-SDD / HYBRID / PARTIAL): the source of truth for the content.
 
-The skill always asks for the direction at the start of any invocation. The shape is determined by argument or interactive prompt with CHUNKS as default.
+The skill always asks for the direction at the start of any invocation. The shape is determined by argument or interactive prompt with CHUNKS as default; an existing LLD keeps its own shape without a prompt (SKILL.md § Interactive shape prompt).
 
 ---
 

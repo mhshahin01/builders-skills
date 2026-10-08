@@ -6,7 +6,7 @@ The requirements stage of the suite: it converts ideas, SoWs, and existing docum
 
 ## What
 
-`brd-unifier` generates, transforms, or reformats a Business Requirements Document (BRD or BRD-HLD) into the user's standardised template. It can build a fresh BRD from a SoW, project brief, product spec, RFP scope, conversation, or topic seed, and it can re-shape an existing document (a pre-BRD from `pre-brd-unifier`, an old-format BRD, a flat scope doc, a single-file BRD that needs chunking, or a chunked BRD that needs combining) into the template.
+`brd-unifier` generates, transforms, or reformats a Business Requirements Document (BRD or BRD-HLD) into the user's standardised template. It can build a fresh BRD from a conversation, topic seed, or raw notes, and it can re-shape an existing document (a SoW, project brief, product spec, or RFP scope, a pre-BRD from `pre-brd-unifier`, an old-format BRD, a flat scope doc, a single-file BRD that needs chunking, or a chunked BRD that needs combining) into the template.
 
 The BRD is business language only: the WHAT, never the HOW. No technology names, protocols, or implementation terminology in the body. Technical mandates found in source material are parked verbatim in Appendix § Technical Inputs for the SDD, and the technical design itself belongs to `sdd-unifier`.
 
@@ -55,7 +55,7 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 ### The workflow
 
 1. **Resolve mode and generation option.** From the arguments or the interactive prompt (chunks is the default; never guessed silently). A resume check on `[project-slug]-brd-master.md` runs first, so an interrupted parts run continues instead of restarting.
-2. **Resolve intent.** Generate (fresh BRD from a SoW, conversation, or seed) or transform (re-shape an existing document into the template), per `transform-detection.md`. Both end in the same output shape.
+2. **Resolve intent.** Generate (fresh BRD from a conversation, raw notes, or a seed) or transform (re-shape an existing document, such as a SoW, a pre-BRD, or an old BRD, into the template), per `transform-detection.md`. Both end in the same output shape.
 3. **Intake.** At most three questions: project name, source material, personas. Answers already in the conversation are not re-asked.
 4. **Plan and generate.** Enumerate the chunks (one use-case chunk per persona, plus `14-todo.md`) and write them from the embedded skeletons. Diagrams are inline Mermaid with a prose summary; Miro only on explicit request. Transforms preserve verbatim numbers, dates, and commitments.
 5. **Build the matrix.** The Users & Use Cases Matrix (chunk 07) is derived from the completed use cases, cross-checked in both directions, with conditional access footnoted.

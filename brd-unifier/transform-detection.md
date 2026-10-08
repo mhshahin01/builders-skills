@@ -1,6 +1,6 @@
 # Transform vs Generate: Intent Detection
 
-The skill produces output in either GENERATE intent (author a BRD from scratch / from conversation / from a SoW) or TRANSFORM intent (re-shape an existing document into this template). This file gives the rules for deciding which.
+The skill produces output in either GENERATE intent (author a BRD from scratch / from conversation / from raw notes) or TRANSFORM intent (re-shape an existing document, a SoW included, into this template). This file gives the rules for deciding which.
 
 The user almost never says "I want you to transform this" or "I want you to generate this" explicitly. The skill must infer intent from the input.
 

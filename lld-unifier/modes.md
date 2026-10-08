@@ -154,7 +154,7 @@ The user points the skill at an SDD covering full scope, but only some services 
 
 |  | FROM-CODE | FROM-SDD | HYBRID | PARTIAL |
 |---|---|---|---|---|
-| **CHUNKS** | Reverse-engineer 19-chunk LLD from code. | Forward-design 19-chunk LLD from SDD. | Two-pass + unified 19-chunk LLD with drift markers. | From-code on existing services; TODO placeholders for the rest. |
+| **CHUNKS** | Reverse-engineer 19-chunk LLD from code. | Forward-design 19-chunk LLD from SDD. | Two-pass + unified 19-chunk LLD with drift markers. | From-code on existing services; the not-yet-built placeholder (the Status / Owns use cases / TODO re-run block, `transform-detection.md` § Partial-code resolution) for the rest. |
 | **COMBINED** | Reverse-engineer single-file LLD. | Forward-design single-file LLD. | Two-pass + unified single-file LLD with inline drift markers. | Same as chunks but in one file. |
 
 See `transform-detection.md` for how the skill prompts for direction and resolves ambiguity.

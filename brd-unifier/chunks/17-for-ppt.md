@@ -3,7 +3,7 @@ CHUNK: 17
 TITLE: Presentation & Video Brief
 PROJECT: [Project Name]
 VERSION: [X.X]
-DEPENDS_ON: 01, 02, 04, 05, 06a+ (every use-case chunk), 07, 08, 09, 10, 11, 13, 14, 15
+DEPENDS_ON: 01, 02, 04, 05, 06a+ (every use-case chunk), 07, 08, 09, 10, 11, 13, 14, 15, 16
 PART OF: BRD - [Project Name]
 TYPE: Delivery chunk
 GATE: Locked until 14-todo.md is fully cleared (all five steps Complete with evidence, every to-do item Resolved, Deferred does not count, no override) and chunks 15 and 16 were written without raising a new open item. Never written or refreshed while the gate is shut; only its status line may change, to Stale (delivery-chunks.md § The delivery gate, Re-lock), and in COMBINED mode its links to the renamed BRD file (delivery-chunks.md § COMBINED mode adaptations).

@@ -87,7 +87,7 @@ PART OF: BRD - Wallet Management Service
 ...
 ```
 
-Delivery chunks (14-17) add two keys to this block: `TYPE: Delivery chunk` and `MERGE: Included | Excluded`. The merge step reads `MERGE:` to decide whether the chunk is concatenated.
+Delivery chunks (14-17) add two keys to this block: `TYPE: Delivery chunk` (chunk 14 writes `TYPE: Delivery chunk - living checklist`) and `MERGE: Included | Excluded`. The merge step reads `MERGE:` to decide whether the chunk is concatenated.
 
 After the comment, the chunk's top-level heading begins at `#`. Sub-sections use `##`, `###`. Each heading keeps the level and text it has in the combined file, except in the detailed use cases (`06*`) and the chunk 16 title: see § Heading map (chunks and combined).
 

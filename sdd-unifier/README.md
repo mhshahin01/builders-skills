@@ -88,6 +88,6 @@ Invocation prefix depends on the agent: `/sdd-unifier chunks` in Claude Code, `$
 | `decision-log.md` | The decision register companion file: structure, relationship with ADRs, and the rule that chunks carry no decision narration |
 | `transform-detection.md` | Decision tree for generate / transform / derive-from-BRD, including how to recognize BRD and legacy SDD formats |
 | `source-transformation.md` | Mapping of SoW or existing-SDD content into this template |
-| `brd-to-sdd.md` | Explicit BRD-to-SDD field mapping: UC chunks, Users and Use Cases Matrix, parked technical inputs, legacy Specs handling; use-case traceability (UC link format, where each use case is cited, §7.3, its checks) |
+| `brd-to-sdd.md` | Explicit BRD-to-SDD field mapping: UC chunks, Users & Use Cases Matrix, parked technical inputs, legacy Specs handling; use-case traceability (UC link format, where each use case is cited, §7.3, its checks) |
 | `sdd-quality.md` | What makes a substantive section versus a thin one |
 | `mermaid-diagrams.md` | Inline Mermaid conventions per diagram type, plus the Miro-on-demand flow |

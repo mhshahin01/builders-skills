@@ -17,7 +17,7 @@ The embedded templates are the authoritative source: `TEMPLATE-COMBINED.md` for 
 | Chunks | Content |
 | ------ | ------- |
 | 00-04 | Cover and changelog, executive summary, glossary and assumptions, domain concepts, scope and personas |
-| 05, 06a..., 07 | User journeys with use-case diagrams, one detailed UC-NN use-case chunk per persona, Users and Use Cases permission matrix |
+| 05, 06a..., 07 | User journeys with use-case diagrams, one detailed UC-NN use-case chunk per persona, Users & Use Cases Matrix |
 | 08-12 | Business-level integrations, reporting, NFRs as business expectations, summary and UI/UX, appendix and wishlist |
 | 13 | Open Items and Clarifications (reviewer output) |
 | 14 | Product-manager to-do: resolve open items, consistency check, grill-me session, Figma mockups, use-case diagrams and flowcharts |
@@ -27,9 +27,9 @@ The embedded templates are the authoritative source: `TEMPLATE-COMBINED.md` for 
 
 - **Business language only, enforced.** The BRD states the WHAT in plain language. Technical content is never spread into the body; it is parked verbatim in the appendix for the SDD, so nothing is lost and nothing leaks.
 - **User-journey first.** Requirements are per-persona use cases (UC-NN) with numbered steps, alternate and exception flows, business rules, and acceptance criteria, not abstract feature statements. Every persona gets a journey, a use-case chunk, and a column in the matrix.
-- **A real review, not a confirmation.** Every full generation ends with a cleared-context adversarial reviewer subagent that writes chunk 13 (Open Items and Clarifications). Each item carries options with tradeoffs, a paste-ready Recommended Answer, and the Why. The skill then walks the user through accept, adjust, or defer, and applies accepted answers to the body. The reviewer also returns a coverage record, one row per risk area: a review with no findings is valid when every area was checked, and it is re-dispatched only when an area is unchecked or a finding lacks evidence.
+- **A real review, not a confirmation.** Every full generation ends with a cleared-context adversarial reviewer subagent that writes chunk 13 (Open Items and Clarifications). Each item carries options with tradeoffs, a paste-ready Recommended Answer, and the Why. The skill then walks the user through accept, adjust, defer, or reject, and applies accepted answers to the body. The reviewer also returns a coverage record, one row per risk area: a review with no findings is valid when every area was checked, and it is re-dispatched only when an area is unchecked or a finding lacks evidence.
 - **Parts by default, with a real stop.** In chunks mode the BRD is written in three parts, stopping after parts 1 and 2 so scope, personas, and the use-case list are agreed before the detail is written.
-- **The matrix is derived, never authored.** The Users and Use Cases Matrix is built from the completed use cases and cross-checked both directions; a contradiction means the use case is fixed first, never the matrix.
+- **The matrix is derived, never authored.** The Users & Use Cases Matrix is built from the completed use cases and cross-checked both directions; a contradiction means the use case is fixed first, never the matrix.
 - **Gaps are flagged, never papered over.** Anything the source does not cover becomes `**[NEEDS CLARIFICATION: ...]**`; nothing is invented to fill a table.
 - **Delivery chunks are earned.** Chunks 15-17 (implementation plan, UAT/BAT test cases, presentation brief) are locked behind a delivery gate (conditions G1-G5): every to-do step in chunk 14 complete with evidence and every item resolved. `Deferred` does not count, and there is no override.
 - **One fact, one home.** UC IDs, persona names, and integration partner names stay stable across revisions so the downstream SDD and LLD can reference them (`INT-NN` IDs belong to the SDD, not the BRD); nothing is restated across chunks. Decision history lives in `decision-log.md`, the companion register, never in the body.
@@ -58,11 +58,11 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 2. **Resolve intent.** Generate (fresh BRD from a SoW, conversation, or seed) or transform (re-shape an existing document into the template), per `transform-detection.md`. Both end in the same output shape.
 3. **Intake.** At most three questions: project name, source material, personas. Answers already in the conversation are not re-asked.
 4. **Plan and generate.** Enumerate the chunks (one use-case chunk per persona, plus `14-todo.md`) and write them from the embedded skeletons. Diagrams are inline Mermaid with a prose summary; Miro only on explicit request. Transforms preserve verbatim numbers, dates, and commitments.
-5. **Build the matrix.** The Users and Use Cases Matrix (chunk 07) is derived from the completed use cases, cross-checked in both directions, with conditional access footnoted.
+5. **Build the matrix.** The Users & Use Cases Matrix (chunk 07) is derived from the completed use cases, cross-checked in both directions, with conditional access footnoted.
 6. **Plain-language pass.** Mandatory reread of every chunk against `writing-style.md`: short sentences, common words, no number, rule, or exception dropped.
 7. **Adversarial review.** A cleared-context reviewer subagent hunts gaps, ambiguities, risks, matrix inconsistencies, and technical leaks, and writes chunk 13 with a Recommended Answer and Why per item.
-8. **Acceptance loop.** The user decides each Open Item (accept, choose another option, defer); accepted answers are applied to the body and recorded in `decision-log.md`.
-9. **Write the to-do.** `14-todo.md`: the open-items register, consistency check (C1-C8), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block.
+8. **Acceptance loop.** The user decides each Open Item (accept, choose another option, defer, or reject); accepted answers are applied to the body and recorded in `decision-log.md`.
+9. **Write the to-do.** `14-todo.md`: the open-items register, consistency check (C1-C10), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block.
 10. **Gated follow-ons, on later invocations.** Step 8b adds use-case diagrams and flowcharts once to-do steps 1-3 are confirmed (in parallel with the step 4 mockups). Step 8c writes chunks 15, 16, 17 in order, only once the delivery gate (G1-G5) verifies open against the files. Cross-mode conversion (merge, re-chunk, regenerate one chunk, refresh the to-do) is handled on explicit request.
 
 ### Outputs

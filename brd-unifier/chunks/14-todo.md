@@ -190,7 +190,7 @@ Return the share link (view permission, opening on the start frame) and the list
 
 | Mockup | Screen / flow | Use cases | Requirements and decisions to honour | States to cover | Priority | Playable | Breakpoints delivered | Status | Play-through | Figma link |
 |--------|---------------|-----------|--------------------------------------|-----------------|----------|----------|-----------------------|--------|--------------|-----------|
-| MK-01 | [Screen or flow name; the source's screen ID only if the source defined one] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Source/owner-confirmed breakpoints] | [Not started / Blocked by TD-NN / In review / Approved] | [Confirmed by PM, date, result] | [Link] |
+| MK-01 | [Screen or flow name; the source's screen ID only if the source defined one] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Source/owner-confirmed breakpoints] | [Pending gate / Not started / In progress / Blocked by TD-NN / In review / Approved] | [Confirmed by PM, date, result] | [Link] |
 
 **Expected coverage:** every actor-facing UC has a screen; every observable flow/state appears; roles follow the matrix and standards follow chunk 11. P1 rows are fully interactive, P2 rows connected. All rows use source/owner-confirmed breakpoints, not a priority-implied minimum.
 

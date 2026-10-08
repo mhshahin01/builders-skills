@@ -114,7 +114,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 
 <!-- Turn decision-log.md into a link ([decision-log.md](./decision-log.md)) once it exists: it is created with its first record (a decision, or a business review point). -->
 
-> Generated *after* the main BRD by a cleared-context reviewer. Captures gaps, missing scenarios, corner cases the body did not flag inline. Every unapplied item carries a **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply; the skill walks the user through each item for acceptance, then reflects accepted answers into the body and logs them in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to its Resolution Log row. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
+> Generated *after* the main BRD by a cleared-context reviewer. Captures gaps, missing scenarios, corner cases the body did not flag inline. Every unapplied item carries a **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply; the skill walks the user through each item for acceptance, then reflects accepted answers into the body and logs them in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to the Resolution Log. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
 
 ## Delivery Chunks
 

@@ -424,6 +424,8 @@ One row per variable with a Source column, as in `chunks/10-operations.md` § 13
 
 ## 13.7 Alerts
 
+One row per alert with a Source column, as in `chunks/10-operations.md` § 13.7.
+
 ## 13.8 Runbook Procedures
 
 ## 13.9 On-Call
@@ -692,7 +694,7 @@ This section complements (does not replace) §18, which is the author-generated 
 
 ## 21.4 Reviewer Notes
 
-<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service, plus the three `global` rows. Zero findings is valid for a surface that was checked. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed section: its Service cell reads `[YYYY-MM-DD] delta: section N` or `[YYYY-MM-DD] delta: global`, and its Risk surface cell names the surfaces checked. A scoped application check (SKILL.md step 7, Answers in the same update) adds one dated row per applied item: its Service cell reads `[YYYY-MM-DD] application check: OI-NN`, and its What was checked cell names each section the item changed. The brackets are part of each label: `[2026-10-07] delta: section 16`, `[2026-10-07] application check: OI-14`. -->
+<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service, plus the three `global` rows. Zero findings is valid for a surface that was checked. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed section: its Service cell reads `[YYYY-MM-DD] delta: section N (vX.X)` or `[YYYY-MM-DD] delta: global (vX.X)`, and its Risk surface cell names the surfaces checked. A scoped application check (SKILL.md step 7, Answers in the same update) adds one dated row per applied item: its Service cell reads `[YYYY-MM-DD] application check: OI-NN (vX.X)`, and its What was checked cell names each section the item changed. The brackets are part of each label: `[2026-10-07] delta: section 16 (v1.4)`, `[2026-10-07] application check: OI-14 (v1.4)`. vX.X is the LLD version when the review runs; earlier rows keep their labels. -->
 
 | Service | Risk surface | Checked | Findings | What was checked |
 |---------|--------------|---------|----------|------------------|

@@ -1,0 +1,146 @@
+diff -ruN chain-pre-plant/sdd-refunds-platform/00-cover-and-changelog.md chain-before-s4a/sdd-refunds-platform/00-cover-and-changelog.md
+--- chain-pre-plant/sdd-refunds-platform/00-cover-and-changelog.md	2026-10-07 15:48:25.472782800 -0500
++++ chain-before-s4a/sdd-refunds-platform/00-cover-and-changelog.md	2026-10-07 19:20:00.646795400 -0500
+@@ -2,7 +2,7 @@
+ CHUNK: 00
+ TITLE: Cover, Changelog & Table of Contents
+ PROJECT: Refunds Platform
+-VERSION: 1.8
++VERSION: 1.9
+ DEPENDS_ON: none
+ PART OF: SDD - Refunds Platform
+ -->
+@@ -10,7 +10,7 @@
+ # Refunds Platform: Solution Design Document (SDD)
+ 
+ **Project / Product Name:** Refunds Platform
+-**Version:** 1.8
++**Version:** 1.9
+ **Status:** Draft
+ **Author:** Architecture team (derived with sdd-unifier)
+ **Reviewers:** Not assigned yet
+@@ -33,7 +33,7 @@
+ 
+ | LLD | Scope (§13 services) | Direction | Version | SDD version | Link |
+ |-----|----------------------|-----------|---------|-------------|------|
+-| Refunds Platform | customer-accounts, refund-requests, payouts, notifications, loyalty-points | from-sdd | 1.3 | 1.7 (out of date: SDD is now v1.8; refresh through lld-unifier) | [refunds-platform-lld-master.md](../lld-refunds-platform/refunds-platform-lld-master.md) |
++| Refunds Platform | customer-accounts, refund-requests, payouts, notifications, loyalty-points | from-sdd | 1.3 | 1.7 (out of date: SDD is now v1.9; refresh through lld-unifier) | [refunds-platform-lld-master.md](../lld-refunds-platform/refunds-platform-lld-master.md) |
+ 
+ ---
+ 
+@@ -50,6 +50,7 @@
+ | 1.6 | 2026-10-07 | Architecture team (sdd-unifier) | | | E2E refresh with two marker answers, both test-fixture values: §3 Assumption 7 is confirmed, the Finance team has no delivery team of its own for the Refunds Portal and one delivery team builds both products (owner the Head of Retail), with §1 and the ADR-01 Why worded to match; the §5 receipt number and purchase reference identify the same purchase (owner the POS Records owner, the Retail IT team per [REFUNDS 08](../brd-refunds-portal/08-integrations.md#integrations); R-10 stays open), with the R-08 Mitigation. Step 6a rerun, every 13x data model checked once (Legacy SDDs rule): the 13e Tables Design takes the `points_movement.purchase_id` FK that Figure 27 draws. Delta review of 01, 06, and 13e: OI-42 and OI-43; scoped checks of their application: OI-44, then no issue; all three accepted and applied: the §3 Assumption 7 link kept on the ownership LOYALTY 02 states, with the Head of Retail as owner of the assumption; the take-back keys `points_movement.refund_id` and `refund_application.movement_id`, five indexes, Figure 27 and its Summary, and the deletion order of former-member history; `movement_id` cleared on a refund application the deletion keeps. Step 6a rerun after the last source change: no finding. Chunk 19 written again at v1.6 from the current template; its faithfulness check found 0 wrong, 1 misleading, and 5 cosmetic mismatches, fixed in chunk 19, and one source design question, raised as OI-45 (the delivery form of API-07, API-08, and API-09) and decided, pending application, so the E2E gate is Stale. Child LLD v1.2 is now out of date (SDD v1.6). Editorial, not listed: the missing REFUNDS key added to REFUNDS/TC-DEC-09 in 13c Developer Notes and to six test-case IDs in closed chunk 18 records. Chunks: 01, 06, 13e, 18, 19. |
+ | 1.7 | 2026-10-07 | Architecture team (sdd-unifier) | | | OI-45 applied (Option A, decided on 2026-10-07 and pending application): §3 Assumption 8 states that POS Records (API-07), the member sign-in and membership (API-08), and the points balances at go-live (API-09) deliver by calling the platform's provider routes, and the §15.3 markers and §15.6 cells of the three contracts ask only how each provider calls. Scoped check of the OI-45 application: OI-46 and OI-47, both accepted and applied: the API-09 marker and §15.6 row ask the Marketing team for the call fields API-07 and API-08 ask for, in an "Opening balance call specification"; API-09 takes a secret per tenant and the endpoint check of the other provider routes, and §6 Secrets Management lists the Marketing team. Scoped check of their application: no issue. Step 6a rerun after each change and once more after the last: no finding. Chunk 19 written again at v1.7 against the changed sources; its faithfulness check found 0 wrong, 1 misleading, and 3 cosmetic mismatches, fixed in chunk 19 (§24.7 row 2, a Faithfulness bullet, the How to Read legend), and raised no source open item, so the E2E gate is Open - Up to date. Child LLD v1.2 stays out of date (SDD v1.7). Chunks: 01, 02, 11, 18, 19. |
+ | 1.8 | 2026-10-07 | Architecture team (sdd-unifier) | | | Targeted update of §17.1 Developer Notes, the Testing bullet: the code-rule tests run with a fixed business clock (§19), so the 15-minute expiry is deterministic. Step 6a rerun after the change: no finding. Delta review of 13a: no issue found and no open item; three older observations outside its scope (§17.1, §19) are kept in the chunk 18 Reviewer Notes for their owner. Chunk 19 verified current through step 8b: no claim it asserts changed and its faithfulness check found no mismatch, so it keeps v1.7 and the E2E gate is Open - Up to date; the five source problems the check reported, none in the changed text and none a chunk 19 claim depends on, are recorded in the chunk 18 Reviewer Notes, not raised. Child LLD v1.3 is now out of date (SDD v1.8). Chunks: 13a, 18. |
++| 1.9 | 2026-10-07 | Architecture team (sdd-unifier) | | | OI-48 raised from the Refund operations owner's question (the branch assignment refresh against the 5-minute end of a removed staff role) after the last review pass of the request, and decided by the test PM on 2026-10-07 (Option A: read API-06 every 5 minutes); it waits as Decided - pending application (step 8 item 3). The E2E gate is Stale on E1 (OI-48); chunk 19 keeps v1.7. Chunks: 18. |
+ 
+ ---
+ 
+diff -ruN chain-pre-plant/sdd-refunds-platform/13a-service-customer-accounts.md chain-before-s4a/sdd-refunds-platform/13a-service-customer-accounts.md
+--- chain-pre-plant/sdd-refunds-platform/13a-service-customer-accounts.md	2026-10-07 15:48:25.467782800 -0500
++++ chain-before-s4a/sdd-refunds-platform/13a-service-customer-accounts.md	2026-10-07 19:20:00.649418600 -0500
+@@ -47,7 +47,7 @@
+ - **Sign-in** (A1, E4) and **not signed in** (A2): customers sign in on the Keycloak page with OIDC Authorization Code and PKCE; a wrong email address or password gets Keycloak's wrong-credentials message (E4). The web app sends a visitor who tries to request, track, or cancel to sign-in or sign-up first (A2). Keycloak saves the sign-in events of customer users with an expiry of 7 days; the daily `account-closure` job reads them through the Keycloak admin client and updates each account's last sign-in before it selects accounts to close, and the sign-ins of [REFUNDS/UC-06](../brd-refunds-portal/06a-use-cases-customer.md#uc-06-sign-up-and-sign-in) step 6 and [REFUNDS/UC-06](../brd-refunds-portal/06a-use-cases-customer.md#uc-06-sign-up-and-sign-in) A3 set the last sign-in when they happen. `GET /v1/customer-accounts/me` only reads.
+ - **Password reset** (A3): `POST /v1/password-resets` takes the email address; when an account has it, a code goes to that address by email through API-14. `POST /v1/password-resets/{passwordResetId}/confirmation` takes the code and a new password, sets the password in Keycloak, and signs the customer in as at step 6. Wrong or expired codes follow E1 and unsent codes E3. The endpoint answers the same way whether or not an account has the address and sends a code only to an existing account.
+ - **Keycloak user lifecycle:** (1) A sign-up stores the Keycloak user id it creates; if its transaction does not commit, the user is deleted at once. (2) A pending sign-up expires 24 hours after its latest code, and job (5) then deletes its disabled user. A sign-up for an email address that has a pending sign-up but no account replaces that sign-up and its disabled user, so E2 is given only when an account exists. (3) Confirmation enables the user and then commits the account; if the commit fails, the user is disabled again. (4) Closure commits the closed state and the removal of the contact details together with a `CustomerAccountClosed` publication that only customer-accounts handles (so it stays out of §14.10); its after-commit listener deletes the Keycloak user from the publication log, retried until done. (5) An hourly `keycloak-user-reconciliation` job disables any enabled CUSTOMER user with no account and deletes any disabled customer user with no pending sign-up.
+-- **Linked requests and closure** ([REFUNDS 03 § Refund records](../brd-refunds-portal/03-definitions-and-domain-concepts.md#refund-records)): the listener for `RefundRequestSubmitted` adds one to the account's linked-request count and the listener for `RefundRequestUnlinked` removes one. The daily `account-closure` job closes every active account with no sign-in for 2 years and a count of 0: it removes the email address and mobile number and publishes `CustomerAccountClosed`.
++- **Linked requests and closure** ([REFUNDS 03 § Refund records](../brd-refunds-portal/03-definitions-and-domain-concepts.md#refund-records)): the listener for `RefundRequestSubmitted` adds one to the account's linked-request count and the listener for `RefundRequestUnlinked` removes one. The daily `account-closing` job closes every active account with no sign-in for 2 years and a count of 0: it removes the email address and mobile number and publishes `CustomerAccountClosed`.
+ - **Contact for messages:** port API-12 returns the email address and mobile number of an active account.
+ 
+ **State machine (if applicable):** Not applicable: a sign-up moves only from pending to completed, expired, or closed, and an account only from active to closed; the transitions are listed above.
+diff -ruN chain-pre-plant/sdd-refunds-platform/18-open-items-and-clarifications.md chain-before-s4a/sdd-refunds-platform/18-open-items-and-clarifications.md
+--- chain-pre-plant/sdd-refunds-platform/18-open-items-and-clarifications.md	2026-10-07 15:48:25.465395400 -0500
++++ chain-before-s4a/sdd-refunds-platform/18-open-items-and-clarifications.md	2026-10-07 19:20:00.645796800 -0500
+@@ -2,7 +2,7 @@
+ CHUNK: 18
+ TITLE: Open Items & Clarifications
+ PROJECT: Refunds Platform
+-VERSION: 1.8
++VERSION: 1.9
+ DEPENDS_ON: all preceding SDD chunks (00 through 17)
+ GATES: chunk 19 (End-to-End System Design). Chunk 19 is written only after every item here is resolved: Accepted - applied, Adjusted - applied, or Rejected. Open, Deferred, and Decided - pending application items keep the gate shut (SKILL.md step 8b).
+ PART OF: SDD - Refunds Platform
+@@ -831,6 +831,21 @@
+ 
+ ---
+ 
++### OI-48: A moved branch manager keeps the old branch for up to 15 minutes
++
++- **Where:** §17.2 Business Logic, Branch assignments (chunk 13b)
++- **Type:** Inconsistency
++- **Concern:** The `branch-assignment-refresh` job reads API-06 every 15 minutes, and a sign-in session reads it for its branch manager only at the first branch request, so a branch manager moved to another branch during a session keeps the old branch's requests for up to 15 minutes. A removed staff role ends within 5 minutes (§16.8, through the 5-minute access token of chunk 06). Two staff changes that end access to a branch's requests take effect in different bounds.
++- **Options:**
++  - **A.** Read API-06 every 5 minutes - a moved branch manager loses the old branch within the bound of a removed role; three times the scheduled API-06 reads.
++  - **B.** Keep 15 minutes and state the longer bound in §16.8 - no added load; two bounds for staff changes stay.
++  - **C.** Read API-06 at every branch request - no stale window; every branch page then depends on the Retail IT system answering.
++- **Recommended Answer:** Option A - §17.2 Business Logic, Branch assignments: "the `branch-assignment-refresh` job reads API-06 every 15 minutes" becomes "the `branch-assignment-refresh` job reads API-06 every 5 minutes".
++- **Why:** A removed role and a moved branch manager are both staff changes that end access to a branch's requests; option A gives them one bound, while B keeps a documented 15-minute window on the old branch and C ties every branch page to an outside system. No option adds business behaviour. The tradeoff accepted: three times the scheduled API-06 reads.
++- **Status:** Decided - pending application: Option A, decided by the test PM on 2026-10-07; the next request applies it.
++
++---
++
+ ## Resolution Log
+ 
+ | ID | Resolution Date | Resolved In | Outcome |
+diff -ruN chain-pre-plant/sdd-refunds-platform/19-e2e-system-design.md chain-before-s4a/sdd-refunds-platform/19-e2e-system-design.md
+--- chain-pre-plant/sdd-refunds-platform/19-e2e-system-design.md	2026-10-07 15:48:25.467782800 -0500
++++ chain-before-s4a/sdd-refunds-platform/19-e2e-system-design.md	2026-10-07 19:20:00.648412600 -0500
+@@ -28,7 +28,7 @@
+ | Services | 5 (modules of one deployable) | §13 (chunk 09) |
+ | Topics | 0 | §14.4 (chunk 10) |
+ | Distinct published events | 0 (integration events) | §14.9 coverage matrix (chunk 10) |
+-| In-process domain events | 10 | §14.10 (chunk 10) |
++| In-process domain events | 11 | §14.10 (chunk 10) |
+ | Synchronous HTTP edges between services | 0 | §24.7 |
+ | In-process port calls | 3 | §24.7 |
+ | Sagas documented | 2 | §24.8 |
+diff -ruN chain-pre-plant/sdd-refunds-platform/decision-log.md chain-before-s4a/sdd-refunds-platform/decision-log.md
+--- chain-pre-plant/sdd-refunds-platform/decision-log.md	2026-10-07 15:48:25.472782800 -0500
++++ chain-before-s4a/sdd-refunds-platform/decision-log.md	2026-10-07 19:20:00.646795400 -0500
+@@ -36,7 +36,7 @@
+ 
+ ## Clarification register
+ 
+-All 26 open items from the review are decided on 2026-10-06: 25 accepted and applied, 1 rejected (OI-22). The delta review of v1.1 added OI-27 to OI-34, all decided on 2026-10-06: 7 accepted and applied, 1 rejected (OI-27). The delta review of v1.2 added OI-35 to OI-41, all decided on 2026-10-06: 4 accepted and applied, 1 adjusted and applied (OI-36), and 2 rejected (OI-35, OI-39). The delta review of v1.6 added OI-42 and OI-43, and the scoped check of their application added OI-44, all decided on 2026-10-07: 3 accepted and applied. The chunk 19 faithfulness check of v1.6 raised OI-45, decided on 2026-10-07 and accepted and applied in v1.7; the scoped check of its application added OI-46 and OI-47, both decided on 2026-10-07 and accepted and applied. The delta review of v1.8 added no item. Each record below is the process; the chunks carry the settled design.
++All 26 open items from the review are decided on 2026-10-06: 25 accepted and applied, 1 rejected (OI-22). The delta review of v1.1 added OI-27 to OI-34, all decided on 2026-10-06: 7 accepted and applied, 1 rejected (OI-27). The delta review of v1.2 added OI-35 to OI-41, all decided on 2026-10-06: 4 accepted and applied, 1 adjusted and applied (OI-36), and 2 rejected (OI-35, OI-39). The delta review of v1.6 added OI-42 and OI-43, and the scoped check of their application added OI-44, all decided on 2026-10-07: 3 accepted and applied. The chunk 19 faithfulness check of v1.6 raised OI-45, decided on 2026-10-07 and accepted and applied in v1.7; the scoped check of its application added OI-46 and OI-47, both decided on 2026-10-07 and accepted and applied. The delta review of v1.8 added no item. OI-48 was raised from the Refund operations owner's question after the last review pass of the v1.9 request; it was decided on 2026-10-07 and waits as Decided - pending application. Each record below is the process; the chunks carry the settled design.
+ 
+ ### OI-01 - Module dependency cycles
+ 
+@@ -426,6 +426,14 @@
+ 
+ **Rule home:** [§15.3 API-09](./11-api-contracts.md#api-09-receive-opening-balances-points-balances-at-go-live---loyalty-points) and [§6 Ecosystem Overview](./02-ecosystem-overview.md#6-ecosystem-overview)
+ 
++### OI-48 - The branch assignment refresh interval
++
++**Question:** The `branch-assignment-refresh` job reads API-06 every 15 minutes, so a branch manager moved during a session keeps the old branch's requests for up to 15 minutes, while a removed staff role ends within 5 minutes (§16.8).
++
++**Decision record, 2026-10-07:** Option A, the Recommended Answer: §17.2 Business Logic, Branch assignments reads API-06 every 5 minutes. Offered: A (recommended), B keep 15 minutes and state the longer bound in §16.8, C read API-06 at every branch request. Rationale: one bound for both staff changes that end access to a branch's requests, at three times the scheduled API-06 reads; no option adds business behaviour. Decided by the test PM (a test-fixture decision). It was raised after the last review pass of the v1.9 request, so it waits as Decided - pending application; the next request that changes this SDD applies it first.
++
++**Rule home:** [§17.2 Business Logic](./13b-service-refund-requests.md#business-logic)
++
+ ## Marker register
+ 
+ The decision walk of 2026-10-06 offered the 51 markers left in chunks 10 to 13e (50 from generation, 1 added by OI-18). Of the first 50 entries below, 47 were settled and 3 settled in part (the Compliance markers of 13a, 13b, and 13e, whose lawful basis stays marked); the OI-18 counting rule stays marked (see the action entries). Settled by the user, who accepted every proposed answer of the decision walk (standing answer for this run). The last four entries (v1.1) settle the four markers that stayed, with the answers the user gave later as test-fixture values.
+diff -ruN chain-pre-plant/sdd-refunds-platform/refunds-platform-sdd-master.md chain-before-s4a/sdd-refunds-platform/refunds-platform-sdd-master.md
+--- chain-pre-plant/sdd-refunds-platform/refunds-platform-sdd-master.md	2026-10-07 15:48:25.472782800 -0500
++++ chain-before-s4a/sdd-refunds-platform/refunds-platform-sdd-master.md	2026-10-07 19:20:00.648412600 -0500
+@@ -1,7 +1,7 @@
+ <!--
+ TYPE: Master Index
+ PROJECT: Refunds Platform
+-VERSION: 1.8
++VERSION: 1.9
+ PART OF: SDD - Refunds Platform
+ PURPOSE: Navigation graph for AI agents and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
+ VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and chunk 00 carry the current SDD version; every other chunk carries the version in which its content last changed, and chunk 19 the version it was written at.
+@@ -27,8 +27,8 @@
+ **Source:** ../brd-refunds-portal/refunds-portal-brd-master.md; ../brd-loyalty-points/loyalty-points-brd-master.md
+ 
+ **Reconciled:** 2026-10-07, step 6a rerun by sdd-unifier (Claude) for the request "update the Testing bullet of 13a Developer Notes" (v1.8), one run; order: run after the request's only content edit to chunks 01 to 17 (the Testing bullet of §17.1 Developer Notes in 13a), and no later edit touches those chunks: only chunk 18 (the delta review's coverage row and Reviewer Notes bullet), chunk 00, this master, and decision-log.md are written after it, none of them a reconciliation source; checked content: chunks 01 to 17 as on disk, sha256 be4d581fda9b95de (each file name, a NUL byte, and its bytes, in name order); parents REFUNDS v1.9 and LOYALTY v1.8, child LLD v1.3; result: no finding: the 10 in-process events from both sides (names, publishers, listeners, DTOs, and the Input tables of 13a to 13e), the 16 permission tokens of 13a to 13e and chunk 11 against §16.11 and the six role counts against §16.12.2, the 14 API contracts (the §15.2 index against the §15.3 blocks, and every API reference of chunks 01 to 17 against §15.2), the 9 §7.3 rows' entry points against the 13x Lists of APIs, no row in §14.8, §15.5, or §16.12.3, and the 1126 relative links and anchors of this folder; the change touches no 13x DB Modeling, so no data model check is owed (the one-time sweep is recorded in the v1.6 entry); earlier entries: 2026-10-07 (v1.7, chunks 01 to 17 at sha256 c8dbd190559473ea, three runs, no finding), 2026-10-07 (v1.6, chunks 01 to 17 at sha256 2e8724c56c828c79, with the data model sweep), 2026-10-07 (the gate check that built the E3 marker inventory), 2026-10-06 (date only, legacy)
+-**E2E gate (chunk 19):** Open - Up to date
+-**E2E basis:** chunk 19 v1.7, written 2026-10-07 against the v1.7 Reconciled entry (chunks 01 to 17 at sha256 c8dbd190559473ea), and last verified 2026-10-07 for v1.8 against the v1.8 Reconciled entry above (chunks 01 to 17 at sha256 be4d581fda9b95de; REFUNDS v1.9, LOYALTY v1.8), with E1 to E4 verified against the files: no claim chunk 19 asserts changed (the one v1.8 source change is the Testing bullet of §17.1 Developer Notes), so its body and version are kept; faithfulness check 2026-10-07 (v1.8) by a cleared-context agent against chunks 02 to 13e as on disk: 0 wrong, 0 misleading, 0 cosmetic mismatches; five source problems it reported, none in text the v1.8 request changed and none a chunk 19 claim depends on, are recorded in the chunk 18 Reviewer Notes for their owner, not raised; the v1.7 write's faithfulness check: 0 wrong, 1 misleading, and 3 cosmetic mismatches, all fixed in chunk 19 and confirmed; verified again 2026-10-07 for the request "refresh the e2e" (v1.8): E1 to E4 verified against the files, and a direct comparison of chunks 01 to 17 with this basis (sha256 be4d581fda9b95de, unchanged, the same as the Reconciled entry above) shows no changed source claim, so chunk 19 is already current: body and version kept, no change
++**E2E gate (chunk 19):** Stale - E1: OI-48 is Decided - pending application
++**E2E basis:** chunk 19 v1.7, written 2026-10-07 against the v1.7 Reconciled entry (chunks 01 to 17 at sha256 c8dbd190559473ea), and last verified 2026-10-07 for v1.8 against the v1.8 Reconciled entry above (chunks 01 to 17 at sha256 be4d581fda9b95de; REFUNDS v1.9, LOYALTY v1.8), with E1 to E4 verified against the files: no claim chunk 19 asserts changed (the one v1.8 source change is the Testing bullet of §17.1 Developer Notes), so its body and version are kept; faithfulness check 2026-10-07 (v1.8) by a cleared-context agent against chunks 02 to 13e as on disk: 0 wrong, 0 misleading, 0 cosmetic mismatches; five source problems it reported, none in text the v1.8 request changed and none a chunk 19 claim depends on, are recorded in the chunk 18 Reviewer Notes for their owner, not raised; the v1.7 write's faithfulness check: 0 wrong, 1 misleading, and 3 cosmetic mismatches, all fixed in chunk 19 and confirmed; verified again 2026-10-07 for the request "refresh the e2e" (v1.8): E1 to E4 verified against the files, and a direct comparison of chunks 01 to 17 with this basis (sha256 be4d581fda9b95de, unchanged, the same as the Reconciled entry above) shows no changed source claim, so chunk 19 is already current: body and version kept, no change. Not verified for v1.9: the gate is shut on E1 (OI-48).
+ 
+ ### E3 marker inventory
+ 

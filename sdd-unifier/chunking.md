@@ -50,7 +50,7 @@ Total typical chunk count: **19 + N services** (so 21–25 for a typical multi-s
 
 **Parts.** In `parts` generation the chunks are written in three parts: 00-09, then `13x` + 10 + 12 + 11, then 14-18 with 19 behind the e2e gate (`parts-mode.md`).
 
-**Specs is not an SDD chunk.** The constitution-grade `Specs` (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with each child LLD (`./lld-[lld-slug]/17-specs.md`), synthesised from this SDD's body. Legacy SDDs may still carry a `15-specs.md`: treat it as read-only input for the LLD, not part of this template.
+**Specs is not an SDD chunk.** The constitution-grade `Specs` (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with each child LLD (`../lld-[lld-slug]/17-specs.md`), synthesised from this SDD's body. Legacy SDDs may still carry a `15-specs.md`: treat it as read-only input for the LLD, not part of this template.
 
 ---
 

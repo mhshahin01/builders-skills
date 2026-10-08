@@ -5,7 +5,7 @@
 **Date:** [YYYY-MM-DD]
 **Status:** [Draft | In Review | Approved]
 
-<!-- LANGUAGE RULE: The whole BRD is business language only - it states the WHAT. No technology names, protocols, frameworks, or implementation terminology anywhere in the body. The HOW (tech stack, architecture, technical targets) is owned by the SDD (sdd-unifier). Technical mandates found in source material are parked verbatim in Appendix > Technical Inputs for the SDD. -->
+<!-- LANGUAGE RULE: The whole BRD is business language only - it states the WHAT. No technology names, protocols, frameworks, or implementation terminology anywhere in the body. The HOW (tech stack, architecture, technical targets) is owned by the SDD (sdd-unifier). Technical mandates found in source material are parked verbatim in Appendix § Technical Inputs for the SDD. -->
 
 <!-- STYLE RULE: Plain language everywhere: simple, clear, precise, easy to understand. Short sentences, common words, active voice, one term for one thing, the exact number instead of a vague word. Simple never means incomplete: every number, rule, and exception stays. See writing-style.md. -->
 
@@ -411,7 +411,7 @@ All detailed use cases follow this structure:
 # Open Items & Clarifications
 
 <!--
-Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every unapplied item carries a Recommended Answer and Why. Walk the owner through each item; apply accepted answers to the body and record each outcome in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to its Resolution Log row. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
+Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every unapplied item carries a Recommended Answer and Why. Walk the owner through each item; apply accepted answers to the body and record each outcome in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to the Resolution Log. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
 This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay inline. This section is the reviewer's external findings.
 -->
 

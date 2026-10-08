@@ -62,7 +62,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 ## Clarification register
 
-[One line of state, e.g. "All N open items from the review are decided on [date]." One entry per decided open item or clarification question; a settled marker goes to § Marker register.]
+[One line of state, e.g. "All N open items from the review are decided on [date]." One entry per decided open item or clarification question; an item left `Decided - pending application` gets its entry when it is applied (SKILL.md step 8 item 3); a settled marker goes to § Marker register.]
 
 ### OI-NN - [short title]
 

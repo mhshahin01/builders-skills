@@ -411,7 +411,7 @@ All detailed use cases follow this structure:
 # Open Items & Clarifications
 
 <!--
-Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every unapplied item carries a Recommended Answer and Why. Walk the owner through each item; apply accepted answers to the body and record each outcome in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to its Resolution Log row. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
+Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every unapplied item carries a Recommended Answer and Why. Walk the owner through each item; apply accepted answers to the body and record each outcome in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to the Resolution Log. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
 This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay inline. This section is the reviewer's external findings.
 -->
 

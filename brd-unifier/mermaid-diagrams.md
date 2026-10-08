@@ -155,7 +155,7 @@ flowchart TD
 - Node IDs use letters and digits only. Never use `end` as an ID. Keep a space on both sides of every link.
 - One statement or one chain per line. Every `subgraph` has its `end`.
 - If a Mermaid parser or renderer is available in the session, parse every block with it and look at one rendered use-case diagram and one rendered flowchart (a block can parse and still render a label wrongly); otherwise check each block line by line against the examples in this file.
-- A parser that works wherever Node and Chrome are installed is the Mermaid CLI through `npx` (`npx -y @mermaid-js/mermaid-cli -p <puppeteer-config.json> -i diagram.mmd -o diagram.svg`, with `executablePath` in the config pointing at the installed Chrome and `PUPPETEER_SKIP_DOWNLOAD=true` set). It downloads a tool on first use, so ask the user before running it. Write the test files to a scratch location, never into the BRD folder. An error message or a missing output file means the block does not parse.
+- A parser that works wherever Node and Chrome are installed is the Mermaid CLI through `npx` (`npx -y @mermaid-js/mermaid-cli -p <puppeteer-config.json> -i diagram.mmd -o diagram.svg`, with `executablePath` in the config pointing at the installed Chrome and `PUPPETEER_SKIP_DOWNLOAD=true` set). It downloads a tool on first use, so ask the user before running it; without a yes, use the line-by-line check. Write the test files to a scratch location, never into the BRD folder. An error message or a missing output file means the block does not parse.
 
 ---
 

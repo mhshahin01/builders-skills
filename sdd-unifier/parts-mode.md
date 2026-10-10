@@ -4,12 +4,12 @@ The generation option controls **how much is written before the user looks at it
 
 | Option | What happens | When |
 |---|---|---|
-| `parts` (**default**) | The SDD is written in three parts. The skill stops after parts 1 and 2 and waits for the user's go-ahead. | CHUNKS mode, generate, transform, or derive-from-BRD |
+| `parts` (**default**) | The SDD is written in three parts. The skill stops after parts 1 and 2 and waits for the user's go-ahead (an answer policy that names part checkpoints passes the stop: § The checkpoint). | CHUNKS mode, generate, transform, or derive-from-BRD |
 | `whole` | Chunks 00-18 are written in one go, as one run (the acceptance loop still runs at the end); chunk 19 follows in the same run only if the e2e gate opens. | When the user asks for it; always in COMBINED mode; always for pure conversions (merge, re-chunk) and targeted updates |
 
 **How it is chosen**
 
-- Argument: `sdd-unifier [chunks|combined] [parts|whole]`, in any order. Examples: `sdd-unifier chunks whole`, `sdd-unifier whole`, `sdd-unifier parts`.
+- Argument: `sdd-unifier [chunks|combined] [parts|whole] [light]`, in any order. Examples: `sdd-unifier chunks whole`, `sdd-unifier whole`, `sdd-unifier parts`.
 - Words in the request: "all at once", "in one go", "one shot", "everything now" mean `whole`. "Part by part", "step by step", "let me review as we go" mean `parts`.
 - Nothing said: `parts`. Do not ask. Say it in one line before starting: "Generation: parts (default). Say 'whole' to get everything in one go."
 - `combined parts` is not available: a combined SDD is always written whole. Say so in one line and continue in `whole`.
@@ -58,7 +58,7 @@ Show a short part summary:
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 
-Then **stop and wait**. Do not start the next part in the same turn. Do not start it on silence, on a thank-you, or on a question about something else. Start it only when the user says so ("continue", "next part", "part 2", "go on"), or gives corrections and then asks to continue.
+Then **stop and wait**. Do not start the next part in the same turn. Do not start it on silence, on a thank-you, or on a question about something else. Start it only when the user says so ("continue", "next part", "part 2", "go on"), or gives corrections and then asks to continue. The one exception is an answer policy that names part checkpoints (SKILL.md step 8, Answer policy): it passes this stop, and the next part starts after the summary, in the same turn.
 
 When the user gives corrections: apply them to the existing chunks first, rerun the exit checklist of that part, update the summary, and only then move on if they asked to. Record each decision that settles an open question in `decision-log.md`; the chunks carry only the resulting design.
 
@@ -79,7 +79,7 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 - [ ] Every §6 ecosystem row has its source in Notes (`BRD-mandated`, `source SDD`, `questionnaire`, `default`, `recommended`, `user override`); every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
 - [ ] §8.1 Architecture Style has What / Why / How at the bar of `sdd-quality.md`; the minimum ADR set is present or flagged.
 - [ ] Every actor in 03 traces to a BRD persona (derive-from-BRD) or to the source; none is invented.
-- [ ] Every service in 09 has a bounded context, owns its data, and serves at least one use case or platform concern. No entity is owned by two services.
+- [ ] Every service in 09 has a bounded context, owns its data, and serves at least one use case or platform concern (a later-phase scope item of a phase-based BRD is neither until its use cases exist: `brd-to-sdd.md` § Phase-based BRDs). No entity is owned by two services.
 - [ ] Derive-from-BRD: chunk 00 § Document Lineage lists every source BRD with its key, version, and link, and Child LLDs reads `None yet` (or the LLDs found); every BRD reference in 00-09 carries its key; with two or more BRDs, every cross-BRD conflict is asked, recorded as an ADR, or flagged (`brd-to-sdd.md` § Source BRDs and lineage).
 - [ ] Derive-from-BRD: every use case of every source BRD has its §7.3 row in 03, under its BRD's group (title as the BRD states it, status derived from its Description marker); every active one has exactly one owner in 09 `Use cases (BRD)`, or a `[NEEDS CLARIFICATION: ...]` in its Owner cell; every §8.4 and §8.5 diagram has its `**Use cases:**` line; every UC link resolves (file and anchor).
 - [ ] Every integration in 08 names the service that owns it, or is flagged.
@@ -99,7 +99,7 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 - [ ] Per-service authorization notes agree with the BRD Users & Use Cases Matrix (derive-from-BRD), or the difference is flagged.
 - [ ] Derive-from-BRD: §7.3 Entry points, APIs, and Events are filled, every Owner links to its `13x` chunk, and the use-case traceability check of step 6a passes (every owned use case is cited in its owner's Business Logic; no active use case lacks an entry point, or it is flagged).
 - [ ] 09, 04, 05, and 08 match the service chunks after the back-fill.
-- [ ] No per-service DB model, API list, or Event Model was invented from the BRD alone; missing architect input is flagged. Derive-from-BRD: an endpoint proposed for a §7.3 entry point carries only its method and path, its fields are flagged, and the part summary names it as a proposal.
+- [ ] No per-service DB model, API list, or Event Model was invented from the BRD alone; missing architect input is flagged. Derive-from-BRD: an endpoint proposed for a §7.3 entry point carries only its method and path, its fields are flagged, and the part summary names it as a proposal; an Event Model carries only the candidate events chunk 10 lists (`candidate` there), with their payload flagged (`brd-to-sdd.md` § SDD-only sections, §17.X).
 - [ ] No decision-process narration in content chunks. Clarifications raised or decided in this part are recorded in `decision-log.md` with working rule-home links.
 
 **Part 3**
@@ -134,11 +134,12 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 **E2E basis:** None (chunk 19 not written)
 ```
 
+- A first build given `light` writes `**Generation:** parts, light` (SKILL.md § Light run).
 - Write the **Source** line in part 1: the path of every source file (every source BRD's master or combined file), or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
 - Status is `Pending`, `In progress ([last step done])`, or `Complete`. Parts 2 and 3 have several steps, so record each one as it finishes. Part 2: `13x written`, `10 written`, `12 written`, `11 written`, `7.3 filled` (derive-from-BRD), `reconciled`. Part 3: `14-17 written`, `18 written`, `acceptance loop done`, `19 written` or `19 Locked (gate shut)`. Part 3 becomes `Complete` when the gate check has run: chunk 19 is then either written or `Locked`, and a later request refreshes it through SKILL.md step 8b.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
 - Chunk 00 shows `**Status:** Draft - part N of 3` until part 3 is complete, then `Draft`.
-- During the first build, the version stays 1.0 and the Changes Log keeps one "Initial draft" row, dated when part 3 completes. The review, the acceptance loop, and the e2e gate check of part 3 belong to that build: they bump nothing and add no row. After part 3 is complete, any content change follows SKILL.md § Output conventions, Versions.
+- During the first build, the version stays 1.0 and the Changes Log keeps one "Initial draft" row, dated when part 3 completes. The review, the acceptance loop, and the e2e gate check of part 3 belong to that build: they bump nothing and add no row (the row's text names the open items the loop applied: SKILL.md step 8 item 3). After part 3 is complete, any content change follows SKILL.md § Output conventions, Versions.
 - PREV / NEXT footers may point at a chunk that does not exist yet. That is expected until its part is written.
 - When part 3 is complete, remove nothing: keep the table with all three parts `Complete`. It is the record of how the SDD was built.
 
@@ -153,7 +154,7 @@ When the skill is invoked on a folder whose `[project-slug]-sdd-master.md` shows
 1. Say what was found: "Part 1 is complete (2026-09-27). Part 2 is next."
 2. Act on what the user asked:
    - The request says to go on ("continue", "next part", "part 2"): start that part.
-   - The request is empty (the skill was only invoked): ask "Continue with part N?" and wait.
+   - The request is empty (the skill was only invoked): ask "Continue with part N?" and wait (an answer policy that names part checkpoints answers it: SKILL.md step 8, Answer policy).
    - The request is something else (a change to a written chunk, a question): do that, then name the part that is still waiting. Do not start it.
 3. When a part starts, follow "What every part does" from step 1: read the source (from the **Source** line), `decision-log.md`, and every written chunk first.
 4. A part that is `In progress` continues after its last recorded step; a finished step is never redone. In part 3: if chunk 18 exists, the independent reviewer does not run again. Open items still `Open` go through the acceptance loop.

@@ -9,6 +9,8 @@ PART OF: LLD - [Project Name]
 
 # 13. Operations
 
+<!-- Light run: the sub-sections of this chunk that carry the light-work flag are named in SKILL.md § Light run. -->
+
 ## 13.1 Configuration (per service)
 
 | Service | Variable | Type | Default | Notes | Source |
@@ -45,7 +47,7 @@ PART OF: LLD - [Project Name]
 | `outbox_oldest_age_seconds` | gauge | `service` | Outbox liveness |
 | `db_pool_active` | gauge | `service`, `pool` | DB pool saturation |
 
-> **Per-service custom metrics** (from each service's SDD `13x` Observability) are added to this table, one row per metric with its `service` label.
+> **Per-service custom metrics** (from each service's SDD `13x` Observability) are referenced, not restated: link each service's SDD metrics here, and add a row only for a metric the LLD adds, with its `service` label (reference + delta, `sdd-to-lld.md` § One fact, one home).
 
 ## 13.4 Logs
 

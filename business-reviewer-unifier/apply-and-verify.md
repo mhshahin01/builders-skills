@@ -17,7 +17,9 @@ close, even when the walkthrough resumes on another day.
    that changes the document gets one record in its `decision-log.md`,
    § Business review register (the log is created on first use, as that
    skill says): the point ID, the tracker, what was decided, what it
-   replaced, and a `Rule home:` link to the section that now states it. A
+   replaced, and a `Rule home:` link to the section that now states it.
+   When the answer policy decided the point, the record names the policy
+   with its decider label (SKILL.md § Answer policy). A
    record that replaces an earlier one says so, and the
    earlier record stays as it is. In any other document, a decision that
    overrides an earlier statement in another doc states the supersession
@@ -83,16 +85,23 @@ close, even when the walkthrough resumes on another day.
    BRD, a to-do item with its owner and source, plus an open item when it
    needs a business choice. For a pre-BRD, which has no decision log, the
    tracker's Decision cell states it, and the BRD hand-off (item 1)
-   records it in the BRD made from that pre-BRD.
+   records it in the BRD made from that pre-BRD. In a BRD or SDD, the
+   session may also write the open remainder where it applies, as the
+   owning skill's clarification marker (`[NEEDS CLARIFICATION: ...]`), so
+   the gap stays visible in the text. The decision record and the
+   hand-off name each marker the session added, and the owner's update
+   registers it (in a BRD, the to-do item cites it). Until that hand-off
+   runs, the marker has no to-do item yet; that is expected.
 7. **Version at the first change.** The first content change a review
    session makes to a document bumps that document's version once and
    opens one Changes Log row naming the session and the tracker.
    - The bump is one minor step and follows the owning skill's version
      rule (BRD: brd-unifier's `delivery-chunks.md` § Refresh triggers,
      Version; SDD: sdd-unifier's SKILL.md § Output conventions, Versions).
-     A BRD whose cover Status reads `Approved` also gets Status
-     `In Review` and the change date on its cover (same file, § Refresh
-     triggers, Cover status).
+     A BRD or SDD whose cover Status reads `Approved` also gets Status
+     `In Review` and the change date on its cover (BRD: same file,
+     § Refresh triggers, Cover status; SDD: sdd-unifier's SKILL.md
+     § Output conventions, Cover status).
      A document no skill versions (a business document) gets its
      in-document version bumped and a changelog entry in its header. A
      pre-BRD has no version and no changelog, so nothing is added to it:
@@ -105,9 +114,19 @@ close, even when the walkthrough resumes on another day.
    - The Changes Log row lists each point ID with the chunks it changed
      (sections only in a combined document) and ends with the owning
      skill's `Chunks:` list, so the next skill down the chain knows what to
-     refresh. Its Reviewed By and Approved By cells (Reviewed/Approved By
-     in a BRD) stay empty until the document's owner reviews and approves
-     the new version.
+     refresh. A point that changes only a status (no document text, for
+     example a cover Status mark) is named in the row's summary with that
+     status and kept out of the `Chunks:` list. Its Reviewed By and
+     Approved By cells (Reviewed/Approved By in a BRD) stay empty, whatever this review's answer policy names: the
+     owning skill fills them when the new version is reviewed and approved,
+     with the approver the user names or, when the answer policy of the
+     owning skill's own run names an Approver stand-in, with that
+     stand-in's label (SKILL.md § Answer policy), under that skill's own
+     sign-off conditions. An Approver stand-in counts under that run's
+     policy, not this review's, and signs a version this session changed
+     only after the session has closed with every hand-off `Done`: that
+     skill checks each row's `Done` evidence (§ Hand-off) itself, since
+     owners never write the tracker.
    - When the version is in the file name (a combined BRD or SDD), rename
      the file with the bump, and update the citations to it in the
      documents the session may edit, the links in a combined BRD's
@@ -168,8 +187,9 @@ note in the close-out (Apply rule 7). A remnant of the same kind found while
 confirming is fixed the same way and marked as found while confirming. A
 remnant with two possible fixes that would make a document say different
 things is put to the user with the options and a recommendation, as in the
-walkthrough (SKILL.md, Core principle 4). Then append the **Verification
-pass** block to the tracker: date, the hunt's score (taken before the
+walkthrough, unless the run's answer policy takes the recommendation
+(SKILL.md, Core principle 4 and § Answer policy). Then append the
+**Verification pass** block to the tracker: date, the hunt's score (taken before the
 fixes; there is no second hunt), remnant count, one line per remnant (its
 fix, the hand-off that takes it, the close-out note of a gated chunk, or
 why it was rejected). If the agent returns zero remnants on a session with
@@ -187,7 +207,7 @@ once with the stale-remnant categories spelled out.
 - [ ] Complete the **Versioning** block in the tracker.
 - [ ] Write the **Hand-offs** block (§ Hand-off).
 - [ ] Present the close-out summary: points by status, structural
-      decisions list, skill changes requested, the files the session touched, new
+      decisions list, the rejections an answer policy took, skill changes requested, the files the session touched, new
       versions, and the hand-offs with the request to give each skill.
 
 ## Hand-off (the owning skills take the chain back)
@@ -251,5 +271,6 @@ owner's own record:
   evidence (a date alone does not prove the order).
 - LLD: 16 §19.1 naming the new SDD version.
 
-Offer to start the first row. Each row runs only on the user's word, as that
-skill's own request with its own stops.
+Offer to start the first row. Each row runs only on the user's word, or on
+an answer policy that names the hand-offs (SKILL.md § Answer policy), as
+that skill's own request with its own stops.

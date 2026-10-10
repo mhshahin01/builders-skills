@@ -22,9 +22,9 @@ PART OF: BRD - [Project Name]
 |---------|-------------|------------|---------------------|----------------|
 | 1.0 | YYYY-MM-DD | [Actual editor/runtime] | | Initial draft. Chunks: none (initial build) |
 
-<!-- Date: an update row takes the date of its request's first content change; the Initial draft row takes the date the first build completes (in parts, when part 3 completes). Updated By: actual editor/runtime; approver only when user-named. Chunks lists semantic changes, not routine cover/index/footer sync. Table/figure numbers stay stable; new ones take the next free number. -->
+<!-- Date: an update row takes the date of its request's first content change; the Initial draft row takes the date the first build completes (in parts, when part 3 completes). Updated By: actual editor/runtime; approver only when user-named, or an Approver stand-in's label under an answer policy that names one (SKILL.md step 8, Stand-ins). Chunks lists semantic changes, not routine cover/index/footer sync. Table/figure numbers stay stable; new ones take the next free number. -->
 
-<!-- One row per update that changes content (delivery-chunks.md § Refresh triggers, Version). Status follows sign-off (delivery-chunks.md § Refresh triggers, Cover status): Approved, with the approver's name in Reviewed/Approved By, only when the user names the approver. -->
+<!-- One row per update that changes content (delivery-chunks.md § Refresh triggers, Version). Status follows sign-off (delivery-chunks.md § Refresh triggers, Cover status): Approved, with the approver's name in Reviewed/Approved By, only when the user names the approver, or an answer policy names an Approver stand-in and its sign-off conditions hold (its label goes in the cell). -->
 
 ---
 

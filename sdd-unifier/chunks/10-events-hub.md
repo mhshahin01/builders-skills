@@ -123,7 +123,7 @@ flowchart LR
 
 ## 14.4 Topic Registry
 
-<!-- One row per topic. Every topic has exactly ONE owner (sole publisher). Names here are canonical - per-service chunks must use them verbatim. -->
+<!-- One row per topic. Every topic has exactly ONE owner (sole publisher). Names here are canonical - per-service chunks must use them verbatim. Phase from a phase-based source BRD: brd-to-sdd.md § Phase-based BRDs. -->
 
 | # | Topic | Owner (sole publisher) | Key family | Phase |
 |---|---|---|---|---|
@@ -236,14 +236,15 @@ Define common value objects once, then reference them.
 <!--
 Domain events that one module publishes and other modules of the same deployable handle in process (architecture-questionnaire.md § Effect on the SDD). They are not integration events: the broker delivery rules (§14.2 one-hub rules, §14.2.1, §14.6) do not apply. An event that must also leave the deployable is published through the outbox as an integration event and catalogued in §14.5. Events that never leave one module stay out of scope.
 When (derive-from-BRD): the use case step that fires the event, cited like the §14.5 "when": a keyed link plus the part, e.g. "[REFUNDS/UC-04](BRD link) step 5", or "None - platform" when no use case step fires it. This registry is the only home of the When; §7.3 reads its Events column from here and from §14.5.
+Status: `committed` or `candidate`, as in §14.5: a candidate's name, publisher module, and listener modules are fixed, but no listener is built against it until its DTO is ratified, which makes it committed. This registry is the only home of the Status.
 Delivery: one line above the table, stated once for the deployable. Durable: each event is recorded in a publication log (its home: §11.1) in the publisher's transaction and redelivered until every listener completes. In memory: an event is lost if the process stops before a listener runs. The Transaction phase column says when a listener runs, not whether the event survives a stop.
 A microservices SDD writes "Not applicable - no in-process events".
 -->
 
 **Delivery:** [Durable - recorded in the publication log (§11.1) in the publisher's transaction, redelivered until every listener completes / In memory - lost if the process stops before a listener runs]
 
-| Event | Publisher module | Listener modules | When | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
-|---|---|---|---|---|---|---|
-| `[EventName]` | [Module] | [Modules] | [[KEY/UC-NN](BRD link) step N / None - platform] | [after commit] | `[EventDto]`: [fields] | [Notes] |
+| Event | Publisher module | Listener modules | When | Transaction phase (before commit / after commit) | Payload (DTO) | Status | Notes |
+|---|---|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [[KEY/UC-NN](BRD link) step N / None - platform] | [after commit] | `[EventDto]`: [fields] | [committed / candidate] | [Notes] |
 
 <!-- MASTER: [project-slug]-sdd-master.md | PREV: 09-services-summary.md | NEXT: 11-api-contracts.md -->

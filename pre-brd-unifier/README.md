@@ -27,7 +27,7 @@ Most idea docs are static templates filled from intuition. This skill exists to 
 - **Research is sourced, never guessed.** Six parallel research agents (one per chunk 06-11) gather market data, and every figure carries a source. Unverifiable values become `[NEEDS CLARIFICATION: <question>]`, never invented numbers.
 - **Compute, do not hardcode.** RICE, TAM/SAM/SOM (with a top-down vs bottom-up cross-check), EFAS/IFAS weighted scores, Porter's averages, and the Tier-5 composite all come from stated formulas in `frameworks.md`.
 - **Two independent verdicts.** The mechanical Scoreboard (22) is checked by a skeptical investor agent (23) that scores seven aspects, computes a weighted composite, and must reconcile its Go/No-Go with the Scoreboard. Enterprise and internal initiatives get a business-case lens instead of a venture lens.
-- **Adversarial review built in.** A cleared-context reviewer reviews chunks 01-23, hunting unsourced numbers, cross-chunk figure inconsistencies, and weak go/no-go logic. Zero findings triggers a re-dispatch with stronger framing.
+- **Adversarial review built in.** A cleared-context reviewer reviews chunks 01-23, hunting unsourced numbers, cross-chunk figure inconsistencies, and weak go/no-go logic. Zero findings triggers up to two re-dispatches with stronger framing.
 - **Coherent synthesis.** The Scoreboard scores its five signals from tier 2 only (07, 09, 10, 11), chunks 22 and 23 never contradict chunks 01-21, and shared facts (UVP, revenue levers, target segment) are stated once in their home chunk and cross-referenced elsewhere, never restated.
 - **Excel on approval only.** The export clones the embedded reference workbook (styling, sample columns, and its 77 formula cells) and writes Answer cells only, per a whitelisted cell map.
 
@@ -36,28 +36,31 @@ Most idea docs are static templates filled from intuition. This skill exists to 
 ### Usage
 
 ```text
-pre-brd-unifier [chunks|combined]
+pre-brd-unifier [chunks|combined] [light]
 ```
 
 | Argument | Action |
 | -------- | ------ |
 | `chunks` | CHUNKS mode: `./pre-brd-[project-slug]/` with `00-pre-brd-master.md` as the index plus `NN-*.md` per framework. |
 | `combined` | COMBINED mode: one `./PRE-BRD-[ProjectName]-v1.1.md` with a table of contents. |
+| `light` | A light run: fewer frameworks and research agents, and no Excel export (`SKILL.md` § Light run). It combines with `chunks` or `combined` in any order; "light run" and "light-work" count too. |
 | (empty) | Interactive prompt for the output format; chunks is the default. |
 
 Excel is not a mode. Say "export to Excel" after approving the Markdown to run the on-demand export in `xlsx-export.md`.
+
+A request can also set an answer policy (for example "answer policy: accept the recommended option"); what it may answer is in `SKILL.md` § Answer policy.
 
 Invocation prefix depends on the agent: `/pre-brd-unifier chunks` in Claude Code, `$pre-brd-unifier chunks` in Codex, `/skill:pre-brd-unifier chunks` in Kimi Code. Or describe the task in plain words ("validate this idea with a pre-BRD") and the agent picks the skill from its description.
 
 ### The workflow
 
-1. **Resolve mode and intent.** Chunks vs combined from the argument or prompt; generate vs transform per `transform-detection.md` (a source document means transform, an idea alone means generate).
+1. **Resolve output mode and intent.** Chunks vs combined from the argument or prompt; generate vs transform per `transform-detection.md` (a source document means transform, an idea alone means generate).
 2. **Intake.** At most four questions, skipping anything already in context: product idea, target segment, geography and market footprint, currency and hard constraints.
 3. **Research fan-out.** Six parallel research subagents, one per chunk 06-11, each returning structured sourced data for its chunk only, per `research-orchestration.md`. Tiers 1, 3, and 4 are authored from intake; SWOT (12) and the Scoreboard (22) are derived in synthesis.
 4. **Fill the 22 frameworks.** Tier by tier from the research bundle, using `chunks/*.md` as authoritative skeletons. Answer cells only; guidance stays read-only; gaps are flagged with `[NEEDS CLARIFICATION: ...]`.
 5. **Investor assessment pass.** A dedicated skeptical-investor agent reads chunks 01-22 and authors chunk 23: seven aspects scored out of 10 with cited rationales, a computed weighted composite, and a decisive Go/No-Go reconciled with the Scoreboard.
 6. **Reviewer pass.** A cleared-context reviewer reviews chunks 01-23 and writes chunk 24: findings with Where, Type, Concern, Options, a concrete Recommended Answer, a mandatory Why, and the Assumptions Log.
-7. **Present and stop.** The Markdown deliverable with an inventory: chunks, clarification count, open-items count, source count, and the investor verdict. No Excel yet.
+7. **Present and stop.** The Markdown deliverable with an inventory: chunks, clarification count, open-items count, source count, and the investor verdict, plus, when they apply, a light run's skipped frameworks, a zero-finding review, and an answer policy's answers. No Excel yet.
 8. **Export on approval.** Only on explicit request, run the `.xlsx` export per `xlsx-export.md`.
 
 ### Outputs
@@ -71,7 +74,7 @@ Invocation prefix depends on the agent: `/pre-brd-unifier chunks` in Claude Code
 
 | File | Contents |
 | ---- | -------- |
-| `modes.md` | Chunks vs combined output shapes and cross-mode conversion |
+| `modes.md` | Chunks vs combined output modes and cross-mode conversion |
 | `transform-detection.md` | Generate vs transform intent detection and transform procedure |
 | `frameworks.md` | Fill contract, framework classification, formula catalog, Tier-5 propagation |
 | `research-orchestration.md` | Multi-agent research playbook: six per-chunk agents, source rules, reconciliation |

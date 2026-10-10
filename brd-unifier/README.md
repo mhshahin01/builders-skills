@@ -26,7 +26,7 @@ The embedded templates are the authoritative source: `TEMPLATE-COMBINED.md` for 
 ## Why
 
 - **Business language only, enforced.** The BRD states the WHAT in plain language. Technical content is never spread into the body; it is parked verbatim in the appendix for the SDD, so nothing is lost and nothing leaks.
-- **User-journey first.** Requirements are per-persona use cases (UC-NN) with numbered steps, alternate and exception flows, business rules, and acceptance criteria, not abstract feature statements. Every persona gets a journey, a use-case chunk, and a column in the matrix.
+- **User-journey first.** Requirements are per-persona use cases (UC-NN) with numbered steps, alternate and exception flows, business rules, and acceptance criteria, not abstract feature statements. Every persona gets a journey, a use-case chunk (in a phase-based BRD, once its phase starts), and a column in the matrix.
 - **A real review, not a confirmation.** Every full generation ends with a cleared-context adversarial reviewer subagent that writes chunk 13 (Open Items and Clarifications). Each item carries options with tradeoffs, a paste-ready Recommended Answer, and the Why. The skill then walks the user through accept, adjust, defer, or reject, and applies accepted answers to the body. The reviewer also returns a coverage record, one row per risk area: a review with no findings is valid when every area was checked, and it is re-dispatched only when an area is unchecked or a finding lacks evidence.
 - **Parts by default, with a real stop.** In chunks mode the BRD is written in three parts, stopping after parts 1 and 2 so scope, personas, and the use-case list are agreed before the detail is written.
 - **The matrix is derived, never authored.** The Users & Use Cases Matrix is built from the completed use cases and cross-checked both directions; a contradiction means the use case is fixed first, never the matrix.
@@ -39,7 +39,7 @@ The embedded templates are the authoritative source: `TEMPLATE-COMBINED.md` for 
 ### Usage
 
 ```text
-brd-unifier [chunks|combined] [parts|whole]
+brd-unifier [chunks|combined] [parts|whole] [light] [phase=N]
 ```
 
 | Argument | Action |
@@ -48,20 +48,22 @@ brd-unifier [chunks|combined] [parts|whole]
 | `combined` | Single consolidated file `BRD-[ProjectName]-v[X.X].md`. |
 | `parts` | Write the BRD in three parts (00-05, then `06*` and 07, then 08-14), stopping for the user's review after parts 1 and 2. Default in chunks mode. |
 | `whole` | Write chunks 00-14 in one run. Always used in combined mode and for pure conversions and targeted updates. |
-| (empty) | Resume check first: if `[project-slug]-brd-master.md` shows a part Pending or In progress, continue it; otherwise prompt for the mode (chunks is the default). |
+| `light` | A light run: no chunk 17, no Miro board, and only the consistency reruns the delivery gate needs; the reviewer and plain-language passes still run (SKILL.md § Light run). |
+| `phase=N` | Names the current phase of a phase-based BRD: detailed use cases only for that phase's scope items, and a `Phase` column in the Use Case Summary (SKILL.md § Phase-based BRD). |
+| (empty) | Resume check first: if `[project-slug]-brd-master.md` shows a part Pending or In progress, continue it; a finished BRD is updated in its own mode without the prompt; otherwise prompt for the mode (chunks is the default). |
 
-Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Code, `$brd-unifier chunks parts` in Codex, `/skill:brd-unifier chunks parts` in Kimi Code. Or describe the task in plain words ("turn this SoW into a BRD") and the agent picks the skill from its description. Words count as arguments too: "in one go" means `whole`, "part by part" means `parts`.
+Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Code, `$brd-unifier chunks parts` in Codex, `/skill:brd-unifier chunks parts` in Kimi Code. Or describe the task in plain words ("turn this SoW into a BRD") and the agent picks the skill from its description. Words count as arguments too: "in one go" means `whole`, "part by part" means `parts`, "light run" means `light`, and "current phase 1" means `phase=1`.
 
 ### The workflow
 
 1. **Resolve mode and generation option.** From the arguments or the interactive prompt (chunks is the default; never guessed silently). A resume check on `[project-slug]-brd-master.md` runs first, so an interrupted parts run continues instead of restarting.
-2. **Resolve intent.** Generate (fresh BRD from a conversation, raw notes, or a seed) or transform (re-shape an existing document, such as a SoW, a pre-BRD, or an old BRD, into the template), per `transform-detection.md`. Both end in the same output shape.
+2. **Resolve intent.** Generate (fresh BRD from a conversation, raw notes, or a seed) or transform (re-shape an existing document, such as a SoW, a pre-BRD, or an old BRD, into the template), per `transform-detection.md`. Both end in the same output mode.
 3. **Intake.** At most three questions: project name, source material, personas. Answers already in the conversation are not re-asked.
 4. **Plan and generate.** Enumerate the chunks (one use-case chunk per persona, plus `14-todo.md`) and write them from the embedded skeletons. Diagrams are inline Mermaid with a prose summary; Miro only on explicit request. Transforms preserve verbatim numbers, dates, and commitments.
 5. **Build the matrix.** The Users & Use Cases Matrix (chunk 07) is derived from the completed use cases, cross-checked in both directions, with conditional access footnoted.
 6. **Plain-language pass.** Mandatory reread of every chunk against `writing-style.md`: short sentences, common words, no number, rule, or exception dropped.
 7. **Adversarial review.** A cleared-context reviewer subagent hunts gaps, ambiguities, risks, matrix inconsistencies, and technical leaks, and writes chunk 13 with a Recommended Answer and Why per item.
-8. **Acceptance loop.** The user decides each Open Item (accept, choose another option, defer, or reject); accepted answers are applied to the body and recorded in `decision-log.md`.
+8. **Acceptance loop.** The user decides each Open Item (accept, choose another option, defer, or reject), or an answer policy the user set for the run accepts the recommended answers (SKILL.md step 8); accepted answers are applied to the body and recorded in `decision-log.md`.
 9. **Write the to-do.** `14-todo.md`: the open-items register, consistency check (C1-C10), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block.
 10. **Gated follow-ons, on later invocations.** Step 8b adds use-case diagrams and flowcharts once to-do steps 1-3 are confirmed (in parallel with the step 4 mockups). Step 8c writes chunks 15, 16, 17 in order, only once the delivery gate (G1-G5) verifies open against the files. Cross-mode conversion (merge, re-chunk, regenerate one chunk, refresh the to-do) is handled on explicit request.
 

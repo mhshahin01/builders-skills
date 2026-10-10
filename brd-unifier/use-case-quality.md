@@ -197,7 +197,7 @@ The Users & Use Cases Matrix is derived, not authored independently. After writi
 1. Every UC ID appears exactly once as a matrix row (rows marked `Merged into UC-NN` or `Removed` are left out); every persona from chunk 04 appears exactly once as a column.
 2. A `Yes` cell must correspond to the UC's Primary or Supporting Actor, and every persona named as a UC actor must have a `Yes`. External supporting parties are never columns and need no `Yes`.
 3. Conditional access ("own records only", "requires second approval") is a numbered footnote, never a bare `Yes`.
-4. A persona column with no `Yes` at all, or a UC row where everyone is allowed everything, is a red flag: recheck the personas and the UC actors.
+4. A persona column with no `Yes` at all, or a UC row where everyone is allowed everything, is a red flag: recheck the personas and the UC actors. A persona that only a later phase serves has no `Yes` until its phase starts (SKILL.md § Phase-based BRD).
 
 ## What about cross-cutting behaviour?
 

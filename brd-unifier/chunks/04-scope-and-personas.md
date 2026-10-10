@@ -15,6 +15,8 @@ PART OF: BRD - [Project Name]
 
 ## In Scope
 
+<!-- Phase-based BRD only (SKILL.md § Phase-based BRD): every scope item carries its phase label, keeping the roadmap period when the source has one, e.g. "Refund self-service (Phase 1, Q1-2027)". -->
+
 - [Scope item 1]
 - [Scope item 2]
 
@@ -27,7 +29,7 @@ PART OF: BRD - [Project Name]
 
 # Personas / Actors
 
-<!-- Different actors that operate the system. Each persona should describe their role, goals, and access level. Every persona listed here becomes a column in the Users & Use Cases Matrix (chunk 07) and owns a detailed use-case chunk (06a, 06b, ...). -->
+<!-- Different actors that operate the system. Each persona should describe their role, goals, and access level. Every persona listed here becomes a column in the Users & Use Cases Matrix (chunk 07) and owns a detailed use-case chunk (06a, 06b, ...). In a phase-based BRD, a persona that only a later phase serves is listed with its phase label, e.g. "Loyalty Manager (Phase 2)", and gets its use-case chunk when its phase starts (SKILL.md § Phase-based BRD). -->
 
 | Persona | Role | Key Goals | Access Level |
 |---------|------|-----------|-------------|

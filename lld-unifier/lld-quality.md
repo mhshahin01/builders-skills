@@ -79,7 +79,7 @@ We use outbox pattern. See CLAUDE.md.
 
 **Test:** Can a developer implement this pattern from the subsection alone, knowing which classes participate, what each contributes, and what the pseudocode for each is? If not, rewrite.
 
-**Outbox test:** the writer inserts the row in the aggregate's transaction, and the publisher skeleton shows the acknowledgement check before `markProcessed`, leaves failed or timed-out rows unprocessed, and names the duplicate case (`pattern-rules.md` § Outbox, Delivery contract). In from-code mode the skeleton matches the code; if the code marks rows processed without a successful acknowledgement, that stays visible and carries the HIGH anti-pattern flag (`pattern-rules.md` § Anti-patterns to flag).
+**Outbox test:** the writer inserts the row in the aggregate's transaction, and the publisher skeleton shows the acknowledgement check before `markProcessed`, leaves failed or timed-out rows unprocessed, and names the duplicate case (`pattern-rules.md` § Outbox, Delivery contract). In from-code direction the skeleton matches the code; if the code marks rows processed without a successful acknowledgement, that stays visible and carries the HIGH anti-pattern flag (`pattern-rules.md` § Anti-patterns to flag).
 
 ### Minimum pattern set per service
 
@@ -239,4 +239,6 @@ Empty-with-flag is correct; thin-with-words is not.
 
 If the LLD is being **reverse-engineered from code** (per `code-extraction.md`), the structural sections should be high-confidence (the code is the truth). Flags appear on inferred semantic content (rationale, business rule narrative).
 
-If the LLD is being **generated in hybrid mode** (per `hybrid-drift.md`), the quality bar above applies in full to non-drifting sections; drifting sections add the drift marker plus a resolution suggestion.
+If the LLD is being **generated in hybrid direction** (per `hybrid-drift.md`), the quality bar above applies in full to non-drifting sections; drifting sections add the drift marker plus a resolution suggestion.
+
+In a **light run** (SKILL.md § Light run), the sub-sections its light set names carry the light-work flag on purpose; the bar above applies to them when their detail is written.

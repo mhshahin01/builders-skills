@@ -1,4 +1,4 @@
-# Hybrid Mode: Two-Pass Drift Detection
+# Hybrid Direction: Two-Pass Drift Detection
 
 This file defines the diff logic for hybrid direction: when both an SDD and complete code are available, the skill produces a unified LLD with inline drift markers showing where design intent diverges from code reality.
 
@@ -74,7 +74,7 @@ A service the SDD lists in §13 with no code at all is not Case D: it gets only 
 
 ### `00-metadata.md`
 
-- Mode field is `hybrid`.
+- Direction field is `hybrid`.
 - Changes Log entry: "Hybrid LLD generated; N drift markers, M code-only, K sdd-only - see 15-open-questions.md."
 
 ### `01-purpose-and-scope.md`
@@ -216,4 +216,4 @@ Some sections cannot be cleanly diffed (e.g., a free-form rationale paragraph). 
 - Emit **code's observed behaviour** as a `> Drift note: code does X - verify whether intentional drift or unimplemented requirement`.
 - Severity: MEDIUM by default; reviewer can edit.
 
-Never silently merge two contradictory paragraphs. The whole point of hybrid mode is to surface drift, not paper over it.
+Never silently merge two contradictory paragraphs. The whole point of the hybrid direction is to surface drift, not paper over it.

@@ -13,7 +13,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 
 > **How to use:** This file is the entry point for the Low-Level Design Document. Each section below maps to a chunk file containing the full template content. Links are relative to this directory. An AI agent should load this file first, identify which chunk(s) are relevant to the task, and navigate to only those chunks.
 
-> **Mode:** [from-code | from-sdd | hybrid | partial]
+> **Direction:** [from-code | from-sdd | hybrid | partial]
 >
 > **Project Type:** [Greenfield | Brownfield] (recorded in [17-specs.md](./17-specs.md) § 4; resolved from the SDD at intake)
 >
@@ -33,7 +33,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 
 | Section | Chunk |
 |---------|-------|
-| Title block, Version, Author, Reviewers, Approvers, Status, Mode | [00-metadata.md](./00-metadata.md) |
+| Title block, Version, Author, Reviewers, Approvers, Status, Direction | [00-metadata.md](./00-metadata.md) |
 | Related BRD/SDD reference | [00-metadata.md](./00-metadata.md) |
 | Changes Log | [00-metadata.md](./00-metadata.md) |
 
@@ -108,11 +108,11 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 |--------|---------|
 | `> Confirm:` | Medium-confidence inference. Reviewer should verify but content is usable. |
 | `> TODO: <best-guess> - verify` | Low-confidence inference. Reviewer must verify or replace. |
-| `✅` (implicit, no marker) | Aligned: from-code and from-sdd match (hybrid mode only). |
+| `✅` (implicit, no marker) | Aligned: from-code and from-sdd match (hybrid only). |
 | `⚠ drift` | Hybrid only: SDD intent and code reality disagree. See `> Drift note:` block. |
 | `🆕 code-only` | Hybrid only: present in code, not in SDD. |
 | `⛔ sdd-only` | Hybrid only: in SDD, not yet built. |
-| `⚠ policy` | Every mode that reads code: the code breaks a CLAUDE.md rule or a `pattern-rules.md` anti-pattern; indexed in 15 § 18.6 with the rule and severity. |
+| `⚠ policy` | Every direction that reads code: the code breaks a CLAUDE.md rule or a `pattern-rules.md` anti-pattern; indexed in 15 § 18.6 with the rule and severity. |
 
 All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 
@@ -123,7 +123,7 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 ```
 [project-slug]-lld-master.md (you are here)
 |
-+-- 00-metadata.md ............................. mode, version, authors, related BRD/SDD
++-- 00-metadata.md ............................. direction, version, authors, related BRD/SDD
 +-- 01-purpose-and-scope.md .................... purpose, scope, assumptions, glossary
 +-- 02-context.md .............................. bounded context, upstream/downstream
 +-- 03-architecture.md ......................... component overview, deployment

@@ -112,10 +112,17 @@ for fn in files:
         if "\u2014" in line:
             problems.append(f"{fn}:{i}: em dash")
 
-# 5. Section 7.3 entry points in owner List of APIs (a Schedule:/Event: trigger, in the owner's Input table)
+# 5. Section 7.3 entry points in the List of APIs of the service they name, else the owner's
+#    (a Schedule:/Event: trigger, on an Input row citing the use case); Events fired per chunk 10;
+#    and every Input trigger row citing a use case is in its entry points, unless it fires the event
 c03 = read(os.path.join(SDD, "03-users-and-use-cases.md"))
+c10 = read(os.path.join(SDD, "10-events-hub.md"))
+notes = []
 api_lists = {}
 inputs = {}
+trig_ucs = {}
+cited_triggers = []
+trig_name = {"event": r"[A-Z][A-Za-z0-9_]+", "schedule": r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*"}
 for fn in files:
     if fn.startswith("13"):
         body = read(os.path.join(SDD, fn))
@@ -125,38 +132,108 @@ for fn in files:
             if m:
                 rows.add(f"{m.group(1)} {m.group(2).strip()}")
         api_lists[fn] = rows
-        ev, sc = set(), set()
+        inputs[fn] = {"event": set(), "schedule": set()}
         itab = body.split("### Input", 1)[1] if "### Input" in body else ""
         itab = re.split(r"\n#{2,3} ", itab, maxsplit=1)[0]
         for line in itab.splitlines():
             c = [x.strip() for x in line.strip().strip("|").split("|")]
-            if line.startswith("|") and len(c) >= 2 and c[0] != "Type" and "---" not in c[0]:
-                names = set(re.findall(r"`([^`]+)`", " ".join(c[1:])))
-                if "event" in c[0].lower():
-                    ev |= names
-                if "schedule" in c[0].lower():
-                    sc |= names
-        inputs[fn] = {"event": ev, "schedule": sc}
+            if not (line.startswith("|") and len(c) >= 3 and c[0] != "Type" and "---" not in c[0]):
+                continue
+            kind = next((k for k in ("event", "schedule") if k in c[0].lower()), None)
+            if not kind:
+                continue
+            names = []
+            for n in re.findall(r"`([^`]+)`", c[1] + " | " + c[2]):
+                if re.fullmatch(trig_name[kind], n) and n not in names:
+                    names.append(n)
+            inputs[fn][kind] |= set(names)
+            ucs = re.findall(r"\[((?:REFUNDS|LOYALTY)/UC-\d\d)\]\(", " ".join(c[1:]))
+            if kind == "event" and len(names) > 1 and ucs:
+                problems.append(f"{fn} Input row lists {len(names)} events and cites a use case")
+                continue
+            for name in names:
+                trig_ucs.setdefault((fn, kind, name), set()).update(ucs)
+                for uc in ucs:
+                    if (fn, kind.capitalize(), name, uc) not in cited_triggers:
+                        cited_triggers.append((fn, kind.capitalize(), name, uc))
+
+
+def service_file(name):
+    for fn in api_lists:
+        if re.fullmatch(r"13[a-z]-(?:service-)?" + re.escape(name.strip().replace(" ", "-")) + r"\.md", fn, flags=re.I):
+            return fn
+    return None
+
+
+def section(text, num):
+    m = re.search(r"^## " + re.escape(num) + r"\b.*?(?=^## |\Z)", text, flags=re.M | re.S)
+    return m.group(0) if m else ""
+
+
+fired = defaultdict(set)
+for num, col in (("14.5", "Business: what · when · why"), ("14.10", "When")):
+    head = None
+    for line in section(c10, num).splitlines():
+        if not line.startswith("|"):
+            head = None
+            continue
+        c = [x.strip() for x in line.strip().strip("|").split("|")]
+        if c[0] == "Event":
+            head = c
+        elif head and col in head and re.fullmatch(r"`[^`]+`", c[0]) and len(c) > head.index(col):
+            when = c[head.index(col)]
+            parts = when.split(" · ")
+            when = parts[1] if num == "14.5" and len(parts) >= 3 else when
+            fired[c[0].strip("`")] |= set(re.findall(r"\[([A-Z]+/UC-\d\d)\]\(", when))
+
+uc_rows = {}
 for line in c03.splitlines():
     m = re.match(r"^\| \[(REFUNDS|LOYALTY)/UC-\d\d\]\([^)]*\) \| ([^|]*) \| ([^|]*) \| ([^|]*) \|", line)
     if not m:
         continue
     owner_cell, entry_cell = m.group(3), m.group(4)
     om = re.search(r"\]\(\./(13[a-z]-[^)]+)\)", owner_cell)
-    eps = re.findall(r"`([^`]+)`", entry_cell)
+    eps = re.findall(r"`([^`]+)`(?:\s*\(([A-Za-z][\w -]*)\))?", entry_cell)
+    cells = [x.strip() for x in line.strip().strip("|").split("|")]
+    uc_id = re.match(r"\[([A-Z]+/UC-\d\d)\]", cells[0]).group(1)
+    own_events = set()
+    for ev in re.findall(r"`([^`]+)`", cells[6] if len(cells) > 6 else ""):
+        if uc_id in fired.get(ev, set()):
+            own_events.add(ev)
+        else:
+            problems.append(f"03 §7.3: {uc_id} Events lists {ev}, which §14.5/§14.10 do not fire for {uc_id}")
+    uc_rows[uc_id] = (entry_cell, own_events)
     if om:
-        for ep in eps:
+        for ep, named in eps:
+            target = service_file(named) if named else om.group(1)
+            if not target:
+                problems.append(f"03 §7.3: entry point {ep} names service '{named}', which matches no 13x file")
+                continue
             tm = re.match(r"(Schedule|Event):\s*(.+?)\s*$", ep)
             if tm:
-                if tm.group(2) not in inputs.get(om.group(1), {}).get(tm.group(1).lower(), set()):
-                    problems.append(f"03 §7.3: entry point {ep} not in the Input table of {om.group(1)}")
-            elif ep not in api_lists.get(om.group(1), set()):
-                problems.append(f"03 §7.3: entry point {ep} not in {om.group(1)}")
+                kind, name = tm.group(1).lower(), tm.group(2)
+                if name not in inputs.get(target, {}).get(kind, set()):
+                    problems.append(f"03 §7.3: entry point {ep} not in the Input table of {target}")
+                    continue
+                cites = trig_ucs.get((target, kind, name))
+                if cites is not None and not cites:
+                    notes.append(f"03 §7.3: {ep} for {uc_id}: its Input row in {target} cites no use case (predates the trigger tie)")
+                elif cites is not None and uc_id not in cites:
+                    problems.append(f"03 §7.3: entry point {ep} for {uc_id}: its Input row in {target} cites {', '.join(sorted(cites))}, not {uc_id}")
+            elif ep not in api_lists.get(target, set()):
+                problems.append(f"03 §7.3: entry point {ep} not in {target}")
     elif eps:
         problems.append(f"03 §7.3: entry points without owner: {line[:80]}")
+for fn, kind, name, uc in cited_triggers:
+    if uc not in uc_rows:
+        continue
+    entry_cell, own_events = uc_rows[uc]
+    if kind == "Event" and name in own_events:
+        continue
+    if not re.search(r"`" + kind + r":\s*" + re.escape(name) + r"`", entry_cell):
+        problems.append(f"03 §7.3: {fn} Input {kind} {name} cites {uc}, but is not in its entry points")
 
 # 6. Events: chunk 10 names vs 13x
-c10 = read(os.path.join(SDD, "10-events-hub.md"))
 hub_events = set(re.findall(r"^\| `([A-Z_]+)` \| ([^|]+) \| `", c10, flags=re.M))
 hub_names = {e for e, _ in hub_events}
 for fn in files:
@@ -261,6 +338,10 @@ for fn in files:
 print("PROBLEMS:", len(problems))
 for p in problems:
     print(" -", p)
+if notes:
+    print("NOTES:", len(notes))
+    for n in notes:
+        print(" -", n)
 print("MARKERS:")
 for fn, n in counts.items():
     print(f"  {fn}: {n}")

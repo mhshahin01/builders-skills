@@ -23,10 +23,12 @@ rule 6), and is never edited after the walkthrough starts.
 **Source:** Multi-agent review of <doc list with versions at review time>
 **Reviewers:** Business Owner (BO), <Domain> SME (SME), Product Manager (PM),
 Principal Architect (PA), Document Consistency (DC)[, add-ons]
-**SME domain:** <confirmed domain, e.g., residential compound and community operations>
+**SME domain:** <confirmed domain, e.g., residential compound and community operations>[, confirmed by Stand-in: SME (<policy>, set by <name>, <date>)]
 **Status values:** Pending | Decided | Applied | Partially applied | Rejected | Deferred
 **Panel findings:** [review-panel-findings.md](review-panel-findings.md)
 **Panel notes:** <a reviewer whose re-dispatch still returned nothing: the persona, the areas it named clean, and the evidence; omit the line when there is none>
+**Answer policy:** <the policy as the user stated it, who set it and the date, and the stand-ins it names (SKILL.md § Answer policy); omit the line when there is none>
+**Paused:** <the point the walkthrough stopped at because the answer policy cannot decide it (SKILL.md § Answer policy, rule 4), the rule or policy wording that kept the policy from deciding it, and the date; remove the line when the walkthrough resumes; omit it when the walkthrough is not paused>
 
 | ID | Reviewer | Concern (short) | Target doc(s) | Status | Decision |
 |----|----------|-----------------|---------------|--------|----------|
@@ -59,26 +61,33 @@ Principal Architect (PA), Document Consistency (DC)[, add-ons]
 - **Concern (short)**: one line, readable without the source documents.
 - **Target doc(s)**: doc ids + sections, comma-separated; update if apply
   or a verify fix reveals more affected docs than the reviewer cited.
-- **Status**: exactly one of the six values. Decided means the user chose
-  but edits are not yet made; Applied means every affected doc the review
-  may edit reflects it, and the rest is named in a hand-off
-  (`apply-and-verify.md`, Apply rule 6).
+- **Status**: exactly one of the six values. Decided means the user, or
+  the answer policy (SKILL.md § Answer policy), chose but edits are not yet
+  made; Applied means every affected doc the review may edit reflects it,
+  and the rest is named in a hand-off (`apply-and-verify.md`, Apply rule 6).
 - **Decision**: filled at decision time; states what was ACTUALLY decided
   (which may exceed or fall short of the recommendation). For Partially
   applied, name the declined parts, or the part recorded under Skill
-  changes requested. For Rejected/Deferred, one-line reason.
+  changes requested. For Rejected/Deferred, one-line reason. A decision
+  the answer policy took ends with its decider label, for example
+  `Option B: <edits made>. Decided by Policy: <policy> (set by <name>, <date>).`
 
 ## Footer rules
 
-- **Progress** line is recomputed at every update.
+- **Progress** line is recomputed at every update. A stop at a point the
+  answer policy cannot decide goes in the header's **Paused** line, not
+  here.
 - **Versioning** gets a line when a point first changes a document
   (`apply-and-verify.md`, Apply rule 7) and is completed at the close. A
   pre-BRD, which has no version, gets the list of its chunks the session
   changed.
-- **Verification pass** is appended by the `verify` phase only.
+- **Verification pass** is appended by the `verify` phase only. A fix the
+  answer policy chose ends with the decider label, as in the Decision cell.
 - **Hand-offs** is written at the close, one row per request in chain order
   (`apply-and-verify.md` § Hand-off). A row reads `To run` until the user
-  says it ran or the owner's own record shows it; then `Done`. Gated chunks
+  says it ran or the owner's own record shows it; then `Done`. A row the
+  answer policy started ends with
+  `Started by Policy: <policy> (set by <name>, <date>)`. Gated chunks
   waiting for their gate are a note in the close-out, not a row.
 - **Skill changes requested** lists the parts of decisions that needed a
   structure the owning skill defines (`apply-and-verify.md`, Apply rule 6),

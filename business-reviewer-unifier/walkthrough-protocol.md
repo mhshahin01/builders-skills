@@ -28,7 +28,10 @@ rejected; do not regress to either.
       change.
    4. **Recommendation**: one explicit recommended option with the reason.
       Prefer an option that works within the owning skill's structure.
-   Then ask for acceptance.
+   Then ask for acceptance, unless the run's answer policy takes the
+   Recommendation (SKILL.md § Answer policy). When the policy cannot
+   decide the point, record the stop in the tracker's `**Paused:**` line
+   (`tracker-schema.md`).
 5. **Never** compress this into bare AskUserQuestion option labels. If
    AskUserQuestion is used at all, it comes AFTER the full prose
    presentation, as a convenience for selecting among already-explained
@@ -40,7 +43,9 @@ rejected; do not regress to either.
    against, what breaks without it) before the options.
 7. **Record what was decided, not what was recommended.** The user
    sometimes goes beyond the recommendation; the Decision cell reflects
-   the actual choice. Partial acceptance names the declined parts.
+   the actual choice. Partial acceptance names the declined parts. A
+   decision the answer policy took carries its label (`tracker-schema.md`,
+   Decision).
 8. After the decision: apply chain-wide per `apply-and-verify.md`, update
    the tracker row, then move to the next point.
 

@@ -1,6 +1,6 @@
 # Modes: Chunks vs Combined
 
-The output shape is set by the argument (`pre-brd-unifier chunks|combined`) or the interactive prompt (chunks is default). Mode is independent of intent (generate vs transform) and independent of Excel export (which is a separate, post-approval step).
+The output mode is set by the argument (`pre-brd-unifier chunks|combined`) or the interactive prompt (chunks is default). It is independent of intent (generate vs transform) and independent of Excel export (which is a separate, post-approval step).
 
 ## CHUNKS mode
 

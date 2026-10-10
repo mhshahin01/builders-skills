@@ -1,6 +1,6 @@
 # Chunking Strategy
 
-The CHUNKS shape produces multiple `.md` files, one per logical template-section grouping. This file defines the canonical chunk map, the per-service split rules, and how merge / re-chunk handling works.
+The CHUNKS mode produces multiple `.md` files, one per logical template-section grouping. This file defines the canonical chunk map, the per-service split rules, and how merge / re-chunk handling works.
 
 The chunk skeletons are embedded in this skill folder under `chunks/`: they are the authoritative source for section structure inside each chunk.
 
@@ -22,7 +22,7 @@ The chunk skeletons are embedded in this skill folder under `chunks/`: they are 
 | # | Filename | Embedded skeleton | Content (template sections) | Typical size |
 |---|---|---|---|---|
 | - | `[project-slug]-lld-master.md` | `chunks/lld-master.md` | Master index: links to all chunks; reading order tables; cross-doc nav; the Related SDD line sdd-unifier finds this LLD by. Regenerated per project. | Small |
-| 00 | `00-metadata.md` | `chunks/00-metadata.md` | Title block, mode, version, status, author, reviewers, approvers, date, Related BRD(s) (each with its key from the SDD's Source BRDs register), Related SDD (its master), source code path, Changes Log, confidence flag summary. | Small |
+| 00 | `00-metadata.md` | `chunks/00-metadata.md` | Title block, direction, version, status, author, reviewers, approvers, date, Related BRD(s) (each with its key from the SDD's Source BRDs register), Related SDD (its master), source code path, Changes Log, confidence flag summary. | Small |
 | 01 | `01-purpose-and-scope.md` | `chunks/01-purpose-and-scope.md` | §1 Purpose, §2 Scope, §3 Assumptions, §4 Glossary. | Small |
 | 02 | `02-context.md` | `chunks/02-context.md` | §5 Context: bounded context, upstream / downstream, cross-service dependency diagram, shared conventions. | Small |
 | 03 | `03-architecture.md` | `chunks/03-architecture.md` | §6 Architecture overview: component topology (Mermaid), deployment topology, runtime stack, architectural style as operationalised. | Medium |
@@ -54,7 +54,7 @@ Total typical chunk count: **19 + N services - 1 (if no UI)** ≈ **20–24 for 
 
 Section §7 of the LLD is the heaviest section: it contains a full implementation deep-dive for every service in the system. Each spec is roughly 300–600 lines.
 
-In CHUNKS shape, each service gets its own file inside the `04-implementation/` folder:
+In CHUNKS mode, each service gets its own file inside the `04-implementation/` folder:
 
 ```
 04-implementation/
@@ -136,7 +136,7 @@ Conversion is reversible: merge applies this map, and re-chunk applies it backwa
 | `### OI-NN: …` | Unchanged |
 | None: chunks navigate through the master index | `## Table of Contents` after the Changes Log, combined only: built on merge, dropped on re-chunk |
 
-**Links.** Rebase every relative link from the location of the file that now holds it (`sdd-to-lld.md` § The link, rule 2): `../` from a chunk, `../../` from a service file, `./` from a combined LLD at the project root. A link between two LLD chunks becomes a same-file anchor on merge (`./refund-service.md#refundsuc-04-approve--reject-refund` → `#refundsuc-04-approve--reject-refund`) and a file link again on re-chunk. Recompute each anchor from the heading as it stands in the target file: a heading repeated across services in the combined file (`### Responsibility`) takes GitHub's `-1`, `-2`, … suffixes in document order.
+**Links.** Every relative link is written from the location of the file that holds it (`sdd-to-lld.md` § The link, rule 2): `../` from a chunk or a merged file (both sit in `lld-[project-slug]/`), `../../` from a service file, `./` from a combined LLD at the project root. On merge (§ Merge handling, step 5), a link to a file outside the LLD keeps working: as it is from a chunk, with one `../` dropped from a service file. A link between two LLD chunks becomes a same-file anchor (`./refund-service.md#refundsuc-04-approve--reject-refund` → `#refundsuc-04-approve--reject-refund`). On re-chunk, each link to a file outside the LLD is rebased from the combined file's location to the chunk or service file that now holds it, and each same-file anchor between chunks becomes a file link again. Recompute each anchor from the heading as it stands in the target file: a heading repeated across services in the combined file (`### Responsibility`) takes GitHub's `-1`, `-2`, … suffixes in document order.
 
 **Navigation.** The master index and the chunk footers (`<!-- MASTER: … | PREV: … | NEXT: … -->`) exist only in chunks: drop them on merge and rebuild them on re-chunk (master: `[project-slug]-lld-master.md`). The combined file's `## Table of Contents` exists only in the combined file: regenerate it on merge and drop it on re-chunk.
 
@@ -152,9 +152,9 @@ Steps:
 2. Concatenate with a single blank line between chunks.
 3. For chunk 04, write `# 7. Per-Service Implementation` once, then each per-service file in alphabetical order as a `## 7.N <Service Name>` block, numbered in that order, with its headings mapped per § Heading map.
 4. Map the Specs and Open Items headings to §20 and §21 (§ Heading map).
-5. Rebase links and recompute anchors (§ Heading map).
+5. Keep links to files outside the LLD working (a link from a service file drops one `../`), turn links between LLD chunks into same-file anchors, and recompute anchors (§ Heading map, Links).
 6. Regenerate the combined file's `## Table of Contents` after the Changes Log.
-7. Write to `./LLD-[ProjectName]-v[X.X]-MERGED.md` at the project root, beside the `lld-[project-slug]/` folder.
+7. Write to `./lld-[project-slug]/LLD-[ProjectName]-v[X.X]-MERGED.md`, next to the chunks, so their links to files outside the LLD keep working (step 5). A merged file an earlier run wrote at the project root stays where it is; new merges go inside the folder.
 8. Keep the original chunks.
 
 ---

@@ -1,6 +1,6 @@
 # Modes: Chunks vs Combined
 
-The skill produces output in one of two shapes. The shape is determined either by the argument passed to the skill (`brd-unifier chunks` / `brd-unifier combined`) or, when no argument is passed, by the interactive mode prompt.
+The skill produces output in one of two output modes. The mode is determined either by the argument passed to the skill (`brd-unifier chunks` / `brd-unifier combined`) or, when no argument is passed, by the interactive mode prompt.
 
 This file describes what each mode is, when to prefer which, and how the modes relate to each other.
 
@@ -145,7 +145,7 @@ When the user says "split into chunks", "chunk this BRD", "re-chunk this" (a sum
 
 ## When the user changes their mind mid-run
 
-If the user has already approved a mode and then asks for the other shape mid-generation:
+If the user has already approved a mode and then asks for the other mode mid-generation:
 
 - If you've written nothing yet: switch silently and proceed.
 - If you've written some output: finish writing the current file, then offer the cross-mode conversion. Do not silently delete what you've already produced.
@@ -167,7 +167,7 @@ A combined BRD is a single file, so it is always written whole. Rules, checklist
 
 ## Mode is independent of intent
 
-Mode (CHUNKS / COMBINED) describes the **output shape**. Intent (GENERATE / TRANSFORM) describes the **input handling**. They are orthogonal:
+Mode (CHUNKS / COMBINED) describes the **output format**. Intent (GENERATE / TRANSFORM) describes the **input handling**. They are orthogonal:
 
 |  | GENERATE | TRANSFORM |
 |---|---|---|

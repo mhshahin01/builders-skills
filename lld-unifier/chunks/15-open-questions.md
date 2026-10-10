@@ -17,7 +17,7 @@ PART OF: LLD - [Project Name]
 
 ---
 
-## 18.1 Drift Markers (hybrid mode only)
+## 18.1 Drift Markers (hybrid only)
 
 <!-- Every row carries the author's recommended reconciliation AND the reason behind it - never a bare "Pending". -->
 
@@ -33,6 +33,8 @@ PART OF: LLD - [Project Name]
 > - **Low:** naming, documentation, or non-load-bearing detail.
 
 ## 18.2 Low-Confidence Inferences (TODO)
+
+<!-- A light run's `> TODO: light-work run - detail before release` flags are indexed here too (SKILL.md § Light run). -->
 
 | Location | Best-guess content | Source / Reason | Status |
 |----------|--------------------|----|--------|
@@ -78,7 +80,7 @@ PART OF: LLD - [Project Name]
 
 > **Convention:** each cell counts the open flags of its kind in that section, as a search for `> Confirm:` and `> TODO:` finds them; nothing is judged, and a section with none reads 0. These counts are updated whenever a chunk is regenerated.
 
-## 18.6 Policy Findings (every mode that reads code)
+## 18.6 Policy Findings (every direction that reads code)
 
 <!-- Code that breaks a CLAUDE.md rule or a pattern-rules.md anti-pattern (from-code, hybrid, partial). Not drift: it claims no SDD disagreement. Every row cites the rule, takes the severity from pattern-rules.md, and carries the author's recommended fix and the reason. -->
 

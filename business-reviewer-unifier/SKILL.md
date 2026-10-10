@@ -6,8 +6,8 @@ description: >-
   to resolution. Use when asked to review documents from different angles, run a review panel or
   multi-agent review, challenge the docs, do a business review, resume a review, walk through review
   points, apply review comments, or verify applied changes. Keeps a review-comments-tracker.md in
-  the project root. Arguments: [panel|walkthrough|apply|verify]; with none, the phase is detected
-  from the tracker. This is the cross-document panel, not the single reviewer pass built into
+  the project root. Arguments: [panel|walkthrough|apply|verify] [light]; with no phase argument, the
+  phase is detected from the tracker. This is the cross-document panel, not the single reviewer pass built into
   brd-unifier, sdd-unifier, and pre-brd-unifier.
 ---
 
@@ -38,7 +38,7 @@ Paths in this file are relative to the skill folder.
 
 ## Argument parsing (do this first)
 
-`business-reviewer-unifier [panel|walkthrough|apply|verify]`
+`business-reviewer-unifier [panel|walkthrough|apply|verify] [light]`
 
 | Argument | Action |
 |---|---|
@@ -47,6 +47,7 @@ Paths in this file are relative to the skill folder.
 | `apply` | Apply all Decided-but-unapplied points chain-wide. |
 | `verify` | Cleared-context consistency re-review, then the close and the hand-offs to the owning skills. |
 | (empty) | **Detect from tracker state:** no `review-comments-tracker.md` means `panel`; Pending points mean `walkthrough`; Decided points not yet applied mean `apply`; every point closed (Applied, Partially applied, Rejected, Deferred) but no Verification pass means offer `verify`; a Verification pass but no Hand-offs block means the close (step 7); Hand-offs rows still `To run` mean offer the next one; otherwise report status and ask. |
+| `light` | A light run: Intake makes no add-on offer, so the panel is the five default personas; an add-on the request names explicitly is still added. It combines with a phase argument in any order, or with none (the phase is then detected as above); the words "light run" and "light-work" count as `light`. Without it, the full run. |
 
 The empty-argument default runs `panel` then flows into `walkthrough`
 (announce the transition). `apply` happens per point during walkthrough,
@@ -65,8 +66,9 @@ not as a deferred batch, unless the user asks to decide everything first.
    It lives at `./review-comments-tracker.md` and is updated after every
    applied point, never in batch at the end.
 4. **Nothing is applied without an explicit decision.** A recommendation is
-   not an approval. Partial acceptance is recorded as Partially applied with
-   the declined parts named.
+   not an approval: the user decides, or an answer policy the user set for
+   the run takes the recommendation (§ Answer policy). Partial acceptance is
+   recorded as Partially applied with the declined parts named.
 5. **Merge duplicates before walkthrough.** Overlapping findings across
    personas are merged under one ID; the user resolves each concern once.
 6. **Chain-wide consistency.** A decision is not Applied until every affected
@@ -82,6 +84,75 @@ not as a deferred batch, unless the user asks to decide everything first.
    never edited. The first content change to a document bumps its version
    as its own rule says, and the close hands the chain back to the owning
    skills (`apply-and-verify.md`).
+
+---
+
+## Answer policy
+
+An **answer policy** is a standing instruction the user sets for a run, in
+the request or in a run brief, for example "answer policy: accept the
+recommended option". It may also name stand-ins and the stops it may pass.
+It may cover less than the rules below allow, for example "accept the
+recommended option except on security points": a point or question its
+wording leaves out waits for the user, and the walkthrough stops at
+that point (item 4).
+With no answer policy, every rule in this skill stays as written.
+
+1. **It takes the recommended option.** It answers a question only when the
+   question carries a recommended option or a stated default, by taking
+   that option, for example a point's Recommendation, the recommended fix
+   of a verify remnant, or a stated default (the whole chain and no add-ons
+   at Intake, tracker order for the walkthrough).
+2. **It never defers, rejects, or adjusts.** It never defers or rejects a
+   point (even when that is the recommendation), never chooses another
+   option or adjusts the recommended one, and never writes a custom
+   decision. Such an answer stays with the user, and the point stays
+   Pending. One exception: a Recommendation to reject the point with no
+   change to any document (for example "Reject, with no change") decides
+   nothing new, so the policy takes it. The point becomes Rejected, its
+   Decision cell gives the Recommendation's reason and the decider, and
+   the close-out summary lists it for the user's review. A recommended
+   rejection that changes a document, or a recommended Defer, stays with
+   the user.
+3. **It never supplies a fact** only a person or a provider can give: an
+   intake fact (the SME domain included), a figure, a provider document, a
+   legal basis, a business number, a brand color. A point whose
+   recommended option needs one goes to the user. A fact the option leaves
+   to the document's owner stays its open remainder (`apply-and-verify.md`,
+   Apply rule 6). A target the business sets (a time limit, an NFR
+   measure, a milestone) that the recommended option proposes with its
+   reason is a choice, not such a fact, and the policy may take it; a
+   figure that already exists somewhere (a volume, a contract term, a
+   provider's limit) is a fact. Nor does the policy take a recommended
+   option that makes a decision the user's standing instructions for the
+   project reserve for the user (for example adding a new dependency), or
+   that sets a business rule a source document rules out: such a point
+   goes to the user.
+4. **The walkthrough keeps its contract.** One point stays in flight and is
+   presented in full (`walkthrough-protocol.md`). A point the policy can
+   decide is decided without asking and applied right away (step 5). A
+   point it cannot decide goes to the user as usual, and the walkthrough
+   stops at that point until the user decides it (the tracker's
+   `**Paused:**` line records the stop): the policy never skips ahead to a
+   later point.
+5. **Stops.** The hand-offs (step 7) are a stop for the user. A policy
+   starts a hand-off row only when it names the hand-offs (for example
+   "run the hand-offs"); general words such as "do everything" or "run to
+   the end" do not name them. A started row runs as the owning skill's own
+   request and carries this policy only when the policy says so (for
+   example "run the hand-offs under this policy").
+6. **Stand-ins.** A stand-in is an agent the policy names to do a person's
+   task. Its output counts only when the policy names it, and the record
+   names the stand-in, never a person:
+   `Stand-in: <role> (<policy>, set by <name>, <date>)`.
+   - `SME` confirms an inferred SME domain in place of the user (Intake).
+     Anything else about the domain still goes to the user, and a product
+     category is still invalid.
+   - `Approver` has no task in a review: the approval cells stay empty
+     (`apply-and-verify.md`, Apply rule 7).
+7. **Records.** Each answer is recorded where that decision is recorded
+   today, with the decider `Policy: <policy> (set by <name>, <date>)`; the
+   policy itself goes in the tracker header (`tracker-schema.md`).
 
 ---
 
@@ -101,12 +172,15 @@ Ask at most three questions, skipping anything already in context:
   `16-references.md` § 19.1 (the SDD version it read).
 - **SME domain**: MANDATORY. Resolve in this order: (a) explicit in the
   invocation, (b) inferable from the docs' own framing; if inferred, restate
-  it and ask for confirmation before dispatching, (c) ask the user outright.
-  The domain is the CUSTOMER'S business (who operates with this product and
-  what they operate), not the product's tech category. Record the confirmed
-  domain in the tracker header.
+  it and ask for confirmation before dispatching (an SME stand-in the answer
+  policy names confirms it instead, § Answer policy), (c) ask the user
+  outright. The domain is the CUSTOMER'S business (who operates with this
+  product and what they operate), not the product's tech category. Record
+  the confirmed domain in the tracker header, with the stand-in's label
+  when the stand-in confirmed it.
 - **Panel composition**: default five personas (below). Offer optional
   add-ons (Security, Finance/Legal, UX) in one line; add only on request.
+  A light run makes no offer (Argument parsing).
 
 ### 2. Panel dispatch
 
@@ -138,7 +212,10 @@ write the tracker and its companion `review-panel-findings.md` per
 `tracker-schema.md`. Present the tracker summary: total findings, merges,
 per-reviewer counts, and how many findings each reviewer left out. Before
 the walkthrough, the user may ask a reviewer for more
-(`panel-orchestration.md` § Merge rules, rule 6).
+(`panel-orchestration.md` § Merge rules, rule 6). This is an offer, not a
+question with a recommended option, so an answer policy never takes it up
+(§ Answer policy, rule 1): under a policy, the walkthrough starts after the
+tracker summary.
 
 ### 4. Walkthrough (point-by-point)
 
@@ -151,7 +228,8 @@ Follow `walkthrough-protocol.md` exactly. Summary of the contract:
   presenting it.
 - Full prose per point, in chat: 1) the issue and exactly which document and
   section it lives in, 2) why it matters, 3) options table with trade-offs,
-  4) explicit recommendation. Then ask for acceptance.
+  4) explicit recommendation. Then ask for acceptance, unless the run's
+  answer policy takes the recommendation (§ Answer policy).
 - Never substitute terse AskUserQuestion option labels for that prose.
 - Security topics get first-principles explanations before the decision ask.
 - Expect decisions beyond the recommendation; record what was decided.
@@ -182,9 +260,10 @@ Versioning block in the tracker. Then write the Hand-offs block: the owning
 skills re-check the changed documents in chain order (`apply-and-verify.md`
 § Hand-off).
 Present the close-out summary: points by status, structural decisions list,
-skill changes requested, the files the session touched, new versions, and the
+the rejections an answer policy took (§ Answer policy, rule 2), skill changes requested, the files the session touched, new versions, and the
 hand-offs with the request to give each skill. Offer to start the first hand-off; each runs
-only on the user's word.
+only on the user's word, or on an answer policy that names the hand-offs
+(§ Answer policy).
 
 ---
 

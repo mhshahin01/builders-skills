@@ -25,7 +25,7 @@ Per `chunks/04-implementation-template.md` § 7.4, every applied pattern carries
 
 ## Mandatory patterns (CLAUDE.md hard rules)
 
-These patterns MUST be applied in any service whose conditions match. From-sdd: applied unconditionally. From-code: missing pattern → `⚠ drift` with HIGH severity in hybrid mode.
+These patterns MUST be applied in any service whose conditions match. From-sdd: applied unconditionally. From-code: missing pattern → `⚠ drift` with HIGH severity in hybrid direction.
 
 ### Outbox
 
@@ -51,7 +51,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 - A record is marked processed only after its target acknowledges it: the broker's acknowledgement (`acks=all`), the provider's success response, or every listener's commit. The acknowledgement check is a visible step in the pseudocode, before `markProcessed`.
 - A failed or timed-out send leaves the record unprocessed, so the next poll retries it. It is never marked processed or deleted.
 - Duplicates are expected. If the target acknowledges but the processed update fails (database error, or a crash before the update), the record is still unprocessed and the next poll delivers it again. A failed or timed-out send may also have reached its target. The payload, including `eventId`, is fixed when the record is written, so a re-send is identical and the receiver dedupes it (broker consumers: `chunks/07-event-contracts.md` § 10.4).
-- From-code mode documents the publisher as the code behaves. A breach of this contract stays visible in the skeleton and is flagged per § Anti-patterns to flag; the skeleton is never rewritten to comply.
+- From-code direction documents the publisher as the code behaves. A breach of this contract stays visible in the skeleton and is flagged per § Anti-patterns to flag; the skeleton is never rewritten to comply.
 
 ### Idempotency (on money / wallet / notification / external-provider write endpoints)
 
@@ -197,7 +197,7 @@ These are **discretionary**: applied only when the triggering condition is genui
 
 ## Anti-patterns to flag (FROM-CODE direction)
 
-The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-questions.md` § 18.6 Policy Findings, in every mode that reads code (from-code, hybrid, partial). It is not drift: it claims no SDD disagreement, so a from-code run with no SDD reports it the same way.
+The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-questions.md` § 18.6 Policy Findings, in every direction that reads code (from-code, hybrid, partial). It is not drift: it claims no SDD disagreement, so a from-code run with no SDD reports it the same way.
 
 | Anti-pattern | CLAUDE.md rule violated | Severity |
 |--------------|------------------------|----------|

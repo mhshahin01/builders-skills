@@ -2,7 +2,7 @@
 
 Fill the analysis-heavy frameworks with sourced findings by fanning out **one independent research subagent per research chunk** via the **Agent tool** (parallel, dispatched in a single message). Each agent owns exactly one chunk, returns structured sourced data for that chunk only, and is blind to the others. A single-threaded synthesis step then writes the consolidating chunks (12 SWOT, 22 scoreboard) and propagates shared values.
 
-Only chunks **06–11** do independent web research, so only they get an agent. Chunk 12 (SWOT) and chunk 22 (Tier-5 scoreboard) are **not** agents - they are derived in synthesis from upstream chunks. Tiers 1, 3, 4 (chunks 01–05, 13–21) are authored from intake, not research.
+Only chunks **06–11** do independent web research, so only they get an agent; a light run has no 08 agent (`SKILL.md` § Light run). Chunk 12 (SWOT) and chunk 22 (Tier-5 scoreboard) are **not** agents - they are derived in synthesis from upstream chunks. Tiers 1, 3, 4 (chunks 01–05, 13–21) are authored from intake, not research.
 
 ## Per-chunk research agents (six, run concurrently)
 

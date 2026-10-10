@@ -1,6 +1,6 @@
 # Modes: Chunks vs Combined
 
-The skill produces output in one of two shapes. The shape is determined either by the argument passed (`sdd-unifier chunks` / `sdd-unifier combined`) or, when no argument is passed, by the interactive mode prompt with CHUNKS as the default.
+The skill produces output in one of two output modes. The mode is determined either by the argument passed (`sdd-unifier chunks` / `sdd-unifier combined`) or, when no argument is passed, by the interactive mode prompt with CHUNKS as the default.
 
 ---
 
@@ -148,7 +148,7 @@ When the user says "split into chunks", "chunk this SDD", "re-chunk this":
 
 ## Mode is independent of intent
 
-Mode (CHUNKS / COMBINED) describes the **output shape**. Intent (GENERATE / TRANSFORM / DERIVE-FROM-BRD) describes the **input handling**. They are orthogonal:
+Mode (CHUNKS / COMBINED) describes the **output format**. Intent (GENERATE / TRANSFORM / DERIVE-FROM-BRD) describes the **input handling**. They are orthogonal:
 
 |  | GENERATE | TRANSFORM | DERIVE-FROM-BRD |
 |---|---|---|---|

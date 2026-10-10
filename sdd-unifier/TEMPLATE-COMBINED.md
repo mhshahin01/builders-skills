@@ -2,13 +2,13 @@
 
 **Project / Product Name:** [Project Name]
 **Version:** [X.X]
-**Status:** [Draft | In Review | Approved]
+**Status:** [Draft | In Review | Approved] <!-- Draft until a version is approved; Approved when the latest Changes Log row's Approved By cell is filled; In Review after a content change to an Approved SDD (SKILL.md § Output conventions, Cover status). -->
 **Author:** [Author Name]
 **Reviewers:** [Reviewer Name(s)]
 **Approvers:** [Approver Name(s)]
 **Date:** [YYYY-MM-DD]
 **Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
-**Reconciled:** [Date, checker, request and checked content revision/hash or explicit final-edit-then-check order]
+**Reconciled:** [Date, checker, request and checked content revision/hash (hash scope and method: SKILL.md step 8b, E4) or explicit final-edit-then-check order]
 **E2E gate (§24):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
 **E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
 
@@ -16,7 +16,7 @@
 
 <!-- Row format (COMBINED): link this file's source section anchor, then a colon and the exact remaining question text. One classification per distinct question/section; moving a marker requires updating its source pointer. Blocks E3 reads exactly `Yes` or `No: <reason>`: Yes names its dependent claim; No always gives the nonblocking reason. Claims/reasons require human source review. -->
 
-<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. -->
+<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell quotes the marker's question; an owner sentence at the end of the marker (`Owner: ...`) goes in the Owner column, not the question cell. Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
 
 | Marker source / question | Owner | Dependent E2E claim / reference path | Blocks E3 / reason | Next action |
 |---|---|---|---|---|
@@ -50,13 +50,13 @@
 
 ## Changes Log
 
-<!-- Initial row: Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, a new coverage record row included when the update changes other content (coverage rows alone bump nothing); companion headers reflect current parent without a separate bump. -->
+<!-- Initial row: names the open items the first build's acceptance loop applied (SKILL.md step 8 item 3), then Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, a new coverage record row included when the update changes other content (coverage rows alone bump nothing); companion headers reflect current parent without a separate bump. -->
 
 | Version | Updated Date | Updated By | Reviewed By | Approved By | Update Summary |
 |---------|--------------|------------|-------------|-------------|----------------|
 | 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. Chunks: none (initial build) |
 
-<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. -->
+<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. Reviewed By and Approved By: SKILL.md § Output conventions, Approvals. -->
 
 ---
 
@@ -124,7 +124,7 @@ Key technical bets and trade-offs:
 
 ## 2.2 Out of Scope
 
-<!-- Explicitly excluded from this SDD. Reference the deferral reason or the document where it is handled. -->
+<!-- Explicitly excluded from this SDD. Reference the deferral reason or the document where it is handled. A phase-based source BRD's later-phase scope items are listed here as the phasing boundary, one line per later phase (brd-to-sdd.md § Phase-based BRDs). -->
 
 - [Out-of-scope item 1, with justification or deferral note]
 - [Out-of-scope item 2]
@@ -244,7 +244,7 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 
 **Figure 1: Use Case Diagram**
 
-<!-- Inline Mermaid is the default diagram medium. Carry the UC IDs verbatim from the BRD with their BRD key, as plain quoted labels (no links inside Mermaid; the links to the BRD are in §7.3). Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
+<!-- Inline Mermaid is the default diagram medium. Carry the UC IDs verbatim from the BRD with their BRD key, as plain quoted labels (no links inside Mermaid). The links to the BRD live in the text around the diagram, its Summary, and in §7.3 (brd-to-sdd.md § The link, item 6). Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
 
 ```mermaid
 flowchart LR
@@ -263,7 +263,7 @@ flowchart LR
   EXT --> UC02
 ```
 
-**Summary:** [1-2 sentences: which actors drive which use-case clusters.]
+**Summary:** [1-2 sentences: which actors drive which use-case clusters, each use case cited as its keyed link.]
 
 ## 7.3 Use Case Traceability (BRD → SDD)
 
@@ -274,7 +274,7 @@ A consolidated view: every column is read from its home and never states a mappi
   Use case (BRD), Title: the BRD Use Case Summary (title exactly as the BRD writes it).
   Status: derived from the marker that opens the use case's Description cell in that summary: no marker gives Active; "Merged into UC-NN." gives Merged into [KEY]/UC-NN (keyed); "Removed: [reason]." gives Removed (the reason stays in the BRD).
   Owner: the §13 "Use cases (BRD)" column, the home of ownership (exactly one owner per active use case).
-  Entry points: the named service's List of APIs (§17.X), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]) from that service's Input table.
+  Entry points: the named service's List of APIs (§17.X), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]) from that service's Input table, whose row cites this use case; every trigger row that cites the use case is listed, the owner's or another service's, and no other trigger, except an event the use case itself fires (its Events value) (brd-to-sdd.md § The trigger tie).
   Flows: the "Use cases:" lines in §8.4 and §8.5.
   APIs: §15.2 "Use case ref".
   Events: the "when" citations in §14.5 and the When column of §14.10 (in-process domain events); an event the use case only handles is an Entry points trigger (Event: [EVENT_NAME]).
@@ -680,7 +680,7 @@ flowchart LR
 
 ## 14.4 Topic Registry
 
-<!-- One row per topic. Every topic has exactly ONE owner (sole publisher). Names here are canonical - per-service chunks must use them verbatim. -->
+<!-- One row per topic. Every topic has exactly ONE owner (sole publisher). Names here are canonical - per-service chunks must use them verbatim. Phase from a phase-based source BRD: brd-to-sdd.md § Phase-based BRDs. -->
 
 | # | Topic | Owner (sole publisher) | Key family | Phase |
 |---|---|---|---|---|
@@ -793,15 +793,16 @@ Define common value objects once, then reference them.
 <!--
 Domain events that one module publishes and other modules of the same deployable handle in process (architecture-questionnaire.md § Effect on the SDD). They are not integration events: the broker delivery rules (§14.2 one-hub rules, §14.2.1, §14.6) do not apply. An event that must also leave the deployable is published through the outbox as an integration event and catalogued in §14.5. Events that never leave one module stay out of scope.
 When (derive-from-BRD): the use case step that fires the event, cited like the §14.5 "when": a keyed link plus the part, e.g. "[REFUNDS/UC-04](BRD link) step 5", or "None - platform" when no use case step fires it. This registry is the only home of the When; §7.3 reads its Events column from here and from §14.5.
+Status: `committed` or `candidate`, as in §14.5: a candidate's name, publisher module, and listener modules are fixed, but no listener is built against it until its DTO is ratified, which makes it committed. This registry is the only home of the Status.
 Delivery: one line above the table, stated once for the deployable. Durable: each event is recorded in a publication log (its home: §11.1) in the publisher's transaction and redelivered until every listener completes. In memory: an event is lost if the process stops before a listener runs. The Transaction phase column says when a listener runs, not whether the event survives a stop.
 A microservices SDD writes "Not applicable - no in-process events".
 -->
 
 **Delivery:** [Durable - recorded in the publication log (§11.1) in the publisher's transaction, redelivered until every listener completes / In memory - lost if the process stops before a listener runs]
 
-| Event | Publisher module | Listener modules | When | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
-|---|---|---|---|---|---|---|
-| `[EventName]` | [Module] | [Modules] | [[KEY/UC-NN](BRD link) step N / None - platform] | [after commit] | `[EventDto]`: [fields] | [Notes] |
+| Event | Publisher module | Listener modules | When | Transaction phase (before commit / after commit) | Payload (DTO) | Status | Notes |
+|---|---|---|---|---|---|---|---|
+| `[EventName]` | [Module] | [Modules] | [[KEY/UC-NN](BRD link) step N / None - platform] | [after commit] | `[EventDto]`: [fields] | [committed / candidate] | [Notes] |
 
 
 ---
@@ -1280,6 +1281,8 @@ Each service follows the exact same structure for predictability and grep-abilit
 |------|--------|-------------|
 | [REST / Event / Schedule / Other] | [Source] | [Description] |
 
+<!-- An Event or Schedule row names one trigger and, when it realises a part of a BRD use case, cites that part as a keyed link (step, BR-n, E1, AC-n). That citation is the trigger's tie to the use case's §7.3 Entry points (brd-to-sdd.md § The trigger tie). -->
+
 ### Business Logic
 
 <!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (§13 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2: [short label]", "AC-3: customer is notified". BR-n and AC-n are positions in the BRD lists, so each always carries its short label (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
@@ -1419,7 +1422,7 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 
 **In-process domain events (modules only):**
 
-<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match §14.10 except When, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable - no in-process events". -->
+<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match §14.10 except When and Status, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable - no in-process events". -->
 
 | Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
 |---|---|---|---|---|---|
@@ -1807,6 +1810,7 @@ sequenceDiagram
 
 <!-- Optional new scope: label Scope proposal here with source, recommendation and tradeoff; not a blocking Open OI until owner-adopted. Required gaps keep the normal OI schema. -->
 <!-- A source problem the chunk 19 faithfulness check found and neither fixed nor raised (SKILL.md step 8b item 3): a note here with its source, its owner, and why no chunk 19 claim depends on it. -->
+<!-- Out of scope, for the next review: a defect a delta review, an application check, or the scoped verification of later answers noticed outside its scope (SKILL.md step 7, Review after answers): a note labelled `Out of scope, for the next review` with its location and what is wrong. It is not an open item and bumps nothing; the next delta or full review that covers that location reads it and raises it or drops it. -->
 
 - [Note 1]
 - [Note 2]

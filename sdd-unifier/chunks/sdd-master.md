@@ -34,7 +34,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 | 2 | 13x, 10, 12, 11 | [Pending / In progress (last step) / Complete] | - |
 | 3 | 14-18, 19 (gated) | [Pending / In progress (last step) / Complete] | - |
 
-**Reconciled:** [Date, checker, request and checked content revision/hash or explicit final-edit-then-check order]
+**Reconciled:** [Date, checker, request and checked content revision/hash (hash scope and method: SKILL.md step 8b, E4) or explicit final-edit-then-check order]
 **E2E gate (chunk 19):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
 **E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
 
@@ -42,7 +42,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 <!-- Row format (CHUNKS): link the source filename and anchor, then a colon and the exact remaining question text. One classification per distinct question/file; moving a marker requires updating its source pointer. Blocks E3 reads exactly `Yes` or `No: <reason>`: Yes names its dependent claim; No always gives the nonblocking reason. Claims/reasons require human source review. -->
 
-<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. -->
+<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell quotes the marker's question; an owner sentence at the end of the marker (`Owner: ...`) goes in the Owner column, not the question cell. Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
 
 | Marker source / question | Owner | Dependent E2E claim / reference path | Blocks E3 / reason | Next action |
 |---|---|---|---|---|
@@ -187,7 +187,7 @@ Each `13x` service chunk contains these sub-sections in order:
 |---------|-------|
 | 23. Open Items & Clarifications | [18-open-items-and-clarifications.md](./18-open-items-and-clarifications.md) |
 
-> Generated *after* the main SDD body by a cleared-context reviewer. Captures architecture-level gaps, missing scenarios, ADR ambiguities, and cross-chunk contract mismatches. Every item carries a **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply; the skill walks the user through each item for acceptance, then reflects accepted answers into the body and logs them in the Resolution Log.
+> Generated *after* the main SDD body by a cleared-context reviewer. Captures architecture-level gaps, missing scenarios, ADR ambiguities, and cross-chunk contract mismatches. Every item carries a **Recommended Answer** with the **Why** behind it (evidence + tradeoff), ready to apply; the skill walks the user through each item for acceptance (an answer policy the user set for the run accepts the recommendations it may), then reflects accepted answers into the body and logs them in the Resolution Log.
 
 ## End-to-End View (gated)
 

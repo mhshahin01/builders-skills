@@ -180,7 +180,7 @@ The skill leans toward fewer, more meaningful diagrams. A 6-line state machine t
 
 Mermaid syntax errors break the doc. The skill should:
 
-1. Validate every emitted Mermaid block parses (syntactically) before writing.
+1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in this file and the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
 2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + a `> TODO: Mermaid syntax error: review and fix.` flag.
 3. Surface the fallback count in the handoff summary.
 

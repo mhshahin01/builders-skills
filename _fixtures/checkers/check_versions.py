@@ -62,7 +62,8 @@ kind = ("brd" if (master or "").endswith("-brd-master.md") or base.startswith("b
         "lld" if (master or "").endswith("-lld-master.md") or base.startswith("lld-") else "other")
 
 chunk_files = {}  # chunk id -> [paths]
-for dp, _, fs in os.walk(DOC):
+for dp, ds, fs in os.walk(DOC):
+    ds[:] = [d for d in ds if not d.startswith("source-snapshot")]
     for fn in sorted(fs):
         if not fn.endswith(".md"):
             continue

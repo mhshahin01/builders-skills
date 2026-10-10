@@ -31,7 +31,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 |---|------|--------|----------|----------|
 | 1 | Resolve open items and clarifications | [Status] | [None yet, or pointer] | Step 2 |
 | 2 | Run a consistency check across all BRD chunks | [Status] | [Run #, date, findings dispositioned] | Step 3 |
-| 3 | Finalise requirements with the grill-me skill | [Status] | [PM confirmation + date] | Steps 4 and 5 |
+| 3 | Finalise requirements with the grill-me skill | [Status] | [PM confirmation + date, or a Product Owner stand-in's label + date] | Steps 4 and 5 |
 | 4 | Generate mockups in Figma | [Status] | [Figma links + review and play-through confirmation] | The delivery gate: chunks 15, 16, 17 (with step 5) |
 | 5 | Update the use-case chunks with use-case diagrams and flowcharts | Pending gate | [None yet] | The delivery gate: chunks 15, 16, 17 (with step 4) |
 
@@ -93,7 +93,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 | **Status** | [Status] |
 | **Required inputs** | All BRD chunks 00-13 (and 05 / 06* diagrams once step 5 has run; chunk 14 itself, and 15-17 once they exist, for check C10) |
 | **Expected output** | Every finding recorded below with its affected chunks and identifiers, impact, and a disposition; confirmed corrections applied to every affected chunk; a recheck run recorded |
-| **Completion criteria** | The latest full/scoped check follows the final relevant content change, with request/run order and checked revision or change-then-check evidence. Dates alone do not prove same-day order. Every finding has a disposition; pending TD/OI keeps step 1 incomplete. |
+| **Completion criteria** | The latest full/scoped check follows the final relevant content change, with request/run order and checked revision or change-then-check evidence. Dates alone do not prove same-day order. Every finding has a disposition; pending TD/OI keeps step 1 incomplete. This step can be `Complete` while G2 is still `Not met`: G2 also needs every finding's decision taken and applied. |
 | **Evidence** | [None yet] |
 
 **Checks performed:** C1 conflicting requirements, C2 terminology, C3 scope, C4 duplicated requirements, C5 missing requirements, C6 broken references, C7 use cases vs acceptance criteria, C8 derived views (Use Case Summary, matrix), C9 diagrams vs narrative (after step 5), C10 delivery chunks vs body (chunk 14 at every write; 15-17 once they exist).
@@ -127,8 +127,8 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 | **Status** | Not started |
 | **Required inputs** | Open rows of the register above (P1 first); unresolved consistency findings; the requirements listed below |
 | **Expected output** | A decision list from the session; confirmed decisions applied to the affected BRD chunks; consistency check rerun |
-| **Completion criteria** | The product manager confirms the session took place and hands back the decision list; every confirmed decision is applied and logged; the step 2 reruns that follow (delivery-chunks.md § Step 2) leave no new undispositioned finding. New questions reopen steps 1-2. |
-| **Evidence** | [None yet. Recommended, not executed.] |
+| **Completion criteria** | The product manager, or a Product Owner stand-in the run's answer policy names, confirms the session took place and hands back the decision list; every confirmed decision is applied and logged; the step 2 reruns that follow (delivery-chunks.md § Step 2) leave no new undispositioned finding. New questions reopen steps 1-2; a new choice that needs the product manager's (or a Product Owner stand-in's) confirmation reopens this step. |
+| **Evidence** | [None yet. Recommended, not executed. Once confirmed: who confirmed (the PM, or `Stand-in: Product Owner (<policy>, set by <name>, <date>)`, SKILL.md step 8) and the date.] |
 
 **Take into the session**
 
@@ -160,10 +160,10 @@ Do not edit any file during the session. End with a numbered decision list I can
 | | |
 |---|---|
 | **Status** | Pending gate |
-| **Gate** | Starts only after steps 1-3 are `Complete` with evidence (conditions G1-G3 above, verified in the files). Runs in parallel with step 5; neither waits for the other. The product manager's confirmation is the evidence for step 3. No override. |
+| **Gate** | Starts only after steps 1-3 are `Complete` with evidence (conditions G1-G3 above, verified in the files). Runs in parallel with step 5; neither waits for the other. The product manager's confirmation, or a Product Owner stand-in's under the run's answer policy, is the evidence for step 3. No override. |
 | **Required inputs** | Finalised use cases (06*), the matrix ([07](./07-users-use-cases-matrix.md)), UI/UX Expectations ([11](./11-summary-and-uiux.md)), decisions from steps 1-3, and the project's global UI/UX constitution when one exists (`ui-ux-global-constitution.md`: its token, responsive, mockups and prototypes, and Figma prototypes sections, by name) [Found: path / No UI/UX constitution found; chunk 11 used] |
 | **Expected output** | A playable, responsive prototype covering the table below, reviewed against the criteria, with links in each UC UI/UX or owning no-UC report/requirement section |
-| **Completion criteria** | Every row is `Approved`; the product manager confirms the review and a dated play-through; the Figma links are in the UC UI/UX or owning no-UC report/requirement section |
+| **Completion criteria** | Every row is `Approved`; the product manager, or a Product Owner stand-in the run's answer policy names, confirms the review and a dated play-through; the Figma links are in the UC UI/UX or owning no-UC report/requirement section |
 | **Evidence** | [None yet. Play-through: date and result once confirmed.] |
 
 **Approval impact:** [For any source change, name affected MK rows and changed actor-visible flow/state/rule/role/content. Record the before/after comparison for retained approvals. A failed overall gate pauses new work without erasing unchanged completed evidence.]
@@ -190,7 +190,7 @@ Return the share link (view permission, opening on the start frame) and the list
 
 | Mockup | Screen / flow | Use cases | Requirements and decisions to honour | States to cover | Priority | Playable | Breakpoints delivered | Status | Play-through | Figma link |
 |--------|---------------|-----------|--------------------------------------|-----------------|----------|----------|-----------------------|--------|--------------|-----------|
-| MK-01 | [Screen or flow name; the source's screen ID only if the source defined one] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Source/owner-confirmed breakpoints] | [Pending gate / Not started / In progress / Blocked by TD-NN / In review / Approved] | [Confirmed by PM, date, result] | [Link] |
+| MK-01 | [Screen or flow name; the source's screen ID only if the source defined one] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Source/owner-confirmed breakpoints] | [Pending gate / Not started / In progress / Blocked by TD-NN / In review / Approved] | [Confirmed by PM or a named stand-in, date, result] | [Link] |
 
 **Expected coverage:** every actor-facing UC has a screen; every observable flow/state appears; roles follow the matrix and standards follow chunk 11. P1 rows are fully interactive, P2 rows connected. All rows use source/owner-confirmed breakpoints, not a priority-implied minimum.
 
@@ -216,7 +216,7 @@ Return the share link (view permission, opening on the start frame) and the list
 | | |
 |---|---|
 | **Status** | Pending gate |
-| **Gate** | Starts only after steps 1-3 are `Complete` with evidence (conditions G1-G3 above, verified in the files). Runs in parallel with step 4; neither waits for the other. The product manager's confirmation is the evidence for step 3. No override. |
+| **Gate** | Starts only after steps 1-3 are `Complete` with evidence (conditions G1-G3 above, verified in the files). Runs in parallel with step 4; neither waits for the other. The product manager's confirmation, or a Product Owner stand-in's under the run's answer policy, is the evidence for step 3. No override. |
 | **Required inputs** | Finalised requirements and use-case narratives; this step's tracking tables |
 | **Expected output** | Use-case diagrams added to [05-user-journeys-overview.md](./05-user-journeys-overview.md); a flowchart added to every qualifying use case in chunks 06*; consistency check rerun. Completing this step opens the delivery gate for chunks 15, 16, and 17. |
 | **Completion criteria** | Chunk 05 contains the applicable use-case diagrams; every qualifying 06* use case has its flowchart and every other use case has a recorded skip reason; all Mermaid blocks parse; the updated chunks pass the consistency check |

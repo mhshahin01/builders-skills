@@ -54,6 +54,7 @@ Used by speckit /constitution AND by pattern-rules.md for stack-appropriate patt
 <!--
 Phases derived from the SDD's §13 Services Decomposition and the BRD use cases each service owns. Each phase is a coherent, deployable slice of capability the team can ship and stakeholders can review.
 3-6 phases is typical. More than 8 means the slicing is too fine; fewer than 2 means it is too coarse.
+When the source BRDs are phase-based (a `Phase` column in their Use Case Summary), the rows are the BRD's phases instead and this count guidance does not apply (SKILL.md step 6b).
 Each phase: short label + one-line scope + the services / BRD UC IDs it covers. UC IDs are written as SDD §7.3 writes them, with their BRD key (plain text, no links).
 From-code direction (no SDD): write "Not applicable - reverse-engineered LLD."
 Used by speckit /constitution to set ordering expectations and by execution agents to plan delivery sequences.

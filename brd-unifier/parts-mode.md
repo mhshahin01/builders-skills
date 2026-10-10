@@ -55,7 +55,7 @@ Show a short part summary:
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 
-Then **stop and wait**. Do not start the next part in the same turn. Do not start it on silence, on a thank-you, or on a question about something else. Start it only when the user says so ("continue", "next part", "part 2", "go on"), or gives corrections and then asks to continue.
+Then **stop and wait**. Do not start the next part in the same turn. Do not start it on silence, on a thank-you, or on a question about something else. Start it only when the user says so ("continue", "next part", "part 2", "go on"), or gives corrections and then asks to continue. Under an answer policy that names part checkpoints (SKILL.md step 8, Answer policy), show the part summary and start the next part at once.
 
 When the user gives corrections: apply them to the existing chunks first, rerun the exit checklist of that part, update the summary, and only then move on if they asked to.
 
@@ -70,6 +70,8 @@ Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run
 ## Exit checklists
 
 **Part 1**
+
+In a phase-based BRD, the checks below ask for no use case yet for a later phase's scope items, or for a persona or objective that only a later phase serves; such a persona is listed in 04 with its phase label (SKILL.md § Phase-based BRD).
 
 - [ ] Every persona in 04 has a journey in 05 and at least one use case in the Use Case Summary.
 - [ ] Every use case in the summary has a Primary Actor that is a persona from 04, and sits inside In Scope.
@@ -115,6 +117,7 @@ Parts mode keeps its state in `[project-slug]-brd-master.md`, so any later sessi
 | 3 | 08-14 | In progress (13 written; acceptance loop next) | - |
 ```
 
+- A light build writes `**Generation:** parts, light`, and its later parts stay light (SKILL.md § Light run).
 - Write the **Source** line in part 1: the path of every source file, or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
 - Status is `Pending`, `In progress ([last step done])`, or `Complete`. Part 3 has several steps, so record each one as it finishes: `08-12 written`, `13 written`, `acceptance loop done`. It becomes `Complete` when chunk 14 is written.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
@@ -134,7 +137,7 @@ When the skill is invoked on a folder whose `[project-slug]-brd-master.md` shows
 1. Say what was found: "Part 1 is complete (2026-09-17). Part 2 is next."
 2. Act on what the user asked:
    - The request says to go on ("continue", "next part", "part 2"): start that part.
-   - The request is empty (the skill was only invoked): ask "Continue with part N?" and wait.
+   - The request is empty (the skill was only invoked): ask "Continue with part N?" and wait. An answer policy that names part checkpoints answers yes.
    - The request is something else (a change to a written chunk, a question): do that, then name the part that is still waiting. Do not start it.
 3. When a part starts, follow "What every part does" from step 1: read the source (from the **Source** line) and every written chunk first.
 4. A part that is `In progress` continues after its last recorded step; a finished step is never redone. In part 3: if chunk 13 exists, the independent reviewer does not run again. Open items still `Open` go through the acceptance loop, then chunk 14 is written.

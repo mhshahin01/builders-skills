@@ -169,7 +169,7 @@ The rules above do not depend on another skill. When `../lld-unifier/mermaid-dia
 
 In the product-manager checklist (`14-todo.md`), Miro is positioned as an optional step **after** step 5 (use-case diagrams and flowcharts), for collaboration or presentation. It is still produced on explicit request only.
 
-If, and only if, the user asks for a Miro board ("put the diagrams on Miro", "create a board"):
+If, and only if, the user asks for a Miro board ("put the diagrams on Miro", "create a board"), and the run is not a light run (SKILL.md § Light run):
 
 1. Load Miro tools via ToolSearch (they are deferred).
 2. Create or reuse a board named `BRD - [Project Name] - Diagrams` (`Miro:context_explore` to check; ask for the URL when updating an existing BRD: don't guess).

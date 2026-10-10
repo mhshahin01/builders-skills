@@ -17,9 +17,9 @@
 |---------|-------------|------------|---------------------|----------------|
 | 1.0 | YYYY-MM-DD | [Actual editor/runtime] | | Initial draft. Chunks: none (initial build) |
 
-<!-- Date: an update row takes the date of its request's first content change; the Initial draft row takes the date the first build completes (in parts, when part 3 completes). Updated By: actual editor/runtime; approver only when user-named. Chunks lists semantic changes, not routine cover/index/footer sync. Table/figure numbers stay stable; new ones take the next free number. -->
+<!-- Date: an update row takes the date of its request's first content change; the Initial draft row takes the date the first build completes (in parts, when part 3 completes). Updated By: actual editor/runtime; approver only when user-named, or an Approver stand-in's label under an answer policy that names one (SKILL.md step 8, Stand-ins). Chunks lists semantic changes, not routine cover/index/footer sync. Table/figure numbers stay stable; new ones take the next free number. -->
 
-<!-- One row per update that changes content (delivery-chunks.md § Refresh triggers, Version). Status follows sign-off (delivery-chunks.md § Refresh triggers, Cover status): Approved, with the approver's name in Reviewed/Approved By, only when the user names the approver. -->
+<!-- One row per update that changes content (delivery-chunks.md § Refresh triggers, Version). Status follows sign-off (delivery-chunks.md § Refresh triggers, Cover status): Approved, with the approver's name in Reviewed/Approved By, only when the user names the approver, or an answer policy names an Approver stand-in and its sign-off conditions hold (its label goes in the cell). -->
 
 ---
 
@@ -162,6 +162,8 @@ Core capabilities:
 
 ## In Scope
 
+<!-- Phase-based BRD only (SKILL.md § Phase-based BRD): every scope item carries its phase label, keeping the roadmap period when the source has one, e.g. "Refund self-service (Phase 1, Q1-2027)". -->
+
 - [Scope item 1]
 - [Scope item 2]
 
@@ -174,7 +176,7 @@ Core capabilities:
 
 # Personas / Actors
 
-<!-- Different actors that operate the system. Every persona listed here becomes a column in the Users & Use Cases Matrix and owns a group of detailed use cases. -->
+<!-- Different actors that operate the system. Every persona listed here becomes a column in the Users & Use Cases Matrix and owns a group of detailed use cases. In a phase-based BRD, a persona that only a later phase serves is listed with its phase label, e.g. "Loyalty Manager (Phase 2)", and gets its detailed use cases when its phase starts (SKILL.md § Phase-based BRD). -->
 
 | Persona | Role | Key Goals | Access Level |
 |---------|------|-----------|-------------|
@@ -206,6 +208,8 @@ Core capabilities:
 ## Use Case Summary
 
 <!-- Every use case, one row each. UC numbering is sequential across the whole BRD. A use case that disappears keeps its row, and its Description cell starts with `Merged into UC-NN.` or `Removed: [reason].` (use-case-quality.md § UC numbering and IDs). Group rows per persona. -->
+
+<!-- Phase-based BRD only (SKILL.md § Phase-based BRD): add a last column, `Phase`, holding `Phase 1`, `Phase 2`, ...; a later phase gets no rows until it starts. Any other BRD keeps these four columns. -->
 
 | UC ID | Use Case | Primary Actor | Description |
 |-------|----------|---------------|-------------|
@@ -371,7 +375,7 @@ All detailed use cases follow this structure:
 
 <!-- Global UI/UX standards that apply across all pages, from the user's point of view. -->
 
-- **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once, with the open items in SKILL.md step 8). Never an invented value.]
+- **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once, with the open items in SKILL.md step 8; a run-brief color counts as a source color, and under an answer policy it is not asked). Never an invented value.]
 - **Data Tables**: [Source or confirmed sorting, pagination, export and filtering rules. Unstated behaviour is a labelled proposal for owner confirmation; examples such as 20 rows/page or CSV/XLSX export are not automatic requirements.]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.
@@ -411,7 +415,7 @@ All detailed use cases follow this structure:
 # Open Items & Clarifications
 
 <!--
-Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every unapplied item carries a Recommended Answer and Why. Walk the owner through each item; apply accepted answers to the body and record each outcome in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to the Resolution Log. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
+Output of the post-generation cleared-context reviewer pass. Captures gaps, missing scenarios, corner cases that the body did not flag inline. Every unapplied item carries a Recommended Answer and Why. Walk the owner through each item (an answer policy the owner set for the run accepts recommended answers in the owner's place: SKILL.md step 8, Answer policy); apply accepted answers to the body and record each outcome in the Resolution Log. An applied item keeps its `### OI-NN: [title]` heading, current Status and a link to the Resolution Log. The full question, options, chosen answer and Why live in `decision-log.md`. Open, Deferred, Decided - pending application and Rejected items keep their full blocks.
 This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay inline. This section is the reviewer's external findings.
 -->
 

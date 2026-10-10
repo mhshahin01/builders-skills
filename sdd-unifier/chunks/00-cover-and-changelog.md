@@ -11,7 +11,7 @@ PART OF: SDD - [Project Name]
 
 **Project / Product Name:** [Project Name]
 **Version:** [X.X]
-**Status:** [Draft | In Review | Approved]
+**Status:** [Draft | In Review | Approved] <!-- Draft until a version is approved; Approved when the latest Changes Log row's Approved By cell is filled; In Review after a content change to an Approved SDD (SKILL.md § Output conventions, Cover status). -->
 **Author:** [Author Name]
 **Reviewers:** [Reviewer Name(s)]
 **Approvers:** [Approver Name(s)]
@@ -44,13 +44,13 @@ PART OF: SDD - [Project Name]
 
 ## Changes Log
 
-<!-- Initial row: Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, a new coverage record row included when the update changes other content (coverage rows alone bump nothing); companion headers reflect current parent without a separate bump. -->
+<!-- Initial row: names the open items the first build's acceptance loop applied (SKILL.md step 8 item 3), then Chunks: none (initial build), dated when the first build completes (when part 3 completes in parts, when the run completes in whole). Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, a new coverage record row included when the update changes other content (coverage rows alone bump nothing); companion headers reflect current parent without a separate bump. -->
 
 | Version | Updated Date | Updated By | Reviewed By | Approved By | Update Summary |
 |---------|--------------|------------|-------------|-------------|----------------|
 | 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. Chunks: none (initial build) |
 
-<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. -->
+<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. Reviewed By and Approved By: SKILL.md § Output conventions, Approvals. -->
 
 ---
 

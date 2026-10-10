@@ -4,16 +4,27 @@ import re
 def norm(text):
     return re.sub(r'\s+',' ',text).strip().lower()
 
+def marker_question(text):
+    return norm(re.sub(r'(?:(?:^|(?<=[.?!])|\s*;)\s*Owner(?:s|\(s\))?\s*:\s.*|\s*\(\s*Owner(?:s|\(s\))?\s*:\s.*\)[.?!]?)\s*$','',text.strip(),flags=re.S))
+
 def filled(text):
     text=text.strip()
     return bool(text and text.lower() not in ('none','-','tbd','unknown') and not re.fullmatch(r'\[[^\]]+\]',text))
+
+def reconciled_date(master):
+    block=re.search(r'\*\*Reconciled:\*\*([^\n]*(?:\n(?![ \t]*(?:[-*>|#\n]|$))[^\n]*)*)',master)
+    if not block:return None
+    numbered=[(int(n),d) for n,d in re.findall(r'\((\d+)\)\s*(\d{4}-\d\d-\d\d)',block[1])]
+    if numbered:return max(numbered)[1]
+    first=re.match(r'\s*(\d{4}-\d\d-\d\d)',block[1])
+    return first[1] if first else None
 
 def evaluate_inventory(files,master):
     live=[];optional=[]
     for name,text in files.items():
         text=re.sub(r'<!--.*?-->','',text,flags=re.S)
-        live += [(name,norm(m)) for m in re.findall(r'\[NEEDS CLARIFICATION:\s*([^\]]+)\]',text)]
-        optional += [(name,norm(m)) for m in re.findall(r'\[TBD - EXTERNAL:\s*([^\]]+)\]',text)]
+        live += [(name,marker_question(m)) for m in re.findall(r'\[NEEDS CLARIFICATION:\s*([^\]]+)\]',text)]
+        optional += [(name,marker_question(m)) for m in re.findall(r'\[TBD - EXTERNAL:\s*([^\]]+)\]',text)]
     section=re.search(r'^### E3 marker inventory\s*\n(.*?)(?=^#{1,3} |\Z)',master,re.M|re.S)
     if not section:
         return {'mode':'legacy','blockers':{},'problems':[],'unclassified':len(live)}
@@ -26,7 +37,7 @@ def evaluate_inventory(files,master):
             problems.append('E3 inventory row must have five columns');continue
         source,owner,claim,decision,action=cells
         filename=re.search(r'\b(\d\d[a-z]?-[\w-]+\.md)\b',source)
-        asked=norm(re.sub(r'^\s*(?:\[[^\]]*\]\([^)]*\)[\s,;]*)+:?','',source).split(']')[0])
+        asked=marker_question(re.sub(r'^\s*(?:\[[^\]]*\]\([^)]*\)[\s,;]*)+:?','',source).split(']')[0])
         matched=[i for i,(name,question) in enumerate(live) if filename and filename[1]==name and question==asked]
         external=[i for i,(name,question) in enumerate(optional) if filename and filename[1]==name and question==asked]
         if not matched and not external:problems.append('E3 obsolete or unmatched source/question: '+source)

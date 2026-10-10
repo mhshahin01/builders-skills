@@ -1,5 +1,5 @@
 import glob, os, re, sys
-from _e2e_gate import evaluate_inventory, reconciled_date
+from _e2e_gate import content_hash, evaluate_inventory, reconciled_date, reconciled_entry, reconciled_hash, unclosed_items
 
 SDD = sys.argv[1]
 
@@ -97,8 +97,7 @@ print(f"sources: {len(services)} services, {len(topics)} topics, {len(events)} c
 
 # ---- e2e gate E1-E4 (SKILL.md step 8b)
 c18 = read("18-open-items-and-clarifications.md")
-ok = ("Accepted - applied", "Adjusted - applied", "Rejected")
-e1 = [s for s in re.findall(r"^- \*\*Status:\*\* (.+)$", c18, re.M) if not s.strip().startswith(ok)]
+e1 = [f"{oi}: {status}" for oi, status in unclosed_items(c18)]
 e2 = []
 for fn, head in (("10-events-hub.md", "## 14.8"), ("11-api-contracts.md", "## 15.5"), ("12-centralized-user-roles.md", "## 16.12")):
     for hd, rows in tables(sect(read(fn), head)):
@@ -137,9 +136,16 @@ c00 = read("00-cover-and-changelog.md")
 log = [r for r in table(sect(c00, "## Changes Log"), "| Version") if re.match(r"\d{4}-\d\d-\d\d", r.get("Updated Date", ""))]
 log_dates = [r["Updated Date"][:10] for r in log]
 reruns = [i for i, r in enumerate(log) if re.search(r"step 6a|\b6a rerun|reconciled again|contract reconciliation", r.get("Update Summary", ""), re.I)]
+rec_hash = reconciled_hash(master)
+rec_entry = reconciled_entry(master)
+now_hash = content_hash(SDD) if rec_hash else None
 e4 = bool(rec and log_dates and rec >= max(log_dates))
 e4_why = ""
-if e4 and rec == max(log_dates):
+if now_hash:
+    e4 = now_hash.startswith(rec_hash)
+    e4_why = (f" (by content hash: chunks 00-17 hash to sha256:{now_hash[:16]}, as the newest Reconciled entry records)" if e4 else
+              f" (by content hash: chunks 00-17 hash to sha256:{now_hash[:16]}, not sha256:{rec_hash} as the newest Reconciled entry records)")
+elif e4 and rec == max(log_dates):
     if not reruns:
         e4_why = " (by date only: no Changes Log row records a step 6a rerun, so the same-day order is not recorded)"
     elif reruns[-1] != len(log) - 1:
@@ -150,6 +156,8 @@ print(f"E1 open items not closed: {len(e1)} {e1[:5]}")
 print(f"E2 open divergence rows: {len(e2)} {e2[:5]}")
 print(f"E3 markers: {sum(e3.values())} {e3}")
 print(f"E4 reconciled {rec} vs last Changes Log date {max(log_dates) if log_dates else None}: {'met' if e4 else 'NOT met'}{e4_why}")
+if rec_entry and not rec_hash and "sha256" in rec_entry.lower():
+    print("E4 note: the newest Reconciled entry mentions sha256 but records no hash the checker can read (`sha256:` and 16 to 64 hex digits), so E4 is judged by date")
 print(f"master gate line: {gate.group(1).strip() if gate else None}")
 
 f19 = sorted(glob.glob(os.path.join(SDD, "19-*.md")))

@@ -146,6 +146,8 @@ for fn in files:
             for n in re.findall(r"`([^`]+)`", c[1] + " | " + c[2]):
                 if re.fullmatch(trig_name[kind], n) and n not in names:
                     names.append(n)
+            if kind == "schedule" and "`" not in c[1] and re.fullmatch(trig_name[kind], c[1]):
+                names = [c[1]]
             inputs[fn][kind] |= set(names)
             ucs = re.findall(r"\[((?:REFUNDS|LOYALTY)/UC-\d\d)\]\(", " ".join(c[1:]))
             if kind == "event" and len(names) > 1 and ucs:
@@ -315,8 +317,9 @@ for fn in files:
             ep = norm_ep(f"{c.get('Method', '')} {c.get('Path', '')}")
             if "Permission token (§16)" in head:
                 cell = c.get("Permission token (§16)", "")
-                found = re.findall(r"`([^`]+)`", cell)
-                if not found and cell not in ("-", "None - public"):
+                bare = cell.replace("`", "").strip()
+                found = [] if bare in ("-", "None - public") else re.findall(r"`([^`]+)`", cell)
+                if not found and bare not in ("-", "None - public"):
                     problems.append(f"{fn}: {ep}: permission token cell {cell!r} names no token")
                 for token in found:
                     if token not in tokens:

@@ -13,7 +13,7 @@ HEAD = ('| ID | Priority | Kind | Source (chunk / identifier) | Decision or clar
 
 
 def row(tid='TD-01', kind='Open question', source='[13 / OI-01](./13-open-items-and-clarifications.md)',
-        need='Which plan applies?', blocks='UC-01 Main Flow', owner='Recommendation: product manager', status='Open'):
+        need='Which plan applies?', blocks='UC-01 Main Flow', owner='Proposed: product manager', status='Open'):
     return f'| {tid} | P1 | {kind} | {source} | {need} | {blocks} | {owner} | {status} |\n'
 
 
@@ -87,6 +87,23 @@ class CheckTodo(unittest.TestCase):
     def test_closed_item_needs_no_row(self):
         self.brd([row(source='[02 / Assumption 1](./02-glossary.md#assumptions)')], oi_status='Accepted - applied')
         self.assertNotIn('OI-01', self.run_on(self.doc).split('problems:')[1])
+
+    def test_status_outside_the_closed_legend_needs_a_row(self):
+        for status in ('Withdrawn', 'Rejected - withdrawn by the reviewer', 'Accepted - applied in part', 'Superseded in part'):
+            with self.subTest(status=status):
+                self.brd([row(source='[02 / Assumption 1](./02-glossary.md#assumptions)')], oi_status=status)
+                self.assertIn('OI-01 is not closed in chunk 13', self.run_on(self.doc))
+        for status in ('Rejected: out of scope', 'Adjusted - applied (06a / UC-01 BR-2)', 'Rejected (2026-10-07). It adds a report'):
+            with self.subTest(status=status):
+                self.brd([row(source='[02 / Assumption 1](./02-glossary.md#assumptions)')], oi_status=status)
+                self.assertNotIn('OI-01', self.run_on(self.doc).split('problems:')[1])
+
+    def test_item_with_no_status_line_needs_a_row(self):
+        self.brd([row(source='[02 / Assumption 1](./02-glossary.md#assumptions)')])
+        self.write('13-open-items-and-clarifications.md', '### OI-01: A question\n\n- **Question:** Which plan?\n')
+        out = self.run_on(self.doc)
+        self.assertIn('OI-01 is not closed in chunk 13', out)
+        self.assertIn('chunk 13 items not closed: 1', out)
 
     def test_marker_in_a_chunk_no_row_cites_is_a_problem(self):
         self.brd([row()], files={'08-integrations.md': '## Integrations\n\nSMS [NEEDS CLARIFICATION: which provider?]\n'})

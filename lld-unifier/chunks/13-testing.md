@@ -13,6 +13,7 @@ PART OF: LLD - [Project Name]
 > - Frontend: Jest (unit/component), Playwright (e2e).
 > - Test naming: `methodName_scenario_expectedResult`.
 > - No mocking repositories in integration tests; use real DB via Testcontainers.
+> - A tool above that SDD §6 does not name is a new dependency: mark it `proposed; needs approval when the project's rules reserve new dependencies`.
 
 ## 16.1 Test Pyramid (per service)
 

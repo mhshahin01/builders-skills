@@ -101,7 +101,7 @@ public interface FooService {
 | `[FooCleanupJob.run]` | Job | `[token, or None - system job]` | [Job runner check, or None] |
 | `[FooPort.reserve]` | Port | `[token]` | At the port, in its adapter (SDD §15.1) |
 
-> **Convention:** one row per entry point of this service (REST method, event listener, scheduled job, in-process port). Tokens are the SDD §16 permission tokens, verbatim; the role catalogue stays in the SDD (`sdd-to-lld.md` § One fact, one home). On an internal HTTP entry point the provider's filter or sidecar checks the caller's client-credentials token against the token (SDD §15.1). From code with no SDD: the scopes the code checks.
+> **Convention:** one row per entry point of this service (REST method, event listener, scheduled job, in-process port). Tokens are the SDD §16 permission tokens, verbatim, and a contract the SDD marks with no token copies its cell verbatim (`None - public`), with any reason in `06-api-contracts.md` § 9.3, never in the cell (never `- (<reason>)`); the role catalogue stays in the SDD (`sdd-to-lld.md` § One fact, one home). On an internal HTTP entry point the provider's filter or sidecar checks the caller's client-credentials token against the token (SDD §15.1). From code with no SDD: the scopes the code checks.
 
 ---
 

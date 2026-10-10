@@ -3,6 +3,8 @@ import os
 import re
 import sys
 
+from _e2e_gate import unclosed_items
+
 DOC = os.path.abspath(sys.argv[1])
 
 problems = []
@@ -10,7 +12,6 @@ notes = []
 
 KINDS = ("Open question", "Assumption to validate", "Pending decision")
 STATUS = re.compile(r"^(Open|Decided - pending application|Resolved|Deferred)\b")
-NOT_CLOSED = re.compile(r"^(Open|Deferred|Decided - pending application)\b")
 SPECIFIC = re.compile(r"UC-\d+|NFR|\bAC-?\d+|BO-\d+|MK-\d+|TASK-\d+|TC-\d+|BR-\d+|§|\b\d{2}[a-z]?\b|Main Flow|\bstep \d+|Business Objective \d+|Objective \d+|go-live|BAT sign-off|Build of|Table \d+|Figure \d+", re.I)
 PLACEHOLDER = re.compile(r"^(\[.*\]|-|\u2014|n/a|none|tbd|\.\.\.)?$", re.I)
 LINK = re.compile(r"\[([^\]]*)\]\(([^)]*)\)")
@@ -127,11 +128,7 @@ for text, tids in blocks_seen.items():
 c13 = os.path.join(DOC, "13-open-items-and-clarifications.md")
 open_ois = []
 if os.path.isfile(c13):
-    t13 = uncomment(read(c13))
-    for m in re.finditer(r"^### (OI-\d+)\b(.*?)(?=^### |^## |\Z)", t13, flags=re.S | re.M):
-        st = re.search(r"^\s*-\s*\*\*Status:\*\*\s*(.+)$", m.group(2), flags=re.M)
-        if st and NOT_CLOSED.match(st.group(1).strip()):
-            open_ois.append(m.group(1))
+    open_ois = [oi for oi, _ in unclosed_items(read(c13))]
     for oi in open_ois:
         if oi not in cited_ois:
             problems.append(f"{oi} is not closed in chunk 13 but no TD row cites 13 / {oi} in its Source")

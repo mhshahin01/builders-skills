@@ -182,7 +182,7 @@ Modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process
 |-------------|------|--------------------------------------|-------------------|
 | `[POST /v1/foo]` | REST | `[foo:write]` | `@PreAuthorize` on `FooController.create` |
 
-One row per entry point of this service (REST method, event listener, scheduled job, in-process port), as in `chunks/04-implementation-template.md` § 7.2 Authorization. Tokens are the SDD §16 permission tokens, verbatim; an internal HTTP entry point checks the caller's client-credentials token in the provider's filter or sidecar, and a port checks it at the port (SDD §15.1). From code with no SDD, the scopes the code checks.
+One row per entry point of this service (REST method, event listener, scheduled job, in-process port), as in `chunks/04-implementation-template.md` § 7.2 Authorization. Tokens are the SDD §16 permission tokens, verbatim, and a contract the SDD marks with no token copies its cell verbatim (`None - public`), with any reason in §9.3, never in the cell (never `- (<reason>)`); an internal HTTP entry point checks the caller's client-credentials token in the provider's filter or sidecar, and a port checks it at the port (SDD §15.1). From code with no SDD, the scopes the code checks.
 
 ### Method-Level Pseudocode (non-trivial logic only)
 
@@ -298,7 +298,7 @@ One table per service with a Source column per row, as in `chunks/05-data-model.
 |--------------|--------|------|---------|-----------------|----------------------------|--------------|
 | [API-01](./sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) | `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 409, 422 |
 
-API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked; `-` for an endpoint no §15 contract covers. Permission tokens are SDD §16 tokens, verbatim.
+API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked; `-` for an endpoint no §15 contract covers. Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in §9.3, never in the cell (never `- (<reason>)`).
 
 ## 9.2 Request / Response Shapes
 
@@ -306,7 +306,7 @@ API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint impl
 
 ## 9.3 Authentication & Authorisation
 
-Internal HTTP calls follow SDD §15.1: the caller sends its client-credentials token (`Authorization: Bearer`), the provider (its filter or a sidecar) checks the contract's SDD §16 permission token, and mTLS stays as the transport. The tenant travels in the `X-Tenant-Id` header on HTTP calls and in the call context in process.
+Internal HTTP calls follow SDD §15.1: the caller sends its client-credentials token (`Authorization: Bearer`), the provider (its filter or a sidecar) checks the contract's SDD §16 permission token, and mTLS stays as the transport. Each endpoint whose §9.1 cell reads `None - public` (copied from the SDD) is named here with the reason it needs no token. The tenant travels in the `X-Tenant-Id` header on HTTP calls and in the call context in process.
 
 ## 9.4 Pagination, Sorting, Filtering
 
@@ -673,7 +673,7 @@ This section complements (does not replace) §18, which is the author-generated 
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | REQUIRED. The reviewer's suggested option and the concrete resolution text, written so it can be pasted into the LLD as-is - always pick one, even for close calls. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins - the evidence (CLAUDE.md rule, SDD contract, code fact, risk avoided) and the tradeoff accepted. Never empty. |
-| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request that changes LLD content applies it) / Accepted - applied (link to LLD update) / Adjusted - applied (link to LLD update) / Deferred (with rationale) / Rejected (with rationale). Decisions: SKILL.md step 7a. |
+| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request that changes LLD content applies it) / Accepted - applied (link to LLD update) / Adjusted - applied (link to LLD update) / Deferred (with rationale) / Rejected (with rationale). Decisions: SKILL.md step 7a. A status outside this legend counts as `Open`: a refresh and the handoff treat the item as not closed, and the next acceptance loop presents it. |
 
 ## 21.2 Open Items
 

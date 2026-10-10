@@ -17,6 +17,7 @@ NOTE: This chunk is OMITTED when the LLD scope has no UI surface. Do not stub it
 > - Tailwind + PrimeNG (PrimeNG first, custom only when PrimeNG cannot do it).
 > - Strict TypeScript, no `any`.
 > - Routing via standalone APIs (`provideRouter`, `loadComponent`), no `RouterModule`.
+> - A library above that SDD §6 does not name is a new dependency: mark it `proposed; needs approval when the project's rules reserve new dependencies`.
 
 ## 17.1 Module / Component Tree
 

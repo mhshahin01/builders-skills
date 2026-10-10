@@ -27,7 +27,7 @@ PART OF: LLD - [Project Name]
 
 > **Convention:** every write endpoint touching money/wallet/notifications/external-providers requires an `Idempotency-Key` header (CLAUDE.md). The dedup tuple and the TTL are in `09-cross-cutting.md` § 12.2.
 >
-> **API ID:** the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked to its block; `-` for an endpoint no §15 contract covers (for example one only the frontend calls). The owner's 04 file names the controller (provider side) or client (caller side). Permission tokens are SDD §16 tokens, verbatim.
+> **API ID:** the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked to its block; `-` for an endpoint no §15 contract covers (for example one only the frontend calls). The owner's 04 file names the controller (provider side) or client (caller side). Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in § 9.3, never in the cell (never `- (<reason>)`).
 
 ### Service: `[service-b]`
 
@@ -84,7 +84,7 @@ PART OF: LLD - [Project Name]
 - **Token type:** JWT (Bearer).
 - **Validation point:** the API gateway for inbound traffic (CLAUDE.md: cross-cutting concerns live in gateway/sidecar, not duplicated per service).
 - **Internal HTTP calls (SDD §15.1):** the caller sends its client-credentials token (`Authorization: Bearer`); the provider, in its filter or a sidecar, checks the contract's SDD §16 permission token; mTLS stays as the transport. In-process port calls check the token at the port (04 § 7.2 Authorization, Kind Port).
-- **Permission tokens:** the endpoint inventory tables above (SDD §16, verbatim).
+- **Permission tokens:** the endpoint inventory tables above (SDD §16, verbatim). Each endpoint whose cell reads `None - public` (copied from the SDD) is named here with the reason it needs no token.
 - **Tenant resolution:** `tenant_id` claim in JWT; propagated via the `X-Tenant-Id` header on downstream HTTP calls (SDD §15.1); in-process port calls carry it in the call context.
 
 ## 9.4 Pagination, Sorting, Filtering

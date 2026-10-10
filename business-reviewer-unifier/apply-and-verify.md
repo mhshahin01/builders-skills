@@ -19,7 +19,8 @@ close, even when the walkthrough resumes on another day.
    skill says): the point ID, the tracker, what was decided, what it
    replaced, and a `Rule home:` link to the section that now states it.
    When the answer policy decided the point, the record names the policy
-   with its decider label (SKILL.md § Answer policy). A
+   with its decider label and links the tracker, the policy's only home
+   (SKILL.md § Answer policy, rule 7). A
    record that replaces an earlier one says so, and the
    earlier record stays as it is. In any other document, a decision that
    overrides an earlier statement in another doc states the supersession
@@ -45,9 +46,13 @@ close, even when the walkthrough resumes on another day.
 
    Inside that structure:
    - A decision changes content, and the change reaches every row that
-     lists it, in the form the row already uses. A new event gets its
-     registry rows. A new use case gets its matrix row, its owner in SDD 09,
-     and its §7.3 row.
+     lists it, in the form the row already uses. A new event a decision
+     sets in an SDD gets its registry rows. A new use case gets its BRD
+     matrix row.
+   - The review edits an SDD only where a decision targets it or makes its
+     text wrong. Deriving new BRD content into the SDD (for a new use case,
+     its owner in SDD 09 and its §7.3 row) goes to the SDD hand-off
+     (§ Hand-off, item 2), which the point's Decision cell names.
    - New `BR-n` and `AC-n` items go at the end of their list, because other
      documents cite them by position. A merged or removed use case keeps
      its row and its status; nothing is deleted.
@@ -80,15 +85,21 @@ close, even when the walkthrough resumes on another day.
    (`walkthrough-protocol.md`). A point whose remaining part is a hand-off
    is Applied; its Decision cell names that hand-off. A question the
    decision leaves for the document's owner is such a part: the decision
-   record states it as its open remainder, and the hand-off asks the owner
-   to record it under its own rules: an open item in an SDD or LLD; in a
-   BRD, a to-do item with its owner and source, plus an open item when it
-   needs a business choice. For a pre-BRD, which has no decision log, the
-   tracker's Decision cell states it, and the BRD hand-off (item 1)
+   record states it as its open remainder and names its kind (a choice for
+   this document's owner, a fact, or a question for a BRD owner or a
+   provider), and the hand-off asks the owner to record it under its own
+   rules: in an SDD, an open item only for a design choice the decision
+   leaves to the SDD owner, while a fact, a BRD owner's question, or a
+   provider's question stays a clarification marker; an open item in an
+   LLD; in a BRD, a to-do item with its owner and source, plus an open item
+   when it needs a business choice. For a pre-BRD, which has no decision
+   log, the tracker's Decision cell states it, and the BRD hand-off (item 1)
    records it in the BRD made from that pre-BRD. In a BRD or SDD, the
    session may also write the open remainder where it applies, as the
    owning skill's clarification marker (`[NEEDS CLARIFICATION: ...]`), so
-   the gap stays visible in the text. The decision record and the
+   the gap stays visible in the text; in an SDD it writes one for each
+   remainder that is not a design choice, since that remainder gets no
+   open item. The decision record and the
    hand-off name each marker the session added, and the owner's update
    registers it (in a BRD, the to-do item cites it). Until that hand-off
    runs, the marker has no to-do item yet; that is expected.
@@ -124,9 +135,11 @@ close, even when the walkthrough resumes on another day.
      stand-in's label (SKILL.md § Answer policy), under that skill's own
      sign-off conditions. An Approver stand-in counts under that run's
      policy, not this review's, and signs a version this session changed
-     only after the session has closed with every hand-off `Done`: that
-     skill checks each row's `Done` evidence (§ Hand-off) itself, since
-     owners never write the tracker.
+     only after the session has closed with every hand-off `Done`. The
+     session has closed when the review's tracker has its **Hand-offs**
+     block and no point in it is `Pending` or `Decided`. That skill checks
+     each row's `Done` evidence (§ Hand-off) itself, whatever the tracker
+     cell reads, since owners never write the tracker.
    - When the version is in the file name (a combined BRD or SDD), rename
      the file with the bump, and update the citations to it in the
      documents the session may edit, the links in a combined BRD's
@@ -175,17 +188,18 @@ Brief:
 >   [lineage context paths].
 >
 > A lineage row that is behind only because this session bumped a version
-> is expected. List it under "For the hand-off", not as a remnant. For
+> is expected, and so is new BRD content that an SDD has not derived yet
+> (Apply rule 6). List them under "For the hand-off", not as remnants. For
 > each remnant: Where, what is stale, what it should say. Score overall
 > chain consistency out of 10. Do not re-litigate the decisions
 > themselves.
 
 Fix every confirmed remnant under the Apply rules, as part of its point's
-apply, except lineage rows and the owner's open items, which go to the
-hand-off (Apply rule 6), and gated chunks, which keep their Stale mark and a
+apply, except lineage rows, new BRD content an SDD has not derived yet,
+and the owner's open items, which go to the hand-off (Apply rule 6), and gated chunks, which keep their Stale mark and a
 note in the close-out (Apply rule 7). A remnant of the same kind found while
 confirming is fixed the same way and marked as found while confirming. A
-remnant with two possible fixes that would make a document say different
+remnant with two or more possible fixes that would make a document say different
 things is put to the user with the options and a recommendation, as in the
 walkthrough, unless the run's answer policy takes the recommendation
 (SKILL.md, Core principle 4 and § Answer policy). Then append the
@@ -231,7 +245,7 @@ did not change; write `None` when no document changed.
    - It checks the decisions already applied, closes the owner's open
      items they answer, and records each open remainder their decision
      records state (for a pre-BRD point, its Decision cell) as a to-do
-     item with its owner and source, plus an open item when it needs a
+     item for each distinct question in it, with its owner and source, plus an open item when it needs a
      business choice.
    - It reruns the consistency check and refreshes `14-todo.md` and the
      delivery gate; a changed diagrammed use case reopens to-do step 5.
@@ -248,9 +262,13 @@ did not change; write `None` when no document changed.
 
    Either request reruns the contract reconciliation (step 6a, §7.3
    included). It reads the tracker, closes the SDD's open items the
-   review's decisions answer, and raises an open item for each open
-   remainder their decision records state. It checks the Child LLDs table,
-   where a child that reflects an older SDD version is marked out of date. It
+   review's decisions answer, and derives into the SDD the new BRD content
+   the review left to it (Apply rule 6). Of the open remainders their
+   decision records state, it raises an open item only for a design choice
+   a decision leaves to the SDD owner; a fact, a BRD owner's question, or a
+   provider's question stays a clarification marker. It checks the Child
+   LLDs table, where a child that reflects an older SDD version is marked
+   out of date. It
    keeps chunk 19's Stale mark (Apply rule 7) and sets it for its own
    changes where its rules say so.
 3. **Each child LLD (lld-unifier):** "the SDD has a new version". Its
@@ -264,12 +282,20 @@ did not change; write `None` when no document changed.
 Gated chunks (BRD 15-17, SDD 19) refresh through their owners once their
 gates are open again. They are a note in the close-out, not a hand-off row.
 
-Each row starts as `To run` and turns `Done` on the user's word, or on the
-owner's own record:
-- BRD: a consistency check run recorded in chunk 14 after the review.
+Each row starts as `To run`. A hand-off row is `Done` when the user said it
+ran, or when the owner's own record shows it, whatever the tracker cell
+reads (owners never write the tracker):
+- BRD: a consistency check run in chunk 14 whose Trigger names the review.
 - SDD: a Reconciled entry after the review, with its step 6a order
   evidence (a date alone does not prove the order).
-- LLD: 16 §19.1 naming the new SDD version.
+- LLD: 16 §19.1 naming the SDD version the review produced.
+
+A record counts only when the owning skill wrote it after the review (a
+Changes Log row below the review's row, a chunk 14 run whose Trigger names
+the review, or an action entry saying the hand-off was taken), never the
+review's own entries in the owner's registers. The session has closed when
+the tracker has its **Hand-offs** block and no point in it is `Pending` or
+`Decided`; the owning skills restate these conditions for their sign-off.
 
 Offer to start the first row. Each row runs only on the user's word, or on
 an answer policy that names the hand-offs (SKILL.md § Answer policy), as

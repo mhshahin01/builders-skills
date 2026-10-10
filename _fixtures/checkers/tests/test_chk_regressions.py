@@ -99,11 +99,24 @@ class CheckerRegressions(unittest.TestCase):
         self.assertIn('13e-service-loyalty-points.md Input Event RefundPaid cites LOYALTY/UC-01, but is not in its entry points', out)
 
     def test_sdd_trigger_name_in_description_cell(self):
-        self.edit(self.sdd/'13b-service-refund-requests.md', '| Schedule | `waiting-requests-summary`, daily | Daily', '| Schedule | daily | `waiting-requests-summary`: daily')
+        self.edit(self.sdd/'13b-service-refund-requests.md', '| Schedule | `waiting-requests-summary`, daily | Daily', '| Schedule | daily, 08:00 | `waiting-requests-summary`: daily')
         self.clean(self.cli('check_sdd.py', self.sdd))
         self.edit(self.sdd/'03-users-and-use-cases.md', ', `Schedule: waiting-requests-summary` |', ' |')
         self.assertIn('13b-service-refund-requests.md Input Schedule waiting-requests-summary cites REFUNDS/UC-04, but is not in its entry points',
                       self.cli('check_sdd.py', self.sdd))
+
+    def test_sdd_bare_schedule_name_cell_only_for_schedules(self):
+        self.edit(self.sdd/'13b-service-refund-requests.md', '| Schedule | `waiting-requests-summary`, daily | Daily', '| Schedule | waiting-requests-summary | Daily')
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        self.edit(self.sdd/'13e-service-loyalty-points.md', '| Event | refund-requests: `RefundPaid` |', '| Event | RefundPaid |')
+        self.assertIn('03 §7.3: entry point Event: RefundPaid not in the Input table of 13e-service-loyalty-points.md', self.cli('check_sdd.py', self.sdd))
+
+    def test_sdd_bare_schedule_name_wins_over_description_backticks(self):
+        p = self.sdd/'13b-service-refund-requests.md'
+        self.edit(p, '| Schedule | `waiting-requests-summary`, daily | Daily', '| Schedule | waiting-requests-summary | Sent `daily` from the `outbox`:')
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        self.edit(p, '| Schedule | waiting-requests-summary | Sent `daily` from the `outbox`:', '| Schedule | daily | `waiting-requests-summary`:')
+        self.assertIn('03 §7.3: entry point Schedule: waiting-requests-summary not in the Input table of 13b-service-refund-requests.md', self.cli('check_sdd.py', self.sdd))
 
     def test_sdd_entry_point_service_name_resolves(self):
         p = self.sdd/'03-users-and-use-cases.md'
@@ -142,6 +155,14 @@ class CheckerRegressions(unittest.TestCase):
         self.clean(self.cli('check_sdd.py', self.sdd))
         self.edit(self.sdd/'13a-service-customer-accounts.md', 'None - public', 'None')
         self.assertIn("permission token cell 'None' names no token", self.cli('check_sdd.py', self.sdd))
+
+    def test_backticked_public_marker_is_not_a_token(self):
+        p = self.sdd/'13a-service-customer-accounts.md'
+        self.edit(p, '| None - public |', '| `None - public` |')
+        self.edit(p, '| None - public |', '| `-` |')
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        self.edit(p, '| `None - public` |', '| `None` |')
+        self.assertIn('permission token None not in §16.11', self.cli('check_sdd.py', self.sdd))
 
     def test_unknown_legacy_and_hyphen_tokens_rejected(self):
         p = self.sdd/'13b-service-refund-requests.md'

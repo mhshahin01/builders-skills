@@ -79,7 +79,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 | ID | Priority | Kind | Source (chunk / identifier) | Decision or clarification needed | Blocks | Owner | Status |
 |----|----------|------|-----------------------------|----------------------------------|--------|-------|--------|
-| TD-01 | P1 | Open question | [13 / OI-03](./13-open-items-and-clarifications.md) | [The decision needed, one sentence] | [UC-04 Main Flow, UC-04 AC-2] | [Name, or "Recommendation: BRD author"] | Open |
+| TD-01 | P1 | Open question | [13 / OI-03](./13-open-items-and-clarifications.md) | [The decision needed, one sentence] | [UC-04 Main Flow, UC-04 AC-2] | [Name, or "Proposed: BRD author"] | Open |
 | TD-02 | P1 | Open question | [06a / UC-02 step 4](./06a-use-cases-[persona-slug].md) | [The inline clarification, as a question] | [...] | [...] | Open |
 | TD-03 | P2 | Assumption to validate | [02 / Assumption 4](./02-glossary-assumptions-facts.md) | [What must be confirmed, and with whom] | [...] | [...] | Open |
 | TD-04 | P2 | Pending decision | [13 / OI-07](./13-open-items-and-clarifications.md) (Deferred) | [The decision that was deferred, and what it waits for] | [...] | [...] | Deferred |
@@ -134,7 +134,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 
 | What | Items |
 |------|-------|
-| Open questions and pending decisions | [TD-01, TD-02, ...] |
+| Open questions and pending decisions | [TD-01, TD-02, ...; under an answer policy, the brand or key color row stays here marked "(not asked during a run)"] |
 | Unresolved consistency findings | [CF-NN, ...] |
 | Requirements to stress-test even though nothing is flagged | [UC-NN acceptance criteria with numbers, NFR-NN measures, use cases carrying a Business Objective] |
 

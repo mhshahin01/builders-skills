@@ -148,7 +148,7 @@ erDiagram
 
 #### List of APIs (Swagger-friendly)
 
-<!-- Endpoints called by another service or an external system carry their API ID and link to §15 (chunk 11), which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. Permission token (§16): the token the endpoint checks, verbatim from §16; an endpoint that only an external system calls (callback, webhook) writes "-" (§15.1 Authorization by contract type). -->
+<!-- Endpoints called by another service or an external system carry their API ID and link to §15 (chunk 11), which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. Permission token (§16): the token the endpoint checks, verbatim from §16; an endpoint that only an external system calls (callback, webhook) writes "-" (§15.1 Authorization by contract type); a public endpoint, which anyone may call without signing in (a sign-up, a password reset), writes `None - public`. The cell holds only a token, "-", or `None - public`, never a dash with a reason such as `- (public)`; a reason goes in the Authorization notes. -->
 
 | Method | Path | Summary | Request Body | Response | Permission token (§16) | API ID (§15) |
 |--------|------|---------|--------------|----------|------------------------|--------------|

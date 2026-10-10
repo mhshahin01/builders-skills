@@ -29,7 +29,7 @@ RELATIONSHIP_TO_15: chunk 15 indexes the author's own `> Confirm:` and `> TODO:`
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | REQUIRED. The reviewer's suggested option and the concrete resolution text, written so it can be pasted into the LLD as-is (the exact class, method, row, sub-section, or wording). Always pick one, even for close calls (state that it is a close call in the Why). |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins - the evidence behind it (CLAUDE.md rule, SDD contract, code fact, correctness/production risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request that changes LLD content applies it) / Accepted - applied (link to LLD update) / Adjusted - applied (link to LLD update) / Deferred (with rationale) / Rejected (with rationale). Decisions: SKILL.md step 7a. |
+| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request that changes LLD content applies it) / Accepted - applied (link to LLD update) / Adjusted - applied (link to LLD update) / Deferred (with rationale) / Rejected (with rationale). Decisions: SKILL.md step 7a. A status outside this legend counts as `Open`: a refresh and the handoff treat the item as not closed, and the next acceptance loop presents it. |
 
 ---
 

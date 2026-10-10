@@ -424,13 +424,13 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 | Field | Meaning |
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
-| **Where** | Section, UC ID, or "global". |
+| **Where** | Section, UC ID, or "global". An item raised after the acceptance loop adds where it came from: "(raised by consistency check CF-NN)", "(raised while writing chunk NN)", "(raised from Reviewer Notes)", "(raised by business review [point ID])", or "(raised by the grill-me session of <date>, <question id>)" (delivery-chunks.md § Special cases). |
 | **Type** | Gap / Missing scenario / Corner case / Ambiguity / Risk / Inconsistency / Duplication (content restated instead of referenced - within the BRD or from source docs). |
 | **Concern** | One paragraph. What was missed and why it matters. |
 | **Options** | Concrete choices, each with a one-line tradeoff. At least 2 where a choice exists. |
-| **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content. This is what gets injected into the body when accepted. |
+| **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content. This is what gets injected into the body when accepted. A clarification marker it inserts asks one distinct question that can be answered on its own (SKILL.md principle 8). |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives: the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. |
+| **Status** | Open / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
 
 ## Open Items
 

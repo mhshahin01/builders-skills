@@ -92,7 +92,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 ### [Point ID] - [short title]
 
-**Decision record, [YYYY-MM-DD]:** [What the review decided and applied, what it replaced, and the open items or markers of this document it answers. Tracker: [review-comments-tracker.md](../review-comments-tracker.md). An open remainder, a question the decision leaves to this document's owner, is stated here; the owner's hand-off raises it as an open item.]
+**Decision record, [YYYY-MM-DD]:** [What the review decided and applied, what it replaced, and the open items or markers of this document it answers. Tracker: [review-comments-tracker.md](../review-comments-tracker.md). An open remainder, a question the decision leaves open, is stated here with its kind (a choice for this document's owner, a fact, or a question for a BRD owner or a provider). The owner's hand-off raises an open item only for a design choice the decision leaves to this document's owner; a fact, a question for the BRD owner, or a provider question stays a marker, judged by E3 (SKILL.md step 10, the business review row).]
 
 **Rule home:** [[Section name]](./NN-chunk.md#anchor)
 

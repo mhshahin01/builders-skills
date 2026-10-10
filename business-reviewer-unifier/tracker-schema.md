@@ -27,7 +27,7 @@ Principal Architect (PA), Document Consistency (DC)[, add-ons]
 **Status values:** Pending | Decided | Applied | Partially applied | Rejected | Deferred
 **Panel findings:** [review-panel-findings.md](review-panel-findings.md)
 **Panel notes:** <a reviewer whose re-dispatch still returned nothing: the persona, the areas it named clean, and the evidence; omit the line when there is none>
-**Answer policy:** <the policy as the user stated it, who set it and the date, and the stand-ins it names (SKILL.md § Answer policy); omit the line when there is none>
+**Answer policy:** <the policy as the user stated it, who set it and the date, and the stand-ins it names; this line is the policy's only home (SKILL.md § Answer policy, rule 7); omit the line when there is none>
 **Paused:** <the point the walkthrough stopped at because the answer policy cannot decide it (SKILL.md § Answer policy, rule 4), the rule or policy wording that kept the policy from deciding it, and the date; remove the line when the walkthrough resumes; omit it when the walkthrough is not paused>
 
 | ID | Reviewer | Concern (short) | Target doc(s) | Status | Decision |
@@ -85,7 +85,11 @@ Principal Architect (PA), Document Consistency (DC)[, add-ons]
   answer policy chose ends with the decider label, as in the Decision cell.
 - **Hand-offs** is written at the close, one row per request in chain order
   (`apply-and-verify.md` § Hand-off). A row reads `To run` until the user
-  says it ran or the owner's own record shows it; then `Done`. A row the
+  says it ran or the owner's own record shows it; then `Done`. Owners never
+  write the tracker, so a row whose `Done` evidence exists
+  (`apply-and-verify.md` § Hand-off) is `Done` whatever its cell reads. The
+  session has closed when this block is written and no point is `Pending` or
+  `Decided` (`apply-and-verify.md` § Hand-off). A row the
   answer policy started ends with
   `Started by Policy: <policy> (set by <name>, <date>)`. Gated chunks
   waiting for their gate are a note in the close-out, not a row.

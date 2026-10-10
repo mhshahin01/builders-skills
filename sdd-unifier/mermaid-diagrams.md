@@ -55,7 +55,7 @@ sequenceDiagram
 - Always use the `mermaid` language hint on the fence.
 - The **Summary** line after every diagram is mandatory: it is the no-renderer fallback.
 - Use named participants / meaningful node ids; annotate alt-paths for error scenarios.
-- In sequence diagrams, a synchronous call is `->>` and its reply `-->>`; an asynchronous message (an event or a queued job) is `-)`.
+- In sequence diagrams, a synchronous call is `->>` and its reply `-->>`; an asynchronous message (an event or a queued job) is `-)`. Never put `;` or `#` in a sequence message: `;` ends a Mermaid statement, and `#` can start an entity code.
 - Keep diagrams scoped. A workflow or sequence diagram beyond about 30 lines is split into a happy-path and an error-path diagram. Layered views (§8.3, §24.3) and ERDs have no line cap; an ERD shows entities, keys (PK, FK), and relationships only, and the other columns stay in Tables Design.
 - Figure numbering is sequential across the whole SDD (not per chunk); every figure gets a row in chunk 00's Figures index with its chunk + section.
 

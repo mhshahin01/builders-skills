@@ -181,7 +181,7 @@ Phases are project-wide: every source BRD of one SDD uses the same phase numbers
 - Auto-filling SDD sections that have direct BRD analogues (Glossary, Personas → Actors, Integrations, Scope, NFRs context).
 - Producing an SDD skeleton with all section headings present, in template order.
 - Flagging SDD-only sections (ADRs the architecture questionnaire, the ecosystem selection, and the stated defaults do not settle, Cross-cutting overrides per service, Operations Runbook procedures) with `[NEEDS CLARIFICATION: ...]` markers naming the specific decision needed.
-- Taking the architecture style from the architecture questionnaire (SKILL.md step 3b), then falling back to user CLAUDE.md defaults for the stack, adapted to that style (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka on-prem or SNS+SQS on AWS, Keycloak, Angular 17+ standalone) for the Ecosystem Overview when the BRD's parked technical inputs don't override, always confirmed through the ecosystem selection flow (SKILL.md step 3c).
+- Taking the architecture style from the architecture questionnaire (SKILL.md step 3b), then falling back to the project defaults (SKILL.md step 3c) for the stack, adapted to that style (Java 21, Spring Boot 3.5+, PostgreSQL 17+, UUIDv7, Kafka on-prem or SNS+SQS on AWS, Keycloak, Angular 17+ standalone) for the Ecosystem Overview when the BRD's parked technical inputs don't override, always confirmed through the ecosystem selection flow (SKILL.md step 3c).
 
 **Derivation IS NOT:**
 
@@ -288,7 +288,7 @@ The BRD's parked Technical Inputs may pre-fill some rows. Rows the BRD typically
 - CI/CD platform
 - Observability stack specifics
 
-For each missing row, fall back to user CLAUDE.md defaults if applicable, then to a recommendation the BRD evidence supports (SKILL.md step 3c, source `recommended`), otherwise: `[NEEDS CLARIFICATION: <component> + version + topology]`.
+For each missing row, fall back to the project defaults (SKILL.md step 3c) if applicable, then to a recommendation the BRD evidence supports (SKILL.md step 3c, source `recommended`), otherwise: `[NEEDS CLARIFICATION: <component> + version + topology]`.
 
 ### §8.1 Architecture Style
 

@@ -73,7 +73,10 @@ not as a deferred batch, unless the user asks to decide everything first.
    personas are merged under one ID; the user resolves each concern once.
 6. **Chain-wide consistency.** A decision is not Applied until every affected
    document the review may edit reflects it (counts, IDs, citations,
-   supersession notes) and the rest is named in a hand-off.
+   supersession notes) and the rest is named in a hand-off. The review
+   edits an SDD only where a decision targets it or makes its text wrong;
+   deriving new BRD content into the SDD is the SDD hand-off's
+   (`apply-and-verify.md`, Apply rule 6).
 7. **The SME is domain-bound, never defaulted.** See Intake. A product
    category (PropTech, FinTech, HealthTech) is an invalid SME domain.
 8. **One point in flight at a time** during walkthrough, presented with full
@@ -123,11 +126,19 @@ With no answer policy, every rule in this skill stays as written.
    measure, a milestone) that the recommended option proposes with its
    reason is a choice, not such a fact, and the policy may take it; a
    figure that already exists somewhere (a volume, a contract term, a
-   provider's limit) is a fact. Nor does the policy take a recommended
-   option that makes a decision the user's standing instructions for the
-   project reserve for the user (for example adding a new dependency), or
-   that sets a business rule a source document rules out: such a point
-   goes to the user.
+   provider's limit) is a fact. The test: when the documents' evidence can
+   build the options, each with its tradeoff, the question is a choice; a
+   value that no offered option sets, or one that a named source not
+   attached to the run would settle, is a fact. For example, a daily
+   reminder once a refund request passes its 2-day approval target,
+   recommended over a weekly digest, is a choice; whether goods must be
+   returned before a refund, when the store's returns policy decides it and
+   that policy is not attached, is a fact. Nor does the policy take a
+   recommended option that makes a decision the user's standing
+   instructions for the project reserve for the user (for example adopting
+   a new dependency; proposing one, as a `Proposed` decision with its
+   alternative, is not reserved), or that sets a business rule a source
+   document rules out: such a point goes to the user.
 4. **The walkthrough keeps its contract.** One point stays in flight and is
    presented in full (`walkthrough-protocol.md`). A point the policy can
    decide is decided without asking and applied right away (step 5). A
@@ -151,8 +162,11 @@ With no answer policy, every rule in this skill stays as written.
    - `Approver` has no task in a review: the approval cells stay empty
      (`apply-and-verify.md`, Apply rule 7).
 7. **Records.** Each answer is recorded where that decision is recorded
-   today, with the decider `Policy: <policy> (set by <name>, <date>)`; the
-   policy itself goes in the tracker header (`tracker-schema.md`).
+   today, with the decider `Policy: <policy> (set by <name>, <date>)`. The
+   tracker header is the only home of the policy itself
+   (`tracker-schema.md`): a record in another document (a decision-log
+   entry, a Changes Log row) names the policy by that decider label and
+   links the tracker, and never restates the policy.
 
 ---
 
@@ -237,7 +251,8 @@ Follow `walkthrough-protocol.md` exactly. Summary of the contract:
 ### 5. Apply (per point, immediately after decision)
 
 Apply chain-wide in the same step: every affected document, including
-downstream BRD/SDD chunks that cite the changed content. Change content
+downstream BRD/SDD chunks that cite the changed content (an SDD only where
+the decision targets it or makes its text wrong). Change content
 only, inside the structure the owning skill defines, and bump a document's
 version at its first change in the session (`apply-and-verify.md` § Apply).
 Update the tracker row to Applied (or Partially applied / Rejected /

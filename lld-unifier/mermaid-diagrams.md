@@ -44,6 +44,7 @@ sequenceDiagram
 - Annotate alt-paths for error scenarios.
 - Follow every diagram with a 1-2 sentence prose summary (`**Summary:** ...`), so the chunk reads without a renderer.
 - Keep diagrams scoped: no diagram should exceed ~30 lines, except the layered view in `03-architecture.md` § 6.1 Component Topology and an ERD, which shows entities, keys, and relationships only (the columns live in `05-data-model.md` § 8.2). If another diagram does, split it into multiple smaller diagrams (e.g., happy path + error path).
+- In `sequenceDiagram` message and note text, never write `;` (it ends the statement) or `#` (it starts an entity code such as `#59;`): use a comma or a word instead (`retry, then DLQ`, `No. 3`).
 - Use case IDs inside a diagram are plain keyed IDs, in a quoted label where the syntax needs one (`UC04(("REFUNDS/UC-04"))`, `Note over Client,Controller: REFUNDS/UC-04 step 1`), never links. The links live in the text around the diagram (`sdd-to-lld.md` § Use-case traceability).
 
 ---

@@ -71,7 +71,7 @@ graph TB
 | Observability | [Prometheus + Grafana + Loki + Tempo / other] | [version] | [Source] |
 | Frontend (if applicable) | Angular | 17+ | [[SDD §6](../sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
 
-> **Convention:** each Source cell links the SDD §6 row it derives from (no SDD: the dependency manifest); a value that disagrees with SDD §6 is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3). A CLAUDE.md default fills only a row neither pins, flagged `> Confirm:`.
+> **Convention:** each Source cell links the SDD §6 row it derives from (no SDD: the dependency manifest); a value that disagrees with SDD §6 is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3). A CLAUDE.md default fills only a row neither pins, flagged `> Confirm:`; a default that adds a dependency SDD §6 does not name is marked `proposed; needs approval when the project's rules reserve new dependencies`.
 
 ## 6.4 Architectural Style - As Operationalised
 

@@ -14,9 +14,9 @@
 
 ### E3 marker inventory
 
-<!-- Row format (COMBINED): link this file's source section anchor, then a colon and the exact remaining question text. One classification per distinct question/section; moving a marker requires updating its source pointer. Blocks E3 reads exactly `Yes` or `No: <reason>`: Yes names its dependent claim; No always gives the nonblocking reason. Claims/reasons require human source review. -->
+<!-- Row format (COMBINED): link this file's source section anchor, then a colon and the marker's question text, copied verbatim. One classification per distinct question/section; moving a marker requires updating its source pointer. Blocks E3 reads exactly `Yes` or `No: <reason>`: Yes names its dependent claim; No always gives the nonblocking reason. Claims/reasons require human source review. -->
 
-<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell quotes the marker's question; an owner sentence at the end of the marker (`Owner: ...`) goes in the Owner column, not the question cell. Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
+<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell copies the marker's question text (the text after `NEEDS CLARIFICATION: `) verbatim, never paraphrased or shortened, minus a trailing `Owner: ...` sentence, which goes in the Owner column; it adds no qualifier outside the row format (nothing between the link and the colon, and nothing after the question). Step 8b checks every row against its marker before the gate line is written (SKILL.md step 8b, E3). Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
 
 | Marker source / question | Owner | Dependent E2E claim / reference path | Blocks E3 / reason | Next action |
 |---|---|---|---|---|
@@ -1392,7 +1392,7 @@ erDiagram
 
 #### List of APIs (Swagger-friendly)
 
-<!-- Endpoints called by another service or an external system carry their API ID and link to §15, which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. Permission token (§16): the token the endpoint checks, verbatim from §16; an endpoint that only an external system calls (callback, webhook) writes "-" (§15.1 Authorization by contract type). -->
+<!-- Endpoints called by another service or an external system carry their API ID and link to §15, which is canonical for their contract; Method and Path must match it verbatim. Client-facing-only endpoints show "-" in the API ID column. Permission token (§16): the token the endpoint checks, verbatim from §16; an endpoint that only an external system calls (callback, webhook) writes "-" (§15.1 Authorization by contract type); a public endpoint, which anyone may call without signing in (a sign-up, a password reset), writes `None - public`. The cell holds only a token, "-", or `None - public`, never a dash with a reason such as `- (public)`; a reason goes in the Authorization notes. -->
 
 | Method | Path | Summary | Request Body | Response | Permission token (§16) | API ID (§15) |
 |--------|------|---------|--------------|----------|------------------------|--------------|
@@ -1750,7 +1750,7 @@ sequenceDiagram
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives - the evidence behind it (BRD requirement, NFR, doctrine/CLAUDE.md default, operational risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request applies it) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. |
+| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request applies it) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
 
 ---
 
@@ -1810,7 +1810,7 @@ sequenceDiagram
 
 <!-- Optional new scope: label Scope proposal here with source, recommendation and tradeoff; not a blocking Open OI until owner-adopted. Required gaps keep the normal OI schema. -->
 <!-- A source problem the chunk 19 faithfulness check found and neither fixed nor raised (SKILL.md step 8b item 3): a note here with its source, its owner, and why no chunk 19 claim depends on it. -->
-<!-- Out of scope, for the next review: a defect a delta review, an application check, or the scoped verification of later answers noticed outside its scope (SKILL.md step 7, Review after answers): a note labelled `Out of scope, for the next review` with its location and what is wrong. It is not an open item and bumps nothing; the next delta or full review that covers that location reads it and raises it or drops it. -->
+<!-- Out of scope, for the next review: a defect a delta review, an application check, or the scoped verification of later answers noticed outside its scope (SKILL.md step 7, Review after answers): a note labelled `Out of scope, for the next review` with its location and what is wrong. It is not an open item and bumps nothing; the next delta or full review that covers that location reads it and raises it or drops it. A note whose problem a later change fixed is marked `Resolved in vX.X` (the version that fixed it) by any later pass or by the author. A note on the cover's gate lines (the Reconciled, E2E gate, and E2E basis lines and the E3 marker inventory) is outside every review's scope: the step 8b run that rewrites those lines marks it `Resolved in vX.X`. The mark bumps nothing. -->
 
 - [Note 1]
 - [Note 2]

@@ -6,7 +6,7 @@ The skill always asks for the direction at the start of any invocation. This fil
 
 ## The mandatory prompt
 
-After confirming output shape (chunks / combined), ask the direction question of SKILL.md step 2, word for word. The shorthands and the suggested defaults follow.
+After confirming output mode (chunks / combined), ask the direction question of SKILL.md step 2, word for word. The shorthands and the suggested defaults follow.
 
 **Acceptable shorthands:**
 
@@ -25,7 +25,7 @@ After confirming output shape (chunks / combined), ask the direction question of
 | Only an SDD path | from-sdd |
 | Both code path and SDD path | hybrid |
 | Neither | from-sdd (the most common greenfield case); ask the user to provide an SDD |
-| An existing LLD (an update, a refresh, an added service) | The Mode its `00-metadata.md` records; for `partial`, the row its inputs match |
+| An existing LLD (an update, a refresh, an added service) | The Direction its `00-metadata.md` records (`Mode` in an older LLD, SKILL.md step 9); for `partial`, the row its inputs match |
 
 **Project Type override.** Resolve the Project Type, recorded in the SDD §1 at SDD intake (legacy chains: SDD `15-specs.md` § 4 / combined `# 19. Specs`, or BRD `12-specs.md`), and apply this override BEFORE the smart defaults above (it later lands in this LLD's own `17-specs.md` § 4):
 
@@ -34,7 +34,7 @@ After confirming output shape (chunks / combined), ask the direction question of
 | **Greenfield** | If neither code path nor SDD path provided, default suggestion stays from-sdd. If only code path provided, the user is doing reverse-engineering of a greenfield-built service. Keep from-code default but flag in handoff: "Greenfield project type per the recorded Project Type, but code is being reverse-engineered. Confirm intent." |
 | **Brownfield** | If only an SDD is provided, surface a friction prompt: "Brownfield project type per the recorded Project Type: was the existing codebase intentionally excluded? Direction `from-sdd` will document the *target* design without reflecting the *current* code. Consider `hybrid` (provide both) or `from-code` (point at current code) for accurate documentation." Default suggestion becomes `hybrid` if both inputs available, else keep `from-sdd` and capture the friction in the handoff. |
 
-This override never silently picks the direction: it adjusts the suggested default and surfaces friction. The user still confirms.
+This override never silently picks the direction: it adjusts the suggested default and surfaces friction. The user still confirms; an answer policy may confirm the suggested default instead, but never at the Brownfield friction prompt (SKILL.md step 7a, Answer policy).
 
 ---
 
@@ -50,14 +50,14 @@ When the user picks `from-code` or `hybrid` and the skill detects that the code 
    > **Owns use cases (SDD 09), not built yet:** [[KEY]/UC-NN](...), … [or: None]
    > **TODO:** when this service is scaffolded, re-run lld-unifier in the from-code direction on `<service-path>` (SKILL.md step 9, "re-run from-code") to populate this chunk.
    ```
-   This placeholder is the rule in every mode that reads code (from-code, hybrid, partial) whenever an expected service has no code at all; hybrid never writes a class skeleton for it. The use-case trace accepts it: the use cases it owns are listed as not built, with no invented workflow. An SDD-only endpoint or event inside a built service is not a missing service: it is drift (hybrid) or a `> Confirm:` (from-code).
+   This placeholder is the rule in every direction that reads code (from-code, hybrid, partial) whenever an expected service has no code at all; hybrid never writes a class skeleton for it. The use-case trace accepts it: the use cases it owns are listed as not built, with no invented workflow. An SDD-only endpoint or event inside a built service is not a missing service: it is drift (hybrid) or a `> Confirm:` (from-code).
 4. **Notes the partial-code choice** in `15-open-questions.md` § Decisions Pending.
 
-> **Important:** in partial mode, the SDD content for un-built services is *not* expanded into the LLD. The placeholder is the deliverable for those services. (Per agreement: if the user wants full SDD-driven content for un-built services, they should run from-sdd direction explicitly.)
+> **Important:** in partial direction, the SDD content for un-built services is *not* expanded into the LLD. The placeholder is the deliverable for those services. (Per agreement: if the user wants full SDD-driven content for un-built services, they should run from-sdd direction explicitly.)
 
 ---
 
-## Hybrid mode: both inputs, complete code
+## Hybrid direction: both inputs, complete code
 
 When the user picks `hybrid`:
 
@@ -66,7 +66,7 @@ When the user picks `hybrid`:
 3. The skill diffs section by section per `hybrid-drift.md`.
 4. The output is a single unified LLD with inline drift markers, not separate `designed/` and `built/` folders.
 
-If the code is detected as *partial* in hybrid mode, the skill falls back to the partial-code rules (above) and notes the fallback in the handoff summary.
+If the code is detected as *partial* in hybrid direction, the skill falls back to the partial-code rules (above) and notes the fallback in the handoff summary.
 
 ---
 
@@ -163,7 +163,7 @@ See `hybrid-drift.md` for the full diff rules.
 
 Treat as targeted regeneration:
 
-- Ask the direction question as on any run (SKILL.md step 2), with the recorded Mode as the suggested default.
+- Ask the direction question as on any run (SKILL.md step 2), with the recorded Direction as the suggested default.
 - Identify which chunks the user wants changed.
 - Regenerate only those.
 - Bump the version once for the request (SKILL.md § Output conventions, Versions).
@@ -172,7 +172,7 @@ Treat as targeted regeneration:
 
 Treat as targeted add:
 
-- In CHUNKS shape: add a new `04-implementation/<service-slug>.md`; update the `[project-slug]-lld-master.md` index; cross-check `05-data-model.md`, `06-api-contracts.md`, `07-event-contracts.md` for new tables/endpoints/topics.
+- In CHUNKS mode: add a new `04-implementation/<service-slug>.md`; update the `[project-slug]-lld-master.md` index; cross-check `05-data-model.md`, `06-api-contracts.md`, `07-event-contracts.md` for new tables/endpoints/topics.
 - Trace the use cases the new service owns (SDD §7.3): their 04 workflow blocks, 14 §17.3 routes, 13 §16.8 specs, and 16 §19.9 index rows. Update the Scope of this LLD's row in the SDD's Child LLDs table.
 - Bump the version (SKILL.md § Output conventions, Versions).
 

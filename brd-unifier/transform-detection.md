@@ -101,7 +101,7 @@ Do NOT treat as a transform target. Treat as raw context for GENERATE: extract d
 
 A transform from a source that needs authoring (SoW, pre-BRD, a BRD in another format, a loose spec) uses the generation option like a fresh generation: `parts` by default in CHUNKS mode (`parts-mode.md`). Pure conversions (merge, re-chunk) and targeted updates of an existing BRD always run `whole`: there is nothing to review between parts. A pure conversion runs only SKILL.md step 10 and `chunking.md` § Merge handling or § Re-chunk handling: no `sow-transformation.md` mapping or sanity checks, no reviewer pass, and no version bump.
 
-A substantive older-template migration follows the review-coverage trigger in SKILL.md step 7. A pure shape conversion does not. Record the coverage comparison so the author does not infer that old review evidence covers new risk areas.
+A substantive older-template migration follows the review-coverage trigger in SKILL.md step 7. A pure conversion (merge, re-chunk) does not. Record the coverage comparison so the author does not infer that old review evidence covers new risk areas.
 
 ---
 

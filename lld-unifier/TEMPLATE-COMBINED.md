@@ -5,11 +5,11 @@
 | Document Title | Low-Level Design - [Project Name] |
 | Version | [X.X] |
 | Status | [Draft / In Review / Approved] |
-| Mode | [from-code / from-sdd / hybrid / partial] |
+| Direction | [from-code / from-sdd / hybrid / partial] |
 | Date | [YYYY-MM-DD] |
 | Author(s) | [Names] |
-| Reviewers | [Names] |
-| Approvers | [Names] |
+| Reviewers | [Names of people, never a stand-in] |
+| Approvers | [Names of people, never a stand-in] |
 | Related BRD(s) | [One per source BRD, with its key from the SDD's Source BRDs register: `[KEY]` [[brd-slug]-brd-master.md](./brd-[brd-slug]/[brd-slug]-brd-master.md); or `Not applicable`] |
 | Related SDD | [[sdd-slug]-sdd-master.md](./sdd-[sdd-slug]/[sdd-slug]-sdd-master.md) [or `Not applicable`] |
 | Source Code Path | [path or `Not applicable`] |
@@ -18,9 +18,9 @@
 
 ---
 
-## Mode Summary
+## Direction Summary
 
-> **How to read this LLD given its mode:**
+> **How to read this LLD given its direction:**
 >
 > - **`from-code`**: every section was reverse-engineered from existing source. Structural claims (class names, schemas, topics) are high-confidence; semantic claims (rationale, intent) are medium-confidence unless cross-validated.
 > - **`from-sdd`**: every section was forward-designed from the SDD (and CLAUDE.md defaults). Treat as a build target for the implementer. Patterns are proposals annotated with their triggering CLAUDE.md rule.
@@ -33,9 +33,9 @@
 
 <!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, and so do §18 flag rows and the §19.1 upstream state (SKILL.md § Output conventions, Versions). -->
 
-| Version | Date | Author | Mode | Change Summary |
-|---------|------|--------|------|----------------|
-| [X.X] | [YYYY-MM-DD] | [Author] | [mode] | Initial LLD draft via lld-unifier. Chunks: none (initial build) |
+| Version | Date | Author | Direction | Change Summary |
+|---------|------|--------|-----------|----------------|
+| [X.X] | [YYYY-MM-DD] | [Author] | [direction] | Initial LLD draft via lld-unifier. Chunks: none (initial build) |
 
 ## Table of Contents
 
@@ -54,7 +54,7 @@
 | `⚠ drift` (hybrid only) | [N] | SDD intent vs code reality divergences. |
 | `🆕 code-only` (hybrid only) | [N] | Present in code, not in SDD. |
 | `⛔ sdd-only` (hybrid only) | [N] | In SDD, not yet built. |
-| `⚠ policy` (every mode that reads code) | [N] | Code that breaks a CLAUDE.md rule or a `pattern-rules.md` anti-pattern, indexed in §18.6. |
+| `⚠ policy` (every direction that reads code) | [N] | Code that breaks a CLAUDE.md rule or a `pattern-rules.md` anti-pattern, indexed in §18.6. |
 
 ---
 
@@ -170,7 +170,7 @@ graph TB
 
 ### Class & Interface Map
 - Controllers (with the event listeners and scheduled jobs that are entry points, their trigger as the endpoint), Services, ServiceImpls, Repositories, Domain types (records), Method signatures
-- Every entry point a use case's traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (§12.8). An `Event:` or `Schedule:` trigger that SDD §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. Platform endpoints, and the entry points of a `#### Workflow:` block, carry none.
+- Every entry point a use case's traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (§12.8). An `Event:` or `Schedule:` trigger that SDD §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. Platform endpoints, the entry points of a `#### Workflow:` block, and an endpoint the LLD proposes that SDD §7.3 does not list, carry none.
 
 #### Ports and Adapters (in-process contracts)
 
@@ -207,7 +207,7 @@ TRACEABILITY LINE (required, directly under the heading; rules: sdd-to-lld.md §
   Screens: from §17.3, the screen reference (the ID of the screen's chunk 14 row, its MK-NN or, in a BRD written before MK-NN, its screen ID, linked to 14-todo.md#mockup-coverage; only a screen ID with no chunk 14 row links to the BRD heading that carries it) and each §17.3 route whose Use cases cell names the use case; "Not applicable - no UI" when §17 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
 Every BRD ID carries the key from the SDD's Source BRDs register. Paths start with ./ (this file sits next to the BRD and SDD folders); links to workflow blocks are same-file anchors.
 No source BRD, or pure from-code: heading "#### Workflow: [Flow name]" and the line "> **Traceability:** Not applicable - no source BRD" (or "- no source SDD"). Never a made-up UC ID.
-Behaviour the BRD or SDD asks for that no use case covers: heading "#### Workflow: [Flow name]" and the line "> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the [KEY]/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them]". It gets no §19.9 row.
+Behaviour the BRD or SDD asks for that no use case covers: heading "#### Workflow: [Flow name]" and the line "> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the [KEY]/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them; where the SDD names none, the name the LLD gives it (`Schedule: [job name]`), flagged `> Confirm:`]". It gets no §19.9 row.
 -->
 
 #### [KEY]/UC-01: [Use case title, exactly as the BRD writes it]
@@ -393,7 +393,7 @@ Every side effect that must follow a state change and must not be lost: integrat
 | Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`). An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`) | SDD §7.3 |
 | Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (it also matches a longer ID that contains the one searched for) | LLD convention |
 | Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
-| Not set | Platform endpoints (health, actuator, sign-in) | LLD convention |
+| Not set | Platform endpoints (health, actuator, sign-in); an endpoint the LLD proposes that SDD §7.3 does not list | LLD convention |
 | Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (§17.3); `use_case` joins the route's `useCases` in the Value form when present; a screen-only Workflow route has no `use_case` | LLD convention |
 
 > Confirm: `use_case` is an LLD convention; the SDD does not settle a use case attribute (drop this flag when SDD §11.4 or a 13x Observability section names one).
@@ -403,6 +403,8 @@ Every side effect that must follow a state change and must not be lost: integrat
 ## 12.10 Health & Readiness
 
 # 13. Operations
+
+<!-- Light run: the sub-sections of this section that carry the light-work flag are named in SKILL.md § Light run. -->
 
 ## 13.1 Configuration (per service)
 
@@ -448,6 +450,8 @@ Service-to-service: per SDD §15.1, the caller's client-credentials token (`Auth
 
 # 15. Performance
 
+<!-- Light run: the sub-sections of this section that carry the light-work flag are named in SKILL.md § Light run. -->
+
 ## 15.1 SLOs (per service)
 
 ## 15.2 Caching Strategy
@@ -489,7 +493,7 @@ Derive-from-SDD with a brd-unifier BRD (sdd-to-lld.md § Use-case traceability).
 The home of spec -> use case and spec -> test case. One row per e2e spec: one spec per in-scope BRD use case, named from its key and BRD title.
 Use cases and test cases carry the key from the SDD's Source BRDs register and link to their BRD headings (test cases to the chunk 16 feature-area heading that holds them), listed one by one, never as a range.
 While BRD chunk 16 is not written (its delivery gate is shut): "Pending (BRD 16 not written)" in the test case column; specs carry use case tags only.
-The Not automated line lists every non-retired chunk 16 case of an in-scope use case that no spec covers, with its reason. "None" when every case is automated.
+The Not automated line lists every non-retired chunk 16 case of an in-scope use case that no spec covers, with its reason. "None" when every case is automated; "Pending (BRD 16 not written)" while chunk 16 is not written.
 -->
 
 > **Convention:** one spec per BRD use case, named `e2e/[key-lowercase]-uc-NN-[title-slug].spec.ts`. Every test carries its keyed use case and test case IDs as tags: Playwright `test('[TC name]', { tag: ['@[KEY]/UC-NN', '@[KEY]/TC-[AREA]-NN'] }, async ({ page }) => { ... })`; a backend REST harness (JUnit 5) uses `@Tag("[KEY]/UC-NN")` and `@Tag("[KEY]/TC-[AREA]-NN")`. To re-run a failing UAT case or a production regression: `npx playwright test --grep "@[KEY]/TC-[AREA]-NN"`, or the JUnit Platform tag filter (the `groups` parameter of Maven Surefire or Failsafe).
@@ -498,7 +502,7 @@ The Not automated line lists every non-retired chunk 16 case of an in-scope use 
 |------|-----------------|--------------------------|---------------|--------|
 | `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` | [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [[KEY]/TC-[AREA]-01](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) [or: Pending (BRD 16 not written)] | [step 1-5, A1, E1] | Playwright |
 
-**Not automated:** [[KEY]/TC-NFR-02](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-nfr-acceptance-[ids-slug]) ([reason]) [or: None]
+**Not automated:** [[KEY]/TC-NFR-02](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-nfr-acceptance-[ids-slug]) ([reason]) [or: None / Pending (BRD 16 not written)]
 
 # 17. Frontend
 
@@ -515,6 +519,7 @@ Every route has a row (sdd-to-lld.md § Use-case traceability). This table is th
   Screen (BRD): the ID of the BRD chunk 14 Mockup coverage row (one row per screen or flow, the screen reference) of the screen or flow the route implements, linked to 14-todo.md#mockup-coverage: its MK-NN, or in a BRD written before MK-NN the screen ID that keys the row. The chunk 14 row wins; only a screen ID with no chunk 14 row, where the BRD text carries one from its source (brd-unifier never defines one), links to the heading that carries it. Else "None - platform page" (sign-in, not found, the shell), or "None - no BRD screen ([link])" for a route that serves a Workflow block (behaviour no use case covers, such as a BRD chunk 09 report). When that screen has a chunk 14 row, the row wins: cite its ID here.
   Use cases (BRD): the use cases the BRD gives that screen (its chunk 14 row, or for a screen ID with no row the UI/UX sections that name it), linked to their BRD headings; "None - platform page" for platform pages; "None - no BRD screen ([link])" for a Workflow route, which carries no route data; "None - no BRD use case ([link])" for a Workflow route whose screen has a chunk 14 row, whose route data carries the screen only.
 Every BRD ID carries the key from the SDD's Source BRDs register. Every active use case with a screen the actor sees has at least one route; a use case with neither a screen ID nor an MK-NN gets "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN".
+Route: the path only. When the LLD has more than one front-end app, the app's name follows the path in parentheses (`/points` (Loyalty Points)); the 04 Screens fields and the §19.9 Routes cells carry the path alone.
 Route paths and components are this LLD's design choice (from-sdd: "> Confirm:"). With no source BRD, the two BRD columns read "Not applicable - no source BRD".
 -->
 
@@ -550,9 +555,11 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 
 # 18. Open Questions & Flag Index
 
-## 18.1 Drift Markers (hybrid mode only)
+## 18.1 Drift Markers (hybrid only)
 
 ## 18.2 Low-Confidence Inferences (TODO)
+
+<!-- A light run's `> TODO: light-work run - detail before release` flags are indexed here too (SKILL.md § Light run). -->
 
 ## 18.3 Medium-Confidence Inferences (Confirm)
 
@@ -562,7 +569,7 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 
 Open `> Confirm:` and `> TODO:` flags counted per section, with a row for every section (§1 to §17, one §7 row per service, and §20) and a Global row for the flags §18 holds itself, as in `chunks/15-open-questions.md` § 18.5.
 
-## 18.6 Policy Findings (every mode that reads code)
+## 18.6 Policy Findings (every direction that reads code)
 
 # 19. References
 
@@ -621,7 +628,7 @@ With no source BRD, write "Not applicable - no source BRD."
 # 20. Specs
 
 <!--
-Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD: Mission from SDD §1 (2-3 sentences, core idea only), Tech Stack from SDD §6 verbatim with version pins (must equal §6.3 Runtime Stack above - a mismatch is drift to flag; a pin missing from the resolved stack is never asked for and points to the §6.3 `> TODO:`, SKILL.md step 6b), Roadmap from SDD §13 + BRD UC ownership (3-6 delivery phases), Project Type from intake with the LLD direction taken. Direct input for speckit /constitution. Tone: short, precise, declarative. See chunks/17-specs.md for the full skeleton.
+Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD: Mission from SDD §1 (2-3 sentences, core idea only), Tech Stack from SDD §6 verbatim with version pins (must equal §6.3 Runtime Stack above - a mismatch is drift to flag; a pin missing from the resolved stack is never asked for and points to the §6.3 `> TODO:`, SKILL.md step 6b), Roadmap from SDD §13 + BRD UC ownership (delivery phases per SKILL.md step 6b: the BRD's own phases when the BRD is phase-based), Project Type from intake with the LLD direction taken. Direct input for speckit /constitution. Tone: short, precise, declarative. See chunks/17-specs.md for the full skeleton.
 -->
 
 ## 20.1 Mission
@@ -664,9 +671,9 @@ This section complements (does not replace) §18, which is the author-generated 
 | **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift / Contract drift (vs SDD §14/§15/§16) / Specs-body mismatch / Duplication (SDD content restated outside the sourced derived views in SKILL.md principle 13) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour that no BRD use case covers and no BRD or SDD section asks for; never a new UC). |
 | **Concern** | One paragraph. What was missed and why it matters. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
-| **Recommendation** | REQUIRED. The reviewer's suggested option - always pick one, even for close calls. |
+| **Recommended Answer** | REQUIRED. The reviewer's suggested option and the concrete resolution text, written so it can be pasted into the LLD as-is - always pick one, even for close calls. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins - the evidence (CLAUDE.md rule, SDD contract, code fact, risk avoided) and the tradeoff accepted. Never empty. |
-| **Status** | Open / Resolved / Deferred. |
+| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request that changes LLD content applies it) / Accepted - applied (link to LLD update) / Adjusted - applied (link to LLD update) / Deferred (with rationale) / Rejected (with rationale). Decisions: SKILL.md step 7a. |
 
 ## 21.2 Open Items
 
@@ -678,7 +685,7 @@ This section complements (does not replace) §18, which is the author-generated 
 - **Options:**
   - **A.** [Option A] - [one-line tradeoff].
   - **B.** [Option B] - [one-line tradeoff].
-- **Recommendation:** [Suggested option letter + the concrete change.]
+- **Recommended Answer:** [Option letter + the concrete resolution text, ready to paste into the LLD.]
 - **Why:** [The reason this option wins: evidence + tradeoff accepted.]
 - **Status:** Open
 
@@ -686,11 +693,11 @@ This section complements (does not replace) §18, which is the author-generated 
 
 ## 21.3 Resolution Log
 
-<!-- When an open item is resolved, add its row here with a pointer to the LLD update. An upstream change that settles an item, in whole or in part, adds its row too (sdd-to-lld.md § Refresh triggers). -->
+<!-- When an open item is decided (SKILL.md step 7a), add its row here with a pointer to the LLD update (service + sub-section); the item keeps its entry above with its new status. An upstream change that settles an item, in whole or in part, adds its row too (sdd-to-lld.md § Refresh triggers). An answer the answer policy gave ends its Outcome with `Decided by Policy: <policy> (set by <name>, <date>)` (SKILL.md step 7a). -->
 
 | ID | Resolution Date | Resolved In | Outcome |
 |----|----------------|-------------|---------|
-| [OI-XX] | [YYYY-MM-DD] | [Service / sub-section] | [Option chosen - short note, or Settled by, Superseded by, or Reopened by SDD v[X.X] (or [KEY] v[X.X]) - short note] |
+| [OI-XX] | [YYYY-MM-DD] | [Service / sub-section] | [Accepted recommendation / Adjusted: short note / Deferred / Rejected, or Settled by, Superseded by, or Reopened by SDD v[X.X] (or [KEY] v[X.X]) - short note] |
 
 ## 21.4 Reviewer Notes
 

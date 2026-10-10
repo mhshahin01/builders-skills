@@ -22,7 +22,7 @@ PART OF: SDD - [Project Name]
 
 **Figure 1: Use Case Diagram**
 
-<!-- Inline Mermaid is the default diagram medium. Carry the UC IDs verbatim from the BRD with their BRD key, as plain quoted labels (no links inside Mermaid; the links to the BRD are in §7.3). Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
+<!-- Inline Mermaid is the default diagram medium. Carry the UC IDs verbatim from the BRD with their BRD key, as plain quoted labels (no links inside Mermaid). The links to the BRD live in the text around the diagram, its Summary, and in §7.3 (brd-to-sdd.md § The link, item 6). Append `> Miro: <url>` only if a richer whiteboard version exists on a real board. -->
 
 ```mermaid
 flowchart LR
@@ -41,7 +41,7 @@ flowchart LR
   EXT --> UC02
 ```
 
-**Summary:** [1-2 sentences: which actors drive which use-case clusters.]
+**Summary:** [1-2 sentences: which actors drive which use-case clusters, each use case cited as its keyed link.]
 
 ## 7.3 Use Case Traceability (BRD → SDD)
 
@@ -52,7 +52,7 @@ A consolidated view: every column is read from its home and never states a mappi
   Use case (BRD), Title: the BRD Use Case Summary (title exactly as the BRD writes it).
   Status: derived from the marker that opens the use case's Description cell in that summary: no marker gives Active; "Merged into UC-NN." gives Merged into [KEY]/UC-NN (keyed); "Removed: [reason]." gives Removed (the reason stays in the BRD).
   Owner: chunk 09 "Use cases (BRD)" column, the home of ownership (exactly one owner per active use case).
-  Entry points: the named service's List of APIs (13x), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]) from that service's Input table.
+  Entry points: the named service's List of APIs (13x), method and path exactly as written there; or the trigger (Schedule: [name] / Event: [EVENT_NAME]) from that service's Input table, whose row cites this use case; every trigger row that cites the use case is listed, the owner's or another service's, and no other trigger, except an event the use case itself fires (its Events value) (brd-to-sdd.md § The trigger tie).
   Flows: the "Use cases:" lines in chunk 05.
   APIs: chunk 11 §15.2 "Use case ref".
   Events: the "when" citations in chunk 10 §14.5 and the When column of §14.10 (in-process domain events); an event the use case only handles is an Entry points trigger (Event: [EVENT_NAME]).

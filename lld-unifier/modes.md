@@ -1,17 +1,17 @@
-# Modes: Output shape and Direction
+# Modes: Output mode and Direction
 
-This skill has **two orthogonal mode dimensions**:
+This skill has **two orthogonal dimensions**:
 
-1. **Output shape** (CHUNKS / COMBINED): the file layout of the deliverable.
+1. **Output mode** (CHUNKS / COMBINED): the file layout of the deliverable.
 2. **Direction** (FROM-CODE / FROM-SDD / HYBRID / PARTIAL): the source of truth for the content.
 
-The skill always asks for the direction at the start of any invocation. The shape is determined by argument or interactive prompt with CHUNKS as default; an existing LLD keeps its own shape without a prompt (SKILL.md § Interactive shape prompt).
+The skill always asks for the direction at the start of any invocation. The output mode is determined by argument or interactive prompt with CHUNKS as default; an existing LLD keeps its own mode without a prompt (SKILL.md § Interactive mode prompt).
 
 ---
 
-## Output shape
+## Output mode
 
-### CHUNKS shape (default)
+### CHUNKS mode (default)
 
 **Output:** A folder of `.md` files written to `./lld-[project-slug]/`.
 
@@ -70,7 +70,7 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 - Per-service chunks need to be regenerated as services evolve.
 - AI implementer downstream: single-file-per-service makes context loading clean.
 
-### COMBINED shape
+### COMBINED mode
 
 **Output:** A single `.md` file written to `./LLD-[ProjectName]-v[X.X].md`.
 
@@ -78,7 +78,7 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 
 **Structure follows the template top-to-bottom** (sections 1–21 per `TEMPLATE-COMBINED.md`).
 
-**No chunk comment blocks** in combined shape: the file is a single artefact.
+**No chunk comment blocks** in combined mode: the file is a single artefact.
 
 **When to prefer COMBINED:**
 
@@ -87,9 +87,9 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 - Submitting for a formal architecture review pipeline that expects one file.
 - Archiving a finalised version.
 
-### Cross-shape conversion
+### Cross-mode conversion
 
-The two shapes are reversible.
+The two modes are reversible.
 
 **Chunks → Combined (merge)**: see `chunking.md` § Merge handling.
 

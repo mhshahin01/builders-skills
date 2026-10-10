@@ -86,4 +86,7 @@ tracker's Panel notes line; never invent findings to fill the gap.
    before the walkthrough starts, for the areas its `Left out` line names,
    with its earlier findings listed so it does not repeat them; the new
    findings are merged under these rules and added to the tracker and to
-   `review-panel-findings.md`.
+   `review-panel-findings.md`. The offer is not a question with a
+   recommended option, so an answer policy never takes it up (SKILL.md
+   § Answer policy, rule 1): under a policy, the walkthrough starts after
+   this report.

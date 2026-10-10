@@ -9,7 +9,7 @@ PART OF: SDD - [Project Name]
 PURPOSE: Output of the post-generation cleared-context reviewer pass. Captures architecture-level gaps, missing scenarios, integration corner cases, ADR ambiguities, and cross-chunk contract mismatches flagged by an independent reviewer. Every item carries a concrete Recommended Answer, ready to be applied to the SDD body once the architect accepts it.
 GENERATED_BY: sdd-unifier post-generation reviewer (cleared-context subagent run after the main SDD body is complete). After that review, the author appends only the open items the skill's rules tell it to raise: the derivation's (SKILL.md step 7), text an applied decision makes wrong that needs a choice (step 8 item 3), a source-chunk problem found by the chunk 19 faithfulness check that a chunk 19 claim depends on or that lies in text the request changed (step 8b), an open remainder of a business review decision (step 10), and a last-pass discovery decided for later application (step 8).
 SCOPE: The reviewer reads ALL preceding chunks. Contract-consistency findings are first-class: topic names, event names, payload fields, and consumer lists that diverge between the Centralized Event Hub (chunk 10), the per-service chunks (13x), the Centralized User Roles catalogue (chunk 12), and the Service Integration API Contracts (chunk 11) are valid OI items. The End-to-End System Design (chunk 19) does not exist yet when the first review runs; it is written after this chunk is cleared.
-WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, defer, or reject the Recommended Answer. Accepted answers are applied to the referenced chunk(s), the item gets its Resolution Log row, and the change joins the update's Changes Log row (SKILL.md § Output conventions, Versions).
+WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, defer, or reject the Recommended Answer (an answer policy the user set for the run accepts the recommendations it may: SKILL.md step 8, Answer policy). Accepted answers are applied to the referenced chunk(s), the item gets its Resolution Log row, and the change joins the update's Changes Log row (SKILL.md § Output conventions, Versions).
 -->
 
 # 23. Open Items & Clarifications
@@ -91,6 +91,7 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 
 <!-- Optional new scope: label Scope proposal here with source, recommendation and tradeoff; not a blocking Open OI until owner-adopted. Required gaps keep the normal OI schema. -->
 <!-- A source problem the chunk 19 faithfulness check found and neither fixed nor raised (SKILL.md step 8b item 3): a note here with its source, its owner, and why no chunk 19 claim depends on it. -->
+<!-- Out of scope, for the next review: a defect a delta review, an application check, or the scoped verification of later answers noticed outside its scope (SKILL.md step 7, Review after answers): a note labelled `Out of scope, for the next review` with its location and what is wrong. It is not an open item and bumps nothing; the next delta or full review that covers that location reads it and raises it or drops it. -->
 
 - [Note 1]
 - [Note 2]

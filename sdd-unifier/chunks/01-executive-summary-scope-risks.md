@@ -47,7 +47,7 @@ Key technical bets and trade-offs:
 
 ## 2.2 Out of Scope
 
-<!-- Explicitly excluded from this SDD. Reference the deferral reason or the document where it is handled. -->
+<!-- Explicitly excluded from this SDD. Reference the deferral reason or the document where it is handled. A phase-based source BRD's later-phase scope items are listed here as the phasing boundary, one line per later phase (brd-to-sdd.md § Phase-based BRDs). -->
 
 - [Out-of-scope item 1, with justification or deferral note]
 - [Out-of-scope item 2]

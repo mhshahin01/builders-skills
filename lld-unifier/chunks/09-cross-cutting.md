@@ -117,7 +117,7 @@ PART OF: LLD - [Project Name]
 | Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`). An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`) | SDD §7.3 |
 | Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (it also matches a longer ID that contains the one searched for) | LLD convention |
 | Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
-| Not set | Platform endpoints (health, actuator, sign-in) | LLD convention |
+| Not set | Platform endpoints (health, actuator, sign-in); an endpoint the LLD proposes that SDD §7.3 does not list | LLD convention |
 | Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (`14-frontend.md` § 17.3); `use_case` joins the route's `useCases` in the Value form when present; a screen-only Workflow route has no `use_case` | LLD convention |
 
 > Confirm: `use_case` is an LLD convention; the SDD does not settle a use case attribute (drop this flag when SDD §11.4 or a 13x Observability section names one).

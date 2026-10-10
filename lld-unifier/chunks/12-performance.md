@@ -8,6 +8,8 @@ PART OF: LLD - [Project Name]
 
 # 15. Performance
 
+<!-- Light run: the sub-sections of this chunk that carry the light-work flag are named in SKILL.md § Light run. -->
+
 > **Convention:** SLOs and load targets carry over from SDD §18. This chunk operationalises them: what cache strategy, what indexes, what query plans, what bulkhead sizes meet the targets.
 
 ## 15.1 SLOs (per service)

@@ -14,7 +14,7 @@ The detailed-design stage of the suite: authors, transforms, or unifies a Low-Le
 | `from-code` | Code already exists | Reverse-engineer the LLD from a codebase using two specialist agents (`feature-dev:code-explorer` for discovery, `code-documentation:docs-architect` for synthesis) |
 | `hybrid` | SDD and complete code both exist | Two-pass: generate both views, then unify into one LLD with inline drift markers |
 
-Output is Markdown only, in one of two shapes: `chunks` (the default, one `.md` per section grouping, with one file per service under `04-implementation/`) or `combined` (a single file matching `TEMPLATE-COMBINED.md`). The chunk map runs 00-metadata through 18-open-items-and-clarifications, with the load-bearing chunk 04 split per service and `14-frontend.md` omitted entirely when there is no UI surface.
+Output is Markdown only, in one of two output modes: `chunks` (the default, one `.md` per section grouping, with one file per service under `04-implementation/`) or `combined` (a single file matching `TEMPLATE-COMBINED.md`). The chunk map runs 00-metadata through 18-open-items-and-clarifications, with the load-bearing chunk 04 split per service and `14-frontend.md` omitted entirely when there is no UI surface.
 
 The skill also owns the Specs chunk (chunk 17: Mission, Tech Stack, Roadmap, Project Type), synthesised after the body as constitution-grade input for SpecKit `/constitution`.
 
@@ -25,7 +25,7 @@ When the SDD derives from brd-unifier BRDs, the LLD carries the SDD's use-case t
 A design doc an implementer cannot code from is a dead document. This skill exists to make the LLD executable and honest about its own uncertainty:
 
 - **Bidirectional by design.** The same template fits reverse engineering, forward design, and unification, so a brownfield codebase and a greenfield SDD land in the same structure and can be diffed.
-- **Drift is a feature, not a flaw.** In hybrid mode, divergences between SDD intent and code reality are marked inline (`drift`, `code-only`, `sdd-only` markers with a drift note) instead of being silently reconciled.
+- **Drift is a feature, not a flaw.** In hybrid direction, divergences between SDD intent and code reality are marked inline (`drift`, `code-only`, `sdd-only` markers with a drift note) instead of being silently reconciled.
 - **Design patterns are first-class.** Every applied pattern carries its name, the triggering CLAUDE.md rule, the roles classes and methods play, a one-line rationale, a Mermaid class diagram, and a pseudocode skeleton.
 - **Confidence is tiered, not binary.** High-confidence inference emits clean, medium emits with a `> Confirm:` flag, low emits with a `> TODO:` flag plus best-guess content. Nothing is invented to paper over a gap, and nothing is blocked from emitting.
 - **One fact, one home.** The LLD references the SDD and restates it only in a derived view that names its source on every row (the runtime stack, tables, the idempotency and transaction cells of in-process port contracts, resilience instances, configuration defaults, alerts, and SLOs). Contract names (topics, events, `API-NN` contracts and their URIs, roles, permission tokens) match the SDD character-for-character; contract bodies are cited with only the implementation delta added.
@@ -37,47 +37,48 @@ A design doc an implementer cannot code from is a dead document. This skill exis
 ### Usage
 
 ```text
-lld-unifier [chunks|combined]
+lld-unifier [chunks|combined] [light]
 ```
 
 | Argument | Action |
 | -------- | ------ |
 | `chunks` (default) | Multi-file output to `./lld-[project-slug]/`, one chunk per section grouping, one file per service under `04-implementation/`. Empty input, Enter, or `y` all confirm it. |
 | `combined` | Single consolidated file `./LLD-[ProjectName]-v[X.X].md` matching `TEMPLATE-COMBINED.md`. |
+| `light` | A light run, in either output mode and in any order with it: the operations and performance detail beyond the SDD is left as a `> TODO: light-work run - detail before release` flag (SKILL.md § Light run). "light run" or "light-work" in the request counts too. |
 
-The argument controls only the output shape. The direction (`from-code` / `from-sdd` / `hybrid`) is always asked separately and is never silently inferred, though a provided code path or SDD path, or an existing LLD's recorded mode, defaults the prompt accordingly.
+The arguments control only the output mode and the light run. The direction (`from-code` / `from-sdd` / `hybrid`) is always asked separately and is never silently inferred, though a provided code path or SDD path, or an existing LLD's recorded direction, defaults the prompt accordingly.
 
 Invocation prefix depends on the agent: `/lld-unifier chunks` in Claude Code, `$lld-unifier chunks` in Codex, `/skill:lld-unifier chunks` in Kimi Code. Or describe the task in plain words ("write the LLD for the wallet service from the SDD") and the agent picks the skill from its description.
 
 ### The workflow
 
-1. **Resolve output shape.** Chunks is the default; a single question confirms it unless the user already implied a shape.
-2. **Resolve direction.** Always asked: from-code, from-sdd, or hybrid, with partial-code handling (missing services get the not-yet-built placeholder that lists the use cases they own).
+1. **Resolve output mode.** Chunks is the default; a single question confirms it unless the user already implied a mode (an answer policy you set answers it with `chunks`).
+2. **Resolve direction.** Always asked: from-code, from-sdd, or hybrid (an answer policy you set answers it with the suggested default, except at the Brownfield friction prompt, and the handoff says so), with partial-code handling (missing services get the not-yet-built placeholder that lists the use cases they own).
 3. **Intake.** At most three questions: project name, source material, direction confirmation. Plus the Specs inputs (Project Type, Tech Stack) are resolved now because they steer generation. On an existing LLD, a newer SDD version or a BRD change is detected (step 3c): the changed chunks are named and one targeted refresh is offered for all of them, never applied silently.
 4. **Plan internally.** Enumerate chunks, workflows, per-service files, applicable CLAUDE.md defaults, and sections needing confidence flags.
 5. **Dispatch agents (from-code and hybrid only).** Phase 1: `code-explorer` maps entry points, call graph, dependencies, topics, and patterns with file:line citations. Phase 2: `docs-architect` turns findings into per-service narratives and pattern rationale. The from-sdd direction skips this and reads the SDD directly.
 6. **Generate.** Fit content to the chunk skeletons (or the combined template), per the direction's rules: from-code weighting, from-sdd mapping plus aggressive CLAUDE.md defaults, or hybrid's section-by-section diff with drift markers. Then reconcile the use-case trace against SDD §7.3 and the BRD (every link and anchor checked).
-7. **Synthesise the Specs chunk.** Mandatory, after the body: Mission, Tech Stack with version pins, Roadmap in 3 to 6 delivery phases, Project Type. Written in constitution voice for SpecKit `/constitution`. Then add this LLD's row to the SDD's Child LLDs table (step 6c).
-8. **Post-generation review.** A cleared-context reviewer subagent (no conversation memory) hunts for unflagged gaps and writes the Open Items and Clarifications chunk, each item with options, a recommendation, and a Why. It records a coverage row per service and risk surface; zero findings is valid for a checked surface, and the reviewer is re-dispatched only when a surface is unchecked or a finding lacks evidence. A later update that changes content gets a delta review of the chunks it changed (SKILL.md step 7, On an update). Answers you give before the handoff are applied in the same update and checked once, by a scoped application check; what that check raises waits for a new request, even under an answer policy you set for the request.
-9. **Present.** A summary covering shape, direction, services covered, diagram counts, drift marker counts, `⚠ policy` finding counts by severity, confidence flag counts, Open Item counts, Specs status, the use-case traceability line per source BRD, the parent SDD's Child LLDs row, and the chain handoff check (every SDD reference resolves, contract names match character-for-character, every BRD ID is keyed).
-10. **Cross-shape conversion (on request).** Merge chunks to a `-MERGED.md` file, split a combined file into chunks, regenerate a single chunk or service, refresh after a new SDD version, or re-run from-code once missing services are built.
+7. **Synthesise the Specs chunk.** Mandatory, after the body: Mission, Tech Stack with version pins, Roadmap in 3 to 6 delivery phases (or the BRD's own phases when the BRD is phase-based), Project Type. Written in constitution voice for SpecKit `/constitution`. Then add this LLD's row to the SDD's Child LLDs table (step 6c).
+8. **Post-generation review.** A cleared-context reviewer subagent (no conversation memory) hunts for unflagged gaps and writes the Open Items and Clarifications chunk, each item with options, a Recommended Answer, and a Why. It records a coverage row per service and risk surface; zero findings is valid for a checked surface, and the reviewer is re-dispatched only when a surface is unchecked or a finding lacks evidence. A later update that changes content gets a delta review of the chunks it changed (SKILL.md step 7, On an update). Then the acceptance loop walks you through the items (accept the recommendation, choose another option, defer, or reject; "later" leaves them open; SKILL.md step 7a). Answers accepted before the handoff are applied in the same update and checked once, by a scoped application check; what that check raises waits for you in a new request, and no answer policy ever answers it, since it verifies answers already applied; an answer you accept for it waits as `Decided - pending application` until the next request that changes the LLD applies it.
+9. **Present.** A summary covering output mode, direction, services covered, diagram counts, drift marker counts, `⚠ policy` finding counts by severity, confidence flag counts, Open Item counts, Specs status, the use-case traceability line per source BRD, the parent SDD's Child LLDs row, and the chain handoff check (every SDD reference resolves, contract names match character-for-character, every BRD ID is keyed).
+10. **Cross-mode conversion (on request).** Merge chunks to a `-MERGED.md` file next to them, inside `./lld-[project-slug]/`, split a combined file into chunks, regenerate a single chunk or service, refresh after a new SDD version, or re-run from-code once missing services are built.
 
 ### Outputs
 
-- `./lld-[project-slug]/` with `NN-kebab-name.md` chunks plus a `[project-slug]-lld-master.md` index (chunks shape), or `./LLD-[ProjectName]-v[X.X].md` (combined shape).
+- `./lld-[project-slug]/` with `NN-kebab-name.md` chunks plus a `[project-slug]-lld-master.md` index (chunks mode), or `./LLD-[ProjectName]-v[X.X].md` (combined mode).
 - Per-service implementation files under `04-implementation/`, one per service, each self-sufficient for an implementer.
 - `16-references.md` § 19.9: the use-case traceability index, the entry point for production-bug triage.
 - One row in the SDD's Child LLDs table (the only write outside the LLD folder).
 - `17-specs.md`: the Specs chunk (Mission, Tech Stack, Roadmap, Project Type) consumed verbatim by SpecKit `/constitution`.
 - `15-open-questions.md`: the author-generated index of every inline `> Confirm:` and `> TODO:` flag, plus the hybrid drift index and the `⚠ policy` findings (§ 18.6).
-- `18-open-items-and-clarifications.md`: the reviewer-generated findings, each with options, a recommendation, and a Why.
+- `18-open-items-and-clarifications.md`: the reviewer-generated findings, each with options, a Recommended Answer, a Why, and its status from the acceptance loop.
 
 ### Reference files
 
 | File | Contents |
 | ---- | -------- |
-| `TEMPLATE-COMBINED.md` | The single-file template, authoritative for COMBINED shape |
-| `chunks/*.md` | Per-chunk template skeletons (00 through 18, plus `04-implementation-template.md` and `lld-master.md`, written per project as `[project-slug]-lld-master.md`), authoritative for CHUNKS shape |
+| `TEMPLATE-COMBINED.md` | The single-file template, authoritative for COMBINED mode |
+| `chunks/*.md` | Per-chunk template skeletons (00 through 18, plus `04-implementation-template.md` and `lld-master.md`, written per project as `[project-slug]-lld-master.md`), authoritative for CHUNKS mode |
 | `chunking.md` | Canonical chunk map, per-service split, chunk header contract, merge and re-chunk handling |
 | `modes.md` | Chunks vs combined behavioural details |
 | `transform-detection.md` | Direction question rules, acceptable shorthands, partial-code resolution |

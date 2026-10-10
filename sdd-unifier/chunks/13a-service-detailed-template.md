@@ -37,6 +37,8 @@ Each service follows the exact same structure for predictability and grep-abilit
 |------|--------|-------------|
 | [REST / Event / Schedule / Other] | [Source] | [Description] |
 
+<!-- An Event or Schedule row names one trigger and, when it realises a part of a BRD use case, cites that part as a keyed link (step, BR-n, E1, AC-n). That citation is the trigger's tie to the use case's §7.3 Entry points (brd-to-sdd.md § The trigger tie). -->
+
 ### Business Logic
 
 <!-- Plain-language description of the logic, including state machines for stateful services. Derive-from-BRD: cite every use case this service owns (chunk 09 "Use cases (BRD)") as a link to its BRD heading, with the part it realises, e.g. "[REFUNDS/UC-04](BRD link) steps 3-6", "A1", "BR-2: [short label]", "AC-3: customer is notified". BR-n and AC-n are positions in the BRD lists, so each always carries its short label (brd-to-sdd.md § Use-case traceability). Write only the technical realisation, never a restated Main Flow. -->
@@ -176,7 +178,7 @@ CONSISTENCY RULE (chunk 10 is the contract registry): every topic name, event na
 
 **In-process domain events (modules only):**
 
-<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match chunk 10 §14.10 except When, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable - no in-process events". -->
+<!-- Modular monolith or hybrid core: the domain events this module publishes or handles in process (architecture-questionnaire.md § Effect on the SDD). Columns match chunk 10 §14.10 except When and Status, which only the registry holds; names match it verbatim, from both sides. A microservice writes "Not applicable - no in-process events". -->
 
 | Event | Publisher module | Listener modules | Transaction phase (before commit / after commit) | Payload (DTO) | Notes |
 |---|---|---|---|---|---|

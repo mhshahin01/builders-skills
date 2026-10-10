@@ -49,7 +49,9 @@ You are NOT a software-market analyst. Hunt for:
 
 ### SME domain rules (for the orchestrator, not copied into the charter)
 
-- The SME domain is a mandatory intake parameter, confirmed by the user.
+- The SME domain is a mandatory intake parameter, confirmed by the user,
+  or by an SME stand-in the run's answer policy names (SKILL.md § Answer
+  policy).
 - **PropTech, FinTech, HealthTech and similar labels are product
   categories and are INVALID SME domains.** The SME is an operator in the
   customer's business domain, not an analyst of the software market the

@@ -20,7 +20,7 @@ STYLE: Plain language in every chunk: simple, clear, precise, easy to understand
 
 ## Generation Progress
 
-**Generation:** [parts | whole]
+**Generation:** [parts | whole; a light parts build writes "parts, light" (SKILL.md § Light run)]
 **Source:** [path of every source file (SoW, old BRD, notes), or "conversation"]
 
 <!-- Parts generation only. Keep the table after part 3 completes: it is the record of how the BRD was built. In a whole run, keep only the two lines above. -->

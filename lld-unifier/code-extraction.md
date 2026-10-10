@@ -54,8 +54,8 @@ The skill takes Phase 1 + Phase 2 outputs and routes them into the chunks:
 
 For sections the agents cannot fill from code alone:
 
-- **SLO targets** (`12-performance.md`): code rarely declares SLOs. From-code mode emits `> TODO: SLO targets - verify with SDD §18 or production data`.
-- **Threat notes** (`11-security.md`): code rarely captures threat reasoning. From-code mode emits `> TODO: threat notes - verify with security review or threat model`.
+- **SLO targets** (`12-performance.md`): code rarely declares SLOs. From-code direction emits `> TODO: SLO targets - verify with SDD §18 or production data`.
+- **Threat notes** (`11-security.md`): code rarely captures threat reasoning. From-code direction emits `> TODO: threat notes - verify with security review or threat model`.
 - **Compliance applicability** (`11-security.md` § 14.6): code shows what's done; *whether it's compliant* needs human judgement. Flag with `> Confirm:`.
 - **Future enhancements** (`15-open-questions.md` § 18.4 Decisions Pending, as in the `sdd-to-lld.md` field mapping): code rarely tracks future work. Skip if no `// TODO`-style markers found; otherwise transcribe what exists.
 
@@ -74,7 +74,7 @@ Code carries no BRD use case IDs of its own, so a pure from-code LLD has no use-
 
 ---
 
-## Confidence weighting in from-code mode
+## Confidence weighting in from-code direction
 
 Per `confidence-rules.md`:
 
@@ -108,7 +108,7 @@ Per `confidence-rules.md`:
 4. **Template fit.** Walk the chunks; fill content from Phase 1 + Phase 2; apply confidence flags.
 5. **Trace to BRD use cases** when an SDD is given (§ Tracing to BRD use cases), then SKILL.md step 6a; register in the SDD per step 6c.
 6. **Index flags** in `15-open-questions.md`.
-7. **Write output** per chosen shape.
+7. **Write output** per chosen output mode.
 8. **Specs and review.** SKILL.md step 6b (Specs chunk), then step 7 (cleared-context review).
 9. **Surface handoff summary**: file paths, services discovered, patterns detected, confidence flag counts, and the use-case traceability line when an SDD was given.
 

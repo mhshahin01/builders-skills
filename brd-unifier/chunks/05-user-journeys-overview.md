@@ -32,6 +32,8 @@ LANGUAGE: Business language only. No technology names, protocols, or implementat
 
 <!-- Every use case in the BRD, one row each. UC numbering is sequential across the whole BRD. A use case that disappears keeps its row, and its Description cell starts with `Merged into UC-NN.` or `Removed: [reason].` (use-case-quality.md § UC numbering and IDs). Group rows per persona - the detailed chunks (06a, 06b, ...) split per persona in the same order. -->
 
+<!-- Phase-based BRD only (SKILL.md § Phase-based BRD): add a last column, `Phase`, holding `Phase 1`, `Phase 2`, ...; a later phase gets no rows until it starts. Any other BRD keeps these four columns. -->
+
 | UC ID | Use Case | Primary Actor | Description |
 |-------|----------|---------------|-------------|
 | **[Persona 1]** | | | |

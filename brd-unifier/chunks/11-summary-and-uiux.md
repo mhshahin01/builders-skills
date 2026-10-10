@@ -20,7 +20,7 @@ LANGUAGE: Business language only. UI/UX expectations describe what users experie
 
 <!-- Global UI/UX standards that apply across all pages, from the user's point of view. -->
 
-- **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once, with the open items in SKILL.md step 8). Never an invented value.]
+- **Primary Color**: [With a UI/UX constitution: its color token by name, e.g., `color.primary`, and the constitution section that defines it, by name, not number. Without one: the brand or key color the user confirms (asked once, with the open items in SKILL.md step 8; a run-brief color counts as a source color, and under an answer policy it is not asked). Never an invented value.]
 - **Data Tables**: [Source or confirmed sorting, pagination, export and filtering rules. Unstated behaviour is a labelled proposal for owner confirmation; examples such as 20 rows/page or CSV/XLSX export are not automatic requirements.]
 - **Filtration**: [Standardized filter patterns]
 - **Error Messages**: Errors tell the user in plain language what went wrong and what to do next. No technical codes or internal details are shown to users.

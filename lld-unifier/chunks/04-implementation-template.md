@@ -5,7 +5,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 DEPENDS_ON: 03, 09
 PART OF: LLD - [Project Name]
-NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file as
+NOTE: This is the TEMPLATE for a single service. In CHUNKS mode, copy this file as
       ./lld-[project-slug]/04-implementation/[service-slug].md per service.
       Cross-service sagas live with the orchestrator service's file.
 -->
@@ -42,7 +42,7 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS shape, copy this file
 |-------|-----------|-------|
 | `[FooController]` | `[GET /v1/foo/{id}, POST /v1/foo, ...]` | [Permission token (SDD §16), idempotency rules] |
 
-> **Convention:** every entry point a use case's § 7.8 traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (`09-cross-cutting.md` § 12.8). An `Event:` or `Schedule:` trigger that SDD §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. Platform endpoints, and the entry points of a `### Workflow:` block, carry none. Event listeners and scheduled jobs that are entry points go in the Controllers table too, with their trigger in the Endpoints cell (`Event: [EVENT_NAME]`, `Schedule: [name]`).
+> **Convention:** every entry point a use case's § 7.8 traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (`09-cross-cutting.md` § 12.8). An `Event:` or `Schedule:` trigger that SDD §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. Platform endpoints, the entry points of a `### Workflow:` block, and an endpoint the LLD proposes that SDD §7.3 does not list, carry none. Event listeners and scheduled jobs that are entry points go in the Controllers table too, with their trigger in the Endpoints cell (`Event: [EVENT_NAME]`, `Schedule: [name]`).
 
 ### Services (interfaces)
 
@@ -248,7 +248,7 @@ class PricingService {
 
 <!-- Repeat one Pattern subsection per pattern applied: Factory Method, Mediator, Chain of Responsibility, Saga, Template Method, Facade, Composition over inheritance, etc. Always include the four parts: triggering rule, rationale, roles, Mermaid + pseudocode. -->
 
-> **Note:** for from-sdd mode, every pattern triggered by a CLAUDE.md rule MUST be applied here (not just suggested). For from-code mode, only patterns *actually* present in code are documented; pattern detections are flagged with `> Confirm: pattern detected via [heuristic]` unless a test exercises the pattern.
+> **Note:** for from-sdd direction, every pattern triggered by a CLAUDE.md rule MUST be applied here (not just suggested). For from-code direction, only patterns *actually* present in code are documented; pattern detections are flagged with `> Confirm: pattern detected via [heuristic]` unless a test exercises the pattern.
 
 ---
 
@@ -309,7 +309,7 @@ TRACEABILITY LINE (required, directly under the heading; rules: sdd-to-lld.md §
   Screens: from 14-frontend.md § 17.3, the screen reference (the ID of the screen's chunk 14 row, its MK-NN or, in a BRD written before MK-NN, its screen ID, linked to 14-todo.md#mockup-coverage; only a screen ID with no chunk 14 row links to the BRD heading that carries it) and each § 17.3 route whose Use cases cell names the use case; "Not applicable - no UI" when chunk 14 is omitted; "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN" when the BRD has neither.
 Every BRD ID carries the key from the SDD's Source BRDs register. Paths are relative to this file (../../ reaches the sibling BRD and SDD folders).
 No source BRD, or pure from-code: heading "### Workflow: [Flow name]" and the line "> **Traceability:** Not applicable - no source BRD" (or "- no source SDD"). Never a made-up UC ID.
-Behaviour the BRD or SDD asks for that no use case covers: heading "### Workflow: [Flow name]" and the line "> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the [KEY]/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them]". It gets no 16 § 19.9 row.
+Behaviour the BRD or SDD asks for that no use case covers: heading "### Workflow: [Flow name]" and the line "> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the [KEY]/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them; where the SDD names none, the name the LLD gives it (`Schedule: [job name]`), flagged `> Confirm:`]". It gets no 16 § 19.9 row.
 -->
 
 ### [KEY]/UC-01: [Use case title, exactly as the BRD writes it]

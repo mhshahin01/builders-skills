@@ -14,7 +14,7 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 
 | Template section | Diagram | Mermaid dialect |
 |---|---|---|
-| §7.2 Use Case Diagram | Actors → use-case clusters (carry the keyed UC IDs as plain quoted labels, e.g. `UC04(("REFUNDS/UC-04"))`; the links to the BRD live in §7.3) | `flowchart LR` |
+| §7.2 Use Case Diagram | Actors → use-case clusters (carry the keyed UC IDs as plain quoted labels, e.g. `UC04(("REFUNDS/UC-04"))`; the links to the BRD live in the text around the diagram, its Summary, and in §7.3: `brd-to-sdd.md` § The link, item 6) | `flowchart LR` |
 | §8.2 Context Diagram | System in the middle, externals around it, edges labelled protocol + purpose | `flowchart TB` |
 | §8.3 High-Level Architecture | Layers (edge, frontend, services, data, async backbone, external, observability) | `flowchart TB` with `subgraph` |
 | §8.4 Workflow Diagrams | One per critical end-to-end flow | `flowchart TD` |
@@ -61,7 +61,7 @@ sequenceDiagram
 
 ## Render-fail mitigation
 
-1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in the chunk templates.
+1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
 2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + `[NEEDS CLARIFICATION: Mermaid syntax error: review and fix]`.
 3. Surface the fallback count in the handoff summary.
 
@@ -73,7 +73,7 @@ The rules above do not depend on another skill. When `../lld-unifier/mermaid-dia
 
 ## Miro on demand (only when the user explicitly asks)
 
-If, and only if, the user asks for a Miro board ("put the diagrams on Miro", "create a board"):
+A light run makes no board, even on request (SKILL.md § Light run). Otherwise, if, and only if, the user asks for a Miro board ("put the diagrams on Miro", "create a board"):
 
 1. Load Miro tools via ToolSearch (they are deferred).
 2. Create or reuse a board named `SDD - [Project Name] - Diagrams` (`Miro:context_explore` to check; ask for the URL when updating an existing SDD: don't guess).

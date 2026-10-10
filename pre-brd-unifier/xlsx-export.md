@@ -1,6 +1,6 @@
 # Excel Export - On Demand, Post-Approval
 
-Excel is produced only when the user explicitly approves the reviewed Markdown and asks for the sheet ("export excel" / "looks good, generate the sheet"). Never from the mode argument; never before review.
+Excel is produced only when the user explicitly approves the reviewed Markdown and asks for the sheet ("export excel" / "looks good, generate the sheet"). Never from the mode argument; never before review; never after a light run or by an answer policy (`SKILL.md` § Light run, § Answer policy).
 
 ## How it works
 The export clones `reference/PRE-BRD-v1.1.xlsx` and writes generated values into Answer cells only. The workbook's formulas, READ-ONLY sample columns, Calibri 11 styling, dark-blue header bands, and Executive Summary control panel are preserved. It holds 77 formula cells, the READ-ONLY samples included. The seven `= ...` notes in column C of `Market Sizing & analysis` describe a formula: they are text, not formulas. Writable cells are whitelisted in `reference/cell-map.json`; the engine (`scripts/export_xlsx.py`) refuses to write anywhere else.

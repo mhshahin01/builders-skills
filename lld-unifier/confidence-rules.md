@@ -125,7 +125,7 @@ Example:
 
 ## Confidence weighting in HYBRID direction
 
-In hybrid mode, every section has both a from-sdd and a from-code value. The unified emission's confidence is **the higher of the two contributing confidences**, with one exception:
+In hybrid direction, every section has both a from-sdd and a from-code value. The unified emission's confidence is **the higher of the two contributing confidences**, with one exception:
 
 - If the two values **disagree** (drift case), the emission's confidence is **High** for the *fact of drift* itself (we know they disagree because we can compare both), regardless of the contributing tiers. The drift note's *resolution suggestion* may be lower confidence: annotate accordingly.
 
@@ -148,7 +148,7 @@ Example:
 Every flag emitted anywhere in the LLD MUST appear as a row in `15-open-questions.md`:
 
 - Drift markers → § 18.1 Drift Markers.
-- `> TODO: <best-guess> - verify` → § 18.2 Low-Confidence Inferences.
+- `> TODO: <best-guess> - verify`, and a light run's `> TODO: light-work run - detail before release` (SKILL.md § Light run) → § 18.2 Low-Confidence Inferences.
 - `> Confirm:` → § 18.3 Medium-Confidence Inferences.
 - `⚠ policy` → § 18.6 Policy Findings.
 

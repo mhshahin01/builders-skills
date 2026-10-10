@@ -115,7 +115,8 @@ sec = fe.split("## 17.3 Routing", 1)[1].split("## 17.4", 1)[0]
 for line in sec.splitlines():
     if line.startswith("| `"):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        route, screen, ucs = cells[0].strip("`"), cells[2], cells[3]
+        rm = re.fullmatch(r"`([^`]+)`(?:\s*\([^()]*\))?", cells[0])
+        route, screen, ucs = rm.group(1) if rm else cells[0].strip("`"), cells[2], cells[3]
         routes.append((route, re.findall(r"\[((?:REFUNDS|LOYALTY)/(?:SCR|MK|LP)-\d\d)\]", screen),
                        re.findall(r"\[((?:REFUNDS|LOYALTY)/UC-\d\d)\]", ucs), screen, ucs))
 for uc, b in blocks.items():
@@ -252,6 +253,9 @@ def norm(ep):
 
 
 active_eps = {uc: [norm(e) for e in re.findall(r"`([^`]+)`", r["entry"])] for uc, r in s73.items() if r["status"] == "Active"}
+# a trigger 7.3 lists with another service named, e.g. `Event: X` (notification), sits in that service's 04 file
+ep_service = {uc: {norm(e): s.strip() for e, s in re.findall(r"`([^`]+)`(?:\s*\(([a-z][\w -]*)\))?", r["entry"]) if s}
+              for uc, r in s73.items() if r["status"] == "Active"}
 
 
 def anchors_7_2(txt):
@@ -287,12 +291,12 @@ anchors = {fn: anchors_7_2(read(os.path.join(LLD, "04-implementation", fn))) for
 how = {"one by one": 0, "by Controllers row only": 0, "not found": 0}
 checked = set()
 for uc, eps in active_eps.items():
-    fn = s73[uc]["owner"] + ".md"
-    if fn not in anchors:
-        problems += [f"no @UseCase for {uc} {e}: no 04 file {fn}" for e in eps]
-        continue
-    traced, rows = anchors[fn]
     for e in eps:
+        fn = ep_service[uc].get(e, s73[uc]["owner"]) + ".md"
+        if fn not in anchors:
+            problems.append(f"no @UseCase for {uc} {e}: no 04 file {fn}")
+            continue
+        traced, rows = anchors[fn]
         if e in traced:
             got, where = traced[e], "its traced entry point row"
         else:

@@ -13,6 +13,8 @@ CHECKERS = Path(__file__).resolve().parents[1]
 ROOT = CHECKERS.parents[1]
 SAVED = ROOT / '_fixtures/chain/run-2026-10-06-final'
 RUN = SAVED if SAVED.is_dir() else ROOT / '_fixtures/runs-wip/step6-R/run'
+L1 = '[LOYALTY/UC-01](../brd-loyalty-points/06a-use-cases-member.md#uc-01-view-points-balance)'
+L2 = '[LOYALTY/UC-02](../brd-loyalty-points/06a-use-cases-member.md#uc-02-view-points-history)'
 
 
 class CheckerRegressions(unittest.TestCase):
@@ -70,6 +72,71 @@ class CheckerRegressions(unittest.TestCase):
         self.assertIn('data LOYALTY/MK-05', out)
         self.edit(p, "data: { screen: 'LOYALTY/MK-05' }", 'data: {}')
         self.assertIn('no route data', self.cli('check_trace.py', self.run))
+
+    def test_sdd_trigger_tie_named_service_and_reverse(self):
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        p = self.sdd/'03-users-and-use-cases.md'
+        self.edit(p, "`Schedule: waiting-requests-summary` |", "`Schedule: waiting-requests-summary` (notifications) |")
+        self.assertIn('not in the Input table of 13d-service-notifications.md', self.cli('check_sdd.py', self.sdd))
+        self.edit(p, ", `Schedule: waiting-requests-summary` (notifications) |", " |")
+        self.assertIn('13b-service-refund-requests.md Input Schedule waiting-requests-summary cites REFUNDS/UC-04, but is not in its entry points',
+                      self.cli('check_sdd.py', self.sdd))
+
+    def test_sdd_trigger_row_citation_note_vs_problem(self):
+        note = '03 §7.3: Event: RefundPaid for LOYALTY/UC-02: its Input row in 13e-service-loyalty-points.md cites no use case (predates the trigger tie)'
+        out = self.cli('check_sdd.py', self.sdd)
+        self.clean(out)
+        self.assertIn('NOTES: 1', out)
+        self.assertIn(note, out)
+        p = self.sdd/'13e-service-loyalty-points.md'
+        self.edit(p, '| Takes back the points of a paid refund |', '| Takes back the points of a paid refund ('+L2+' BR-1) |')
+        out = self.cli('check_sdd.py', self.sdd)
+        self.clean(out)
+        self.assertNotIn('NOTES:', out)
+        self.edit(p, L2+' BR-1', L1+' BR-1')
+        out = self.cli('check_sdd.py', self.sdd)
+        self.assertIn('entry point Event: RefundPaid for LOYALTY/UC-02: its Input row in 13e-service-loyalty-points.md cites LOYALTY/UC-01, not LOYALTY/UC-02', out)
+        self.assertIn('13e-service-loyalty-points.md Input Event RefundPaid cites LOYALTY/UC-01, but is not in its entry points', out)
+
+    def test_sdd_trigger_name_in_description_cell(self):
+        self.edit(self.sdd/'13b-service-refund-requests.md', '| Schedule | `waiting-requests-summary`, daily | Daily', '| Schedule | daily | `waiting-requests-summary`: daily')
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        self.edit(self.sdd/'03-users-and-use-cases.md', ', `Schedule: waiting-requests-summary` |', ' |')
+        self.assertIn('13b-service-refund-requests.md Input Schedule waiting-requests-summary cites REFUNDS/UC-04, but is not in its entry points',
+                      self.cli('check_sdd.py', self.sdd))
+
+    def test_sdd_entry_point_service_name_resolves(self):
+        p = self.sdd/'03-users-and-use-cases.md'
+        self.edit(p, '`Schedule: waiting-requests-summary` |', '`Schedule: waiting-requests-summary` (Refund Requests) |')
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        self.edit(p, '(Refund Requests)', '(refund-request-svc)')
+        out = self.cli('check_sdd.py', self.sdd)
+        self.assertIn("03 §7.3: entry point Schedule: waiting-requests-summary names service 'refund-request-svc', which matches no 13x file", out)
+        self.assertNotIn('not in the Input table', out)
+
+    def test_sdd_events_value_must_be_fired_by_the_use_case(self):
+        p = self.sdd/'03-users-and-use-cases.md'
+        t = p.read_text(encoding='utf-8')
+        line = next(l for l in t.splitlines() if l.startswith('| [LOYALTY/UC-02]'))
+        c = line.split(' | ')
+        c[3] = c[3].replace(', `Event: RefundPaid`', '')
+        c[6] = '`RefundPaid`'
+        p.write_text(t.replace(line, ' | '.join(c)), encoding='utf-8', newline='\n')
+        self.edit(self.sdd/'13e-service-loyalty-points.md', '| Takes back the points of a paid refund |', '| Takes back the points of a paid refund ('+L2+' BR-1) |')
+        out = self.cli('check_sdd.py', self.sdd)
+        self.assertIn('03 §7.3: LOYALTY/UC-02 Events lists RefundPaid, which §14.5/§14.10 do not fire for LOYALTY/UC-02', out)
+        self.assertIn('13e-service-loyalty-points.md Input Event RefundPaid cites LOYALTY/UC-02, but is not in its entry points', out)
+
+    def test_sdd_multi_event_row_cites_no_use_case(self):
+        self.edit(self.sdd/'13d-service-notifications.md', '| One message per recipient and channel |', '| One message per recipient and channel ('+L2+' BR-1) |')
+        out = self.cli('check_sdd.py', self.sdd)
+        self.assertIn('13d-service-notifications.md Input row lists 6 events and cites a use case', out)
+        self.assertNotIn('13d-service-notifications.md Input Event', out)
+
+    def test_trace_route_cell_app_label(self):
+        self.clean(self.cli('check_trace.py', self.run))
+        self.edit(self.lld/'14-frontend.md', '| `/refunds/request` |', '| `/refunds/request` (Refunds Portal) |')
+        self.clean(self.cli('check_trace.py', self.run))
 
     def test_hyphen_tokens_and_public_endpoints(self):
         self.clean(self.cli('check_sdd.py', self.sdd))
@@ -144,6 +211,17 @@ class CheckerRegressions(unittest.TestCase):
         self.assertIn('does not list 04-implementation/notifications.md', self.cli('check_versions.py', self.lld))
         self.edit(self.lld/'04-implementation/customer-accounts.md', 'VERSION: 1.1', 'VERSION: 0.1')
         self.assertIn('lists 04 but 04-implementation/customer-accounts.md', self.cli('check_versions.py', self.lld))
+
+    def test_versions_skip_source_snapshot_folders(self):
+        chunk = self.brd/'02-glossary-assumptions-facts.md'
+        old = chunk.read_text(encoding='utf-8').replace('VERSION: 1.7', 'VERSION: 1.0', 1)
+        for folder in ('source-snapshot', 'source-snapshot-v1.0'):
+            (self.brd/folder).mkdir()
+            (self.brd/folder/chunk.name).write_text(old, encoding='utf-8', newline='\n')
+        self.clean(self.cli('check_versions.py', self.brd))
+        (self.brd/'other-folder').mkdir()
+        (self.brd/'other-folder'/chunk.name).write_text(old, encoding='utf-8', newline='\n')
+        self.assertIn('lists 02 but other-folder/02-glossary-assumptions-facts.md', self.cli('check_versions.py', self.brd))
 
     def test_initial_chunks_none(self):
         p = next(self.sdd.glob('00-*.md'))

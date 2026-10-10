@@ -1,5 +1,5 @@
 import glob, os, re, sys
-from _e2e_gate import evaluate_inventory
+from _e2e_gate import evaluate_inventory, reconciled_date
 
 SDD = sys.argv[1]
 
@@ -132,14 +132,14 @@ if inventory["mode"] == "inventory":
 else:
     print(f"E3 policy: legacy physical scope; semantic E3 not verified ({inventory['unclassified']} live body markers need classification)")
     notes.append("Legacy fixture: physical-scope E3 only. New authoring requires the semantic marker inventory; zero parser problems is not semantic gate approval.")
-rec = re.search(r"\*\*Reconciled:\*\*\s*(\d{4}-\d\d-\d\d)", master)
+rec = reconciled_date(master)
 c00 = read("00-cover-and-changelog.md")
 log = [r for r in table(sect(c00, "## Changes Log"), "| Version") if re.match(r"\d{4}-\d\d-\d\d", r.get("Updated Date", ""))]
 log_dates = [r["Updated Date"][:10] for r in log]
 reruns = [i for i, r in enumerate(log) if re.search(r"step 6a|\b6a rerun|reconciled again|contract reconciliation", r.get("Update Summary", ""), re.I)]
-e4 = bool(rec and log_dates and rec.group(1) >= max(log_dates))
+e4 = bool(rec and log_dates and rec >= max(log_dates))
 e4_why = ""
-if e4 and rec.group(1) == max(log_dates):
+if e4 and rec == max(log_dates):
     if not reruns:
         e4_why = " (by date only: no Changes Log row records a step 6a rerun, so the same-day order is not recorded)"
     elif reruns[-1] != len(log) - 1:
@@ -149,7 +149,7 @@ gate = re.search(r"\*\*E2E gate \(chunk 19\):\*\*\s*(.+)$", master, re.M)
 print(f"E1 open items not closed: {len(e1)} {e1[:5]}")
 print(f"E2 open divergence rows: {len(e2)} {e2[:5]}")
 print(f"E3 markers: {sum(e3.values())} {e3}")
-print(f"E4 reconciled {rec.group(1) if rec else None} vs last Changes Log date {max(log_dates) if log_dates else None}: {'met' if e4 else 'NOT met'}{e4_why}")
+print(f"E4 reconciled {rec} vs last Changes Log date {max(log_dates) if log_dates else None}: {'met' if e4 else 'NOT met'}{e4_why}")
 print(f"master gate line: {gate.group(1).strip() if gate else None}")
 
 f19 = sorted(glob.glob(os.path.join(SDD, "19-*.md")))

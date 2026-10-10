@@ -97,6 +97,31 @@ class E3Inventory(unittest.TestCase):
         self.assertEqual(result['problems'],[])
         self.assertEqual(result['unclassified'],0)
 
+    def test_owner_sentence_at_marker_end_still_matches(self):
+        for marker in ('lawful basis? Owner: DPO.','lawful basis? Owners: DPO and Legal.'):
+            files={'07-cross-cutting-concerns.md':'[NEEDS CLARIFICATION: '+marker+']'}
+            for asked in ('lawful basis?',marker):
+                result=self.gate.evaluate_inventory(files,inventory(question=asked))
+                self.assertEqual(result['problems'],[],(marker,asked))
+                self.assertEqual(result['blockers'],{'07-cross-cutting-concerns.md':1})
+        files={'07-cross-cutting-concerns.md':'[NEEDS CLARIFICATION: which owner: field holds the basis?]'}
+        result=self.gate.evaluate_inventory(files,inventory(question='which owner: field holds the basis?'))
+        self.assertEqual(result['problems'],[])
+
+    def test_owner_sentence_with_internal_stops_is_stripped(self):
+        for marker,expected in (('lawful basis? Owner: Finance Ops (J. Smith).','lawful basis?'),('lawful basis? Owner: Retail IT, see v1.2 docs.','lawful basis?'),
+                                ('lawful basis? Owners: X and Y','lawful basis?'),('lawful basis? Owner(s): X','lawful basis?'),
+                                ('lawful basis; Owner: X','lawful basis'),('lawful basis (Owner: X)','lawful basis')):
+            with self.subTest(marker=marker):
+                self.assertEqual(self.gate.marker_question(marker),expected)
+        for marker in ('What is the owner: field name?','who owns the basis? the owner decides.','lawful basis (Owner: X) for staff?'):
+            with self.subTest(marker=marker):
+                self.assertEqual(self.gate.marker_question(marker),marker.lower())
+        files={'07-cross-cutting-concerns.md':'[NEEDS CLARIFICATION: lawful basis? Owner: Finance Ops (J. Smith).]'}
+        result=self.gate.evaluate_inventory(files,inventory(question='lawful basis?'))
+        self.assertEqual(result['problems'],[])
+        self.assertEqual(result['blockers'],{'07-cross-cutting-concerns.md':1})
+
     def test_nonblocking_row_may_name_no_next_action(self):
         files={'07-cross-cutting-concerns.md':'[NEEDS CLARIFICATION: lawful basis]'}
         good=self.gate.evaluate_inventory(files,inventory(decision='No: runbook detail, no E2E claim uses it',claim='None',action='None'))
@@ -107,9 +132,19 @@ class E3Inventory(unittest.TestCase):
         dash=self.gate.evaluate_inventory(files,inventory(decision='No - runbook detail',claim='None',action='Owner follow-up'))
         self.assertTrue(any(p.startswith('E3 row needs Yes/No with a reason') for p in dash['problems']))
 
+    def test_reconciled_numbered_entries_read_newest(self):
+        for master,expected in (
+            ('**Reconciled:** (2) 2026-10-09, step 6a, request 2\n(1) 2026-10-08, step 6a, request 1\n**E2E gate (chunk 19):** Locked','2026-10-09'),
+            ('**Reconciled:** (1) 2026-10-08, request 1; (2) 2026-10-09, request 2\n','2026-10-09'),
+            ('**Reconciled:** (3) 2026-10-09, request 3\n\n(9) 2026-12-31 outside the line\n','2026-10-09'),
+            ('**Reconciled:** 2026-10-07, step 6a\n**E2E gate (chunk 19):** Open','2026-10-07'),
+            ('No reconciliation yet.\n',None)):
+            with self.subTest(master=master):
+                self.assertEqual(self.gate.reconciled_date(master),expected)
+
     def test_cli_new_reconciled_entry_keeps_same_day_order_check(self):
         source=PATH.parents[2]/'_fixtures/chain/run-2026-10-06-final/sdd-refunds-platform'
-        for line in ('**Reconciled:** 2026-10-06','**Reconciled:** 2026-10-06, step 6a by the author, request R, after its last edit'):
+        for line in ('**Reconciled:** 2026-10-06','**Reconciled:** 2026-10-06, step 6a by the author, request R, after its last edit','**Reconciled:** (2) 2026-10-06, step 6a by the author, request R\n(1) 2026-10-05, step 6a by the author, request Q'):
             with self.subTest(line=line),tempfile.TemporaryDirectory(prefix='triage-e4-') as tmp:
                 sdd=Path(tmp)/'sdd';shutil.copytree(source,sdd)
                 master=next(sdd.glob('*-sdd-master.md'))

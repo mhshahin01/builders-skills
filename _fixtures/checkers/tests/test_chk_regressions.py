@@ -25,6 +25,8 @@ class CheckerRegressions(unittest.TestCase):
         self.sdd = self.run / 'sdd-refunds-platform'
         self.lld = self.run / 'lld-refunds-platform'
         self.brd = self.run / 'brd-refunds-portal'
+        self.edit(self.sdd/'13e-service-loyalty-points.md', '| Takes back the points of a paid refund |',
+                  '| Takes back the points of a paid refund ('+L2+' BR-1) |')
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -82,13 +84,13 @@ class CheckerRegressions(unittest.TestCase):
         self.assertIn('13b-service-refund-requests.md Input Schedule waiting-requests-summary cites REFUNDS/UC-04, but is not in its entry points',
                       self.cli('check_sdd.py', self.sdd))
 
-    def test_sdd_trigger_row_citation_note_vs_problem(self):
-        note = '03 §7.3: Event: RefundPaid for LOYALTY/UC-02: its Input row in 13e-service-loyalty-points.md cites no use case (predates the trigger tie)'
-        out = self.cli('check_sdd.py', self.sdd)
-        self.clean(out)
-        self.assertIn('NOTES: 1', out)
-        self.assertIn(note, out)
+    def test_sdd_trigger_row_requires_matching_use_case_citation(self):
         p = self.sdd/'13e-service-loyalty-points.md'
+        self.edit(p, '| Takes back the points of a paid refund ('+L2+' BR-1) |', '| Takes back the points of a paid refund |')
+        out = self.cli('check_sdd.py', self.sdd)
+        self.assertRegex(out, r'(?m)^PROBLEMS: 1$')
+        self.assertNotIn('NOTES:', out)
+        self.assertIn('Event: RefundPaid for LOYALTY/UC-02: its Input row in 13e-service-loyalty-points.md cites no use case', out)
         self.edit(p, '| Takes back the points of a paid refund |', '| Takes back the points of a paid refund ('+L2+' BR-1) |')
         out = self.cli('check_sdd.py', self.sdd)
         self.clean(out)
@@ -135,7 +137,6 @@ class CheckerRegressions(unittest.TestCase):
         c[3] = c[3].replace(', `Event: RefundPaid`', '')
         c[6] = '`RefundPaid`'
         p.write_text(t.replace(line, ' | '.join(c)), encoding='utf-8', newline='\n')
-        self.edit(self.sdd/'13e-service-loyalty-points.md', '| Takes back the points of a paid refund |', '| Takes back the points of a paid refund ('+L2+' BR-1) |')
         out = self.cli('check_sdd.py', self.sdd)
         self.assertIn('03 §7.3: LOYALTY/UC-02 Events lists RefundPaid, which §14.5/§14.10 do not fire for LOYALTY/UC-02', out)
         self.assertIn('13e-service-loyalty-points.md Input Event RefundPaid cites LOYALTY/UC-02, but is not in its entry points', out)

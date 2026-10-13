@@ -219,7 +219,7 @@ for line in c03.splitlines():
                     continue
                 cites = trig_ucs.get((target, kind, name))
                 if cites is not None and not cites:
-                    notes.append(f"03 §7.3: {ep} for {uc_id}: its Input row in {target} cites no use case (predates the trigger tie)")
+                    problems.append(f"03 §7.3: {ep} for {uc_id}: its Input row in {target} cites no use case")
                 elif cites is not None and uc_id not in cites:
                     problems.append(f"03 §7.3: entry point {ep} for {uc_id}: its Input row in {target} cites {', '.join(sorted(cites))}, not {uc_id}")
             elif ep not in api_lists.get(target, set()):

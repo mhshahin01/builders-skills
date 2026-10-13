@@ -1,0 +1,1114 @@
+{
+  "source_run": "fc-2026-10-10",
+  "generated_skills_commit": "fbf4f8c",
+  "promotion_base_commit": "a22f97e",
+  "baseline": "chain/run-2026-10-13-fc",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "source_path": "run/AGENTS.md",
+      "original_sha256": "32fd3670d0ca18d80d49206467f7f793d27ec2f8af2514a86e3bf0c854ae8da2",
+      "baseline_sha256": "32fd3670d0ca18d80d49206467f7f793d27ec2f8af2514a86e3bf0c854ae8da2",
+      "changed": false
+    },
+    {
+      "path": "BASELINE-PROVENANCE.md",
+      "source_path": null,
+      "original_sha256": null,
+      "baseline_sha256": "5c0f6b39a14635cbb6066620720ca8e5d643c92eb459c21abe6e92bf881244a6",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/00-cover-and-changelog.md",
+      "source_path": "run/brd-loyalty-points/00-cover-and-changelog.md",
+      "original_sha256": "855b6a31090970216a8644de01c726eefde04f608daf660d5d2eaf5b22eb49e4",
+      "baseline_sha256": "855b6a31090970216a8644de01c726eefde04f608daf660d5d2eaf5b22eb49e4",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/01-executive-summary-and-context.md",
+      "source_path": "run/brd-loyalty-points/01-executive-summary-and-context.md",
+      "original_sha256": "67ebcdb14b6800a6425eaba2676eabaa99f846f13d96a3fdc6ab75db16224714",
+      "baseline_sha256": "5b21faef88718f923dc91d4b9c9afd5eb0f61d7ccdf3e73fb1ec8c59c9b761c1",
+      "changed": true
+    },
+    {
+      "path": "brd-loyalty-points/02-glossary-assumptions-facts.md",
+      "source_path": "run/brd-loyalty-points/02-glossary-assumptions-facts.md",
+      "original_sha256": "682c4dd4a4bfaf4cb6af8d57ac8403fc4d2b0ba8ffbeeeba6d9183da22942fca",
+      "baseline_sha256": "682c4dd4a4bfaf4cb6af8d57ac8403fc4d2b0ba8ffbeeeba6d9183da22942fca",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/03-definitions-and-domain-concepts.md",
+      "source_path": "run/brd-loyalty-points/03-definitions-and-domain-concepts.md",
+      "original_sha256": "efbffdcc9eb5072e40c46f0ca202cd359e7294adb971452aa180a2a842427b2d",
+      "baseline_sha256": "efbffdcc9eb5072e40c46f0ca202cd359e7294adb971452aa180a2a842427b2d",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/04-scope-and-personas.md",
+      "source_path": "run/brd-loyalty-points/04-scope-and-personas.md",
+      "original_sha256": "8daa77402137307779838de8cd2b59907250067ade73936007f8f967b54bb012",
+      "baseline_sha256": "8daa77402137307779838de8cd2b59907250067ade73936007f8f967b54bb012",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/05-user-journeys-overview.md",
+      "source_path": "run/brd-loyalty-points/05-user-journeys-overview.md",
+      "original_sha256": "ecaac8485f6e592ff782595ab8834f4c2c37c67a1c4f82c66e5f43c333f5dfd7",
+      "baseline_sha256": "ecaac8485f6e592ff782595ab8834f4c2c37c67a1c4f82c66e5f43c333f5dfd7",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/06a-use-cases-member.md",
+      "source_path": "run/brd-loyalty-points/06a-use-cases-member.md",
+      "original_sha256": "f7c3cee83a558cef42eba7c5cee4596053c26d3be584fe9ba2ffe7710feba695",
+      "baseline_sha256": "f7c3cee83a558cef42eba7c5cee4596053c26d3be584fe9ba2ffe7710feba695",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/07-users-use-cases-matrix.md",
+      "source_path": "run/brd-loyalty-points/07-users-use-cases-matrix.md",
+      "original_sha256": "2e488746a1e4cafcf50e3e54a17f117f551312bb9a00dc6b25c74df377cec92a",
+      "baseline_sha256": "2e488746a1e4cafcf50e3e54a17f117f551312bb9a00dc6b25c74df377cec92a",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/08-integrations.md",
+      "source_path": "run/brd-loyalty-points/08-integrations.md",
+      "original_sha256": "372f9914b4b3bf22335ccac5ce97c118a59c280c2c023521a70096168e3cb10d",
+      "baseline_sha256": "372f9914b4b3bf22335ccac5ce97c118a59c280c2c023521a70096168e3cb10d",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/09-reporting-and-analytics.md",
+      "source_path": "run/brd-loyalty-points/09-reporting-and-analytics.md",
+      "original_sha256": "5598493a060875bab86b95b0d22f0bfaa093fe55aa877b2b5678e268dd6198df",
+      "baseline_sha256": "5598493a060875bab86b95b0d22f0bfaa093fe55aa877b2b5678e268dd6198df",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/10-nfrs.md",
+      "source_path": "run/brd-loyalty-points/10-nfrs.md",
+      "original_sha256": "365e6c865304f5767d6beda1834d805305576acf8e5ffe3b71f95e8aef1c8ae7",
+      "baseline_sha256": "365e6c865304f5767d6beda1834d805305576acf8e5ffe3b71f95e8aef1c8ae7",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/11-summary-and-uiux.md",
+      "source_path": "run/brd-loyalty-points/11-summary-and-uiux.md",
+      "original_sha256": "5cd10e0229c0efcb4134389857a53847bdd76dcc76b497c0baf279b67687002c",
+      "baseline_sha256": "33394dd9b75a8c8f90b4f707760ab6c7d36a9252bf37ec15245e3f3e06ab6c3b",
+      "changed": true
+    },
+    {
+      "path": "brd-loyalty-points/12-appendix-and-wishlist.md",
+      "source_path": "run/brd-loyalty-points/12-appendix-and-wishlist.md",
+      "original_sha256": "64928d5b89374377e92cf0cb7dd9b3257574d01930b7e65cc316e513d4f71bad",
+      "baseline_sha256": "64928d5b89374377e92cf0cb7dd9b3257574d01930b7e65cc316e513d4f71bad",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/13-open-items-and-clarifications.md",
+      "source_path": "run/brd-loyalty-points/13-open-items-and-clarifications.md",
+      "original_sha256": "ed5daa3820f855c61ae51b90c34c4a9850bc13d643d80740bfda48e9495dbedd",
+      "baseline_sha256": "ed5daa3820f855c61ae51b90c34c4a9850bc13d643d80740bfda48e9495dbedd",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/14-todo.md",
+      "source_path": "run/brd-loyalty-points/14-todo.md",
+      "original_sha256": "a53c298d55749912cf06ddae52d7cd19703c6af2b32f60f125824fce7eb2183a",
+      "baseline_sha256": "72bbdac749ebf44577873066aa212587ce40d9920963f5885deeb9f57f5cac6b",
+      "changed": true
+    },
+    {
+      "path": "brd-loyalty-points/decision-log.md",
+      "source_path": "run/brd-loyalty-points/decision-log.md",
+      "original_sha256": "7f2d1705334ab428eff932ad18eb7332dfe99fc561402d240c0baa1533f0f001",
+      "baseline_sha256": "7f2d1705334ab428eff932ad18eb7332dfe99fc561402d240c0baa1533f0f001",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/loyalty-points-brd-master.md",
+      "source_path": "run/brd-loyalty-points/loyalty-points-brd-master.md",
+      "original_sha256": "c58fe0554d1bfe2f154601a1580edf47a9d620197302593aec282e2b749aed17",
+      "baseline_sha256": "ae5abe54e1db423fa90f0a1036a7e87c9babcb68b3c4584d366a9ee809d68f6e",
+      "changed": true
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/00-cover-and-changelog.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/00-cover-and-changelog.md",
+      "original_sha256": "3a3c28c9f9000fe14032379d13b2afdc0ae583ce0f2ea4cac6c081b6fff7a7b9",
+      "baseline_sha256": "3a3c28c9f9000fe14032379d13b2afdc0ae583ce0f2ea4cac6c081b6fff7a7b9",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/01-executive-summary-and-context.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/01-executive-summary-and-context.md",
+      "original_sha256": "e76a5a5ac1ffaa3203dcc06e416b60cd2be9c493700857ac7bd9fe72324c8cd5",
+      "baseline_sha256": "e76a5a5ac1ffaa3203dcc06e416b60cd2be9c493700857ac7bd9fe72324c8cd5",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/02-glossary-assumptions-facts.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/02-glossary-assumptions-facts.md",
+      "original_sha256": "78ea31048c3ba8ba5d17256b48caab1247015d264bcea2ea8ff3ed92e3e9778c",
+      "baseline_sha256": "78ea31048c3ba8ba5d17256b48caab1247015d264bcea2ea8ff3ed92e3e9778c",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/03-definitions-and-domain-concepts.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/03-definitions-and-domain-concepts.md",
+      "original_sha256": "92d53b6b66bc1fde02021c0eb79c5a4a987b13dc0679f0e10ff4cab40a97e63e",
+      "baseline_sha256": "92d53b6b66bc1fde02021c0eb79c5a4a987b13dc0679f0e10ff4cab40a97e63e",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/04-scope-and-personas.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/04-scope-and-personas.md",
+      "original_sha256": "2fe7ff0241297459d8036e314640917206d7e2d7935569234b7baa3961b9b25d",
+      "baseline_sha256": "2fe7ff0241297459d8036e314640917206d7e2d7935569234b7baa3961b9b25d",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/05-user-journeys-overview.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/05-user-journeys-overview.md",
+      "original_sha256": "5f145f436251d04a767b390ef943a97493eaff1fdc191492c3c28b077f9406f1",
+      "baseline_sha256": "5f145f436251d04a767b390ef943a97493eaff1fdc191492c3c28b077f9406f1",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/06a-use-cases-member.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/06a-use-cases-member.md",
+      "original_sha256": "5b495da022f7c464f371a727f4bf068eeff59743b012c2cbdb1073f0eb78a03e",
+      "baseline_sha256": "5b495da022f7c464f371a727f4bf068eeff59743b012c2cbdb1073f0eb78a03e",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/07-users-use-cases-matrix.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/07-users-use-cases-matrix.md",
+      "original_sha256": "c518eccf620b2aef12c4e0bc881ed0a9224e848abde68ac9ce6024374032e0af",
+      "baseline_sha256": "c518eccf620b2aef12c4e0bc881ed0a9224e848abde68ac9ce6024374032e0af",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/08-integrations.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/08-integrations.md",
+      "original_sha256": "427946ddee8c929e8792320fe12d248cb0b9b86cead57ef781704e5d857f431f",
+      "baseline_sha256": "427946ddee8c929e8792320fe12d248cb0b9b86cead57ef781704e5d857f431f",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/09-reporting-and-analytics.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/09-reporting-and-analytics.md",
+      "original_sha256": "2f96684d9121e6b2d7a87ba2ff6faadd0ad6f756fe39c6937cafc4c3353682ba",
+      "baseline_sha256": "2f96684d9121e6b2d7a87ba2ff6faadd0ad6f756fe39c6937cafc4c3353682ba",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/10-nfrs.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/10-nfrs.md",
+      "original_sha256": "2e4cc09f8ba11158e2447d20306fb41aef8fb871cf8fb3f2a3def7c122c59ff4",
+      "baseline_sha256": "2e4cc09f8ba11158e2447d20306fb41aef8fb871cf8fb3f2a3def7c122c59ff4",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/11-summary-and-uiux.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/11-summary-and-uiux.md",
+      "original_sha256": "d475c85e7f4bd2a8fe7072831f9e4b871a4de4f50039f67cb872571be78faf3e",
+      "baseline_sha256": "d475c85e7f4bd2a8fe7072831f9e4b871a4de4f50039f67cb872571be78faf3e",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/12-appendix-and-wishlist.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/12-appendix-and-wishlist.md",
+      "original_sha256": "1f6ab99b12565686d9135098341219bf6e2ff7bc2b7f787dd8e085b0be130bb8",
+      "baseline_sha256": "1f6ab99b12565686d9135098341219bf6e2ff7bc2b7f787dd8e085b0be130bb8",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/13-open-items-and-clarifications.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/13-open-items-and-clarifications.md",
+      "original_sha256": "158660f7454e1eae7ddf5f6db446a861e137085129b0a5f88bff96a4d64b0e7c",
+      "baseline_sha256": "158660f7454e1eae7ddf5f6db446a861e137085129b0a5f88bff96a4d64b0e7c",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/14-todo.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/14-todo.md",
+      "original_sha256": "90040a6dd921d7be6f3b6ec8b667776da936e02b7041595844b8f78707bec47b",
+      "baseline_sha256": "90040a6dd921d7be6f3b6ec8b667776da936e02b7041595844b8f78707bec47b",
+      "changed": false
+    },
+    {
+      "path": "brd-loyalty-points/source-snapshot-v1.0/loyalty-points-brd-master.md",
+      "source_path": "run/brd-loyalty-points/source-snapshot-v1.0/loyalty-points-brd-master.md",
+      "original_sha256": "656aa560f214267df34181b5befa8c4400772456542c61322a9aec2003b17e2b",
+      "baseline_sha256": "656aa560f214267df34181b5befa8c4400772456542c61322a9aec2003b17e2b",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/00-cover-and-changelog.md",
+      "source_path": "run/brd-refunds-portal/00-cover-and-changelog.md",
+      "original_sha256": "9e9bdb7d684111d1fd439afa417dae74735e509681d6b0f1eef3eb7556f7d7e6",
+      "baseline_sha256": "9e9bdb7d684111d1fd439afa417dae74735e509681d6b0f1eef3eb7556f7d7e6",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/01-executive-summary-and-context.md",
+      "source_path": "run/brd-refunds-portal/01-executive-summary-and-context.md",
+      "original_sha256": "753461dbdca74bae1e77fab82c43ea97c0a854f7a52bae9c4ed7af52efe4d588",
+      "baseline_sha256": "753461dbdca74bae1e77fab82c43ea97c0a854f7a52bae9c4ed7af52efe4d588",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/02-glossary-assumptions-facts.md",
+      "source_path": "run/brd-refunds-portal/02-glossary-assumptions-facts.md",
+      "original_sha256": "9b16a4368c02132bb9c380933fced3b03376c08830f4717e7005f5b3235bcf3c",
+      "baseline_sha256": "2ccab8f57b38757b9e76de12a677e96e170a8a61523ed1604e73a11554864eaf",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/03-definitions-and-domain-concepts.md",
+      "source_path": "run/brd-refunds-portal/03-definitions-and-domain-concepts.md",
+      "original_sha256": "960f11108b875f9cbb2783b3147831adb75609f272360939e298849210f663ba",
+      "baseline_sha256": "960f11108b875f9cbb2783b3147831adb75609f272360939e298849210f663ba",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/04-scope-and-personas.md",
+      "source_path": "run/brd-refunds-portal/04-scope-and-personas.md",
+      "original_sha256": "2d2101b74a87ed8701edc77f90fb9eac904c0e1ee137f2aef1400e6f923a381b",
+      "baseline_sha256": "2d2101b74a87ed8701edc77f90fb9eac904c0e1ee137f2aef1400e6f923a381b",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/05-user-journeys-overview.md",
+      "source_path": "run/brd-refunds-portal/05-user-journeys-overview.md",
+      "original_sha256": "d46fa5c85992094906d049204c20824fdc2c5a0d55ee53b9e679aacc69df5043",
+      "baseline_sha256": "d46fa5c85992094906d049204c20824fdc2c5a0d55ee53b9e679aacc69df5043",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/06a-use-cases-customer.md",
+      "source_path": "run/brd-refunds-portal/06a-use-cases-customer.md",
+      "original_sha256": "90ca1a272f0232ec3b67ba8944cece40fda1a1d429f8b3d87294832651d2f147",
+      "baseline_sha256": "981c0282098fa11263d5fe724e0a7dcadeb8810f2aebae647e03f7351f7a2260",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/06b-use-cases-branch-manager.md",
+      "source_path": "run/brd-refunds-portal/06b-use-cases-branch-manager.md",
+      "original_sha256": "feeb2aeda39ecb875fcc30c1788e863e1a047f2c3ecaf419805f4307fe46cbc4",
+      "baseline_sha256": "90cd7c088521c148c01dca494d5362bb1dfd369e6563d81ce62bae95fc3dc114",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/07-users-use-cases-matrix.md",
+      "source_path": "run/brd-refunds-portal/07-users-use-cases-matrix.md",
+      "original_sha256": "975d9f4bc4ba44d1d0ff0f6e8885ef6c687d84f4b598d92e20cbbbfd63957680",
+      "baseline_sha256": "975d9f4bc4ba44d1d0ff0f6e8885ef6c687d84f4b598d92e20cbbbfd63957680",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/08-integrations.md",
+      "source_path": "run/brd-refunds-portal/08-integrations.md",
+      "original_sha256": "c83a391acd38356adb40f0f31e6b4ec8907b7f85f202055189325e9704cc354c",
+      "baseline_sha256": "c83a391acd38356adb40f0f31e6b4ec8907b7f85f202055189325e9704cc354c",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/09-reporting-and-analytics.md",
+      "source_path": "run/brd-refunds-portal/09-reporting-and-analytics.md",
+      "original_sha256": "5b21e190f18c67a9482a9106289ce93c2c7b2109eaacc5fe81392db4d06ac8ec",
+      "baseline_sha256": "5993853fb343aa3f036f81113d3d6565dfcdaa6f7561de76a9b53ed5cf94e3a6",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/10-nfrs.md",
+      "source_path": "run/brd-refunds-portal/10-nfrs.md",
+      "original_sha256": "06320193291ccd5bfd000de646c875819ee7c59d62b3e98d729bf0513f90a716",
+      "baseline_sha256": "06320193291ccd5bfd000de646c875819ee7c59d62b3e98d729bf0513f90a716",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/11-summary-and-uiux.md",
+      "source_path": "run/brd-refunds-portal/11-summary-and-uiux.md",
+      "original_sha256": "ba9b13ef0f200702bf902d2132c118bc336b78338d0c42570b9c436297410447",
+      "baseline_sha256": "bf6533bdfb97183cdec2c620df2c39ed39268e901240ac615274088747dd2727",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/12-appendix-and-wishlist.md",
+      "source_path": "run/brd-refunds-portal/12-appendix-and-wishlist.md",
+      "original_sha256": "1de8414e37988beb9d16a82b75b9dcf782bb1b4a608c97c55e26951a23e66e03",
+      "baseline_sha256": "1de8414e37988beb9d16a82b75b9dcf782bb1b4a608c97c55e26951a23e66e03",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/13-open-items-and-clarifications.md",
+      "source_path": "run/brd-refunds-portal/13-open-items-and-clarifications.md",
+      "original_sha256": "fcf6cecf040aae973dc29579d58b6feb62d56e04c9a8359a444329e6ea4b1469",
+      "baseline_sha256": "fcf6cecf040aae973dc29579d58b6feb62d56e04c9a8359a444329e6ea4b1469",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/14-todo.md",
+      "source_path": "run/brd-refunds-portal/14-todo.md",
+      "original_sha256": "6665f99ed70722637ad9bdca376786896f42ac164f588443fb988403d6e45984",
+      "baseline_sha256": "b117f83b5f031c9b49ab587572dde2c3f674de904d212c826fc4619863ce1cc1",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/decision-log.md",
+      "source_path": "run/brd-refunds-portal/decision-log.md",
+      "original_sha256": "833095404433024e42949cd44b9eba8e6a4343548952c0254a1db08346986f72",
+      "baseline_sha256": "93e1c8a26edd7c134d5f0af540865616fc71f90ef11a41ae3b16fba0aa85f79f",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/refunds-portal-brd-master.md",
+      "source_path": "run/brd-refunds-portal/refunds-portal-brd-master.md",
+      "original_sha256": "13ae24367e2dc12c571bb60462f101590e8dceae2c7b6b01a3b1c3705365b59a",
+      "baseline_sha256": "e8d22f29a7bf711aa0060d549c6dfcb81b085fa084e43f2dc40d72e6bbbb1379",
+      "changed": true
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/00-cover-and-changelog.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/00-cover-and-changelog.md",
+      "original_sha256": "9ecab57e06086d91a193244abb20c398f6538ce0ed8371b83deb9dd1e4b36100",
+      "baseline_sha256": "9ecab57e06086d91a193244abb20c398f6538ce0ed8371b83deb9dd1e4b36100",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/01-executive-summary-and-context.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/01-executive-summary-and-context.md",
+      "original_sha256": "17beda77167fc0f5dd3a9034a8577d4d6cf75c14902f1fa7b9d885e2776d852a",
+      "baseline_sha256": "17beda77167fc0f5dd3a9034a8577d4d6cf75c14902f1fa7b9d885e2776d852a",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/02-glossary-assumptions-facts.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/02-glossary-assumptions-facts.md",
+      "original_sha256": "bf9b77aab770ffc1283f7020f1768ab03d1fc55da173b5104f2eafaf39fb7055",
+      "baseline_sha256": "bf9b77aab770ffc1283f7020f1768ab03d1fc55da173b5104f2eafaf39fb7055",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/03-definitions-and-domain-concepts.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/03-definitions-and-domain-concepts.md",
+      "original_sha256": "09a62de234e23795c13f17a16bfe15607ae96cd1aefd4f382d65e37ed048c9a0",
+      "baseline_sha256": "09a62de234e23795c13f17a16bfe15607ae96cd1aefd4f382d65e37ed048c9a0",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/04-scope-and-personas.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/04-scope-and-personas.md",
+      "original_sha256": "6314998d5f8106907d76cdf0ec1dae5f834dcbcc1d062e9c2d2e137d61c2c482",
+      "baseline_sha256": "6314998d5f8106907d76cdf0ec1dae5f834dcbcc1d062e9c2d2e137d61c2c482",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/05-user-journeys-overview.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/05-user-journeys-overview.md",
+      "original_sha256": "a10197395281676058c3d38bf10d170b07a32f2993fa2fc8ad90e0cc8eba64b9",
+      "baseline_sha256": "a10197395281676058c3d38bf10d170b07a32f2993fa2fc8ad90e0cc8eba64b9",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/06a-use-cases-customer.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/06a-use-cases-customer.md",
+      "original_sha256": "64ce3bc5d148795c38f91d559dd86ad038ec1a727f3ae6d46e7f796abdda157d",
+      "baseline_sha256": "64ce3bc5d148795c38f91d559dd86ad038ec1a727f3ae6d46e7f796abdda157d",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/06b-use-cases-branch-manager.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/06b-use-cases-branch-manager.md",
+      "original_sha256": "d37bd260caaf5221e5267a4456216f3ff9d4cfe818f3fa8bc3576b73c2835acf",
+      "baseline_sha256": "d37bd260caaf5221e5267a4456216f3ff9d4cfe818f3fa8bc3576b73c2835acf",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/07-users-use-cases-matrix.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/07-users-use-cases-matrix.md",
+      "original_sha256": "a98a062555afb8a29033aacc5faff86cb9ff57a09149c3b991643483a45de352",
+      "baseline_sha256": "a98a062555afb8a29033aacc5faff86cb9ff57a09149c3b991643483a45de352",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/08-integrations.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/08-integrations.md",
+      "original_sha256": "7f60adf52a008909671578c76d2c1819e8f3ee965c5389fadf33993521eb0ef1",
+      "baseline_sha256": "7f60adf52a008909671578c76d2c1819e8f3ee965c5389fadf33993521eb0ef1",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/09-reporting-and-analytics.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/09-reporting-and-analytics.md",
+      "original_sha256": "ac2dba2f40af4390199ca69f017794c16110e561661e957f7230793fcd532b64",
+      "baseline_sha256": "ac2dba2f40af4390199ca69f017794c16110e561661e957f7230793fcd532b64",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/10-nfrs.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/10-nfrs.md",
+      "original_sha256": "31319232582cc18dd3992e7530f29059c8dc78b7b3d4931f0b26072913835898",
+      "baseline_sha256": "31319232582cc18dd3992e7530f29059c8dc78b7b3d4931f0b26072913835898",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/11-summary-and-uiux.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/11-summary-and-uiux.md",
+      "original_sha256": "2c7a49e19a774d88f8649f6c2a7775ccf8491de14c1f6a262736a8bd0b81fc92",
+      "baseline_sha256": "2c7a49e19a774d88f8649f6c2a7775ccf8491de14c1f6a262736a8bd0b81fc92",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/12-appendix-and-wishlist.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/12-appendix-and-wishlist.md",
+      "original_sha256": "e240ef6aeda8545ba899e5c71a08294d122bc3fc0f86468cd08a89c53f9944d3",
+      "baseline_sha256": "e240ef6aeda8545ba899e5c71a08294d122bc3fc0f86468cd08a89c53f9944d3",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/13-open-items-and-clarifications.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/13-open-items-and-clarifications.md",
+      "original_sha256": "e7f194f6c67287355a4cc32d2a1dd7cec95f04f2ebf0c46b33489d5e3ca4433b",
+      "baseline_sha256": "e7f194f6c67287355a4cc32d2a1dd7cec95f04f2ebf0c46b33489d5e3ca4433b",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/14-todo.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/14-todo.md",
+      "original_sha256": "167c65a1b098b89cfb3910bb60959829c193b6c22151882de27125d5752c9dc9",
+      "baseline_sha256": "167c65a1b098b89cfb3910bb60959829c193b6c22151882de27125d5752c9dc9",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/15-implementation.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/15-implementation.md",
+      "original_sha256": "cf5aadd0e86c3f1798bd5beb3ac8aae369392307913be01da1a30eec8841ace2",
+      "baseline_sha256": "cf5aadd0e86c3f1798bd5beb3ac8aae369392307913be01da1a30eec8841ace2",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/16-uat-bat-test-cases.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/16-uat-bat-test-cases.md",
+      "original_sha256": "809fdd17a1b3dfbc8f889430bd05e9445350a01fbbc538c28934a0c388b624f8",
+      "baseline_sha256": "809fdd17a1b3dfbc8f889430bd05e9445350a01fbbc538c28934a0c388b624f8",
+      "changed": false
+    },
+    {
+      "path": "brd-refunds-portal/source-snapshot-v1.0/refunds-portal-brd-master.md",
+      "source_path": "run/brd-refunds-portal/source-snapshot-v1.0/refunds-portal-brd-master.md",
+      "original_sha256": "5d67bf85dd433aace62102219bf458aa9f76bd033e577be5f81c869b2bf3c634",
+      "baseline_sha256": "5d67bf85dd433aace62102219bf458aa9f76bd033e577be5f81c869b2bf3c634",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/00-metadata.md",
+      "source_path": "run/lld-refunds-platform/00-metadata.md",
+      "original_sha256": "db6aea15bf0d2e8fca92280e5b33dc36c2fbeddbfbc8f2fc1e93b459b7e19ee6",
+      "baseline_sha256": "db6aea15bf0d2e8fca92280e5b33dc36c2fbeddbfbc8f2fc1e93b459b7e19ee6",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/01-purpose-and-scope.md",
+      "source_path": "run/lld-refunds-platform/01-purpose-and-scope.md",
+      "original_sha256": "4e4bc510643abc901d409d3bf0327fcfa0c28c8f00e0709339369ea837899702",
+      "baseline_sha256": "4e4bc510643abc901d409d3bf0327fcfa0c28c8f00e0709339369ea837899702",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/02-context.md",
+      "source_path": "run/lld-refunds-platform/02-context.md",
+      "original_sha256": "3b61f95a49cffa5ce79bafc169907c59aa996b3b5f34c23068b401c547966d41",
+      "baseline_sha256": "3b61f95a49cffa5ce79bafc169907c59aa996b3b5f34c23068b401c547966d41",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/03-architecture.md",
+      "source_path": "run/lld-refunds-platform/03-architecture.md",
+      "original_sha256": "1df71b10c771efd9937f94d8ea9e3597bb7f33de2590a42e6f88f186933ab5fc",
+      "baseline_sha256": "1df71b10c771efd9937f94d8ea9e3597bb7f33de2590a42e6f88f186933ab5fc",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/04-implementation/customer-notification.md",
+      "source_path": "run/lld-refunds-platform/04-implementation/customer-notification.md",
+      "original_sha256": "42b2707d79ece3336a012c8bb9f5d3092dc5468c9e4a239b86fc264988480773",
+      "baseline_sha256": "42b2707d79ece3336a012c8bb9f5d3092dc5468c9e4a239b86fc264988480773",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/04-implementation/loyalty-points.md",
+      "source_path": "run/lld-refunds-platform/04-implementation/loyalty-points.md",
+      "original_sha256": "9c2f5e2ff2fe93178cb64f87f00757844540a93073b6f7233d58f63e90b7f91c",
+      "baseline_sha256": "9c2f5e2ff2fe93178cb64f87f00757844540a93073b6f7233d58f63e90b7f91c",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/04-implementation/payout.md",
+      "source_path": "run/lld-refunds-platform/04-implementation/payout.md",
+      "original_sha256": "1fb13e1616de5639fbca19a00133b1a29fcc2ecc158ca5d8b00693e263b7adc0",
+      "baseline_sha256": "1fb13e1616de5639fbca19a00133b1a29fcc2ecc158ca5d8b00693e263b7adc0",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/04-implementation/refund-request.md",
+      "source_path": "run/lld-refunds-platform/04-implementation/refund-request.md",
+      "original_sha256": "701f8c72b1ad1694a0ca267e16c0b5ee7d0948a27f87e600e2d7b2f9507136c1",
+      "baseline_sha256": "701f8c72b1ad1694a0ca267e16c0b5ee7d0948a27f87e600e2d7b2f9507136c1",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/05-data-model.md",
+      "source_path": "run/lld-refunds-platform/05-data-model.md",
+      "original_sha256": "4547cccd754bcab10150e3051069451e90373db05063a71eb5fbdc681ee6d889",
+      "baseline_sha256": "4547cccd754bcab10150e3051069451e90373db05063a71eb5fbdc681ee6d889",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/06-api-contracts.md",
+      "source_path": "run/lld-refunds-platform/06-api-contracts.md",
+      "original_sha256": "3d4f61e39ebdbbf21f0d6ffa42433b9e5111fc2725e9a00fd34c0051693b57f1",
+      "baseline_sha256": "3d4f61e39ebdbbf21f0d6ffa42433b9e5111fc2725e9a00fd34c0051693b57f1",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/07-event-contracts.md",
+      "source_path": "run/lld-refunds-platform/07-event-contracts.md",
+      "original_sha256": "d82f0c194c733bd01e51ac627b4abf29c095d627f817fc30445402b993949210",
+      "baseline_sha256": "d82f0c194c733bd01e51ac627b4abf29c095d627f817fc30445402b993949210",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/08-state-and-rules.md",
+      "source_path": "run/lld-refunds-platform/08-state-and-rules.md",
+      "original_sha256": "afa1921dfb8e6d869317074ad801a5dc69e5287ace9c80876eec15c67c751fe7",
+      "baseline_sha256": "afa1921dfb8e6d869317074ad801a5dc69e5287ace9c80876eec15c67c751fe7",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/09-cross-cutting.md",
+      "source_path": "run/lld-refunds-platform/09-cross-cutting.md",
+      "original_sha256": "e4e7202aa1b15741bc5e75187fc18d974fdb4a1862a50dc76556d1c5ed1a4ea9",
+      "baseline_sha256": "e4e7202aa1b15741bc5e75187fc18d974fdb4a1862a50dc76556d1c5ed1a4ea9",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/10-operations.md",
+      "source_path": "run/lld-refunds-platform/10-operations.md",
+      "original_sha256": "4961cf94eb27cc1c0217d5168d5589679c0e68457de219027de4d141ed78e6b5",
+      "baseline_sha256": "4961cf94eb27cc1c0217d5168d5589679c0e68457de219027de4d141ed78e6b5",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/11-security.md",
+      "source_path": "run/lld-refunds-platform/11-security.md",
+      "original_sha256": "420659ee8762aa15459947c447c096fe08e7f8d02f13ad8e2ff24297daeace98",
+      "baseline_sha256": "420659ee8762aa15459947c447c096fe08e7f8d02f13ad8e2ff24297daeace98",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/12-performance.md",
+      "source_path": "run/lld-refunds-platform/12-performance.md",
+      "original_sha256": "40ad57d81de46a83c9aaf2b6175ba9b92ee94cf4893c52d8004d9f4cd0034311",
+      "baseline_sha256": "40ad57d81de46a83c9aaf2b6175ba9b92ee94cf4893c52d8004d9f4cd0034311",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/13-testing.md",
+      "source_path": "run/lld-refunds-platform/13-testing.md",
+      "original_sha256": "68f37a1e76edb92b39bae5937cd66a134aee1bab624f801d7b85f5852f35ebc4",
+      "baseline_sha256": "68f37a1e76edb92b39bae5937cd66a134aee1bab624f801d7b85f5852f35ebc4",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/14-frontend.md",
+      "source_path": "run/lld-refunds-platform/14-frontend.md",
+      "original_sha256": "0b1e52807adb5043adb2345a2534c5993390cd9b598a052c39872817065c152f",
+      "baseline_sha256": "0b1e52807adb5043adb2345a2534c5993390cd9b598a052c39872817065c152f",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/15-open-questions.md",
+      "source_path": "run/lld-refunds-platform/15-open-questions.md",
+      "original_sha256": "bba3815cbbbf18706c1a1a84da45bd0a00fbb6637ea377a915b4ea8d58b3bb03",
+      "baseline_sha256": "bba3815cbbbf18706c1a1a84da45bd0a00fbb6637ea377a915b4ea8d58b3bb03",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/16-references.md",
+      "source_path": "run/lld-refunds-platform/16-references.md",
+      "original_sha256": "64b73759e198af4dcd9af1575949e988c6bd70f10c7fb9bf2243eca1190cc4bd",
+      "baseline_sha256": "64b73759e198af4dcd9af1575949e988c6bd70f10c7fb9bf2243eca1190cc4bd",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/17-specs.md",
+      "source_path": "run/lld-refunds-platform/17-specs.md",
+      "original_sha256": "7e51b05946a0cdba0f4c2285493788b53131560a3ec01b80328d9923de7d7bf3",
+      "baseline_sha256": "7e51b05946a0cdba0f4c2285493788b53131560a3ec01b80328d9923de7d7bf3",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/18-open-items-and-clarifications.md",
+      "source_path": "run/lld-refunds-platform/18-open-items-and-clarifications.md",
+      "original_sha256": "e6719c8f972b6942f021041d9d31fa6f8cb248fac1294eb2dd58ebe9bf34c08a",
+      "baseline_sha256": "e6719c8f972b6942f021041d9d31fa6f8cb248fac1294eb2dd58ebe9bf34c08a",
+      "changed": false
+    },
+    {
+      "path": "lld-refunds-platform/refunds-platform-lld-master.md",
+      "source_path": "run/lld-refunds-platform/refunds-platform-lld-master.md",
+      "original_sha256": "bb3e704509183b13b45b961128174d97cc51228e5baa20f9da09abdcec8988aa",
+      "baseline_sha256": "bb3e704509183b13b45b961128174d97cc51228e5baa20f9da09abdcec8988aa",
+      "changed": false
+    },
+    {
+      "path": "review-comments-tracker.md",
+      "source_path": "run/review-comments-tracker.md",
+      "original_sha256": "3f3b6463cdb21547b7cfc7dc479c7fb7fec47124155be8428f190c7c0ab74f3a",
+      "baseline_sha256": "3f3b6463cdb21547b7cfc7dc479c7fb7fec47124155be8428f190c7c0ab74f3a",
+      "changed": false
+    },
+    {
+      "path": "review-panel-findings.md",
+      "source_path": "run/review-panel-findings.md",
+      "original_sha256": "ae00e2124eb65e3e2d03b9344bcaaa827fe91391486ad15c4ba8da6fd26c035f",
+      "baseline_sha256": "ae00e2124eb65e3e2d03b9344bcaaa827fe91391486ad15c4ba8da6fd26c035f",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/00-cover-and-changelog.md",
+      "source_path": "run/sdd-refunds-platform/00-cover-and-changelog.md",
+      "original_sha256": "c6137cd2918e174062913c888c6b80cab05a04424df6010300a7a868d362c50b",
+      "baseline_sha256": "c6137cd2918e174062913c888c6b80cab05a04424df6010300a7a868d362c50b",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/01-executive-summary-scope-risks.md",
+      "source_path": "run/sdd-refunds-platform/01-executive-summary-scope-risks.md",
+      "original_sha256": "af4e9c194e775a7edb9cf593aa42a975ccbe5b73f955202e4bb5c163eba542ee",
+      "baseline_sha256": "af4e9c194e775a7edb9cf593aa42a975ccbe5b73f955202e4bb5c163eba542ee",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/02-ecosystem-overview.md",
+      "source_path": "run/sdd-refunds-platform/02-ecosystem-overview.md",
+      "original_sha256": "2da34537c2a7ccc32870cb25a5631ed79b48d68a4e9fdd10c039d95f86246bb6",
+      "baseline_sha256": "2da34537c2a7ccc32870cb25a5631ed79b48d68a4e9fdd10c039d95f86246bb6",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/03-users-and-use-cases.md",
+      "source_path": "run/sdd-refunds-platform/03-users-and-use-cases.md",
+      "original_sha256": "59b0ac9f6de1c19916e7076266d2a23d682968c6b501a603c0afda830e4801b3",
+      "baseline_sha256": "59b0ac9f6de1c19916e7076266d2a23d682968c6b501a603c0afda830e4801b3",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/04-architecture-style-and-diagrams.md",
+      "source_path": "run/sdd-refunds-platform/04-architecture-style-and-diagrams.md",
+      "original_sha256": "47e9b2812ca403bdc43c019e5ecdd4faaf92360ead4f4a1ccac12314ba8ed616",
+      "baseline_sha256": "47e9b2812ca403bdc43c019e5ecdd4faaf92360ead4f4a1ccac12314ba8ed616",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/05-workflows-and-sequences.md",
+      "source_path": "run/sdd-refunds-platform/05-workflows-and-sequences.md",
+      "original_sha256": "40967f721312b4d65a7c9a1ba3e4632d94353646aa3121422f05ba7b1c3fcfbd",
+      "baseline_sha256": "40967f721312b4d65a7c9a1ba3e4632d94353646aa3121422f05ba7b1c3fcfbd",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/06-principles-and-decisions.md",
+      "source_path": "run/sdd-refunds-platform/06-principles-and-decisions.md",
+      "original_sha256": "b9510dd3b9be45ce1ced01a024350263a60e268327984e9cf7541d4af676515d",
+      "baseline_sha256": "b9510dd3b9be45ce1ced01a024350263a60e268327984e9cf7541d4af676515d",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/07-cross-cutting-concerns.md",
+      "source_path": "run/sdd-refunds-platform/07-cross-cutting-concerns.md",
+      "original_sha256": "a91441f252ac817d93ba794886832a06bf49ca2bcf316d0e3e8c0b746e356976",
+      "baseline_sha256": "a91441f252ac817d93ba794886832a06bf49ca2bcf316d0e3e8c0b746e356976",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/08-integrations.md",
+      "source_path": "run/sdd-refunds-platform/08-integrations.md",
+      "original_sha256": "ef2b4f5593f12fbd42dc786edee139682acfb28dff9a43729f7817cc1bdd952f",
+      "baseline_sha256": "ef2b4f5593f12fbd42dc786edee139682acfb28dff9a43729f7817cc1bdd952f",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/09-services-summary.md",
+      "source_path": "run/sdd-refunds-platform/09-services-summary.md",
+      "original_sha256": "a0d3bcc971189eee2c62da42eab6adacf45edc6fa1bc05f1c446444e537175e7",
+      "baseline_sha256": "a0d3bcc971189eee2c62da42eab6adacf45edc6fa1bc05f1c446444e537175e7",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/10-events-hub.md",
+      "source_path": "run/sdd-refunds-platform/10-events-hub.md",
+      "original_sha256": "9c072759a1253a26833e850e6a8ce3c5d2396b0c46799f57edd81cacc1e3c68d",
+      "baseline_sha256": "9c072759a1253a26833e850e6a8ce3c5d2396b0c46799f57edd81cacc1e3c68d",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/11-api-contracts.md",
+      "source_path": "run/sdd-refunds-platform/11-api-contracts.md",
+      "original_sha256": "feec0f7c665a488230e10dd168cf18abc9f02c321d502d2ea760c2c5b8b1f0fd",
+      "baseline_sha256": "feec0f7c665a488230e10dd168cf18abc9f02c321d502d2ea760c2c5b8b1f0fd",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/12-centralized-user-roles.md",
+      "source_path": "run/sdd-refunds-platform/12-centralized-user-roles.md",
+      "original_sha256": "64a2a93db19d9754a5ae037acf8d215e976ac41743dad42d3a77d0dc8c1cbdd8",
+      "baseline_sha256": "64a2a93db19d9754a5ae037acf8d215e976ac41743dad42d3a77d0dc8c1cbdd8",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/13a-service-refund-request.md",
+      "source_path": "run/sdd-refunds-platform/13a-service-refund-request.md",
+      "original_sha256": "dc40f633357d500ee300081c37bf2319fdc696d26392dcb9fc8b499189ed0898",
+      "baseline_sha256": "dc40f633357d500ee300081c37bf2319fdc696d26392dcb9fc8b499189ed0898",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/13b-service-payout.md",
+      "source_path": "run/sdd-refunds-platform/13b-service-payout.md",
+      "original_sha256": "b29686eb2043a2927f9f6968d639aa92e5af77c73674984198cbfece9eb7984e",
+      "baseline_sha256": "b29686eb2043a2927f9f6968d639aa92e5af77c73674984198cbfece9eb7984e",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/13c-service-customer-notification.md",
+      "source_path": "run/sdd-refunds-platform/13c-service-customer-notification.md",
+      "original_sha256": "6c7d719e96f7e50b8c27fa2c8477af69b78ab611a869afe570a2cc0b4cd774aa",
+      "baseline_sha256": "6c7d719e96f7e50b8c27fa2c8477af69b78ab611a869afe570a2cc0b4cd774aa",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/13d-service-loyalty-points.md",
+      "source_path": "run/sdd-refunds-platform/13d-service-loyalty-points.md",
+      "original_sha256": "a111dcfd0cb92e313ed131763922ab5d0b17fb73dbc099bf886370b6263d00b4",
+      "baseline_sha256": "a111dcfd0cb92e313ed131763922ab5d0b17fb73dbc099bf886370b6263d00b4",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/14-performance-and-capacity.md",
+      "source_path": "run/sdd-refunds-platform/14-performance-and-capacity.md",
+      "original_sha256": "f38ed0d7c1849f9e860c6ed0c259e2f225d412c6d89fe7f8dea118778d3f33a5",
+      "baseline_sha256": "f38ed0d7c1849f9e860c6ed0c259e2f225d412c6d89fe7f8dea118778d3f33a5",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/15-environments.md",
+      "source_path": "run/sdd-refunds-platform/15-environments.md",
+      "original_sha256": "2eaa82d79fdfc899bac62b1020f57d91658795a3bbcfc53de7be48304335f065",
+      "baseline_sha256": "2eaa82d79fdfc899bac62b1020f57d91658795a3bbcfc53de7be48304335f065",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/16-operations-runbook.md",
+      "source_path": "run/sdd-refunds-platform/16-operations-runbook.md",
+      "original_sha256": "e988e3792e970787f5866916f0f1006892101184aa44092e64fe5724efc695f8",
+      "baseline_sha256": "e988e3792e970787f5866916f0f1006892101184aa44092e64fe5724efc695f8",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/17-appendix-and-wishlist.md",
+      "source_path": "run/sdd-refunds-platform/17-appendix-and-wishlist.md",
+      "original_sha256": "4b2640819939de1c8b157d1f52a2db51cf6cf9ae366a10ed1fec6f97853eb6fb",
+      "baseline_sha256": "4b2640819939de1c8b157d1f52a2db51cf6cf9ae366a10ed1fec6f97853eb6fb",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/18-open-items-and-clarifications.md",
+      "source_path": "run/sdd-refunds-platform/18-open-items-and-clarifications.md",
+      "original_sha256": "c5141973cd818b85087d36fdebc090f44bd742d6041eca9ad92feeff9b506246",
+      "baseline_sha256": "c5141973cd818b85087d36fdebc090f44bd742d6041eca9ad92feeff9b506246",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/decision-log.md",
+      "source_path": "run/sdd-refunds-platform/decision-log.md",
+      "original_sha256": "522cde8ddb24a073cac4ebf7fd09166dc591c557883de45be7a744049a9fd4f2",
+      "baseline_sha256": "522cde8ddb24a073cac4ebf7fd09166dc591c557883de45be7a744049a9fd4f2",
+      "changed": false
+    },
+    {
+      "path": "sdd-refunds-platform/refunds-platform-sdd-master.md",
+      "source_path": "run/sdd-refunds-platform/refunds-platform-sdd-master.md",
+      "original_sha256": "eb2082158fbea4a8c370cc778b416c26315dafd4cc746baf9de9009cd1fe6382",
+      "baseline_sha256": "eb2082158fbea4a8c370cc778b416c26315dafd4cc746baf9de9009cd1fe6382",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/00-cover-and-changelog.md",
+      "source_path": "source/brd-loyalty-points/00-cover-and-changelog.md",
+      "original_sha256": "3a3c28c9f9000fe14032379d13b2afdc0ae583ce0f2ea4cac6c081b6fff7a7b9",
+      "baseline_sha256": "3a3c28c9f9000fe14032379d13b2afdc0ae583ce0f2ea4cac6c081b6fff7a7b9",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/01-executive-summary-and-context.md",
+      "source_path": "source/brd-loyalty-points/01-executive-summary-and-context.md",
+      "original_sha256": "e76a5a5ac1ffaa3203dcc06e416b60cd2be9c493700857ac7bd9fe72324c8cd5",
+      "baseline_sha256": "e76a5a5ac1ffaa3203dcc06e416b60cd2be9c493700857ac7bd9fe72324c8cd5",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/02-glossary-assumptions-facts.md",
+      "source_path": "source/brd-loyalty-points/02-glossary-assumptions-facts.md",
+      "original_sha256": "78ea31048c3ba8ba5d17256b48caab1247015d264bcea2ea8ff3ed92e3e9778c",
+      "baseline_sha256": "78ea31048c3ba8ba5d17256b48caab1247015d264bcea2ea8ff3ed92e3e9778c",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/03-definitions-and-domain-concepts.md",
+      "source_path": "source/brd-loyalty-points/03-definitions-and-domain-concepts.md",
+      "original_sha256": "92d53b6b66bc1fde02021c0eb79c5a4a987b13dc0679f0e10ff4cab40a97e63e",
+      "baseline_sha256": "92d53b6b66bc1fde02021c0eb79c5a4a987b13dc0679f0e10ff4cab40a97e63e",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/04-scope-and-personas.md",
+      "source_path": "source/brd-loyalty-points/04-scope-and-personas.md",
+      "original_sha256": "2fe7ff0241297459d8036e314640917206d7e2d7935569234b7baa3961b9b25d",
+      "baseline_sha256": "2fe7ff0241297459d8036e314640917206d7e2d7935569234b7baa3961b9b25d",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/05-user-journeys-overview.md",
+      "source_path": "source/brd-loyalty-points/05-user-journeys-overview.md",
+      "original_sha256": "5f145f436251d04a767b390ef943a97493eaff1fdc191492c3c28b077f9406f1",
+      "baseline_sha256": "5f145f436251d04a767b390ef943a97493eaff1fdc191492c3c28b077f9406f1",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/06a-use-cases-member.md",
+      "source_path": "source/brd-loyalty-points/06a-use-cases-member.md",
+      "original_sha256": "5b495da022f7c464f371a727f4bf068eeff59743b012c2cbdb1073f0eb78a03e",
+      "baseline_sha256": "5b495da022f7c464f371a727f4bf068eeff59743b012c2cbdb1073f0eb78a03e",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/07-users-use-cases-matrix.md",
+      "source_path": "source/brd-loyalty-points/07-users-use-cases-matrix.md",
+      "original_sha256": "c518eccf620b2aef12c4e0bc881ed0a9224e848abde68ac9ce6024374032e0af",
+      "baseline_sha256": "c518eccf620b2aef12c4e0bc881ed0a9224e848abde68ac9ce6024374032e0af",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/08-integrations.md",
+      "source_path": "source/brd-loyalty-points/08-integrations.md",
+      "original_sha256": "427946ddee8c929e8792320fe12d248cb0b9b86cead57ef781704e5d857f431f",
+      "baseline_sha256": "427946ddee8c929e8792320fe12d248cb0b9b86cead57ef781704e5d857f431f",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/09-reporting-and-analytics.md",
+      "source_path": "source/brd-loyalty-points/09-reporting-and-analytics.md",
+      "original_sha256": "2f96684d9121e6b2d7a87ba2ff6faadd0ad6f756fe39c6937cafc4c3353682ba",
+      "baseline_sha256": "2f96684d9121e6b2d7a87ba2ff6faadd0ad6f756fe39c6937cafc4c3353682ba",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/10-nfrs.md",
+      "source_path": "source/brd-loyalty-points/10-nfrs.md",
+      "original_sha256": "2e4cc09f8ba11158e2447d20306fb41aef8fb871cf8fb3f2a3def7c122c59ff4",
+      "baseline_sha256": "2e4cc09f8ba11158e2447d20306fb41aef8fb871cf8fb3f2a3def7c122c59ff4",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/11-summary-and-uiux.md",
+      "source_path": "source/brd-loyalty-points/11-summary-and-uiux.md",
+      "original_sha256": "d475c85e7f4bd2a8fe7072831f9e4b871a4de4f50039f67cb872571be78faf3e",
+      "baseline_sha256": "d475c85e7f4bd2a8fe7072831f9e4b871a4de4f50039f67cb872571be78faf3e",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/12-appendix-and-wishlist.md",
+      "source_path": "source/brd-loyalty-points/12-appendix-and-wishlist.md",
+      "original_sha256": "1f6ab99b12565686d9135098341219bf6e2ff7bc2b7f787dd8e085b0be130bb8",
+      "baseline_sha256": "1f6ab99b12565686d9135098341219bf6e2ff7bc2b7f787dd8e085b0be130bb8",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/13-open-items-and-clarifications.md",
+      "source_path": "source/brd-loyalty-points/13-open-items-and-clarifications.md",
+      "original_sha256": "158660f7454e1eae7ddf5f6db446a861e137085129b0a5f88bff96a4d64b0e7c",
+      "baseline_sha256": "158660f7454e1eae7ddf5f6db446a861e137085129b0a5f88bff96a4d64b0e7c",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/14-todo.md",
+      "source_path": "source/brd-loyalty-points/14-todo.md",
+      "original_sha256": "90040a6dd921d7be6f3b6ec8b667776da936e02b7041595844b8f78707bec47b",
+      "baseline_sha256": "90040a6dd921d7be6f3b6ec8b667776da936e02b7041595844b8f78707bec47b",
+      "changed": false
+    },
+    {
+      "path": "source/brd-loyalty-points/loyalty-points-brd-master.md",
+      "source_path": "source/brd-loyalty-points/loyalty-points-brd-master.md",
+      "original_sha256": "656aa560f214267df34181b5befa8c4400772456542c61322a9aec2003b17e2b",
+      "baseline_sha256": "656aa560f214267df34181b5befa8c4400772456542c61322a9aec2003b17e2b",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/00-cover-and-changelog.md",
+      "source_path": "source/brd-refunds-portal/00-cover-and-changelog.md",
+      "original_sha256": "9ecab57e06086d91a193244abb20c398f6538ce0ed8371b83deb9dd1e4b36100",
+      "baseline_sha256": "9ecab57e06086d91a193244abb20c398f6538ce0ed8371b83deb9dd1e4b36100",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/01-executive-summary-and-context.md",
+      "source_path": "source/brd-refunds-portal/01-executive-summary-and-context.md",
+      "original_sha256": "17beda77167fc0f5dd3a9034a8577d4d6cf75c14902f1fa7b9d885e2776d852a",
+      "baseline_sha256": "17beda77167fc0f5dd3a9034a8577d4d6cf75c14902f1fa7b9d885e2776d852a",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/02-glossary-assumptions-facts.md",
+      "source_path": "source/brd-refunds-portal/02-glossary-assumptions-facts.md",
+      "original_sha256": "bf9b77aab770ffc1283f7020f1768ab03d1fc55da173b5104f2eafaf39fb7055",
+      "baseline_sha256": "bf9b77aab770ffc1283f7020f1768ab03d1fc55da173b5104f2eafaf39fb7055",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/03-definitions-and-domain-concepts.md",
+      "source_path": "source/brd-refunds-portal/03-definitions-and-domain-concepts.md",
+      "original_sha256": "09a62de234e23795c13f17a16bfe15607ae96cd1aefd4f382d65e37ed048c9a0",
+      "baseline_sha256": "09a62de234e23795c13f17a16bfe15607ae96cd1aefd4f382d65e37ed048c9a0",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/04-scope-and-personas.md",
+      "source_path": "source/brd-refunds-portal/04-scope-and-personas.md",
+      "original_sha256": "6314998d5f8106907d76cdf0ec1dae5f834dcbcc1d062e9c2d2e137d61c2c482",
+      "baseline_sha256": "6314998d5f8106907d76cdf0ec1dae5f834dcbcc1d062e9c2d2e137d61c2c482",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/05-user-journeys-overview.md",
+      "source_path": "source/brd-refunds-portal/05-user-journeys-overview.md",
+      "original_sha256": "a10197395281676058c3d38bf10d170b07a32f2993fa2fc8ad90e0cc8eba64b9",
+      "baseline_sha256": "a10197395281676058c3d38bf10d170b07a32f2993fa2fc8ad90e0cc8eba64b9",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/06a-use-cases-customer.md",
+      "source_path": "source/brd-refunds-portal/06a-use-cases-customer.md",
+      "original_sha256": "64ce3bc5d148795c38f91d559dd86ad038ec1a727f3ae6d46e7f796abdda157d",
+      "baseline_sha256": "64ce3bc5d148795c38f91d559dd86ad038ec1a727f3ae6d46e7f796abdda157d",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/06b-use-cases-branch-manager.md",
+      "source_path": "source/brd-refunds-portal/06b-use-cases-branch-manager.md",
+      "original_sha256": "d37bd260caaf5221e5267a4456216f3ff9d4cfe818f3fa8bc3576b73c2835acf",
+      "baseline_sha256": "d37bd260caaf5221e5267a4456216f3ff9d4cfe818f3fa8bc3576b73c2835acf",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/07-users-use-cases-matrix.md",
+      "source_path": "source/brd-refunds-portal/07-users-use-cases-matrix.md",
+      "original_sha256": "a98a062555afb8a29033aacc5faff86cb9ff57a09149c3b991643483a45de352",
+      "baseline_sha256": "a98a062555afb8a29033aacc5faff86cb9ff57a09149c3b991643483a45de352",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/08-integrations.md",
+      "source_path": "source/brd-refunds-portal/08-integrations.md",
+      "original_sha256": "7f60adf52a008909671578c76d2c1819e8f3ee965c5389fadf33993521eb0ef1",
+      "baseline_sha256": "7f60adf52a008909671578c76d2c1819e8f3ee965c5389fadf33993521eb0ef1",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/09-reporting-and-analytics.md",
+      "source_path": "source/brd-refunds-portal/09-reporting-and-analytics.md",
+      "original_sha256": "ac2dba2f40af4390199ca69f017794c16110e561661e957f7230793fcd532b64",
+      "baseline_sha256": "ac2dba2f40af4390199ca69f017794c16110e561661e957f7230793fcd532b64",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/10-nfrs.md",
+      "source_path": "source/brd-refunds-portal/10-nfrs.md",
+      "original_sha256": "31319232582cc18dd3992e7530f29059c8dc78b7b3d4931f0b26072913835898",
+      "baseline_sha256": "31319232582cc18dd3992e7530f29059c8dc78b7b3d4931f0b26072913835898",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/11-summary-and-uiux.md",
+      "source_path": "source/brd-refunds-portal/11-summary-and-uiux.md",
+      "original_sha256": "2c7a49e19a774d88f8649f6c2a7775ccf8491de14c1f6a262736a8bd0b81fc92",
+      "baseline_sha256": "2c7a49e19a774d88f8649f6c2a7775ccf8491de14c1f6a262736a8bd0b81fc92",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/12-appendix-and-wishlist.md",
+      "source_path": "source/brd-refunds-portal/12-appendix-and-wishlist.md",
+      "original_sha256": "e240ef6aeda8545ba899e5c71a08294d122bc3fc0f86468cd08a89c53f9944d3",
+      "baseline_sha256": "e240ef6aeda8545ba899e5c71a08294d122bc3fc0f86468cd08a89c53f9944d3",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/13-open-items-and-clarifications.md",
+      "source_path": "source/brd-refunds-portal/13-open-items-and-clarifications.md",
+      "original_sha256": "e7f194f6c67287355a4cc32d2a1dd7cec95f04f2ebf0c46b33489d5e3ca4433b",
+      "baseline_sha256": "e7f194f6c67287355a4cc32d2a1dd7cec95f04f2ebf0c46b33489d5e3ca4433b",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/14-todo.md",
+      "source_path": "source/brd-refunds-portal/14-todo.md",
+      "original_sha256": "167c65a1b098b89cfb3910bb60959829c193b6c22151882de27125d5752c9dc9",
+      "baseline_sha256": "167c65a1b098b89cfb3910bb60959829c193b6c22151882de27125d5752c9dc9",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/15-implementation.md",
+      "source_path": "source/brd-refunds-portal/15-implementation.md",
+      "original_sha256": "cf5aadd0e86c3f1798bd5beb3ac8aae369392307913be01da1a30eec8841ace2",
+      "baseline_sha256": "cf5aadd0e86c3f1798bd5beb3ac8aae369392307913be01da1a30eec8841ace2",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/16-uat-bat-test-cases.md",
+      "source_path": "source/brd-refunds-portal/16-uat-bat-test-cases.md",
+      "original_sha256": "809fdd17a1b3dfbc8f889430bd05e9445350a01fbbc538c28934a0c388b624f8",
+      "baseline_sha256": "809fdd17a1b3dfbc8f889430bd05e9445350a01fbbc538c28934a0c388b624f8",
+      "changed": false
+    },
+    {
+      "path": "source/brd-refunds-portal/refunds-portal-brd-master.md",
+      "source_path": "source/brd-refunds-portal/refunds-portal-brd-master.md",
+      "original_sha256": "5d67bf85dd433aace62102219bf458aa9f76bd033e577be5f81c869b2bf3c634",
+      "baseline_sha256": "5d67bf85dd433aace62102219bf458aa9f76bd033e577be5f81c869b2bf3c634",
+      "changed": false
+    },
+    {
+      "path": "standins/loyalty/grill-me-session.md",
+      "source_path": "standins/loyalty/grill-me-session.md",
+      "original_sha256": "d7ce07c070a6e7572bbc94a384d867b70ac556d41967aa1595cc98dc4a09d052",
+      "baseline_sha256": "d7ce07c070a6e7572bbc94a384d867b70ac556d41967aa1595cc98dc4a09d052",
+      "changed": false
+    },
+    {
+      "path": "standins/refunds/grill-me-session.md",
+      "source_path": "standins/refunds/grill-me-session.md",
+      "original_sha256": "39b7ca1bedf5c78d27cd551356ff6120e3034625e04d3f7ddd046744bcf7f8f1",
+      "baseline_sha256": "39b7ca1bedf5c78d27cd551356ff6120e3034625e04d3f7ddd046744bcf7f8f1",
+      "changed": false
+    }
+  ]
+}

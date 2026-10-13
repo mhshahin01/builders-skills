@@ -46,21 +46,27 @@ def reconciled_block(master):
     block=re.search(r'\*\*Reconciled:\*\*([^\n]*(?:\n(?![ \t]*(?:[-*>|#\n]|$))[^\n]*)*)',master)
     return block[1] if block else None
 
-ENTRY=re.compile(r'(?:^|(?<=\. ))[ \t]*\((\d+)\)\s*(\d{4}-\d\d-\d\d)',re.M)
+ENTRY=re.compile(r'(?:(?:^|(?<=\. ))[ \t]*\((\d+)\)|^[ \t]*(\d+)\.)\s*(\d{4}-\d\d-\d\d)',re.M)
+ENTRY_ANYWHERE=re.compile(r'(?:\((\d+)\)|^[ \t]*(\d+)\.)\s*(\d{4}-\d\d-\d\d)',re.M)
+DATED=re.compile(r'^[ \t]*(\d{4}-\d\d-\d\d)',re.M)
+
+def block_entries(block,pattern=ENTRY):
+    numbered=[(int(m[1] or m[2]),m[3],m.start()) for m in pattern.finditer(block)]
+    if numbered:return numbered
+    return [(0,m[1],m.start()) for m in DATED.finditer(block)]
 
 def newest_entry(block):
-    entries=list(ENTRY.finditer(block))
+    entries=block_entries(block)
     if not entries:return block
-    i=max(range(len(entries)),key=lambda k:int(entries[k][1]))
-    return block[entries[i].start():entries[i+1].start() if i+1<len(entries) else len(block)]
+    i=max(range(len(entries)),key=lambda k:(entries[k][0],k))
+    return block[entries[i][2]:entries[i+1][2] if i+1<len(entries) else len(block)]
 
 def reconciled_date(master):
     block=reconciled_block(master)
     if block is None:return None
-    numbered=[(int(n),d) for n,d in re.findall(r'\((\d+)\)\s*(\d{4}-\d\d-\d\d)',block)]
-    if numbered:return max(numbered)[1]
-    first=re.match(r'\s*(\d{4}-\d\d-\d\d)',block)
-    return first[1] if first else None
+    entries=block_entries(block,ENTRY_ANYWHERE)
+    if not entries:return None
+    return entries[max(range(len(entries)),key=lambda k:(entries[k][0],k))][1]
 
 def reconciled_entry(master):
     block=reconciled_block(master)

@@ -63,7 +63,7 @@ def facts(path):
         "counts": Counter({
             "mermaid": text.count("```mermaid"),
             "links": len(LINK.findall("\n".join(lines))),
-            "clarification": text.count("[NEEDS CLARIFICATION"),
+            "clarification": text.count("[NEEDS CLARIFICATION:"),
             "todo": text.count("> TODO:"),
             "confirm": text.count("> Confirm:"),
             "em_dash": text.count("\u2014"),

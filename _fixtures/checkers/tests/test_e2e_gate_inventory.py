@@ -6,6 +6,15 @@ import tempfile,shutil,subprocess,sys,os,re,hashlib
 
 PATH=Path(__file__).resolve().parents[1]/'_e2e_gate.py'
 FB=Path(os.environ.get('FB_RUN_SDD',r'W:\ITV\projects\hivantic\fixture-runs\fb-2026-10-09\run\sdd-refunds-platform'))
+FC=Path(os.environ.get('FC_RUN_SDD',r'W:\ITV\projects\hivantic\fixture-runs\fc-2026-10-10\run\sdd-refunds-platform'))
+TAIL=' (chunks 00-17, Changes Log and Child LLDs left out)`.'
+FC_RECONCILED=('**Reconciled:**\n'
+    '1. 2026-10-10, step 6a by the author (sdd-unifier), initial build request, before the review: items 1-10 checked; checked content `sha256:fbca640b40504b18'+TAIL+'\n'
+    '2. 2026-10-10, step 6a by the author (sdd-unifier), initial build request, after the acceptance loop: items 1-10 checked. Checked content `sha256:7db2238cb81ef76b'+TAIL+'\n'
+    '3. 2026-10-10, step 6a by the author (sdd-unifier), request (v1.1): the request started from content `sha256:7db2238cb81ef76b`, which matches entry 2. Checked content `sha256:9bd43f74c393244d'+TAIL+'\n'
+    '4. 2026-10-10, step 6a by the author (sdd-unifier), request (v1.3): the request started from content `sha256:87f6ffde646c31af`, whose difference from entry 3 is the v1.3 edit. Checked content `sha256:383424054ea98b4f'+TAIL+'\n'
+    '5. 2026-10-10, step 6a by the author (sdd-unifier), request (v1.4): the request started from content `sha256:383424054ea98b4f`, which matches entry 4. Checked content `sha256:96819fd891ef423f'+TAIL+'\n'
+    '**E2E gate (chunk 19):** Locked - E4 met (Reconciled entry 5)\n')
 
 def load():
     spec=importlib.util.spec_from_file_location('e2e_gate_inventory',PATH)
@@ -252,6 +261,35 @@ class E3Inventory(unittest.TestCase):
             with self.subTest(master=master):
                 self.assertEqual(self.gate.reconciled_hash(master),expected)
         self.assertEqual(self.gate.reconciled_date('**Reconciled:** (9) 2026-10-10, unlike entry (8) 2026-10-09, x\n'),'2026-10-10')
+
+    def test_reconciled_list_entries_read_the_highest_number(self):
+        self.assertEqual(self.gate.reconciled_date(FC_RECONCILED),'2026-10-10')
+        self.assertTrue(self.gate.reconciled_entry(FC_RECONCILED).startswith('5. 2026-10-10'))
+        self.assertEqual(self.gate.reconciled_hash(FC_RECONCILED),'96819fd891ef423f')
+        for master,expected_date,expected_hash in (
+            ('**Reconciled:**\n2. 2026-10-09, `sha256:2222222222222222 (chunks 00-17)`\n10. 2026-10-11, `sha256:aaaaaaaaaaaaaaaa (chunks 00-17)`\n','2026-10-11','aaaaaaaaaaaaaaaa'),
+            ('**Reconciled:**\n3. 2026-10-12, `sha256:3333333333333333 (chunks 00-17)`\n1. 2026-10-08, `sha256:1111111111111111 (chunks 00-17)`\n','2026-10-12','3333333333333333'),
+            ('**Reconciled:**\n1. 2026-10-08, order only\n2. 2026-10-09, order only\n','2026-10-09',None)):
+            with self.subTest(master=master):
+                self.assertEqual(self.gate.reconciled_hash(master),expected_hash)
+                self.assertEqual(self.gate.reconciled_date(master),expected_date)
+
+    def test_reconciled_without_numbers_reads_the_last_entry(self):
+        master=('**Reconciled:**\n2026-10-08, first, `sha256:1111111111111111 (chunks 00-17)`\n'
+                '2026-10-09, second, `sha256:2222222222222222 (chunks 00-17)`\n**E2E gate (chunk 19):** Open\n')
+        self.assertEqual(self.gate.reconciled_hash(master),'2222222222222222')
+        self.assertEqual(self.gate.reconciled_date(master),'2026-10-09')
+        self.assertEqual(self.gate.reconciled_hash('**Reconciled:** 2026-10-08, `sha256:1111111111111111 (chunks 00-17)`\n'),'1111111111111111')
+
+    @unittest.skipUnless(FC.is_dir(),'FC run not present')
+    def test_fc_run_list_entries_give_e4_met(self):
+        with tempfile.TemporaryDirectory(prefix='fc-e4-') as tmp:
+            sdd=Path(tmp)/'sdd';shutil.copytree(FC,sdd)
+            master=next(sdd.glob('*-sdd-master.md')).read_text(encoding='utf-8')
+            self.assertEqual(self.gate.reconciled_date(master),'2026-10-10')
+            self.assertEqual(self.gate.reconciled_hash(master),'96819fd891ef423f')
+            out=self.cli_e2e(sdd)
+            self.assertIn('E4 reconciled 2026-10-10 vs last Changes Log date 2026-10-10: met (by content hash',out)
 
     def test_content_hash_scope_and_join(self):
         with tempfile.TemporaryDirectory(prefix='e4-hash-') as tmp:

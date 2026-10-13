@@ -272,7 +272,7 @@ for fn in files:
 
 # 8. Permission tokens in 13x exist in chunk 12
 c12 = read(os.path.join(SDD, "12-centralized-user-roles.md"))
-tokens = set(re.findall(r"^\| `([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)` \|", c12, flags=re.M))
+tokens = set(re.findall(r"^\| `([a-z][a-z-]*(?:\.[a-z][a-z-]*)+)` \|", c12, flags=re.M))
 c10_path = os.path.join(SDD, "10-events-hub.md")
 topics = set(re.findall(r"^\| \d+ \| `([a-z0-9][a-z0-9.-]*)` \|", read(c10_path), flags=re.M)) if os.path.isfile(c10_path) else set()
 for fn in files:
@@ -329,7 +329,7 @@ for fn in files:
                     problems.append(f"{fn}: {ep}: {api} is {norm_ep(index[api][uri_col])!r} in §15.2")
 for line in c11.splitlines():
     if line.startswith("| Authorization |"):
-        for token in re.findall(r"`([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)`", line):
+        for token in re.findall(r"`([a-z][a-z-]*(?:\.[a-z][a-z-]*)+)`", line):
             if token not in tokens:
                 problems.append(f"11: contract Authorization token {token} not in §16.11")
 

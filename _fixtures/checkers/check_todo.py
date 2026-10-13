@@ -3,7 +3,7 @@ import os
 import re
 import sys
 
-from _e2e_gate import unclosed_items
+from _e2e_gate import bracketed, unclosed_items
 
 DOC = os.path.abspath(sys.argv[1])
 
@@ -16,6 +16,7 @@ SPECIFIC = re.compile(r"UC-\d+|NFR|\bAC-?\d+|BO-\d+|MK-\d+|TASK-\d+|TC-\d+|BR-\d
 PLACEHOLDER = re.compile(r"^(\[.*\]|-|\u2014|n/a|none|tbd|\.\.\.)?$", re.I)
 LINK = re.compile(r"\[([^\]]*)\]\(([^)]*)\)")
 MARKER = "[NEEDS CLARIFICATION"
+SECOND_QUESTION = re.compile(r",\s+and\s+(?:who|which|what|does|is|in which)\b", re.I)
 
 
 def read(path):
@@ -145,6 +146,9 @@ for p in sorted(glob.glob(os.path.join(DOC, "*.md"))):
     if not n:
         continue
     marker_chunks[ch] = n
+    for marker in bracketed(txt, MARKER + ":"):
+        if marker.count("?") > 1 or SECOND_QUESTION.search(marker):
+            notes.append(f"chunk {ch}: a clarification marker may hold more than one question (heuristic): {' '.join(marker.split())[:80]}")
     if ch not in cited_chunks:
         problems.append(f"chunk {ch} has {n} clarification marker(s) and no TD row cites it in its Source")
         continue

@@ -13,6 +13,8 @@ import sys
 import unicodedata
 from collections import Counter
 
+from _flags import line_flags, skipped_chunk
+
 LINK = re.compile(r"\[((?:[^\[\]]|\[[^\]]*\])*)\]\(([^)\s]+)\)")
 HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 INLINE_CODE = re.compile(r"`[^`]*`")
@@ -274,8 +276,9 @@ def main():
                 stats["traceability_lines"] += 1
             if re.match(r"^#{3,4}\s+Workflow:", line):
                 stats["workflow_no_uc_blocks"] += 1
-            stats["confirm_flags"] += line.count("> Confirm:")
-            stats["todo_flags"] += line.count("> TODO:")
+            flags = [] if skipped_chunk(os.path.basename(path)) else line_flags(line)
+            stats["confirm_flags"] += flags.count("Confirm")
+            stats["todo_flags"] += flags.count("TODO")
             stats["pending_brd16"] += line.count("Pending (BRD 16 not written)")
             stats["platform_pages"] += line.count("None - platform page")
         stats["use_case_mentions"] += len(re.findall(r"use_case", text))

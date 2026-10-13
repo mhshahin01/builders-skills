@@ -133,7 +133,11 @@ With no answer policy, every rule in this skill stays as written.
    reminder once a refund request passes its 2-day approval target,
    recommended over a weekly digest, is a choice; whether goods must be
    returned before a refund, when the store's returns policy decides it and
-   that policy is not attached, is a fact. Nor does the policy take a
+   that policy is not attached, is a fact. A recommended option that adds
+   behaviour no source states but offers options with tradeoffs is also a
+   choice the policy may take, and the residue report lists it: for
+   example, how branches start using the portal, recommended as a pilot at
+   two branches over all branches at once. Nor does the policy take a
    recommended option that makes a decision the user's standing
    instructions for the project reserve for the user (for example adopting
    a new dependency; proposing one, as a `Proposed` decision with its

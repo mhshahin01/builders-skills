@@ -176,6 +176,49 @@ class CheckerRegressions(unittest.TestCase):
         self.edit(p, 'refund-requests.request.read-own', 'refund-requests.missing.read')
         self.assertIn('token refund-requests.missing.read not in', self.cli('check_trace.py', self.run))
 
+    def test_two_segment_permission_token_is_registered_and_checked(self):
+        c12 = self.sdd/'12-centralized-user-roles.md'
+        self.edit(c12, '| `customer-accounts.profile.read` |', '| `payout.read` | \u2713 | - | - | - | - | - |\n| `customer-accounts.profile.read` |')
+        p = self.sdd/'13a-service-customer-accounts.md'
+        self.edit(p, '`customer-accounts.profile.read`', '`payout.read`')
+        self.edit(self.sdd/'11-api-contracts.md', '| Authorization | Per contract type', '| Authorization | `payout.read` per contract type')
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        self.edit(c12, '| `payout.read` | \u2713 | - | - | - | - | - |\n', '')
+        out = self.cli('check_sdd.py', self.sdd)
+        self.assertIn('permission token payout.read not in \u00a716.11', out)
+        self.assertIn('11: contract Authorization token payout.read not in \u00a716.11', out)
+
+    def test_flag_count_rule_is_shared_by_list_flags_and_lld_trace(self):
+        args = [self.lld, self.sdd, 'REFUNDS='+str(self.brd), 'LOYALTY='+str(self.run/'brd-loyalty-points')]
+
+        def totals():
+            listed = self.cli('list_flags.py', self.lld)
+            traced = self.cli('check_lld_trace.py', *args)
+            return ((int(re.search(r'===== C (\d+)', listed)[1]), int(re.search(r'===== T (\d+)', listed)[1])),
+                    (int(re.search(r'confirm_flags: (\d+)', traced)[1]), int(re.search(r'todo_flags: (\d+)', traced)[1])))
+        listed, traced = totals()
+        self.assertEqual(listed, traced)
+        self.assertGreater(sum(listed), 0)
+        p = self.lld/'05-data-model.md'
+        p.write_text(p.read_text(encoding='utf-8') + '\n| `refund_request` | > TODO: table cell flag - verify |\n'
+                     '\n| `> Confirm:` (medium confidence) | 5 | legend row |\n'
+                     '\nProse that mentions > Confirm: mid line.\n'
+                     '\n```\n> TODO: inside a fence\n```\n', encoding='utf-8', newline='\n')
+        for name in ('15-open-questions.md', '18-open-items-and-clarifications.md'):
+            q = self.lld/name
+            q.write_text(q.read_text(encoding='utf-8') + '\n> Confirm: quoted in an index chunk\n| x | > TODO: quoted cell |\n', encoding='utf-8', newline='\n')
+        listed2, traced2 = totals()
+        self.assertEqual(listed2, traced2)
+        self.assertEqual(listed2, (listed[0], listed[1] + 1))
+
+    def test_diff_counts_only_the_marker_form_with_a_colon(self):
+        spec = importlib.util.spec_from_file_location('diff_runs_marker', CHECKERS/'diff_runs.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        p = Path(self.tmp.name)/'marker.md'
+        p.write_text('Prose: do not write the [NEEDS CLARIFICATION bracket form.\n\nSMS [NEEDS CLARIFICATION: which provider?]\n', encoding='utf-8')
+        self.assertEqual(module.facts(p)['counts']['clarification'], 1)
+
     def test_e2e_modular_monolith(self):
         self.clean(self.cli('check_e2e.py', self.sdd))
 

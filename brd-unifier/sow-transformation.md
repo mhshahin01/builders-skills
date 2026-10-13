@@ -213,7 +213,7 @@ Then apply the plain-language style (`writing-style.md`): sources written for pr
 
 ## Gap inventory
 
-At the end of any transformation, count the `[NEEDS CLARIFICATION: ...]` markers by question (a marker repeated for one question counts once; the same marker words used for two different things, two flows or two rules, count as two questions) in two groups and surface both totals in the handoff summary: **gaps** (the source does not say, and nothing is proposed) and **proposals** (`[NEEDS CLARIFICATION: proposed ...]`, behaviour the skill proposed for the user to confirm, a pre-BRD open item's Recommended Answer included: § pre-BRD, the 24 row). Both kinds go to the to-do and keep gate condition G1 shut until they are resolved.
+At the end of any transformation, count the `[NEEDS CLARIFICATION: ...]` markers by question (the measure is clarification questions, not text occurrences or lines; a marker repeated for one question counts once; the same marker words used for two different things, two flows or two rules, count as two questions) in two groups and surface both totals in the handoff summary: **gaps** (the source does not say, and nothing is proposed) and **proposals** (`[NEEDS CLARIFICATION: proposed ...]`, behaviour the skill proposed for the user to confirm, a pre-BRD open item's Recommended Answer included: § pre-BRD, the 24 row). Both kinds go to the to-do and keep gate condition G1 shut until they are resolved.
 
 Thresholds apply to gap markers only, because only they measure the source; proposals are reported as "to confirm":
 

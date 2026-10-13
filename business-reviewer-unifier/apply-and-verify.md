@@ -137,9 +137,12 @@ close, even when the walkthrough resumes on another day.
      policy, not this review's, and signs a version this session changed
      only after the session has closed with every hand-off `Done`. The
      session has closed when the review's tracker has its **Hand-offs**
-     block and no point in it is `Pending` or `Decided`. That skill checks
-     each row's `Done` evidence (§ Hand-off) itself, whatever the tracker
-     cell reads, since owners never write the tracker.
+     block and no point in the tracker's point table is `Pending` or
+     `Decided` (`Partially applied` and `Deferred` do not hold the session
+     open). That skill checks each row's `Done` evidence (§ Hand-off)
+     itself, whatever the tracker cell reads, since owners never write the
+     tracker. It verifies each hand-off's Done evidence even when another
+     condition already fails; a condition is never reported unverified.
    - When the version is in the file name (a combined BRD or SDD), rename
      the file with the bump, and update the citations to it in the
      documents the session may edit, the links in a combined BRD's
@@ -294,8 +297,11 @@ A record counts only when the owning skill wrote it after the review (a
 Changes Log row below the review's row, a chunk 14 run whose Trigger names
 the review, or an action entry saying the hand-off was taken), never the
 review's own entries in the owner's registers. The session has closed when
-the tracker has its **Hand-offs** block and no point in it is `Pending` or
-`Decided`; the owning skills restate these conditions for their sign-off.
+the tracker has its **Hand-offs** block and no point in the tracker's point
+table is `Pending` or `Decided` (`Partially applied` and `Deferred` do not
+hold the session open); the owning skills restate these conditions for their
+sign-off. Each hand-off's Done evidence is verified even when another
+condition already fails; a condition is never reported unverified.
 
 Offer to start the first row. Each row runs only on the user's word, or on
 an answer policy that names the hand-offs (SKILL.md § Answer policy), as

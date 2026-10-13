@@ -43,7 +43,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 |---|-----------|-------|--------------------|
 | G1 | Step 1 complete: every to-do item `Resolved`; no Open, Deferred, or Decided - pending application item in chunk 13; no clarification marker left in chunks 00-12 | [Met / Not met] | [TD-NN, OI-NN, markers in 06b ...] |
 | G2 | Step 2 complete: check rerun after the last BRD change; every finding has a disposition and none is still waiting on a decision or its application | [Met / Not met] | [CF-NN ...; rerun needed] |
-| G3 | Step 3 complete: grill-me session confirmed; decisions applied | [Met / Not met] | [...] |
+| G3 | Step 3 complete: grill-me session ran to its end and its decisions are applied | [Met / Not met] | [...] |
 | G4 | Step 4 complete: every mockup approved; review/play-through confirmed; links in UC UI/UX or owning no-UC report/requirement section | [Met / Not met] | [MK-NN ...] |
 | G5 | Step 5 complete: use-case diagrams and flowcharts added; consistency check rerun | [Met / Not met] | [...] |
 
@@ -127,7 +127,7 @@ RULES: delivery-chunks.md in the brd-unifier skill.
 | **Status** | Not started |
 | **Required inputs** | Open rows of the register above (P1 first); unresolved consistency findings; the requirements listed below |
 | **Expected output** | A decision list from the session; confirmed decisions applied to the affected BRD chunks; consistency check rerun |
-| **Completion criteria** | The product manager, or a Product Owner stand-in the run's answer policy names, confirms the session took place and hands back the decision list; every confirmed decision is applied and logged; the step 2 reruns that follow (delivery-chunks.md § Step 2) leave no new undispositioned finding. New questions reopen steps 1-2; a new choice that needs the product manager's (or a Product Owner stand-in's) confirmation reopens this step. |
+| **Completion criteria** | The product manager, or a Product Owner stand-in the run's answer policy names, confirms the session ran to its end (no question waits for a later round) and hands back the decision list, whatever its count; a session with questions waiting for a later round, or never reached, leaves this step `In progress`; every confirmed decision is applied and logged; the step 2 reruns that follow (delivery-chunks.md § Step 2) leave no new undispositioned finding. New questions reopen steps 1-2; a new choice that needs the product manager's (or a Product Owner stand-in's) confirmation reopens this step. |
 | **Evidence** | [None yet. Recommended, not executed. Once confirmed: who confirmed (the PM, or `Stand-in: Product Owner (<policy>, set by <name>, <date>)`, SKILL.md step 8) and the date.] |
 
 **Take into the session**

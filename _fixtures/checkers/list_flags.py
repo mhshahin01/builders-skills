@@ -1,10 +1,12 @@
 import os, re, sys
 
+from _flags import line_flags, skipped_chunk
+
 LLD = sys.argv[1]
 rows = []
 for dp, _, fs in os.walk(LLD):
     for fn in sorted(fs):
-        if not fn.endswith(".md") or fn.startswith("18-") or fn.startswith("15-"):
+        if not fn.endswith(".md") or skipped_chunk(fn):
             continue
         p = os.path.relpath(os.path.join(dp, fn), LLD).replace(os.sep, "/")
         h2 = h3 = ""
@@ -22,9 +24,8 @@ for dp, _, fs in os.walk(LLD):
                         h2, h3 = m.group(2), ""
                     else:
                         h3 = m.group(2)
-                if l.startswith("> Confirm:") or l.startswith("> TODO:"):
-                    kind = "C" if l.startswith("> Confirm:") else "T"
-                    rows.append((kind, p, ln, h2, h3, l.strip()[:150]))
+                for flag in line_flags(l):
+                    rows.append(("C" if flag == "Confirm" else "T", p, ln, h2, h3, l.strip()[:150]))
 for k in "TC":
     sel = [r for r in rows if r[0] == k]
     print("=====", k, len(sel))

@@ -173,7 +173,7 @@ Flag what is missing upstream; never fill it.
 | Chunk 16's Traceability Matrix disagrees with a case's `Related UC` | Cite the `Related UC` and add a `> Confirm:` naming both: a BRD inconsistency, not the LLD's to resolve |
 | SDD without § Document Lineage (no Source BRDs register) | Plain BRD IDs, flagged once (§ IDs and keys); the handoff suggests upgrading the SDD |
 | SDD without §7.3 (derived before it existed) | Owner from SDD 09 (its `Use cases (BRD)` column, or the Business Logic that cites the use case) plus the BRD, and entry points from the owner's `13x` List of APIs, each `> Confirm:`; the SDD field reads `Not in this SDD (older SDD) - see [SDD 09](...)`. The handoff suggests upgrading the SDD: sdd-unifier offers to add §7.3 and the lineage on its next run. |
-| A `[NEEDS CLARIFICATION: ...]` the LLD depends on, in a §7.3 cell or in any other SDD section (a §5 term, a `13x` rule) | Carry it as a `> TODO:` that cites the SDD section; never resolve it in the LLD. An unknown §7.3 owner means no workflow block yet; the index row shows the gap. |
+| A `[NEEDS CLARIFICATION: ...]` the LLD depends on, in a §7.3 cell or in any other SDD section (a §5 term, a `13x` rule) | Carry it as a `> TODO:` that cites the SDD section; never resolve it in the LLD. An unknown §7.3 owner means no workflow block yet; the index row shows the gap. In the flag, cite the SDD section, the question and its owner in plain words; do not write the bracketed marker form, so a search for open markers finds only the SDD's own. |
 | §7.3 still `Pending (part 2)` | Stop: the SDD is unfinished |
 
 ### Checks (SKILL.md step 6a)

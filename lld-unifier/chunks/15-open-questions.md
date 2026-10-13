@@ -78,7 +78,7 @@ PART OF: LLD - [Project Name]
 | 20. Specs | [N] | [N] |
 | Global (flags this chunk holds itself, outside its tables) | [N] | [N] |
 
-> **Convention:** each cell counts the open flags of its kind in that section, as a search for `> Confirm:` and `> TODO:` finds them; nothing is judged, and a section with none reads 0. These counts are updated whenever a chunk is regenerated.
+> **Convention:** each cell counts the open flags of its kind in that section, by the flag count rule (`> Confirm:` or `> TODO:` at line start or inside a table cell, outside code fences, excluding legend rows, markers quoted in backticks and chunks 15 and 18); nothing is judged, and a section with none reads 0. These counts are updated whenever a chunk is regenerated.
 
 ## 18.6 Policy Findings (every direction that reads code)
 

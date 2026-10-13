@@ -121,6 +121,40 @@ class CheckTodo(unittest.TestCase):
         self.assertEqual(self.problems(out), 0, out)
         self.assertIn('a marker under UC-02', out)
 
+    def marker_notes(self, marker, chunk='02-glossary.md'):
+        self.brd([row(source='[02 / Assumption 1](./02-glossary.md#assumptions)')],
+                 files={chunk: '## Assumptions\n\n1. Clinics send by SMS [NEEDS CLARIFICATION: ' + marker + ']\n'}, oi_status='Accepted - applied')
+        out = self.run_on(self.doc)
+        self.assertEqual(self.problems(out), 0, out)
+        return [l for l in out.split('notes:')[1].splitlines() if 'more than one question' in l]
+
+    def test_marker_with_two_question_marks_is_a_heuristic_note(self):
+        notes = self.marker_notes('Do the lists need filters? If so, which ones?')
+        self.assertEqual(len(notes), 1)
+        self.assertIn('heuristic', notes[0])
+        self.assertIn('chunk 02', notes[0])
+
+    def test_marker_with_a_second_question_clause_is_a_note(self):
+        for marker in ('Must the customer pick a reason, and does a faulty item follow another window?',
+                       'Above which amount must a second person approve, and who is that person?',
+                       'Who follows the objectives, and in which report?',
+                       'Which plan applies, AND WHICH team owns it?',
+                       'Which plan applies, and what does it cost?',
+                       'Which plan applies, and is it final?'):
+            with self.subTest(marker=marker):
+                self.assertEqual(len(self.marker_notes(marker)), 1)
+
+    def test_marker_with_one_question_is_not_a_note(self):
+        for marker in ('Which plan applies to the clinics?',
+                       'Which plan applies, and isolation of data follows from it?',
+                       'Which plan applies, and whichever team owns it keeps it?',
+                       'Which plan applies to the clinics and which team owns it'):
+            with self.subTest(marker=marker):
+                self.assertEqual(self.marker_notes(marker), [])
+
+    def test_marker_note_is_limited_to_chunks_00_to_12(self):
+        self.assertEqual(self.marker_notes('Which plan? Which team?', chunk='13-open-items-and-clarifications.md'), [])
+
     def test_step6_s3_output_shows_its_known_register_defects(self):
         out = self.run_on(S3 / 'rerun-2026-10-07/brd-clinic-reminders')
         self.assertIn("Kind 'Owner clarification'", out)

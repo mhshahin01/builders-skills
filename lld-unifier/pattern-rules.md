@@ -45,7 +45,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 **Roles** (the same for every target: the broker, a provider, or the in-process listeners):
 - Outbox table (in service schema; for a durable in-process event, the publication log).
 - Outbox writer (inside the same tx as the aggregate write).
-- Outbox publisher (separate from the writing tx; scheduled job by default, one active instance per service).
+- Outbox publisher (separate from the writing tx; scheduled job by default, one active instance per service; when the SDD requires every replica to be able to run it, replicas coordinate through row locks such as `FOR UPDATE SKIP LOCKED`, and the LLD states how per-key order is kept).
 
 **Delivery contract** (the publisher the LLD specifies, and its pseudocode skeleton):
 - A record is marked processed only after its target acknowledges it: the broker's acknowledgement (`acks=all`), the provider's success response, or every listener's commit. The acknowledgement check is a visible step in the pseudocode, before `markProcessed`.

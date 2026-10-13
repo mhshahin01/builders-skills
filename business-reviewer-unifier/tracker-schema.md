@@ -88,8 +88,9 @@ Principal Architect (PA), Document Consistency (DC)[, add-ons]
   says it ran or the owner's own record shows it; then `Done`. Owners never
   write the tracker, so a row whose `Done` evidence exists
   (`apply-and-verify.md` § Hand-off) is `Done` whatever its cell reads. The
-  session has closed when this block is written and no point is `Pending` or
-  `Decided` (`apply-and-verify.md` § Hand-off). A row the
+  session has closed when this block is written and no point in the point
+  table is `Pending` or `Decided`; `Partially applied` and `Deferred` do not
+  hold it open (`apply-and-verify.md` § Hand-off). A row the
   answer policy started ends with
   `Started by Policy: <policy> (set by <name>, <date>)`. Gated chunks
   waiting for their gate are a note in the close-out, not a row.

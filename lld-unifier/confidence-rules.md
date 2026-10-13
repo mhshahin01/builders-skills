@@ -154,7 +154,7 @@ Every flag emitted anywhere in the LLD MUST appear as a row in `15-open-question
 
 When a chunk is regenerated, the index is regenerated too. The skill enforces this by walking each chunk and grepping for the flag patterns, then emitting the index file.
 
-The summary table in § 18.5 (the open `> Confirm:` and `> TODO:` flags counted per section, for every section) is updated on each regeneration.
+The summary table in § 18.5 (the open `> Confirm:` and `> TODO:` flags counted per section, for every section) is updated on each regeneration. Flag count = `> Confirm:` or `> TODO:` at line start or inside a table cell, outside code fences, excluding legend rows, markers quoted in backticks and chunks 15 and 18.
 
 ---
 

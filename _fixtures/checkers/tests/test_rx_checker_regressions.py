@@ -1,5 +1,6 @@
 from pathlib import Path
 import importlib.util
+import os
 import re
 import shutil
 import unittest
@@ -7,11 +8,12 @@ import unittest
 spec = importlib.util.spec_from_file_location('existing_regressions', Path(__file__).with_name('test_chk_regressions.py'))
 existing = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(existing)
+RX_RUN = Path(os.environ.get('RX_RUN', 'W:/ITV/projects/hivantic/fixture-runs/rx-2026-10-13/run'))
 
 
 class RXCheckerRegressions(existing.CheckerRegressions):
     def test_rx_repeated_reconciliation_hash_rejects_changed_body(self):
-        source = existing.CHECKERS.parents[3]/'fixture-runs/rx-2026-10-13/run/sdd-refunds-platform'
+        source = RX_RUN/'sdd-refunds-platform'
         if not source.is_dir():
             self.skipTest('R-X fixture not present')
         sdd = self.run/'rx-sdd'
@@ -26,7 +28,7 @@ class RXCheckerRegressions(existing.CheckerRegressions):
         self.assertNotIn('met (by date only:', out)
 
     def test_rx_explicit_controller_pointer_requires_owned_trigger_annotation(self):
-        source = existing.CHECKERS.parents[3]/'fixture-runs/rx-2026-10-13/run'
+        source = RX_RUN
         if not source.is_dir():
             self.skipTest('R-X fixture not present')
         run = self.run/'rx-run'
@@ -50,7 +52,7 @@ class RXCheckerRegressions(existing.CheckerRegressions):
         self.assertIn('no @UseCase for REFUNDS/UC-01 POST /v1/refunds', self.cli('check_trace.py', run))
 
     def test_rx_pointer_shared_annotation_preserves_source_uc_order(self):
-        source = existing.CHECKERS.parents[3]/'fixture-runs/rx-2026-10-13/run'
+        source = RX_RUN
         if not source.is_dir():
             self.skipTest('R-X fixture not present')
         run = self.run/'rx-run'

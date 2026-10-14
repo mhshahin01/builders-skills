@@ -11,7 +11,7 @@ spec.loader.exec_module(existing)
 
 class CheckerReviewRegressions(existing.RXCheckerRegressions):
     def rx_copy(self):
-        source = existing.existing.CHECKERS.parents[3]/'fixture-runs/rx-2026-10-13/run'
+        source = existing.RX_RUN
         if not source.is_dir():
             self.skipTest('R-X fixture not present')
         run = self.run/'rx-run'

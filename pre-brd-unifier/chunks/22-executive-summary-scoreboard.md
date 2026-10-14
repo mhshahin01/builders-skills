@@ -21,7 +21,7 @@ A go / no-go synthesis. It aggregates five signals (market attractiveness, probl
 
 ## Method
 
-Each score is derived from the analysis files (not entered by hand), with the mapping below; the Excel scoreboard uses the same mapping. Scale is 1 to 5: 5 = strong / favorable, 1 = weak / unfavorable. Round each score to one decimal.
+Each score is derived from the analysis files (not entered by hand), with the mapping below; the Excel scoreboard uses the same mapping. Scale is 1 to 5: 5 = strong / favorable, 1 = weak / unfavorable. Round each score to one decimal using decimal half-up, matching the workbook ROUND formulas: 3.25 becomes 3.3 and 3.35 becomes 3.4. Do not round source inputs early or substitute half-even rounding. Every signal affected by a flagged source retains its live source question in that row's Rationale; a template example or general caveat is not a live row marker.
 
 - Market Attractiveness: the SAM value from 07, in USD (convert a SAM in another currency at the canonical exchange rate in 07). USD 500M or more = 5; USD 100M or more = 4; USD 25M or more = 3; USD 5M or more = 2; below USD 5M = 1.
 - Problem / Solution Fit: the weighted average rating of the EFAS opportunity rows = sum of their weighted scores / sum of their weights.
@@ -31,7 +31,7 @@ If the opportunity weights or strength weights sum to zero, flag that signal `[N
 - Competitive Risk: 7 - 2 x Porter's average threat (1 gives 5, 2 gives 3, 3 gives 1). It is inverted: high threat maps to a low score.
 - Strategic Fit: (EFAS total + IFAS total) / 2.
 
-Composite = sum of (score x weight), rounded to two decimals. Verdict thresholds: 4.0 and above = Go; 3.0 to 3.99 = Conditional Go; below 3.0 = No-Go. Weights must sum to 1. End with a one-line **sensitivity check**: state whether a single ±1 notch on any one signal would flip the verdict band, so the recommendation's robustness (or fragility) is visible rather than implied by suspiciously tidy scores.
+Composite = sum of (already rounded signal score x weight), rounded to two decimals using decimal half-up. Retain the relevant live source questions on the composite when its inputs remain provisional. Verdict thresholds: 4.0 and above = Go; 3.0 to 3.99 = Conditional Go; below 3.0 = No-Go. Weights must sum to 1. End with a one-line **sensitivity check**: recompute each allowed single +1 or -1 notch within the 1 to 5 signal scale, and state whether any resulting composite crosses a verdict boundary. Show the decisive arithmetic with the declared rounding order and weight. A smaller counterexample must also cross the actual boundary: 3.04 - (0.05 x 0.2) = 3.03 does not fall below 3.0. Do not silently replace the prescribed mapping with an alternative model.
 
 ## Scoreboard
 

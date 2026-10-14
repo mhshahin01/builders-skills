@@ -673,7 +673,8 @@ This section complements (does not replace) §18, which is the author-generated 
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | REQUIRED. The reviewer's suggested option and the concrete resolution text, written so it can be pasted into the LLD as-is - always pick one, even for close calls. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins - the evidence (CLAUDE.md rule, SDD contract, code fact, risk avoided) and the tradeoff accepted. Never empty. |
-| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request that changes LLD content applies it) / Accepted - applied (link to LLD update) / Adjusted - applied (link to LLD update) / Deferred (with rationale) / Rejected (with rationale). Decisions: SKILL.md step 7a. A status outside this legend counts as `Open`: a refresh and the handoff treat the item as not closed, and the next acceptance loop presents it. |
+| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request that changes LLD content applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected (with rationale). Decisions: SKILL.md step 7a. A status outside this legend counts as `Open`: a refresh and the handoff treat the item as not closed, and the next acceptance loop presents it. |
+Write a closed Status as the literal legend value on its own line. Put the Resolution Log or update pointer on a separate `Resolution` line; rationale and decision metadata also have their own fields.
 
 ## 21.2 Open Items
 

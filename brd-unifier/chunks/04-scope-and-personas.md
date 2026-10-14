@@ -16,6 +16,7 @@ PART OF: BRD - [Project Name]
 ## In Scope
 
 <!-- Phase-based BRD only (SKILL.md § Phase-based BRD): every scope item carries its phase label, keeping the roadmap period when the source has one, e.g. "Refund self-service (Phase 1, Q1-2027)". -->
+If no source or request assigns a scope item's phase, use `Phase unknown [NEEDS CLARIFICATION: Which phase includes <item>?]` and register the question in chunk 14. A use-case phase table alone does not assign this item.
 
 - [Scope item 1]
 - [Scope item 2]

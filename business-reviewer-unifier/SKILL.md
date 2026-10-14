@@ -100,6 +100,7 @@ recommended option except on security points": a point or question its
 wording leaves out waits for the user, and the walkthrough stops at
 that point (item 4).
 With no answer policy, every rule in this skill stays as written.
+The reviewer/author presents the actual current question and recommendation before recording a policy or named stand-in answer. A finding, prior settled decision, or proposed edit alone is no new actor question or owner attestation; keep the recommendation, actual answer, decider and unanswered remainder distinct.
 
 1. **It takes the recommended option.** It answers a question only when the
    question carries a recommended option or a stated default, by taking
@@ -188,6 +189,7 @@ Ask at most three questions, skipping anything already in context:
   scope lists child LLDs, each LLD's version record goes to the reviewers
   as lineage context only: its master, `00-metadata.md` (Changes Log), and
   `16-references.md` § 19.1 (the SDD version it read).
+  Read only that lineage material: stop the references excerpt at the next peer heading after §19.1. Do not load the rest of the references file or implementation chunks as preparation, search context, or reviewer input.
 - **SME domain**: MANDATORY. Resolve in this order: (a) explicit in the
   invocation, (b) inferable from the docs' own framing; if inferred, restate
   it and ask for confirmation before dispatching (an SME stand-in the answer
@@ -287,6 +289,8 @@ only on the user's word, or on an answer policy that names the hand-offs
 ---
 
 ## Output conventions
+
+Report local preservation/read-back checks by those names. A controller stage quiet interval requires its own receipt after the actual parent final and required child completions, with the real elapsed interval and unchanged hashes; local saves, internal waits, or a child's completion do not establish that interval. In a paused walkthrough, report the point reached, applied/pending/unreached counts, the owner-only question and hand-off, and current gate evidence. Do not claim whole-panel closure or controller quiet from local checks.
 
 - Tracker file: `./review-comments-tracker.md` (project root, persistent).
 - Panel findings file: `./review-panel-findings.md` (next to the tracker,

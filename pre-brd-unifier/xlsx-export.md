@@ -36,7 +36,7 @@ python -c "import sys,json; sys.path.insert(0,r'<skill-folder>/scripts'); import
 
 ### Sheet-specific values
 - `Market Sizing & analysis`: enter the money values (the global market and the ARPU) in USD, converted at the canonical exchange rate in chunk 07. The scoreboard grades the SAM in USD and labels it with `$`.
-- `Market Comparison`: the competitor columns M to Q take the section 1 product names, in order, in their header cells (M21:Q21 and M35:Q35), and `Available` or `Not available` in the feature rows (M22:Q33 and M36:Q47).
+- `Market Comparison`: the competitor columns M to Q take the section 1 product names, in order, in their header cells (M21:Q21 and M35:Q35), and `Available`, `Not available` or `Unverified` in the feature rows (M22:Q33 and M36:Q47). Preserve the approved Markdown's capability qualifiers, source citations and live source-gap questions; never turn Unverified into a negative claim.
 - `EFAS` and `IFAS `: write each Type cell as its letter (`O` or `T`, `S` or `W`). The scoreboard reads the opportunity and strength rows by that letter.
 - `Executive Summary`: G17:G21 take chunk 22's Rationale column, one signal per row in the table's order. B26:B28 take chunk 22's conditions 2 to 4, each with its number (2. ...); condition 1, the lowest signal, is the sheet's automatic B25. Note any condition after the fourth as overflow.
 

@@ -13,7 +13,7 @@ PART OF: SDD - [Project Name]
 
 ### 8.1.1 What
 
-<!-- Name the style chosen in the architecture questionnaire (SKILL.md step 3b; ADR-01): modular monolith, hybrid, or microservices, with its communication model. DDD bounded contexts and hexagonal (ports & adapters) structure apply in every style; anything that leaves the process goes through an outbox. When the questionnaire did not run, take the style from the source or flag it. A later change of style needs a new ADR. -->
+<!-- Name the style chosen in the architecture questionnaire (SKILL.md step 3b; ADR-01): modular monolith, hybrid, or microservices, with its communication model. DDD bounded contexts and hexagonal (ports & adapters) structure apply in every style; durable cross-process effects that must follow a state change use a transactional outbox, while synchronous reads and in-process events have separate guarantees. When the questionnaire did not run, take the style from the source or flag it. A later change of style needs a new ADR. -->
 
 [Architecture style statement.]
 

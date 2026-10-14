@@ -214,7 +214,7 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 
 <!-- The first three rules are platform defaults (EDA / DDD / Hexagonal), adapted to the style in ADR-01 (architecture-questionnaire.md § Effect on the SDD): microservices keep the service wording; a modular monolith or hybrid core also writes the module variant. Any other override of them needs an ADR in §10. -->
 
-- **Event-driven by default (EDA):** every cross-service state change travels as an asynchronous event through the Centralized Event Hub (§14); synchronous REST is reserved for true request-response, capped at one hop. In a modular monolith or hybrid core, module-to-module changes use in-process domain events (§14.10) and `Internal (in-process)` port calls (§15); anything that leaves the process goes through the hub. Outbox pattern mandatory - no dual-writes.
+- **Event-driven by default (EDA):** every cross-service state change travels as an asynchronous event through the Centralized Event Hub (§14); synchronous REST is reserved for true request-response, capped at one hop. In a modular monolith or hybrid core, module-to-module changes use in-process domain events (§14.10) and `Internal (in-process)` port calls (§15); durable integration events that leave the process go through the hub. Durable publication and provider writes that must follow a state change use a transactional outbox - no dual-writes. Synchronous reads and in-process events have separate guarantees.
 - **DDD bounded contexts:** one service or module owns one bounded context, its data, and one team of decisions: one database per service, or one schema per module with no cross-module joins in a modular monolith. No shared schemas across services or modules; the §13 decomposition follows domain boundaries, not technical tiers.
 - **Hexagonal architecture (ports & adapters) per service or module:** domain core isolated from transport and infrastructure; inbound/outbound adapters (REST, messaging, persistence, providers) plug into ports, and modules call each other only through ports. Provider integrations sit behind anti-corruption adapters.
 - [Rule, e.g., timezone - UTC for all datetimes]
@@ -232,6 +232,8 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 # 7. System Users & Use Cases
 
 ## 7.1 Actors
+
+Trace actors and any existing authentication capability separately to their source. Persona presence alone supplies no sign-in or permission proof; keep missing proof flagged and any proposed flow/reuse labelled Proposed (SKILL.md principle 8).
 
 <!-- List all actors (human users and external systems) that interact with the platform. -->
 
@@ -301,7 +303,7 @@ Gaps: an active use case with no owner or no entry point gets [NEEDS CLARIFICATI
 
 ### 8.1.1 What
 
-<!-- Name the style chosen in the architecture questionnaire (SKILL.md step 3b; ADR-01): modular monolith, hybrid, or microservices, with its communication model. DDD bounded contexts and hexagonal (ports & adapters) structure apply in every style; anything that leaves the process goes through an outbox. When the questionnaire did not run, take the style from the source or flag it. A later change of style needs a new ADR. -->
+<!-- Name the style chosen in the architecture questionnaire (SKILL.md step 3b; ADR-01): modular monolith, hybrid, or microservices, with its communication model. DDD bounded contexts and hexagonal (ports & adapters) structure apply in every style; durable cross-process effects that must follow a state change use a transactional outbox, while synchronous reads and in-process events have separate guarantees. When the questionnaire did not run, take the style from the source or flag it. A later change of style needs a new ADR. -->
 
 [Architecture style statement.]
 
@@ -1750,7 +1752,8 @@ sequenceDiagram
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives - the evidence behind it (BRD requirement, NFR, doctrine/CLAUDE.md default, operational risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request applies it) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+Write a closed Status as the literal legend value on its own line. Put the Resolution Log or update pointer on a separate `Resolution` line; rationale and decision metadata also have their own fields.
 
 ---
 

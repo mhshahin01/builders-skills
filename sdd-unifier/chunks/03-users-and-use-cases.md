@@ -11,6 +11,8 @@ PART OF: SDD - [Project Name]
 
 ## 7.1 Actors
 
+Trace each actor to its source. Describe existing authentication capability only with source proof; otherwise keep the proof question flagged and identify any proposed flow/reuse as Proposed. Persona presence alone proves neither sign-in nor permission grants.
+
 <!-- List all actors (human users and external systems) that interact with the platform. -->
 
 | Actor | Type (Human / System) | Description | Primary Interface |

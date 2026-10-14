@@ -2,10 +2,13 @@ import os
 import re
 import sys
 from collections import defaultdict
+from _sdd_values import literal, permission_values, registry_tokens
 
 SDD = os.path.abspath(sys.argv[1])
 
 problems = []
+notes = []
+EVIDENCE_FILES = {"stage-report.md", "author-stage-evidence.md", "application-stage-evidence.md"}
 
 
 def read(path):
@@ -84,14 +87,14 @@ for fn in files:
             if not (prefix.endswith("REFUNDS/") or prefix.endswith("LOYALTY/")):
                 if "Merged into UC-04" in line and line[start - 12:start] == "Merged into ":
                     continue
-                problems.append(f"{fn}:{i}: unkeyed {m.group(0)}: {line.strip()[:120]}")
+                (notes if fn in EVIDENCE_FILES else problems).append(f"{fn}:{i}: unkeyed {m.group(0)}: {line.strip()[:120]}" + (" (auxiliary provenance; not authoritative UC ownership)" if fn in EVIDENCE_FILES else ""))
         for m in re.finditer(r"(REFUNDS|LOYALTY)/UC-\d\d", line):
             before = line[:m.start()]
             after = line[m.end():]
             if before.endswith("Merged into "):
                 continue
             if not (before.endswith("[") and after.startswith("](")):
-                problems.append(f"{fn}:{i}: unlinked {m.group(0)}: {line.strip()[:120]}")
+                (notes if fn in EVIDENCE_FILES else problems).append(f"{fn}:{i}: unlinked {m.group(0)}: {line.strip()[:120]}" + (" (auxiliary provenance; not authoritative UC ownership)" if fn in EVIDENCE_FILES else ""))
 
 # 3. Unkeyed BRD IDs (NFR, TI, BR are fine after a UC link)
 for fn in files:
@@ -117,7 +120,6 @@ for fn in files:
 #    and every Input trigger row citing a use case is in its entry points, unless it fires the event
 c03 = read(os.path.join(SDD, "03-users-and-use-cases.md"))
 c10 = read(os.path.join(SDD, "10-events-hub.md"))
-notes = []
 api_lists = {}
 inputs = {}
 trig_ucs = {}
@@ -146,7 +148,7 @@ for fn in files:
             for n in re.findall(r"`([^`]+)`", c[1] + " | " + c[2]):
                 if re.fullmatch(trig_name[kind], n) and n not in names:
                     names.append(n)
-            if kind == "schedule" and "`" not in c[1] and re.fullmatch(trig_name[kind], c[1]):
+            if "`" not in c[1] and re.fullmatch(trig_name[kind], c[1]):
                 names = [c[1]]
             inputs[fn][kind] |= set(names)
             ucs = re.findall(r"\[((?:REFUNDS|LOYALTY)/UC-\d\d)\]\(", " ".join(c[1:]))
@@ -190,11 +192,11 @@ for num, col in (("14.5", "Business: what · when · why"), ("14.10", "When")):
 
 uc_rows = {}
 for line in c03.splitlines():
-    m = re.match(r"^\| \[(REFUNDS|LOYALTY)/UC-\d\d\]\([^)]*\) \| ([^|]*) \| ([^|]*) \| ([^|]*) \|", line)
+    m = re.match(r"^\|\s*\[(REFUNDS|LOYALTY)/UC-\d\d\]\([^)]*\)\s*\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|", line)
     if not m:
         continue
     owner_cell, entry_cell = m.group(3), m.group(4)
-    om = re.search(r"\]\(\./(13[a-z]-[^)]+)\)", owner_cell)
+    om = re.search(r"\]\((?:\./)?(13[a-z]-[^)#]+)(?:#[^)]*)?\)", owner_cell)
     eps = re.findall(r"`([^`]+)`(?:\s*\(([A-Za-z][\w -]*)\))?", entry_cell)
     cells = [x.strip() for x in line.strip().strip("|").split("|")]
     uc_id = re.match(r"\[([A-Z]+/UC-\d\d)\]", cells[0]).group(1)
@@ -272,7 +274,7 @@ for fn in files:
 
 # 8. Permission tokens in 13x exist in chunk 12
 c12 = read(os.path.join(SDD, "12-centralized-user-roles.md"))
-tokens = set(re.findall(r"^\| `([a-z][a-z-]*(?:\.[a-z][a-z-]*)+)` \|", c12, flags=re.M))
+tokens = registry_tokens(c12)
 c10_path = os.path.join(SDD, "10-events-hub.md")
 topics = set(re.findall(r"^\| \d+ \| `([a-z0-9][a-z0-9.-]*)` \|", read(c10_path), flags=re.M)) if os.path.isfile(c10_path) else set()
 for fn in files:
@@ -318,7 +320,7 @@ for fn in files:
             if "Permission token (§16)" in head:
                 cell = c.get("Permission token (§16)", "")
                 bare = cell.replace("`", "").strip()
-                found = [] if bare in ("-", "None - public") else re.findall(r"`([^`]+)`", cell)
+                found = [] if bare in ("-", "None - public") else [bare] if re.fullmatch(r"`[^`]+`", cell.strip()) else permission_values(cell)
                 if not found and bare not in ("-", "None - public"):
                     problems.append(f"{fn}: {ep}: permission token cell {cell!r} names no token")
                 for token in found:

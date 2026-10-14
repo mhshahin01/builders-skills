@@ -42,18 +42,26 @@ def before_close(text):
             depth-=1
     return text
 
-def reconciled_block(master):
-    block=re.search(r'\*\*Reconciled:\*\*([^\n]*(?:\n(?![ \t]*(?:[-*>|#\n]|$))[^\n]*)*)',master)
-    return block[1] if block else None
+def selected_reconciled(master):
+    blocks=re.finditer(r'\*\*Reconciled:\*\*([^\n]*(?:\n(?![ \t]*(?:[-*>|#\n]|$))[^\n]*)*)',master)
+    candidates=[]
+    for block in blocks:
+        entries=block_entries(block[1])
+        if not entries:
+            candidates.append((0,len(candidates),None,block[1]))
+        for i,(number,date,start) in enumerate(entries):
+            end=entries[i+1][2] if i+1<len(entries) else len(block[1])
+            candidates.append((number,len(candidates),date,block[1][start:end]))
+    selected=max(candidates,key=lambda entry:entry[:2]) if candidates else None
+    return selected[2:] if selected else None
 
-ENTRY=re.compile(r'(?:(?:^|(?<=\. ))[ \t]*\((\d+)\)|^[ \t]*(\d+)\.)\s*(\d{4}-\d\d-\d\d)',re.M)
-ENTRY_ANYWHERE=re.compile(r'(?:\((\d+)\)|^[ \t]*(\d+)\.)\s*(\d{4}-\d\d-\d\d)',re.M)
+ENTRY=re.compile(r'(?:(?:^|(?<=[.;] ))[ \t]*\((\d+)\)|^[ \t]*(\d+)\.)\s*(\d{4}-\d\d-\d\d)',re.M)
 DATED=re.compile(r'^[ \t]*(\d{4}-\d\d-\d\d)',re.M)
 
 def block_entries(block,pattern=ENTRY):
     numbered=[(int(m[1] or m[2]),m[3],m.start()) for m in pattern.finditer(block)]
-    if numbered:return numbered
-    return [(0,m[1],m.start()) for m in DATED.finditer(block)]
+    unnumbered=[(0,m[1],m.start()) for m in DATED.finditer(block)]
+    return sorted(numbered+unnumbered,key=lambda entry:entry[2])
 
 def newest_entry(block):
     entries=block_entries(block)
@@ -62,15 +70,15 @@ def newest_entry(block):
     return block[entries[i][2]:entries[i+1][2] if i+1<len(entries) else len(block)]
 
 def reconciled_date(master):
-    block=reconciled_block(master)
-    if block is None:return None
-    entries=block_entries(block,ENTRY_ANYWHERE)
-    if not entries:return None
-    return entries[max(range(len(entries)),key=lambda k:(entries[k][0],k))][1]
+    selected=selected_reconciled(master)
+    return selected[0] if selected else None
 
 def reconciled_entry(master):
-    block=reconciled_block(master)
-    return None if block is None else newest_entry(block)
+    selected=selected_reconciled(master)
+    return selected[1] if selected else None
+
+def reconciled_block(master):
+    return reconciled_entry(master)
 
 def reconciled_hash(master):
     entry=reconciled_entry(master)

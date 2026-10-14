@@ -107,10 +107,12 @@ class CheckerRegressions(unittest.TestCase):
         self.assertIn('13b-service-refund-requests.md Input Schedule waiting-requests-summary cites REFUNDS/UC-04, but is not in its entry points',
                       self.cli('check_sdd.py', self.sdd))
 
-    def test_sdd_bare_schedule_name_cell_only_for_schedules(self):
+    def test_sdd_bare_schedule_and_event_name_cells(self):
         self.edit(self.sdd/'13b-service-refund-requests.md', '| Schedule | `waiting-requests-summary`, daily | Daily', '| Schedule | waiting-requests-summary | Daily')
         self.clean(self.cli('check_sdd.py', self.sdd))
         self.edit(self.sdd/'13e-service-loyalty-points.md', '| Event | refund-requests: `RefundPaid` |', '| Event | RefundPaid |')
+        self.clean(self.cli('check_sdd.py', self.sdd))
+        self.edit(self.sdd/'13e-service-loyalty-points.md', '| Event | RefundPaid |', '| Event | UnknownRefundEvent |')
         self.assertIn('03 §7.3: entry point Event: RefundPaid not in the Input table of 13e-service-loyalty-points.md', self.cli('check_sdd.py', self.sdd))
 
     def test_sdd_bare_schedule_name_wins_over_description_backticks(self):

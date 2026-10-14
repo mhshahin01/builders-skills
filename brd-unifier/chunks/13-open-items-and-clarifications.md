@@ -32,7 +32,8 @@ DELIVERY GATE: Chunks 15, 16, and 17 stay locked while any item here is Open, De
 | **Options** | Concrete choices, each with a one-line tradeoff. At least 2 options per item where a choice exists. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content (the exact rule, step, row, or wording that would close the item). This is what gets injected into the body when you accept. A clarification marker it inserts asks one distinct question that can be answered on its own (SKILL.md principle 8). |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives: the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open (awaiting your decision) / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+| **Status** | Open (awaiting your decision) / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+Write the Status field as the literal legend value, for example `- **Status:** Accepted - applied`. Put the update or Resolution Log link on a separate `- **Resolution:**` line. Put rationale and decision metadata on their own lines; do not append punctuation, links, or explanation to a closed Status value.
 
 ---
 

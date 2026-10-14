@@ -24,11 +24,11 @@ Output is Markdown, either as a chunked folder (the default) or one combined fil
 
 Most idea docs are static templates filled from intuition. This skill exists to make the discovery layer sourced, computed, and challenged:
 
-- **Research is sourced, never guessed.** Six parallel research agents (one per chunk 06-11) gather market data, and every figure carries a source. Unverifiable values become `[NEEDS CLARIFICATION: <question>]`, never invented numbers.
-- **Compute, do not hardcode.** RICE, TAM/SAM/SOM (with a top-down vs bottom-up cross-check), EFAS/IFAS weighted scores, Porter's averages, and the Tier-5 composite all come from stated formulas in `frameworks.md`.
-- **Two independent verdicts.** The mechanical Scoreboard (22) is checked by a skeptical investor agent (23) that scores seven aspects, computes a weighted composite, and must reconcile its Go/No-Go with the Scoreboard. Enterprise and internal initiatives get a business-case lens instead of a venture lens.
+- **Research is sourced, never guessed.** Six parallel research agents (one per chunk 06-11) gather market data, and every figure carries a source. Unverifiable values become `[NEEDS CLARIFICATION: <question>]`, never invented numbers. Competitor features use Available / Not available / Unverified with evidence or a live source-gap question; only confirmed capabilities support coverage counts.
+- **Compute, do not hardcode.** RICE, TAM/SAM/SOM (with a top-down vs bottom-up cross-check), EFAS/IFAS weighted scores, Porter's averages, and the Tier-5 composite all come from stated formulas in `frameworks.md`. Scoreboard signals use decimal half-up to one decimal before weighting; the composite uses two decimals.
+- **Two independent verdicts.** The mechanical Scoreboard (22) is checked by a skeptical investor agent (23) that scores seven aspects, computes a weighted composite, and must reconcile its Go/No-Go with the Scoreboard using each engine's own scale, thresholds and evidence. Enterprise and internal initiatives get a business-case lens instead of a venture lens.
 - **Adversarial review built in.** A cleared-context reviewer reviews chunks 01-23, hunting unsourced numbers, cross-chunk figure inconsistencies, and weak go/no-go logic. Zero findings triggers up to two re-dispatches with stronger framing.
-- **Coherent synthesis.** The Scoreboard scores its five signals from tier 2 only (07, 09, 10, 11), chunks 22 and 23 never contradict chunks 01-21, and shared facts (UVP, revenue levers, target segment) are stated once in their home chunk and cross-referenced elsewhere, never restated.
+- **Coherent synthesis.** The Scoreboard scores its five signals from tier 2 only (07, 09, 10, 11), each affected signal and provisional composite retains its live source questions, chunks 22 and 23 never contradict chunks 01-21, and shared facts (UVP, revenue levers, target segment) are stated once in their home chunk and cross-referenced elsewhere, never restated.
 - **Excel on approval only.** The export clones the embedded reference workbook (styling, sample columns, and its 77 formula cells) and writes Answer cells only, per a whitelisted cell map.
 
 ## How
@@ -60,7 +60,7 @@ Invocation prefix depends on the agent: `/pre-brd-unifier chunks` in Claude Code
 4. **Fill the 22 frameworks.** Tier by tier from the research bundle, using `chunks/*.md` as authoritative skeletons. Answer cells only; guidance stays read-only; gaps are flagged with `[NEEDS CLARIFICATION: ...]`.
 5. **Investor assessment pass.** A dedicated skeptical-investor agent reads chunks 01-22 and authors chunk 23: seven aspects scored out of 10 with cited rationales, a computed weighted composite, and a decisive Go/No-Go reconciled with the Scoreboard.
 6. **Reviewer pass.** A cleared-context reviewer reviews chunks 01-23 and writes chunk 24: findings with Where, Type, Concern, Options, a concrete Recommended Answer, a mandatory Why, and the Assumptions Log.
-7. **Present and stop.** The Markdown deliverable with an inventory: chunks, clarification count, open-items count, source count, and the investor verdict, plus, when they apply, a light run's skipped frameworks, a zero-finding review, and an answer policy's answers. No Excel yet.
+7. **Present and stop.** The Markdown deliverable with an inventory: chunks, clarification count, open-items count, source count, and the investor verdict, plus, when they apply, a light run's skipped frameworks, a zero-finding review, and an answer policy's answers. Verify live uncertainty propagation and first-use markers for unanswered reserved intake values, including brand color; report live occurrences separately from unique questions and exclude examples/skip notes. No Excel yet.
 8. **Export on approval.** Only on explicit request, run the `.xlsx` export per `xlsx-export.md`.
 
 ### Outputs

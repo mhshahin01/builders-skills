@@ -5,6 +5,8 @@ close, even when the walkthrough resumes on another day.
 
 ## Apply (per point, immediately after the decision)
 
+For each clarification marker added, ask one independently answerable question. Shared source or owner does not combine funding authority with authorization policy or other distinct facts; each live remainder stays separately visible in the decision record and owner hand-off.
+
 1. **Enumerate affected docs before editing.** Start from the tracker's
    Target doc(s) cell, then sweep: which other chain documents restate,
    cite, count, or depend on the changed content? Include downstream BRD

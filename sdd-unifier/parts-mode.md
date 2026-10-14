@@ -79,10 +79,12 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 - [ ] Every §6 ecosystem row has its source in Notes (`BRD-mandated`, `source SDD`, `questionnaire`, `default`, `recommended`, `user override`); every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
 - [ ] §8.1 Architecture Style has What / Why / How at the bar of `sdd-quality.md`; the minimum ADR set is present or flagged.
 - [ ] Every actor in 03 traces to a BRD persona (derive-from-BRD) or to the source; none is invented.
+- [ ] Authentication descriptions distinguish sourced existing capability from Proposed flows/reuse; an actor or persona alone is not authentication evidence (SKILL.md principle 8).
 - [ ] Every service in 09 has a bounded context, owns its data, and serves at least one use case or platform concern (a later-phase scope item of a phase-based BRD is neither until its use cases exist: `brd-to-sdd.md` § Phase-based BRDs). No entity is owned by two services.
 - [ ] Derive-from-BRD: chunk 00 § Document Lineage lists every source BRD with its key, version, and link, and Child LLDs reads `None yet` (or the LLDs found); every BRD reference in 00-09 carries its key; with two or more BRDs, every cross-BRD conflict is asked, recorded as an ADR, or flagged (`brd-to-sdd.md` § Source BRDs and lineage).
 - [ ] Derive-from-BRD: every use case of every source BRD has its §7.3 row in 03, under its BRD's group (title as the BRD states it, status derived from its Description marker); every active one has exactly one owner in 09 `Use cases (BRD)`, or a `[NEEDS CLARIFICATION: ...]` in its Owner cell; every §8.4 and §8.5 diagram has its `**Use cases:**` line; every UC link resolves (file and anchor).
 - [ ] Every integration in 08 names the service that owns it, or is flagged.
+- [ ] Every integration's Input is the business input stated by its source/owning flow, not an invented substitute. Cross-cutting and CI/CD choices carry their source/default/Proposed labels just as ecosystem rows do; no proposal is described as adopted. Synchronous lookups and durable publication/provider writes have separate guarantees (SKILL.md principle 11).
 - [ ] Brownfield only: the §1 Existing System Context sub-section exists and 07 marks each concern inherit / override / new.
 - [ ] The Glossary covers every term and acronym used in 00-09.
 - [ ] Every Mermaid block parses and has its Summary line.

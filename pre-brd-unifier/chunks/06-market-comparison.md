@@ -19,7 +19,7 @@ One row per competing product. Add as many rows as needed.
 
 ## 2. Core features (compared with top products)
 
-> **Hint:** This is a feature-based comparison across the top 5 products. One row per feature. `Competitor 1` to `Competitor 5` are the products in rows 1 to 5 of section 1, in the same order; add each product's name to its column header, for example `Competitor 1 (Product name)`. For each feature row, mark every `Competitor X` column as **Available** or **Not available** to show whether that product offers the feature.
+> **Hint:** This is a feature-based comparison across the top 5 products. One row per feature. `Competitor 1` to `Competitor 5` are the products in rows 1 to 5 of section 1, in the same order; add each product's name to its column header, for example `Competitor 1 (Product name)`. For each feature row, mark every `Competitor X` column as **Available**, **Not available** or **Unverified**. Cite evidence for availability or absence; missing evidence means Unverified with a live source-gap question, not Not available. Preserve narrower capability qualifiers and count only confirmed Available cells in later claims.
 
 | Feature name | Description | Importance / score | Complexity | Workflow | User impact | Technical risk | Estimated dev time | Dependencies | Revenue impact | User feedback (if available) | Competitor 1 | Competitor 2 | Competitor 3 | Competitor 4 | Competitor 5 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -27,7 +27,7 @@ One row per competing product. Add as many rows as needed.
 
 ## 3. Advanced features (compared with top products)
 
-> **Hint:** This is a feature-based comparison across the top 5 products. One row per feature. `Competitor 1` to `Competitor 5` are the products in rows 1 to 5 of section 1, in the same order; add each product's name to its column header, for example `Competitor 1 (Product name)`. For each feature row, mark every `Competitor X` column as **Available** or **Not available** to show whether that product offers the feature.
+> **Hint:** This is a feature-based comparison across the top 5 products. One row per feature. `Competitor 1` to `Competitor 5` are the products in rows 1 to 5 of section 1, in the same order; add each product's name to its column header, for example `Competitor 1 (Product name)`. For each feature row, mark every `Competitor X` column as **Available**, **Not available** or **Unverified**. Cite evidence for availability or absence; missing evidence means Unverified with a live source-gap question, not Not available. Preserve narrower capability qualifiers and count only confirmed Available cells in later claims.
 
 | Feature name | Description | Importance / score | Complexity | Workflow | User impact | Technical risk | Estimated dev time | Dependencies | Revenue impact | User feedback (if available) | Competitor 1 | Competitor 2 | Competitor 3 | Competitor 4 | Competitor 5 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|

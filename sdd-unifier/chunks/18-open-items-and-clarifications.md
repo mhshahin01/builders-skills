@@ -31,7 +31,8 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives - the evidence behind it (BRD requirement, NFR, doctrine/CLAUDE.md default, operational risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request applies it) / Accepted - applied (with pointer) / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+| **Status** | Open (awaiting decision) / Decided - pending application (decision, decider and date in the item; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+Write the Status field as the literal legend value, for example `- **Status:** Accepted - applied`. Put the update or Resolution Log link on a separate `- **Resolution:**` line. Put rationale and decision metadata on their own lines; do not append punctuation, links, or explanation to a closed Status value.
 
 ---
 

@@ -16,6 +16,8 @@ rule 6), and is never edited after the walkthrough starts.
 
 ## Template
 
+When quoting a source register or history block, preserve its wording and provenance. Add a source-base link beside the quotation and provide a usable navigation copy with links rebased to the tracker's location when needed. Do not leave a clickable source-relative link pointing at the wrong file from the tracker; label the literal source link as quoted text when the navigation copy supplies its destination.
+
 ```markdown
 # Review Comments Tracker
 

@@ -1,4 +1,15 @@
 import os, re, sys
+from _sdd_values import permission_values, registry_tokens
+from _route_data import route_records
+
+
+def route_paths(text):
+    text = re.sub(r'\[[^\]]*\]\([^)]*\)', '', text)
+    return re.findall(r'(?<![\w/])(/[\w:/{}.*-]*)', text)
+
+
+def endpoints(text):
+    return [p.strip() for p in re.split(r'[,;]\s*(?=(?:[A-Z]+ /|Schedule:|Event:))', text.replace('`', '')) if re.match(r'^(?:[A-Z]+ /|Schedule:|Event:)', p.strip())]
 
 ROOT = sys.argv[1]
 LLD = os.path.join(ROOT, "lld-refunds-platform")
@@ -16,11 +27,19 @@ problems = []
 # ---- SDD 7.3 rows
 s73 = {}
 for line in read(os.path.join(SDD, "03-users-and-use-cases.md")).splitlines():
-    m = re.match(r"\| \[((REFUNDS|LOYALTY)/UC-\d\d)\]\([^)]*\) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|.*\| ([^|]+) \|\s*$", line)
+    cells = [c.strip() for c in line.strip().strip("|").split("|")]
+    m = re.fullmatch(r"\[((REFUNDS|LOYALTY)/UC-\d\d)\]\([^)]*\)", cells[0]) if line.lstrip().startswith('|') else None
     if m:
-        uc, title, owner, entry, status = m.group(1), m.group(3).strip(), m.group(4).strip(), m.group(5).strip(), m.group(6).strip()
+        uc = m[1]
+        if len(cells) != 8:
+            problems.append(f"SDD 7.3 {uc} needs eight cells")
+            continue
+        title, owner, entry, status = cells[1], cells[2], cells[3], cells[7]
         owner = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", owner)
-        s73[uc] = dict(title=title, owner=owner, entry=entry, status=status)
+        if uc in s73:
+            problems.append(f"duplicate SDD 7.3 {uc}")
+        else:
+            s73[uc] = dict(title=title, owner=owner, entry=entry, status=status)
 print("SDD 7.3 rows:", list(s73))
 
 # ---- BRD chunk 16 Related UC (a BRD without chunk 16 is Pending)
@@ -76,7 +95,7 @@ for uc, row in s73.items():
         else: fields[k] = v
     if fields.get("Owner") != row["owner"]:
         problems.append(f"{uc} owner {fields.get('Owner')} vs {row['owner']}")
-    if fields.get("Entry points") != row["entry"]:
+    if fields.get("Entry points", "").replace('`', '') != row["entry"].replace('`', ''):
         problems.append(f"{uc} entry points differ:\n   LLD {fields.get('Entry points')}\n   SDD {row['entry']}")
     tcs = re.findall(r"\[((?:REFUNDS|LOYALTY)/TC-[A-Z]{3}-\d\d)\]", fields.get("UAT/BAT", ""))
     key = uc.split("/")[0]
@@ -113,15 +132,17 @@ routes = []
 fe = read(os.path.join(LLD, "14-frontend.md"))
 sec = fe.split("## 17.3 Routing", 1)[1].split("## 17.4", 1)[0]
 for line in sec.splitlines():
-    if line.startswith("| `"):
+    if line.lstrip().startswith("|") and re.match(r'^\|\s*`?/', line):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        rm = re.fullmatch(r"`([^`]+)`(?:\s*\([^()]*\))?", cells[0])
+        rm = re.fullmatch(r"`?(/[^`\s]+)`?(?:\s*\([^()]*\))?", cells[0])
         route, screen, ucs = rm.group(1) if rm else cells[0].strip("`"), cells[2], cells[3]
         routes.append((route, re.findall(r"\[((?:REFUNDS|LOYALTY)/(?:SCR|MK|LP)-\d\d)\]", screen),
                        re.findall(r"\[((?:REFUNDS|LOYALTY)/UC-\d\d)\]", ucs), screen, ucs))
 for uc, b in blocks.items():
+    if uc not in s73:
+        problems.append(f"block {uc} not in SDD 7.3")
     exp_routes = [r[0] for r in routes if uc in r[2]]
-    got_routes = re.findall(r"`(/[^`]*)`", b.get("screens_field", ""))
+    got_routes = route_paths(b.get("screens_field", ""))
     if sorted(exp_routes) != sorted(got_routes):
         problems.append(f"{uc} screens field routes {got_routes} vs 17.3 {exp_routes}")
 for r in routes:
@@ -134,16 +155,15 @@ for r in routes:
     problems.append(f"route {r[0]} has no screen and is not a platform page")
 
 # route data matches rows
+runtime_routes = route_records(fe)
 for r in routes:
     if not r[1]:
         continue
-    path = r[0].lstrip("/")
-    # Bound the match to this route, so a missing data field cannot borrow the next one.
-    route = re.search(r"\{\s*path:\s*'" + re.escape(path) + r"'(?:(?!\{\s*path:|```)[\s\S])*", fe)
-    m = re.search(r"data:\s*\{\s*screen:\s*'([^']+)'(?:,\s*useCases:\s*\[([^\]]*)\])?\s*\}", route.group(0)) if route else None
-    if not m:
+    records = runtime_routes.get(r[0], [])
+    data = records[0]['data'] if len(records) == 1 else None
+    if not data:
         problems.append(f"route {r[0]}: no route data"); continue
-    scr = m.group(1); ucs = re.findall(r"'([^']+)'", m.group(2) or "")
+    scr, ucs = data['screen'], data['useCases']
     if [scr] != r[1] or sorted(ucs) != sorted(r[2]):
         problems.append(f"route {r[0]} data {scr} {ucs} vs row {r[1]} {r[2]}")
 
@@ -191,7 +211,7 @@ for r in routes:
     if r[3].startswith("None - no BRD screen ("):
         if not (r[4].startswith("None - no BRD screen (") and "](" in r[4]):
             problems.append(f"route {r[0]}: a Workflow route reads 'None - no BRD screen ([link])' in both BRD columns, not {r[4][:80]!r}")
-        if re.search(r"path: '" + re.escape(r[0].lstrip("/")) + r"'[^}]*data:", fe):
+        if any(record['data_present'] for record in runtime_routes.get(r[0], [])):
             problems.append(f"route {r[0]}: a Workflow route carries no route data")
     if r[4].startswith("None - no BRD use case ("):
         refs = SCREEN_REF.findall(r[3])
@@ -206,7 +226,7 @@ for uc, b in blocks.items():
     for part in re.split(r"(?=\[(?:REFUNDS|LOYALTY)/)", b.get("screens_field", "")):
         m = SCREEN_REF.match(part)
         if m:
-            for route in re.findall(r"`(/[^`]*)`", part):
+            for route in route_paths(part):
                 got.add((f"{m.group(1)}/{m.group(2)}", route))
     exp = {(s, r[0]) for r in routes if uc in r[2] for s in r[1]}
     if got != exp:
@@ -223,6 +243,12 @@ for line in idx.splitlines():
     if not m: continue
     uc = m.group(1)
     cells = [c.strip() for c in line.strip().strip("|").split("|")]
+    if uc not in s73:
+        problems.append(f"index {uc} not in SDD 7.3")
+        continue
+    if len(cells) != 9:
+        problems.append(f"index {uc} needs nine cells")
+        continue
     title, status = cells[1], cells[8]
     if title != s73[uc]["title"] or status != s73[uc]["status"]:
         problems.append(f"index {uc} title/status mismatch")
@@ -233,7 +259,7 @@ for line in idx.splitlines():
             problems.append(f"index {uc} TCs differ")
         elif key not in tcs_by_key and cells[6] != PENDING:
             problems.append(f"index {uc} {key} UAT/BAT should be Pending")
-        rts = re.findall(r"`(/[^`]*)`", cells[5])
+        rts = route_paths(cells[5])
         if sorted(rts) != sorted([r[0] for r in routes if uc in r[2]]):
             problems.append(f"index {uc} routes differ")
         scr = {f"{k}/{i}" for k, i, _ in SCREEN_REF.findall(cells[4])}
@@ -250,6 +276,21 @@ REST = re.compile(r"^(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) /")
 
 def norm(ep):
     return re.sub(r"\s+", " ", ep).strip()
+
+
+def trigger_annotation(text, controller, ep):
+    for clause in re.split(r';|\.\s+(?=[A-Z])', text):
+        clause = clause.strip().rstrip('.')
+        named = re.fullmatch(r'(\w+Controller) methods (?:use|carry) @UseCase\("([^"]+)"\)', clause)
+        query = re.fullmatch(r'@UseCase\("([^"]+)"\) on both query methods', clause)
+        cancel = re.fullmatch(r'@UseCase\("([^"]+)"\) cancellation method', clause)
+        if named and named[1] == controller:
+            return named[2].split(',')
+        if query and ep.startswith('GET '):
+            return query[1].split(',')
+        if cancel and re.fullmatch(r'POST /\S+/cancellations?', ep):
+            return cancel[1].split(',')
+    return []
 
 
 active_eps = {uc: [norm(e) for e in re.findall(r"`([^`]+)`", r["entry"])] for uc, r in s73.items() if r["status"] == "Active"}
@@ -275,13 +316,30 @@ def anchors_7_2(txt):
                 break
             c = dict(zip(head, [x.strip() for x in row.strip().strip("|").split("|")]))
             if ep_col and uc_col:
-                for ep in re.findall(r"`([^`]+)`", c.get(ep_col, "")):
+                for ep in endpoints(c.get(ep_col, "")):
                     traced.setdefault(norm(ep), []).extend(UC_ID.findall(c.get(uc_col, "")))
             elif head[:2] == ["Class", "Endpoints"]:
                 notes, cell = c.get("Notes", ""), c.get("Endpoints", "")
-                eps = [norm(p) for t in re.findall(r"`([^`]+)`", cell) for p in re.split(r",\s*(?=[A-Z]+ /)", t)]
+                eps = [norm(p) for p in endpoints(cell)]
                 listed = re.search(r"`@UseCase` values?:?\s*(.+?)\s+in that order", notes)
                 values = re.findall(r"`([^`]+)`", listed.group(1)) if listed else re.findall(r'@UseCase\("([^"]*)"\)', notes)
+                if re.search(r'\b(?:no|not|without|never)\b[^;]*@UseCase', notes, re.I):
+                    values = []
+                if not values and re.fullmatch(r'Each method carries its own keyed @UseCase from §7\.8\.?', notes, re.I):
+                    for workflow in re.finditer(r'^### ((?:REFUNDS|LOYALTY)/UC-\d\d):.*?\n(.*?)(?=^#{1,3} |\Z)', txt, re.M | re.S):
+                        body = workflow[2]
+                        trace = re.search(r'^> \*\*Traceability:\*\* BRD \[([^\]]+)\].*? · Entry points:\s*(.*?) · ', body, re.M)
+                        trigger = re.search(r'^\*\*Trigger:\*\*\s*(.*)$', body, re.M)
+                        if not trace or trace[1] != workflow[1] or not trigger:
+                            continue
+                        for ep in endpoints(trace[2]):
+                            if ep in eps and REST.match(ep):
+                                got = trigger_annotation(trigger[1], c.get('Class'), ep)
+                                if workflow[1] not in got or any(not UC_ID.fullmatch(v) for v in got):
+                                    continue
+                                old = traced.setdefault(norm(ep), got[:])
+                                if old != got:
+                                    old.extend(got)
                 rows.append(dict(cls=c.get("Class", ""), text=" ".join((c.get("Class", ""), cell, notes)),
                                  rest=[e for e in eps if REST.match(e)], values=values, ordered=bool(listed)))
     return traced, rows
@@ -407,12 +465,13 @@ for i, line in enumerate(lines):
             problems.append(f"06 §9.1 {' '.join(key)}: not in any SDD 13x List of APIs")
             continue
         _, token, apis = same[0]
-        mine = c.get("Permission token (SDD §16)", c.get("Auth Scope", "")).replace("`", "")
-        if mine != token:
+        token_col = next((h for h in head if h.startswith('Permission token')), 'Auth Scope' if 'Auth Scope' in head else None)
+        mine = c.get(token_col, "").replace("`", "")
+        if token_col and mine != token:
             problems.append(f"06 §9.1 {' '.join(key)}: token {mine!r} vs SDD {token!r}")
         if "API ID (§15)" in head and re.findall(r"API-\d\d", c.get("API ID (§15)", "")) != apis:
             problems.append(f"06 §9.1 {' '.join(key)}: API ID {c.get('API ID (§15)')!r} vs SDD {apis}")
-tokens = set(re.findall(r"^\| `([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)` \|", read(os.path.join(SDD, "12-centralized-user-roles.md")), re.M))
+tokens = registry_tokens(read(os.path.join(SDD, "12-centralized-user-roles.md")))
 for fn in sorted(os.listdir(os.path.join(LLD, "04-implementation"))):
     lines = read(os.path.join(LLD, "04-implementation", fn)).splitlines()
     if not any(line.startswith("| Entry point | Kind |") for line in lines):
@@ -428,7 +487,11 @@ for fn in sorted(os.listdir(os.path.join(LLD, "04-implementation"))):
         for row in lines[i + 2:]:
             if not row.startswith("|"):
                 break
-            for t in re.findall(r"`([a-z][a-z-]*\.[a-z][a-z-]*\.[a-z][a-z-]*)`", dict(zip(head, split_row(row))).get(col, "")):
+            auth_cell = dict(zip(head, split_row(row))).get(col, "")
+            auth_tokens = permission_values(auth_cell)
+            if not auth_tokens and re.search(r'[a-z][a-z-]*\.', auth_cell):
+                problems.append(f"04 {fn}: malformed permission token cell {auth_cell!r}")
+            for t in auth_tokens:
                 if t not in tokens:
                     problems.append(f"04 {fn}: token {t} not in SDD §16.11")
 if any(re.match(r"^\| API-\d\d \|", l) and split_row(l)[4:5] == ["Internal"] for l in c11.splitlines()):

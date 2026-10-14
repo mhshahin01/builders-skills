@@ -59,6 +59,41 @@ def cited_chunk(text, url):
     return m.group(1) if m else None
 
 
+def words(text):
+    return ' '.join(re.findall(r'[a-z0-9]+', LINK.sub(r'\1', text).lower()))
+
+
+def named_blocks(blocks, locs):
+    blocked = words(blocks)
+    for text, url, rest in locs:
+        ch = cited_chunk(text, url)
+        if not ch:
+            continue
+        filename = url.split('#')[0] if url else ''
+        paths = [os.path.normpath(os.path.join(DOC, filename))] if filename else glob.glob(os.path.join(DOC, ch + '-*.md'))
+        for path in paths:
+            if os.path.dirname(path) != DOC or not os.path.isfile(path):
+                continue
+            body = uncomment(read(path))
+            headings = re.findall(r'^#{1,6}\s+(.+?)\s*#*$', body, re.M)
+            if any(words(h) and (' ' + words(h) + ' ') in (' ' + blocked + ' ') for h in headings):
+                return True
+            label = re.sub(r'^\d{2}[a-z]?\s*/\s*', '', text)
+            numbered = re.fullmatch(r'(Assumption|Constraint)\s+(\d+)', label, re.I)
+            if numbered and words(label) in blocked:
+                section = next((h for h in headings if re.search(numbered[1] + r's\b', h, re.I)), None)
+                if section:
+                    tail = body.split(section, 1)[1]
+                    tail = re.split(r'^#{1,6}\s', tail, maxsplit=1, flags=re.M)[0]
+                    if re.search(r'^\s*' + numbered[2] + r'\.\s', tail, re.M):
+                        return True
+            dependency = re.fullmatch(r'Dependency\s+(.+)', label, re.I)
+            if dependency and words(label) in blocked:
+                if any(words(line.strip().strip('|').split('|')[0]) == words(dependency[1]) for line in body.splitlines() if line.startswith('|')):
+                    return True
+    return False
+
+
 todo = os.path.join(DOC, "14-todo.md")
 if not os.path.isfile(todo):
     print("problems: 1")
@@ -116,7 +151,7 @@ for r in rows:
     live.append(tid)
     if PLACEHOLDER.match(blocks):
         problems.append(f"{tid}: Blocks is empty or a placeholder ({blocks!r})")
-    elif not SPECIFIC.search(blocks):
+    elif not SPECIFIC.search(blocks) and not named_blocks(blocks, locs):
         problems.append(f"{tid}: Blocks names no use case, NFR, or chunk section ({blocks!r})")
     blocks_seen.setdefault(blocks, []).append(tid)
     if col(r, "decision or clarification needed").count("?") > 1:

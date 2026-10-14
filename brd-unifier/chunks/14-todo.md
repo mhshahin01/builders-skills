@@ -152,6 +152,7 @@ Do not edit any file during the session. End with a numbered decision list I can
 ```
 
 **After the session:** apply new/changed confirmed choices through the decision/OI/TD mechanics and scoped recheck. A no-change confirmation goes only in evidence/history, not a new TD. Third-run choices wait for the next request. Recheck the gate; existing delivery outputs become Stale only when their source meaning changed.
+Record the session's current state in its evidence: `Paused` with unanswered questions and the dated session source, or completed with the actual confirmation. A paused session leaves Step 3 `In progress` and G3 unmet. Count current open questions separately from proposed choices and historical settled decisions; refresh counts and gate reasons from the current files.
 
 ---
 

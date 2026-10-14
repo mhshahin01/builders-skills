@@ -13,7 +13,7 @@ An independent investor-lens evaluation of the whole pre-BRD. Where the Executiv
 
 ## Method
 
-Each aspect is scored **0 to 10** (10 = exceptional, fund-ready; 0 = fatal flaw) from the evidence in the source chunks - not invented. Every score carries a one-line rationale that cites the chunk(s) it draws on. Composite = Σ(score × weight); weights sum to 1.0. Verdict bands: **Go ≥ 7.0**, **Conditional Go 5.0 to 6.9**, **No-Go < 5.0**. The investor must explicitly reconcile its verdict with the Scoreboard (22): agree and reinforce, or disagree and explain why.
+Each aspect is scored **0 to 10** (10 = exceptional, fund-ready; 0 = fatal flaw) from the evidence in the source chunks - not invented. Every score carries a one-line rationale that cites the chunk(s) it draws on. Composite = Σ(score × weight); weights sum to 1.0. Verdict bands: **Go ≥ 7.0**, **Conditional Go 5.0 to below 7.0**, **No-Go < 5.0**. The investor must explicitly reconcile its verdict with the Scoreboard (22): agree and reinforce, or disagree and explain why. Compare each engine against its own scale, thresholds and evidence; similar raw composites on different scales are not corroboration. For example, 3.04/5 is Conditional Go at the 3.0 boundary, while 3.05/10 is No-Go and 1.95 below its 5.0 boundary. Capability counts must match the exact verified feature cells in 06, including their qualifiers; Unverified cells are not confirmed capabilities.
 
 ## Dependencies to verify before scoring
 
@@ -59,4 +59,4 @@ A short, decisive narrative an investor would stand behind.
 
 ## Sources
 
-All filled analysis and synthesis chunks (01–22), with primary weight on Market Sizing (07), VRIO (18), Porter's (09), Lean Canvas (03), the Go-To-Market section (21), and the Scoreboard (22). Update any source chunk and re-run the investor pass.
+All filled analysis and synthesis chunks (01-22), with primary weight on Market Sizing (07), VRIO (18), Porter's (09), Lean Canvas (03), the Go-To-Market section (21), and the Scoreboard (22). Update any source chunk and re-run the investor pass.

@@ -132,6 +132,7 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 | 3 | 14-18, 19 (gated) | In progress (14-17 written; reviewer next) | - |
 
 **Reconciled:** 2026-09-28, step 6a by the author, part 2 request, run after the last part 2 edit (§7.3 filled)
+**Review passes:** 0 of 3 (the baseline review has not run yet)
 **E2E gate (chunk 19):** Locked - E1 (chunk 18 not written yet)
 **E2E basis:** None (chunk 19 not written)
 ```
@@ -141,11 +142,11 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 - Status is `Pending`, `In progress ([last step done])`, or `Complete`. Parts 2 and 3 have several steps, so record each one as it finishes. Part 2: `13x written`, `10 written`, `12 written`, `11 written`, `7.3 filled` (derive-from-BRD), `reconciled`. Part 3: `14-17 written`, `18 written`, `acceptance loop done`, `19 written` or `19 Locked (gate shut)`. Part 3 becomes `Complete` when the gate check has run: chunk 19 is then either written or `Locked`, and a later request refreshes it through SKILL.md step 8b.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
 - Chunk 00 shows `**Status:** Draft - part N of 3` until part 3 is complete, then `Draft`.
-- During the first build, the version stays 1.0 and the Changes Log keeps one "Initial draft" row, dated when part 3 completes. The review, the acceptance loop, and the e2e gate check of part 3 belong to that build: they bump nothing and add no row (the row's text names the open items the loop applied: SKILL.md step 8 item 3). After part 3 is complete, any content change follows SKILL.md § Output conventions, Versions.
+- A first build that completes in one request keeps the version at 1.0 through the build, and the Changes Log keeps one "Initial draft" row, dated when part 3 completes. The review, the acceptance loop, and the e2e gate check of part 3 belong to that build: they bump nothing and add no row (the row's text names the open items the loop applied: SKILL.md step 8 item 3). A long first build, one spread over several requests or stages, may instead bump the version once per request that changes content (SKILL.md § Output conventions, Versions). After part 3 is complete, any content change follows SKILL.md § Output conventions, Versions.
 - PREV / NEXT footers may point at a chunk that does not exist yet. That is expected until its part is written.
 - When part 3 is complete, remove nothing: keep the table with all three parts `Complete`. It is the record of how the SDD was built.
 
-In `whole` runs, **Generation:** reads `whole` and the Part table is left out; the Intent, Source, Reconciled, E2E gate, and E2E basis lines and the E3 marker inventory stay. The Changes Log's Initial draft row, dated when the run completes, is the record of its completion.
+In `whole` runs, **Generation:** reads `whole` and the Part table is left out; the Intent, Source, Reconciled, Review passes, E2E gate, and E2E basis lines and the E3 marker inventory stay. The Changes Log's Initial draft row, dated when the run completes, is the record of its completion.
 
 ---
 

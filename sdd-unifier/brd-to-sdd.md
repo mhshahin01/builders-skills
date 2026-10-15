@@ -79,7 +79,7 @@ These rules apply when the SDD's source BRDs are brd-unifier output. Legacy BRDs
 
 ### The link
 
-Every use case the SDD cites is a Markdown link, keyed by its BRD, to that use case's heading in the BRD:
+Every use case the SDD cites is a Markdown link, keyed by its BRD, to that use case's heading in the BRD. The same hygiene binds every BRD reference any run adds or touches, in every file of the SDD (the chunks, the master, and `decision-log.md`): every `UC-NN`, `NFR-NN`, `TI-NN`, or other ID a source BRD defines carries its BRD key and, wherever § Checks item 6 requires it, its link, in the same edit that writes or touches the text. This holds wherever the text lives: body chunks, chunk 18 (items, Resolution Log, Reviewer Notes, coverage rows), the master's lines and tables, and the decision-log records:
 
 `[REFUNDS/UC-04](../brd-refunds-portal/06b-use-cases-branch-manager.md#uc-04-approve--reject-refund)`
 

@@ -28,7 +28,7 @@ These rules apply when the SDD derives from brd-unifier BRD(s): in from-sdd and 
 
 **Scope.** "In scope" means owned by an SDD §13 service (or module) this LLD covers (SKILL.md step 3b).
 
-**Behaviour no use case covers.** A scheduled job, a BRD chunk 09 report, or an NFR-driven process that the BRD or SDD asks for, but that no BRD use case covers, gets a `### Workflow: [name]` block in its owner's file, never a made-up use case. Directly under its heading: `> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the KEY/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them; where the SDD names none, the name the LLD gives it (`Schedule: [job name]`), flagged `> Confirm:`]`. It carries no `@UseCase` and has no 16 §19.9 row; a route that serves it follows § Frontend routes.
+**Behaviour no use case covers.** A scheduled job, a BRD chunk 09 report, or an NFR-driven process that the BRD or SDD asks for, but that no BRD use case covers, gets a `### Workflow: [name]` block in its owner's file, never a made-up use case. Directly under its heading: `> **Traceability:** No BRD use case - realises [link to the BRD 09 section, the KEY/NFR-NN, or SDD §17.X] · Entry points: [method and path, or the trigger, as the SDD writes them; where the SDD names none, the name the LLD gives it (`Schedule: [job name]`), flagged `> Confirm:`]`. In workflow-block headings and traceability lines, only a use-case flow carries a use-case ID: this block's heading and its traceability line carry no `UC-NN` reference, keyed or plain, it carries no `@UseCase`, and it has no 16 §19.9 row (route cells, the index, spec tags, and the 16 §19.9 rows of use-case flows are unchanged); a route that serves it follows § Frontend routes.
 
 ### Homes
 
@@ -183,7 +183,7 @@ Flag what is missing upstream; never fill it.
 3. Every 14 §17.3 route has a Screen and a Use cases cell, or `None - platform page`, or `None - no BRD screen ([link])` for a route that serves a `### Workflow:` block (when its screen has a chunk 14 row: that row as Screen and `None - no BRD use case ([link])` as Use cases); each screen's use cases equal the BRD's; every active use case with a screen the actor sees has a route; every route with a BRD screen has its own `data` entry in the 14 §17.3 route configuration, and it matches its row.
 4. The index has one row per §7.3 row, in the same order and groups, and every cell equals its home, in both directions.
 5. Every 13 §16.8 tag names a use case or test case the BRD has; every non-retired case of an in-scope use case has a spec or a `Not automated` reason.
-6. Every entry point a use case's 04 line names carries `@UseCase` with the §7.3 value; one a `### Workflow:` line names, and an endpoint the LLD proposes that §7.3 does not list, carry none.
+6. Every entry point a use case's 04 line names carries `@UseCase` with the §7.3 value; one a `### Workflow:` line names, and an endpoint the LLD proposes that §7.3 does not list, carry none. No `### Workflow:` block carries a use-case ID in its heading or traceability line (route cells, the index, spec tags, and §19.9 rows are not workflow-block headings or traceability lines; they are unchanged).
 7. Every link resolves: the file exists at that relative path, and the anchor equals the one built from the real heading in that file.
 8. Every BRD ID, including each ID in a list, carries a key from the SDD's Source BRDs register, and its link points into that BRD's location.
 

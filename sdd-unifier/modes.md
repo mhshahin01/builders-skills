@@ -141,7 +141,7 @@ When the user says "split into chunks", "chunk this SDD", "re-chunk this":
 4. For section 17 (Detailed Service Specs), each `## 17.X` block becomes its own chunk file (`13a-service-*.md`).
 5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer. Its VERSION is the combined file's version for chunk 00, and for any other chunk the version of the newest Changes Log row whose `Chunks:` list names it or one of its sections, else the version of the earliest Changes Log row; when no row has a `Chunks:` list (an SDD older than that rule), the combined file's version, noted in the handoff (SKILL.md § Output conventions, Versions).
 6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed). Links are rebased: a link to a BRD or LLD (`./brd-…`, `./BRD-…`, `./lld-…`, `./LLD-…`) gains `../`, and an in-file anchor (`#171-…`, `#841-…`) becomes a link to the chunk that now holds that heading (`./13a-service-[slug].md#171-…`).
-7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index, which takes over the cover's Reconciled, E2E gate, and E2E basis lines and its E3 marker inventory, each inventory source link rebased to the chunk that now holds its heading).
+7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index, which takes over the cover's Reconciled, Review passes, E2E gate, and E2E basis lines and its E3 marker inventory, each inventory source link rebased to the chunk that now holds its heading).
 8. Keep the original combined file.
 
 ---

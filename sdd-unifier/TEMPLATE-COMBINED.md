@@ -9,6 +9,7 @@
 **Date:** [YYYY-MM-DD]
 **Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
 **Reconciled:** [Date, checker, request and checked content revision/hash (hash scope and method: SKILL.md step 8b, E4) or explicit final-edit-then-check order]
+**Review passes:** [N of 3 for the current request, N of 2 in a light run (baseline + N-1 application), or 0; only the baseline review and each scoped application pass increment it, a re-dispatch never does (SKILL.md step 7, Review limit)]
 **E2E gate (§24):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
 **E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
 

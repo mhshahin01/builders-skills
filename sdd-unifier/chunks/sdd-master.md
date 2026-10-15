@@ -22,7 +22,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 ## Generation Progress
 
-<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: set **Generation:** to whole and leave out the Part table; the Intent, Source, Reconciled, E2E gate, and E2E basis lines and the E3 marker inventory stay. -->
+<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: set **Generation:** to whole and leave out the Part table; the Intent, Source, Reconciled, Review passes, E2E gate, and E2E basis lines and the E3 marker inventory stay. -->
 
 **Generation:** parts
 **Intent:** [generate | transform | derive-from-BRD]
@@ -35,6 +35,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 | 3 | 14-18, 19 (gated) | [Pending / In progress (last step) / Complete] | - |
 
 **Reconciled:** [Date, checker, request and checked content revision/hash (hash scope and method: SKILL.md step 8b, E4) or explicit final-edit-then-check order]
+**Review passes:** [N of 3 for the current request, N of 2 in a light run (baseline + N-1 application), or 0; only the baseline review and each scoped application pass increment it, a re-dispatch never does (SKILL.md step 7, Review limit)]
 **E2E gate (chunk 19):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
 **E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
 

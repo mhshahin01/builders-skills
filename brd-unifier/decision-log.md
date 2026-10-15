@@ -1,6 +1,6 @@
 # Decision Log - the decision register companion file
 
-`decision-log.md` is the single home for the decision story behind a BRD: the clarification Q&A, which option was chosen, who decided, when, what was delegated, what was superseded, walkthrough progress, per-decision impact assessments, part-handoff instructions, settled markers, and the records of business review points. The content chunks (00-13) hold only the settled requirements in plain present tense; this register holds why and how they were decided.
+`decision-log.md` is the single home for the decision story behind a BRD: the clarification Q&A, which option was chosen, who decided, when, what was delegated, what was superseded, walkthrough progress, grill session answer ledgers, per-decision impact assessments, part-handoff instructions, settled markers, and the records of business review points. The content chunks (00-13) hold only the settled requirements in plain present tense; this register holds why and how they were decided.
 
 **Companion file rules.**
 
@@ -77,6 +77,20 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 ### Action entries
 
 **[Action], [YYYY-MM-DD]:** [What was done in that session: chunks written, back-fills, markers raised or resolved, what stays pending.]
+
+## Grill session record
+
+[The answer ledger of a grill-me session (delivery-chunks.md § Step 3): one record per answered question, keyed by the TD row it settles. Chunk 14 holds no such table; this section is its home. One sub-section per session, in date order.]
+
+### [Session, e.g. "2026-10-14 round 1"]
+
+#### TD-NN - [short title]
+
+**Question:** [The question the session asked, as its TD row states it.]
+
+**Answer ([YYYY-MM-DD]):** [What was answered (accepted, adjusted, deferred, or "later") and who decided: the product manager, or a Product Owner stand-in written `Stand-in: Product Owner (<policy>, set by <name>, <date>)` (SKILL.md step 8). A "later" stays recorded as history; its TD row stays open.]
+
+**Rule home:** [[Section name]](./NN-chunk.md#anchor-of-the-settled-rule), once the answer is applied]
 
 ## Per-decision ecosystem assessments
 

@@ -487,12 +487,23 @@ def main():
     ap.add_argument("--push-check", action="store_true")
     ap.add_argument("--slice", default="", help="slice delivery gate: KEY/S-NN (slice-rules.md § 5)")
     ap.add_argument("--accept-count", default="", help="reason for accepting fewer tests than last time")
+    ap.add_argument("--history", action="store_true", help="rebuild tracking/history.md from git and the reports")
+    ap.add_argument("--history-start", default="", help="stamp the start clock of KEY/T-NNN (run at `start`)")
     a = ap.parse_args()
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except AttributeError:
         pass
     tracking = os.path.abspath(a.tracking)
+    if a.history_start or a.history:
+        import history
+        cfg = open(os.path.join(tracking, "config.md"), encoding="utf-8").read()
+        root = os.path.normpath(os.path.join(tracking, "..", (table_value(cfg, "Code root") or ".").split()[0]))
+        if a.history_start:
+            history.stamp_start(tracking, a.history_start)
+        else:
+            history.write(tracking, root)
+        sys.exit(0)
     if a.slice:
         slice_check(tracking, a.slice)
     cfg = open(os.path.join(tracking, "config.md"), encoding="utf-8").read()

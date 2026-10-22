@@ -40,6 +40,7 @@ Support files (paths relative to this skill folder):
 | `lessons-rules.md` | Lesson capture, valid-lesson format, dedup/recurrence, promotion, recall; change log |
 | `audit-rules.md` | The auditor subagent, layer matrix, tool evidence, verdicts, auditor prompt, clean export, parallel audits |
 | `scripts/preflight.py` | Pre-flight: the mechanical checks run before any audit (tree, trailers, status, Owns, tests, stack, lesson checks) |
+| `scripts/history.py` | `--history` / `--history-start`: rebuilds `tracking/history.md` (time per task, over-threshold signals, problems, root-cause counts) from recorded facts only |
 | `hooks/stop-audit-guard.js` | Optional Claude Code Stop hook: blocks ending a turn while a task is `In review` without a passing audit |
 
 ---
@@ -207,6 +208,8 @@ Builds several tasks in one pass without loosening any gate.
    started before the current head commit is restarted now, as part of bringing the environment up
    (audit-rules.md § 3a); never mid-task, never by asking the user.
 4. Set `In progress`, `agent`, `started`, **start commit** (`git rev-parse HEAD`); append to today's journal.
+   Stamp the start clock: `python <skill>/scripts/preflight.py --tracking <tracking> --history-start KEY/T-NNN`
+   (writes `history-clock.json`, used by `history.md` for the task's span; run once, a second run keeps the first).
 5. Print the **task brief** for the implementer: Goal, Why, Doc refs (links), Owns, **Layers to touch**
    (API / DB / UI / logs / security — derived from the LLD, each with its doc anchor), **Lessons that
    apply** (lessons-rules.md § 5, with their Checks), the **Design check** (high risk), Definition of done,
@@ -276,7 +279,11 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    readiness of dependents and print which became Ready. FAIL → back to `In progress`, print the findings
    as a fix list, open gaps, capture lessons; re-run `done` after fixing (re-audit only the failed tasks,
    as a **delta re-audit**, audit-rules.md § 1c, in the reused export).
-4a. **Delivery.** Commit the tracking update with the task trailer. Push automatically only when
+4a. **History.** After the verdict (PASS or FAIL), rebuild `tracking/history.md`:
+   `python <skill>/scripts/preflight.py --tracking <tracking> --history` (seconds, no tokens; in a wave, once after
+   the last verdict). Never edit `history.md` by hand and never add problems, causes or recommendations to it: it
+   holds only what git, the clock, the cards, the reports, lessons.md and gaps.md record (scripts/history.py).
+4b. **Delivery.** Commit the tracking update with the task trailer. Push automatically only when
    `config.md` § Delivery reads `auto (user: "<quote>", <date>)` **and**
    `preflight.py --tracking <tracking> --push-check` passes (every code commit to be pushed carries exactly
    one `Task:` trailer of a Done task; a commit that changes only tracking files never blocks and carries a

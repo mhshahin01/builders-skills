@@ -117,7 +117,8 @@ def _fm(m):
 
 def write(tracking, code_root):
     cfg = open(os.path.join(tracking, "config.md"), encoding="utf-8").read()
-    threshold = int(re.sub(r"\D", "", table_value(cfg, "History threshold (min)") or "") or 20)
+    m = re.search(r"\d+", table_value(cfg, "History threshold (min)") or "")
+    threshold = int(m.group(0)) if m else 20
     clock, _ = _clock(tracking)
     by_task = _trailer_commits(code_root)
     lessons = []

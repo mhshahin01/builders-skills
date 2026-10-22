@@ -1,11 +1,11 @@
 # Product Documentation Skill Suite
 
-Five skills that take a product from a raw idea to an implementation-ready design. Four authoring skills each own one stage and write numbered Markdown chunks or a combined document; the fifth reviews the chain. Downstream stages read their source documents, cite them by link and ID, and add their own detail. The BRD and SDD stop at review checkpoints and gates.
+Six skills that take a product from a raw idea to an implementation-ready design and track its build. Four authoring skills each own one stage and write numbered Markdown chunks or a combined document; the fifth reviews the chain; the sixth tracks implementation against it. Downstream stages read their source documents, cite them by link and ID, and add their own detail. The BRD and SDD stop at review checkpoints and gates.
 
 - [The chain at a glance](#the-chain-at-a-glance)
 - [Shared conventions](#shared-conventions)
 - [How the skills link together](#how-the-skills-link-together)
-- [1. pre-BRD](#1-pre-brd-pre-brd-unifier) · [2. BRD](#2-brd-brd-unifier) · [3. SDD](#3-sdd-sdd-unifier) · [4. LLD](#4-lld-lld-unifier) · [5. Business reviewer](#5-business-reviewer-business-reviewer-unifier)
+- [1. pre-BRD](#1-pre-brd-pre-brd-unifier) · [2. BRD](#2-brd-brd-unifier) · [3. SDD](#3-sdd-sdd-unifier) · [4. LLD](#4-lld-lld-unifier) · [5. Business reviewer](#5-business-reviewer-business-reviewer-unifier) · [6. Implementation tracker](#6-implementation-tracker-impl-tracker-unifier)
 - [Installation and usage](#installation-and-usage)
 - [Suggested workflow](#suggested-workflow) · [Known gaps](#known-gaps)
 
@@ -35,6 +35,7 @@ flowchart LR
 | 2. Requirements | `brd-unifier` | What are we building, and why? | A pre-BRD, SoW, brief, product spec, RFP scope, old BRD, or notes | `./brd-[slug]/`: master and chunks 00-14; 15-17 once unlocked | After parts 1 and 2; on every open item; at the delivery gate (G1-G5) |
 | 3. Solution design | `sdd-unifier` | How does the whole system work? | One or more finished BRDs, an SDD to reshape, or a brief | `./sdd-[slug]/`: master, chunks 00-18, one `13x` chunk per service or module; 19 once unlocked | Project type, architecture, and ecosystem choices; after parts 1 and 2; on every open item; at the e2e gate (E1-E4) |
 | 4. Detailed design | `lld-unifier` | How is each service built? | An SDD, a codebase, or both | `./lld-[slug]/`: master, chunks 00-18 (14 only with a UI), one `04-implementation/<service>.md` per service | The direction question (from-sdd, from-code, hybrid), always asked; on an existing LLD, one refresh offer for SDD and BRD changes |
+| 6. Implementation tracking | `impl-tracker-unifier` | What do we build next, and does the code still match the docs? | An approved LLD (with its SDD and BRD) and the code repo | `./tracking/` in the code repo: config, index, ownership, gaps, per-feature plan and task cards, daily journal | Plan approval; dependency overrides; doc-level gaps |
 | Review | `business-reviewer-unifier` | Does the document chain hold up? | The documents to challenge | `review-comments-tracker.md` and `review-panel-findings.md` in the project root, plus the decided changes in the reviewed documents | On every review point, one at a time |
 
 ---
@@ -475,6 +476,18 @@ A changed BRD or SDD gets one minor version bump and one Changes Log row for the
 **Done when:** no points remain `Pending`, accepted changes are applied, partial acceptance, rejection, and deferral are recorded, and the verification pass and hand-offs are in the tracker. The close reports statuses, structural decisions, skill changes requested, touched files, versions, and hand-offs in chain order ([Lineage and change flow](#lineage-and-change-flow)).
 
 **Reference files:** `reviewer-personas.md`, `panel-orchestration.md`, `tracker-schema.md`, `walkthrough-protocol.md`, `apply-and-verify.md`.
+
+---
+
+## 6. Implementation tracker (`impl-tracker-unifier`)
+
+**Purpose:** turns an approved LLD into an ordered task ledger and keeps it true while code is written. Each task is keyed like the docs (`AUTOAPPLY/T-014`), cites the BRD use case and ACs it realises and the LLD anchor it implements, and says why it is built that way. It never edits the BRD, SDD or LLD; doc problems become gaps routed to the owning skill.
+
+**Usage:** `impl-tracker-unifier <init|discover|plan|next|wave|start|done|audit|verify|gap|lesson|change|standup|status|sync|slice|report> [target] [deep|dry|agent=<name>]`.
+
+**What to expect:** `start` refuses a task whose dependencies are not Done and checks the ownership index and the code so nothing is built twice. `standup` writes a dated journal with agent attribution and flags commits without a `Task:` trailer. `sync` marks tasks Stale after a doc version bump and opens drift gaps.
+
+**Reference files:** `templates.md`, `task-splitting.md`, `status-rules.md`, `gap-rules.md`, `sync-and-drift.md`, `discovery-rules.md`, `slice-rules.md`, `lessons-rules.md`, `audit-rules.md`, plus `scripts/preflight.py` and the optional `hooks/stop-audit-guard.js`. A task is Done only after pre-flight and a fresh read-only audit; `slice` mode plans and reports feature-by-feature delivery.
 
 ---
 

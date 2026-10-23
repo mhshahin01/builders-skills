@@ -97,7 +97,7 @@ user made in chat, an approach the tracker or agent chose (pattern, library, sch
 | Why | One line. |
 | Affected | Tasks (status now), owned items, code files, lessons, earlier CHG rows. |
 | Supersedes | Earlier CHG / planning decision / lesson IDs. |
-| Follow-up | Rework tasks created (`depends_on` the affected ones), gaps routed (doc changes → owning doc skill as `doc-changed`/`doc-gap`). |
+| Follow-up | Rework tasks created (`depends_on` the affected ones); the documents chain run in the same change (SKILL.md § Documents chain), each document named with the version that records it, or `no change` with the reason; a `doc-gap` only for what is still undecided. |
 
 Effects:
 

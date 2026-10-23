@@ -642,9 +642,9 @@ Add a junction whenever a skill joins this repo: a copied folder does not follow
 
 Differences outside Claude Code: agents without sub-agents run the reviewer pass in the same context (weaker than Claude's fresh-context review) and run the tracker's audit as a separate pass that starts from its fixed inputs only, and questions are asked in chat instead of through a question tool. The BRD to-do's grill-me step starts the runtime's way (`$grill-me` in Codex, `/skill:grill-me` in Kimi); with no grill-me skill, paste its prompt into a new chat. The pre-BRD Excel export needs Python with `openpyxl` in every runtime.
 
-### Band Desktop
+### The unifier company (`hivantic-org-unifier/`)
 
-`band-unifiers/` holds a Band Desktop team for the chain: one role file per chain skill (`agent-<role>-<skill>.md`, with the frontmatter Band's New agent form takes) and `team-product-management-guidelines.md` for the team. The six agents share one Room rules block, kept byte-identical. Resync the files whenever a skill changes what it asks, writes, or stops for.
+[`hivantic-org-unifier/`](hivantic-org-unifier/README.md) models the suite as a startup: every skill is an independent employee in one of two teams, Product Management & Business Development (Business development, Product manager, Business owner) and Software Development & Delivery (E2E Architect, Software Architect, Tech Lead, Developer / software engineer, Mentor / assistant). It holds one role file per employee (`agent-<role>-<skill>.md`), one file per team, and a handbook for the shared rules. Employees work together only through files: their documents, the status board `unifier-status.md` in the project root, and the handoff requests on it. The role and team frontmatter fits Band Desktop's forms. The eight role files share one Company rules block, kept byte-identical; resync them whenever a skill changes what it asks, writes, or stops for.
 
 ### How to use each skill
 

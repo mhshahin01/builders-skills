@@ -12,7 +12,7 @@ Templates: `templates.md` § lessons.md and § changes.md.
 
 ---
 
-## 1. When a lesson is captured (automatic — never wait to be asked)
+## 1. When a lesson is captured (automatic: never wait to be asked)
 
 | Trigger | Detected by | Lesson kind |
 |---|---|---|
@@ -20,7 +20,7 @@ Templates: `templates.md` § lessons.md and § changes.md.
 | `verify` fails an AC | `verify` | misread / untested AC |
 | Task reopened (Done/Verified → In progress) | status change | why "done" was wrong |
 | `bug`, `code-drift`, `layer-miss`, `obs-gap`, `double-build`, `untracked-code` gap **closed** | `gap close` | root cause of the gap |
-| User corrects the agent in chat ("no, that's wrong", "you forgot the DB", "I told you…") | any command | the correction itself — quote it |
+| User corrects the agent in chat ("no, that's wrong", "you forgot the DB", "I told you…") | any command | the correction itself; quote it |
 | Same error message / failing test seen twice in one task | `done`, `start` | the fix that worked |
 | `forced-start` gap closed | `gap close` | was skipping the dependency right? |
 
@@ -82,10 +82,10 @@ Never delete a lesson. Retire it with a reason and the superseding CHG/L ID.
 | audit | Every applicable lesson's Check is run; violation of Promoted-rule = blocker, others = major. |
 | `standup` | New lessons and recurrences since last entry. |
 
-Read budget: `start`/`done`/audit read `lessons.md` filtered by scope — grep the Scope column, don't load
+Read budget: `start`/`done`/audit read `lessons.md` filtered by scope: grep the Scope column, don't load
 all of it when it is large.
 
-## 6. Change log (`changes.md`) — direction changes
+## 6. Change log (`changes.md`): direction changes
 
 Opened whenever, **after a task has started**, any of these changes: a use case, an AC, a decision the
 user made in chat, an approach the tracker or agent chose (pattern, library, schema shape), or scope.

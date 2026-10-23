@@ -6,7 +6,7 @@
 | From | To | Allowed when |
 |---|---|---|
 | Planned | In progress | Gate passes |
-| — | Adopted | plan/discover matched existing code (user approved) |
+| - | Adopted | plan/discover matched existing code (user approved) |
 | Adopted | In review | `done` passes pre-flight (Adopted mode), then the audit runs |
 | Adopted | In progress | user or audit finds work missing |
 | In progress | In review | DoD ticked + evidence + a pre-flight PASS report for the head commit; audit starts |

@@ -1,6 +1,6 @@
 # Consistency audit
 
-Goal: "done" means done in **every layer** — API, DB, frontend, logs/audit trail, tests, security — and
+Goal: "done" means done in **every layer** (API, DB, frontend, logs/audit trail, tests, security) and
 matches the LLD. The agent that wrote the code never grades its own work.
 
 Runs: automatically inside `done` (mandatory, cannot be skipped by an agent), and on demand with
@@ -63,7 +63,7 @@ The auditor never works in the repository's working tree:
    Each auditor still gets an export at exactly its own task head; never two auditors in one export.
 2. The auditor runs code, tests, tools and any mutation experiment **only in the export**. It reads the
    repository's code only through `git log` / `git show` / `git diff`, and the docs from the docs root.
-3. After the audit — finished, failed, or stopped by the user — the tracker runs `git status` on the code
+3. After the audit (finished, failed, or stopped by the user), the tracker runs `git status` on the code
    root; any change there is reverted before the next commit and noted in the report.
 4. Delete the export (or `git worktree remove`) when the wave's last report is written.
 
@@ -109,7 +109,7 @@ the auditor can show (e.g. "no persisted state changed: diff has no entity/repos
 
 ## 3. Tool evidence (use when present; configured in `config.md` § Audit checks)
 
-Prefer a real tool over reading code. Examples by stack — use only what the project has:
+Prefer a real tool over reading code. Examples by stack (use only what the project has):
 
 | Check | Tools |
 |---|---|
@@ -127,18 +127,18 @@ Before running any check, the implementer (in `done`) and the auditor (when it r
 environment real:
 1. Detect what the tests need: Testcontainers/`@Container`, `docker-compose*.yml`, `compose.yaml`.
 2. `docker info` fails → start the engine (Windows/macOS: Docker Desktop; Linux: `systemctl start docker`;
-   colima: `colima start`), poll `docker info` every 5 s, give up after 3 min. Start only — never install,
+   colima: `colima start`), poll `docker info` every 5 s, give up after 3 min. Start only: never install,
    update or change Docker settings.
-3. Run the full test command and every `config.md` § Audit checks command, not a subset — **once per head**,
+3. Run the full test command and every `config.md` § Audit checks command, not a subset, **once per head**,
    in pre-flight (rule 8c), suites side by side in the verify worktree (templates.md § Verify worktree).
    The auditor does not repeat it while the pre-flight is valid for the task head.
    - **Reuse conditions** (any risk): the report's line 1 head equals the task head (its last code `Task:`
      commit), its `P5 reuse` row says reusable (tree = task head, or no code change outside tracking/
-     between them — the auditor re-checks with `git diff --quiet <head> <tree> -- . ':!<tracking>'`), and
+     between them; the auditor re-checks with `git diff --quiet <head> <tree> -- . ':!<tracking>'`), and
      every suite row shows `failures=0 errors=0 skipped=0 · exit 0`.
    - Reuse holds → the auditor runs, in the export, every test class the task added or changed plus the
      classes covering its diff. Risk `high` runs that set **twice** when the task's own non-test code is high risk (a tests-only
-     task — every changed file under `src/test/`, `e2e/`, `*.spec.ts` — runs its set once) (flaky and clock/DB-dependent tests show
+     task, where every changed file is under `src/test/`, `e2e/` or `*.spec.ts`, runs its set once) (flaky and clock/DB-dependent tests show
      up on the repeat in a second environment) and adds at least one hands-on probe of a key invariant from
      the card's ## Design check (a throwaway test or command, removed afterwards).
    - Reuse fails (stale or missing report, non-zero count, code changed after pre-flight) → full suites in
@@ -196,7 +196,7 @@ the task card Evidence, and append the verdict to the task History and today's j
 
 ~~~text
 You are a strict, read-only implementation auditor. Do not edit any file.
-Task: <KEY/T-NNN — title>. Start commit: <sha>. Repo: <code root>. Docs: <docs root>.
+Task: <KEY/T-NNN: title>. Start commit: <sha>. Repo: <code root>. Docs: <docs root>.
 
 Inputs (read these, nothing else first):
 - Task card: <path>
@@ -246,7 +246,7 @@ change existing data, external adapters with side effects.
 
 ## 7. Hard enforcement (optional Stop hook)
 
-Skill text alone is a strong request; the hook makes it a rule. `init` offers it once (persistent config —
+Skill text alone is a strong request; the hook makes it a rule. `init` offers it once (persistent config:
 ask first). Add to the code repo's `.claude/settings.json`:
 
 ~~~json

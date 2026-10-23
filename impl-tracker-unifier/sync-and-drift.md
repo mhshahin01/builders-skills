@@ -8,5 +8,5 @@
 5. Untracked code: new classes under feature packages, new migrations, new routes not in
    `ownership.md` → `untracked-code`.
 6. Commits since last sync without `Task:` → listed in next standup.
-7. Ask the user once whether to move the baseline to the new versions (re-plan) — direction-level.
+7. Ask the user once whether to move the baseline to the new versions (re-plan), a direction-level question.
 8. Re-run the code inventory and diff it with the previous one (discovery-rules.md § 5).

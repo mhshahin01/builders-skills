@@ -1,11 +1,14 @@
 # Product Documentation Skill Suite
 
-Five skills that take a product from a raw idea to an implementation-ready design. Four authoring skills each own one stage and write numbered Markdown chunks or a combined document; the fifth reviews the chain. Downstream stages read their source documents, cite them by link and ID, and add their own detail. The BRD and SDD stop at review checkpoints and gates.
+Six skills that take a product from a raw idea to built, audited code. Four authoring skills each own one design stage and write numbered Markdown chunks or a combined document; the fifth reviews the chain; the sixth, `impl-tracker-unifier`, carries the finished LLD into the code and keeps the build true to it. Downstream stages read their source documents, cite them by link and ID, and add their own detail. The BRD and SDD stop at review checkpoints and gates, and the tracker gates every task. A companion skill in this repo, `tutorialize-unifier`, sits outside the chain.
+
+> **Why stage 6 matters.** Stages 1-5 produce documents; stage 6 is the only one that proves the code matches them. Without it the chain stops at the LLD, and nothing stops a task from starting before its dependencies, the same thing from being built twice, or work from counting as done because its builder says so. `impl-tracker-unifier` splits the LLD into keyed, dependency-ordered tasks, refuses to start a task whose dependencies are not done, and lets no agent mark a task Done until a pre-flight script passes and a fresh, read-only auditor has checked it against the LLD (only you can waive an audit, and the waiver is logged as a gap). Doc problems go back to the owning skill, never into the documents. See [6. Implementation tracker](#6-implementation-tracker-impl-tracker-unifier).
 
 - [The chain at a glance](#the-chain-at-a-glance)
 - [Shared conventions](#shared-conventions)
 - [How the skills link together](#how-the-skills-link-together)
-- [1. pre-BRD](#1-pre-brd-pre-brd-unifier) · [2. BRD](#2-brd-brd-unifier) · [3. SDD](#3-sdd-sdd-unifier) · [4. LLD](#4-lld-lld-unifier) · [5. Business reviewer](#5-business-reviewer-business-reviewer-unifier)
+- [1. pre-BRD](#1-pre-brd-pre-brd-unifier) · [2. BRD](#2-brd-brd-unifier) · [3. SDD](#3-sdd-sdd-unifier) · [4. LLD](#4-lld-lld-unifier) · [5. Business reviewer](#5-business-reviewer-business-reviewer-unifier) · [6. Implementation tracker](#6-implementation-tracker-impl-tracker-unifier)
+- [Companion skill: tutorialize-unifier](#companion-skill-tutorialize-unifier)
 - [Installation and usage](#installation-and-usage)
 - [Suggested workflow](#suggested-workflow) · [Known gaps](#known-gaps)
 
@@ -22,12 +25,16 @@ flowchart LR
     sdd -->|"sdd folder"| lld["4. lld-unifier<br/>HOW, per service"]
     lld -->|"17-specs.md"| build(["SpecKit /constitution<br/>and the build"])
     lld -.->|"own Child LLDs row"| sdd
+    lld ==>|"04-implementation, Roadmap"| trk["6. impl-tracker-unifier<br/>Does the code match the docs?"]
+    trk ==>|"gated tasks"| build
+    build -.->|"commits, drift, bugs"| trk
+    trk -.->|"doc gaps to their owner"| lld
     rev["5. business-reviewer-unifier<br/>review panel"] -.-> pre
     rev -.-> brd
     rev -.-> sdd
 ```
 
-**Summary:** the solid arrows show the input and handoff flow; a BRD can also start straight from a SoW, spec, or old BRD. The only write back up the chain is the LLD registering itself in its parent SDD, and the review panel can challenge the pre-BRD, BRD, and SDD at any point.
+**Summary:** the solid arrows show the input and handoff flow; a BRD can also start straight from a SoW, spec, or old BRD. The thick arrows are stage 6: the tracker turns the LLD into gated tasks and audits each task's commits against it. The LLD registering itself in its parent SDD is the only write back up the chain; the tracker never edits a document and hands doc gaps to the owning skill (BRD, SDD, or LLD). The review panel can challenge the pre-BRD, BRD, and SDD at any point.
 
 | Stage | Skill | Question it answers | You give it | It writes | It stops for you |
 | ----- | ----- | ------------------- | ----------- | --------- | ---------------- |
@@ -36,12 +43,13 @@ flowchart LR
 | 3. Solution design | `sdd-unifier` | How does the whole system work? | One or more finished BRDs, an SDD to reshape, or a brief | `./sdd-[slug]/`: master, chunks 00-18, one `13x` chunk per service or module; 19 once unlocked | Project type, architecture, and ecosystem choices; after parts 1 and 2; on every open item; at the e2e gate (E1-E4) |
 | 4. Detailed design | `lld-unifier` | How is each service built? | An SDD, a codebase, or both | `./lld-[slug]/`: master, chunks 00-18 (14 only with a UI), one `04-implementation/<service>.md` per service | The direction question (from-sdd, from-code, hybrid), always asked; on an existing LLD, one refresh offer for SDD and BRD changes |
 | Review | `business-reviewer-unifier` | Does the document chain hold up? | The documents to challenge | `review-comments-tracker.md` and `review-panel-findings.md` in the project root, plus the decided changes in the reviewed documents | On every review point, one at a time |
+| 6. Implementation | `impl-tracker-unifier` | Does the code match the documents, task by task? | An approved LLD with its SDD and BRDs, and the code repository | `./tracking/` in the code repo: config and baseline, task index, plans, task and slice cards, gaps, ownership, lessons, changes, journal, pre-flight and audit reports | Before writing a plan and before each wave; on a dependency override (only your own words count) or a double-build clash; on a contract or direction change; before moving the doc baseline; before a push, unless you set delivery to `auto` |
 
 ---
 
 ## Shared conventions
 
-The skills share a house style, with these output and handoff rules.
+The five document skills (stages 1-5) share a house style, with these output and handoff rules. The tracker reads their output and keeps its own rules ([section 6](#6-implementation-tracker-impl-tracker-unifier)); the keyed IDs below are what its tasks cite.
 
 - **Markdown by default.** BRD, SDD, and LLD write other formats only on explicit request. The pre-BRD produces Markdown and, on demand after approval, an `.xlsx` export.
 - **Chunks or combined.** Every authoring skill takes `chunks` (the default: one file per section group) or `combined` (one file). The BRD and SDD also take `parts` (the default in chunks mode: three parts, with a stop for your review after parts 1 and 2) or `whole` (one run). All four authoring skills convert between layouts in both directions (merge and re-chunk): pre-BRD uses `modes.md`; BRD, SDD, and LLD use `chunking.md`. A combined BRD still keeps 14 and 17 as separate files, and BRD and SDD decision logs stay separate.
@@ -49,11 +57,11 @@ The skills share a house style, with these output and handoff rules.
 - **Self-describing chunks.** BRD, SDD, and LLD chunks open with a `<!-- CHUNK: NN ... -->` comment and close with a `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer. Each folder has a master index: `[project-slug]-brd-master.md`, `[project-slug]-sdd-master.md`, `[project-slug]-lld-master.md`, and `00-pre-brd-master.md`. The pre-BRD instead uses a `PRE-BRD CHUNK:` comment block with `TITLE:`, `TIER:`, `PROJECT:`, and `PART OF:`, and no navigation footer. The BRD and SDD masters record part progress so interrupted runs can resume; the pre-BRD and LLD masters are indexes.
 - **What vs how.** The BRD is business language only (the WHAT). The SDD owns every technical decision (the HOW). The LLD owns implementation detail and the constitution-grade Specs chunk (Mission, Tech Stack, Roadmap, Project Type) that feeds SpecKit `/constitution`.
 - **One fact, one home.** A downstream document cites upstream content by link and ID and adds only its delta; restating it is a review defect (Type `Duplication`), except in an LLD derived view that names its SDD source on every row (the runtime stack, tables, port behaviour, resilience instances, configuration defaults, alerts, and SLOs). Inside the SDD, the registries (10 events, 11 APIs, 12 roles) are the single home of contract names; the service chunks and the LLD match them character for character.
-- **IDs are stable and owned.** IDs are never renumbered once seen. Use case, test case, and mockup IDs belong to the BRD; service names, `API-NN`, `INT-NN`, and event names belong to the SDD. Every BRD ID cited downstream carries its BRD's short key, even when there is one BRD: `REFUNDS/UC-04`.
+- **IDs are stable and owned.** IDs are never renumbered once seen. Use case, test case, and mockup IDs belong to the BRD; service names, `API-NN`, `INT-NN`, and event names belong to the SDD. Every BRD ID cited downstream carries its BRD's short key, even when there is one BRD: `REFUNDS/UC-04`. The tracker keys its own IDs the same way (`REFUNDS/T-014`, `REFUNDS/GAP-007`, `REFUNDS/S-01`) and never renumbers or deletes them.
 - **Gaps are flagged, never invented.** `[NEEDS CLARIFICATION: ...]` in the pre-BRD, BRD, and SDD; `[TBD - EXTERNAL: ...]` for provider-owned API fields in the SDD; `> Confirm:` and `> TODO:` confidence flags in the LLD.
 - **Cleared-context review.** Every full generation includes an independent reviewer subagent that writes an Open Items chunk (pre-BRD 24, BRD 13, SDD 18, LLD 18). Each item has options, a recommendation, and the reason it wins. The BRD, SDD, and LLD then walk you through every item (accept, choose another option, defer, or reject) and apply only what you accept; the pre-BRD leaves the items for you and your team to decide. For BRD, SDD, and LLD, the full review runs once, on the first build; a BRD also gets it on its first substantive migration into the current template when earlier review evidence does not cover the risks, or when it has no chunk 13. BRD consistency checks stop after three runs in one request, SDD reviews after three review passes, and LLD reviews after two (the full or delta review, then one check of the answers applied in that request). A BRD gets a new full review only when you ask. What the last run finds is not applied in that request: it stays open. In the BRD, SDD, and LLD, a decision the owner gives on it is recorded as `Decided - pending application` and applied by the next request. A later SDD update that changes chunks 01-17, or an LLD update that changes content, gets a delta review of the changed chunks (an SDD update that only applies decisions left pending by an earlier request gets an application check of them instead); in a BRD update, the rerun consistency check is that review. Every write of SDD chunk 19 also gets a cleared-context faithfulness check against chunks 02-13x. An open item that a later upstream change or business review settles is closed in that update.
-- **Answer policy and stand-ins.** Every skill accepts an answer policy you set for a run (for example "accept the recommended option"). It takes recommended options only: it never defers, rejects (one exception: a recommended rejection that changes no document, in the review panel, or a Recommended Answer that reads `No change: <evidence>`, in the BRD, SDD, and LLD), picks another option, or supplies a fact only a person or provider can give (a target the business sets, such as a time limit, is a choice, not a fact), and it never takes a decision your standing instructions for the project reserve (for example adopting a new dependency; proposing one, as a `Proposed` decision with its alternative, is not reserved), or a business rule a source document rules out. Each decision it takes is labelled `Policy: <policy> (set by <name>, <date>)`. A policy may name stand-ins (Product Owner, Mockup, SME, Approver) whose labelled confirmations count where a person's would; a stand-in never approves its own work, and the Approver stand-in signs only a latest version whose gate is met. With no policy, every rule stays as written. Each skill states the rule once: the pre-BRD and the review panel in § Answer policy, the BRD and SDD in step 8, the LLD in step 7a.
-- **Light runs.** Every skill takes `light` for a lighter run that keeps templates, IDs, and hand-off contracts whole; each skill's § Light run lists what it skips.
+- **Answer policy and stand-ins.** Every document skill accepts an answer policy you set for a run (for example "accept the recommended option"). It takes recommended options only: it never defers, rejects (one exception: a recommended rejection that changes no document, in the review panel, or a Recommended Answer that reads `No change: <evidence>`, in the BRD, SDD, and LLD), picks another option, or supplies a fact only a person or provider can give (a target the business sets, such as a time limit, is a choice, not a fact), and it never takes a decision your standing instructions for the project reserve (for example adopting a new dependency; proposing one, as a `Proposed` decision with its alternative, is not reserved), or a business rule a source document rules out. Each decision it takes is labelled `Policy: <policy> (set by <name>, <date>)`. A policy may name stand-ins (Product Owner, Mockup, SME, Approver) whose labelled confirmations count where a person's would; a stand-in never approves its own work, and the Approver stand-in signs only a latest version whose gate is met. With no policy, every rule stays as written. Each skill states the rule once: the pre-BRD and the review panel in § Answer policy, the BRD and SDD in step 8, the LLD in step 7a.
+- **Light runs.** Every document skill takes `light` for a lighter run that keeps templates, IDs, and hand-off contracts whole; each skill's § Light run lists what it skips.
 - **Decision history lives in `decision-log.md`** (BRD and SDD), a companion file that is never merged. It includes the Clarification, Marker, and Business review registers. Content chunks state only the settled rule.
 - **One update, one version** (BRD, SDD, LLD). An update is one request, up to its handoff; the first build is one update, at 1.0. Only a content change bumps the version: the update's first one moves it one minor step (1.0 to 1.1; a major step only when you ask) and opens one Changes Log row, which every later change in the update joins. Each row ends with `Chunks:`: the first build's row reads `Chunks: none (initial build)`; a later row names the chunks whose content changed in meaning (LLD service files by name; a combined document names its changed sections), not routine cover, navigation index, or footer updates. An update row is dated by the request's first content change; the first build's row by the build's completion. A BRD bumps only for changes to product content in 00-13; delivery tracking, refreshes, a merge or re-chunk, and rewording that changes no fact do not bump it. A BRD that already has versions moves into the current template as one update, one minor step above its last version. The master and chunk 00 carry the current version; every other chunk keeps the version its content last changed in, and a gated chunk (BRD 15-17, SDD 19) the version it was written at; SDD 19 keeps it when a later write changes none of its content. Status lines, Stale marks, links, footers, the SDD gate lines and E3 marker inventory, an SDD review's coverage rows when nothing else changed, and the Child LLDs rows bump nothing; so do Figma link-only edits, diagram splits that keep every rule, actor, and path, adding a missing BRD key to a citation, and setting an upstream version in an LLD link label to the one 16 §19.1 records.
 - **BRD, SDD, and LLD diagrams are inline Mermaid,** each with a 1-2 sentence summary so the document reads without a renderer. Miro boards are created only on explicit request, and the board link is additive (`> Miro: <url>` under the Mermaid block), never a replacement.
@@ -64,7 +72,7 @@ The skills share a house style, with these output and handoff rules.
 
 ## How the skills link together
 
-The BRD, SDD, and LLD form one traceable chain. The diagram shows the main chunk-to-chunk handoffs; the tables summarize the mappings, with the files that hold the full rules.
+The BRD, SDD, and LLD form one traceable chain, and the tracker carries it into the code. The diagram shows the main chunk-to-chunk handoffs; the tables summarize the mappings, with the files that hold the full rules.
 
 ```mermaid
 flowchart TB
@@ -127,6 +135,7 @@ flowchart TB
 | Classes, pseudocode, patterns, and the tables, columns, and settings the LLD adds | LLD 04, 05, 08, 09, 10 | Implementation |
 | Specs (Mission, Tech Stack, Roadmap, Project Type) | LLD 17 | SpecKit `/constitution` |
 | Source BRDs and child LLDs | SDD 00 § Document Lineage (each LLD writes only its own row) | The BRD key in every downstream ID |
+| Tasks, gaps, lessons, direction changes, pre-flight and audit evidence | Tracker `./tracking/` in the code repo | Commits (one `Task:` or `Tracking:` trailer each), standups, manager reports |
 
 ### BRD to SDD (rules: `sdd-unifier/brd-to-sdd.md`)
 
@@ -182,11 +191,28 @@ The LLD refuses an unfinished SDD (a part still pending, or §7.3 still `Pending
 | 14 Mockup coverage (one row per screen or flow, keyed `MK-NN` or a legacy screen ID; the row wins); a screen ID from the BRD text only when no chunk 14 row exists | 14 §17.3 route rows (`Screen (BRD)`, `Use cases (BRD)`); the Screens field of each 04 traceability line |
 | 16 UAT/BAT test cases | The UAT/BAT field of each 04 traceability line; 13 §16.8 e2e tags; 16 §19.9. While BRD chunk 16 is locked: `Pending (BRD 16 not written)` |
 
+### LLD to tracker (rules: `impl-tracker-unifier/task-splitting.md`)
+
+| LLD source | Becomes | Layer |
+| ---------- | ------- | ----- |
+| 05 Data model: a table or migration group | One task per aggregate's tables | data |
+| 04 §7.2 repositories, services, and domain types; §7.3 pseudocode blocks | One task per repository, per pseudocode block, and per service with no §7.3 block; domain types join the first task that needs them | data, domain |
+| 04 §7.4 cross-cutting patterns (outbox, idempotency, problem details) | One foundation task, before its first user | foundation |
+| 06 API contracts: an endpoint group | One task per controller | api |
+| 07 Event contracts: an event | A producer task, and a consumer task that depends on it | events |
+| 14 Frontend: a route or screen (`MK-NN`) | One task per screen | ui |
+| 13 Testing: an e2e spec row | One task per spec, after every task that realises its use case | e2e |
+| 17 Specs Roadmap phases | The plan's phases; no task depends on a later phase | |
+
+The plan reads BRD use cases only through the anchors the LLD links, and records the BRD, SDD, and LLD versions it planned against as its baseline; `sync` compares later versions with it. Each task cites its keyed use case and ACs (`[REFUNDS/UC-04](...) AC-3`) and its LLD anchor, or says why none applies (for example infrastructure). A shared-kernel or platform capability becomes a dependency on the `PLATFORM` task, never a rebuild. Every code commit carries exactly one `Task: KEY/T-NNN` trailer, so each commit traces back to its requirement.
+
 ### Use-case traceability, end to end
 
 ```mermaid
 flowchart LR
     bug(["Bug on a page,<br/>or a failing test"]) --> ucid["Keyed use case ID<br/>route data, use_case log field,<br/>or e2e tag"]
+    commit(["A commit"]) -->|"Task: KEY/T-NNN trailer"| card["Tracker task card<br/>Realises, Implements"]
+    card --> ucid
     ucid --> idx["LLD 16 §19.9<br/>trace index row"]
     idx --> wf["LLD 04 §7.8<br/>workflow block"]
     idx --> s73["SDD 03 §7.3<br/>owner, entry points,<br/>APIs, events"]
@@ -194,7 +220,7 @@ flowchart LR
     idx --> tc["BRD 16 UAT/BAT cases<br/>LLD 13 §16.8 e2e specs"]
 ```
 
-**Summary:** every traced entry point, route, and e2e test carries the keyed use case ID, so a production bug or a failing test leads to one row of the LLD's trace index, and from there one click reaches the design, the requirement, and its acceptance tests.
+**Summary:** every traced entry point, route, and e2e test carries the keyed use case ID, so a production bug or a failing test leads to one row of the LLD's trace index, and from there one click reaches the design, the requirement, and its acceptance tests. A commit's `Task:` trailer leads to its tracker task card, which cites the same keyed IDs.
 
 ### Lineage and change flow
 
@@ -204,6 +230,7 @@ flowchart LR
 - **BRD chunk 16 written later, or screens and mockups changed:** "refresh the trace" in the LLD updates the affected 04 lines, routes, e2e tags, the index, and 16 §19.1. It also settles, supersedes, or reopens affected chunk 18 items and removes the flags the change answers, then runs a delta review. A Figma link change alone needs no refresh: the LLD links the chunk 14 row, which carries the current link.
 - **After a business review:** the panel changes content within each document's template and bumps each changed BRD or SDD once. It edits an SDD only where a decision targets it or makes its text wrong, and leaves deriving new BRD content into the SDD to the SDD hand-off. It never edits an LLD or gated content; it sets existing gated outputs `Stale` and repoints links after a file rename. The close lists the requests in chain order: `brd-unifier` "update the todo: decisions from the business review of [the tracker's Created date] ([tracker path])" for each changed BRD, including a BRD derived from a changed pre-BRD; then `sdd-unifier` "BRD [KEY] has a new version, after the business review of [the tracker's Created date] ([tracker path])", naming all changed source BRDs, or "the business review changed this SDD" when only the SDD changed; then `lld-unifier` "the SDD has a new version" for each child LLD. Each hand-off runs only when you ask; `brd-unifier` and `sdd-unifier` take a review's hand-off once, and a repeat changes nothing but its pending items. Owners close the items the decisions answer and raise the open remainders under their own rules (the SDD raises an open item only for a design choice a decision leaves to it; a fact, or a question for a BRD owner or a provider, stays a clarification marker); a pre-BRD remainder goes to its BRD. Owner runs bump again only for their own content changes.
 - **Gated outputs after a change:** existing BRD 15-17 chunks are marked `Stale` when a change alters their source meaning, or when a new to-do item, open item, consistency finding, or clarification marker appears after they were written. The mark goes in their status lines, chunk 14's Downstream outputs, and the master's State cells (chunks mode). SDD 19 is marked on the master's E2E gate line, or the combined cover. The owners refresh these outputs only after checking their gates again; the review's close notes them separately from its hand-off rows.
+- **A document change during the build:** after the owners update the BRD, SDD, or LLD, run `sync` in the tracker. Tasks citing a changed anchor become `Stale` (finished ones `Done-stale`) with a `doc-changed` gap that quotes the changelog line, and it asks once before moving its baseline to the new versions (a re-plan). A direction you decide in chat goes through `change` instead: it records a `CHG` row before any code follows the new direction, marks the affected tasks, and creates the rework tasks.
 
 ---
 
@@ -478,15 +505,105 @@ A changed BRD or SDD gets one minor version bump and one Changes Log row for the
 
 ---
 
+## 6. Implementation tracker (`impl-tracker-unifier`)
+
+**Purpose:** the sixth stage, and the one that carries the chain into the code. It turns an approved LLD into an ordered, dependency-checked task ledger, keeps that ledger true while code is written, and reports the gap between what the documents require and what the code does. It never edits a BRD, SDD, or LLD: a document problem becomes a gap row routed to the owning skill.
+
+**Why it matters:**
+
+- **The design reaches the code intact.** Every task cites its keyed use case and ACs and the LLD anchor it implements (or says why none applies), with a Why that names the pattern, ADR, or rule behind its shape. Every code commit carries one `Task:` trailer, so each commit traces back to a requirement.
+- **Nobody grades their own work.** Before a task is Done, a pre-flight script runs every mechanical check (clean tree, commit trailers, owned items, test suites, lesson checks, task isolation, risk floor). Then a fresh, read-only auditor reviews only that task's commits, on a clean export, layer by layer: API, DB migrations, frontend, logs and audit trail, security, tests, and the cross-layer trace from UI field to migration and back. `In progress` straight to `Done` is illegal; only you can waive an audit, and the waiver opens a major gap.
+- **Gates, not reminders.** `start` refuses a task whose dependencies are not Done and prints the blocking chain; an override needs your own words in chat and is logged as a `forced-start` gap. An ownership index and a code grep stop the same class, table, route, or screen from being built twice.
+- **Existing code counts, but is never assumed.** `init` inventories the pages, endpoints, and migrations already in the repo, and `plan` matches them to LLD units. Matched code is `Adopted`, which is not Done until it passes an audit; its dependents stay blocked until then.
+- **Drift gets caught.** `sync` compares the documents' versions with the plan's baseline and marks tasks citing a changed anchor `Stale`; owned code that disappears becomes a `code-drift` gap, and code no task owns becomes `untracked-code`.
+- **It learns.** Audit failures, reopens, your corrections, and closed bugs become lessons with a mechanical check, replayed before the next matching task; a direction change gets a `changes.md` row before any code follows it.
+- **Any agent can pick it up.** Every state change is written to disk at once, so Claude, Codex, Kimi, or a person continues from `./tracking/` alone.
+
+**Usage:** `impl-tracker-unifier <command> [target] [flags]`. With no command it asks once, with `next` as the default. Plain words work too: "what's next", "I'm starting T-014", "finished T-014", "found a bug", "where are we", "what do I tell my manager". Flags: `deep` (plan only: one sub-agent per use-case block), `dry` (show the changes, write nothing), `agent=<name>` (attribution).
+
+| Group | Commands | What they do |
+| ----- | -------- | ------------ |
+| Set up | `init`, `discover` | Create `./tracking/`, record the doc paths and feature keys, and inventory existing code; `discover` re-scans and proposes matches and gaps |
+| Plan | `plan KEY` (or `KEY/UC-NN`, `KEY/P2`; flags `slice`, `reslice`) | Split the LLD into tasks with dependencies, a Why, a Risk, and coverage checks, then ask for approval; `slice` groups them into end-to-end slices in your order |
+| Build | `next`, `wave`, `start`, `done` | Show the next ready tasks and why; pick up to four (by default) that can be built together; start one through its gates; finish one or several through pre-flight and one fresh audit each |
+| Check | `audit`, `verify`, `sync` | Audit a task, use case, or feature; prove each cited AC with a test; compare doc versions and owned code with the baseline |
+| Record | `gap`, `lesson`, `change` | Log or close a gap; record, list, or retire a lesson; record a direction change and create the rework tasks |
+| Report | `standup`, `status`, `slice`, `report` | Write the day's journal; show progress by feature, phase, and use case; deliver, list, or reorder slices; give a manager-ready summary |
+
+**What it writes** (folder `./tracking/` in the code repo; templates: `templates.md`):
+
+| File | Holds |
+| ---- | ----- |
+| `config.md` | Doc paths, feature keys, the version baseline, audit and pre-flight commands, delivery mode, slice order, standing rules from promoted lessons |
+| `index.md` | One generated line per task, with its status; `next`, `status`, and the Stop hook read it |
+| `KEY/plan.md`, `KEY/tasks/`, `KEY/slices/` | The plan (phases or slices, dependency graph, coverage, planning decisions), one card per task, one card per slice |
+| `gaps.md`, `ownership.md` | The gap register (`KEY/GAP-NNN`, typed and routed to an owner) and the ownership index |
+| `lessons.md`, `checks.json`, `changes.md` | Lessons, their mechanical checks, and direction changes (`CHG` rows) |
+| `KEY/preflight/`, `KEY/audits/` | Pre-flight and audit reports, linked from each task's History |
+| `inventory.md`, `journal/`, `history.md` | The existing-code inventory; dated standups and manager reports; time per task, rebuilt by script from recorded facts only |
+
+With your OK at `init`, it also adds its Stop hook to the code repo's `.claude/settings.json` (merged, never replacing other hooks) and an agent rules block to `AGENTS.md` or `CLAUDE.md`.
+
+**How a task moves:**
+
+```mermaid
+flowchart LR
+    pl["Planned"] -->|"start: dependencies Done,<br/>no double build"| ip["In progress"]
+    ad["Adopted<br/>existing code"] -->|"done: pre-flight PASS"| ir["In review"]
+    ip -->|"done: DoD ticked,<br/>pre-flight PASS"| ir
+    ir -->|"fresh audit PASS"| dn["Done"]
+    ir -->|"audit FAIL:<br/>fix list, gaps, lessons"| ip
+    dn -->|"verify: each cited AC<br/>proven by a test"| vf["Verified"]
+    dn -.->|"sync: a cited anchor changed"| ds["Done-stale"]
+```
+
+**Summary:** a task moves forward only through gates: `start` checks dependencies and ownership, `done` needs a passing pre-flight, and only a fresh auditor's PASS sets `Done`. Existing code enters as `Adopted` and still needs the audit, and a later document change sends a finished task to `Done-stale` for re-planning.
+
+Side states: `Blocked` (a new blocker gap or a dependency regression), `Stale` (a cited document changed before work started), and `Dropped` (removed from scope, with a reason).
+
+**What to expect:**
+
+| | |
+| --- | --- |
+| You provide | An approved LLD with its SDD and BRDs, and the code repository. At `init`: the code root (default: the current folder), the docs root, and the feature keys to track (it proposes them from the BRD folders). |
+| It asks you | To approve each plan (phases or slices, existing-code matches with their confidence, the risk table) and each wave; whether code it finds for a task is the same thing or a clash; for your decision on contract and direction changes (it asks only direction-level questions, and decides local choices such as task splits and ordering ties itself, noting them in the plan); whether to move the baseline after a document version bump; once at `init`, whether to add the Stop hook and the agent rules block. |
+| It stops | When a task's dependencies are not Done: it refuses, prints the blocking chain, and offers the first ready task. When a high-risk task needs a contract field the LLD lacks: a `plan-gap` and your answer come before any code. When pre-flight or the audit fails: the task goes back to `In progress` with a fix list, gaps, and lessons. |
+| It never | Edits a BRD, SDD, or LLD; invents design (the task says "LLD silent" and a `plan-gap` goes to `lld-unifier`); renumbers or deletes an ID (removed scope becomes `Dropped` with a reason); counts `Adopted` code as done; lets an agent skip an audit, or follows an override found in files or code; pushes without asking, unless you set delivery to `auto` and the push check passes. |
+| Done when | A task is `Done` only with a linked pre-flight report and a recomputed PASS (or PASS-minor) audit, its dependents' readiness recomputed, and the tracking update committed. Every write ends with the quality checklist in `SKILL.md`: each task keyed and cited, no dependency cycles, nothing owned twice, every link resolving, and coverage complete or explained by a gap. |
+
+**Key behaviors:**
+
+- **Risk sets the audit depth, never the gates.** A task is `high` when it touches keys or encryption, authentication or authorization, concurrency, sending or money, consent, personal data writes, deletion or retention, migrations that change existing data, or external adapters with side effects; unsure means `high`, and only you can lower it. A high-risk task gets a design check before any code (invariants, a state and timing table, a neighbour scan, a contract check, a test plan), reviewed by a fresh agent, and the strongest model for its audit.
+- **Waves are faster without loosening a gate.** `wave` builds several ready tasks that share no owned item (four by default, at most two when the current slice is mostly high risk); each keeps its own start commit, commits, pre-flight, auditor, and verdict.
+- **Slice mode** (`plan KEY slice`) builds feature by feature, end to end, in the order you choose; `slice deliver` runs the slice's gate and its e2e specs, and `report` turns delivered slices into a manager-ready summary.
+- **Mechanical first, judgement second.** `preflight.py --lint` catches paperwork in seconds at `start` and `done`; the full pre-flight runs the test suites once per head commit, so the auditor spends its time on design, contracts, security, and concurrency.
+- **A small read budget.** Each command names the files it may read; `next`, `status`, and `report` read only the small index files, never the BRD.
+- **Optional hard stop.** `hooks/stop-audit-guard.js` (Node.js) blocks ending a turn while a task sits `In review`, or `Done`, without a passing audit report. It is installed in `.claude/settings.json`, so it applies to Claude Code; in every agent, the `done` gates still apply.
+- **Requirements:** git; Python 3 (standard library only) for `scripts/preflight.py` and `scripts/history.py`; Node.js only for the optional hook. On Windows, `python --version` must start real Python, not the Microsoft Store alias.
+
+**Reference files:** `templates.md`, `task-splitting.md`, `status-rules.md`, `gap-rules.md`, `sync-and-drift.md`, `discovery-rules.md`, `slice-rules.md`, `lessons-rules.md`, `audit-rules.md`; the scripts in `scripts/`; the design decisions behind the skill in its own `README.md`.
+
+**Feeds into:** the code and its commits. It also feeds back up the chain: each doc gap goes to `brd-unifier`, `sdd-unifier`, or `lld-unifier` (whichever owns the anchor), and a new document version comes back in through `sync`.
+
+---
+
+## Companion skill: tutorialize-unifier
+
+**Purpose:** outside the product chain. It answers an interview scenario (system design, architecture, migration, customer advisory) or explains a technical concept as a tutorial: a spoken-style answer in chat, the concepts behind it, 1 to 3 interactive diagrams, a decision log, and an exported Markdown file with one standalone HTML file per diagram.
+
+**Usage:** describe the scenario or concept in plain words, or call it by name (`/tutorialize-unifier`, `$tutorialize-unifier`, `/skill:tutorialize-unifier`). Its `SKILL.md` maps the tools for each agent in § Running in different agents.
+
+---
+
 ## Installation and usage
 
-These skills follow the open Agent Skills format (`SKILL.md` folders) and run in Claude (claude.ai and Claude Code), OpenAI Codex, and Kimi Code. Each `SKILL.md` has a "Running outside Claude Code" section that maps Claude-only tools to plain fallbacks.
+These skills follow the open Agent Skills format (`SKILL.md` folders) and run in Claude (claude.ai and Claude Code), OpenAI Codex, and Kimi Code. Each chain skill's `SKILL.md` has a "Running outside Claude Code" section that maps Claude-only tools to plain fallbacks (`tutorialize-unifier` calls it "Running in different agents"). `impl-tracker-unifier` works on a local code repository with git and Python, so run it in Claude Code, Codex, or Kimi Code rather than claude.ai.
 
 ### claude.ai (web or desktop)
 
 Upload each skill through Settings, under Capabilities or Customize, then Skills. Each skill must be a folder containing its `SKILL.md` (plus any reference files), zipped and uploaded individually, then toggled on. Custom skills are private to your account; on Team or Enterprise plans an owner can optionally share them org-wide.
 
-Note the 1024-character cap on the `description` frontmatter field. All descriptions are kept under it and written as YAML block scalars (`description: >-`) so strict parsers accept them; keep both rules when editing.
+Note the 1024-character cap on the `description` frontmatter field. All descriptions are kept under it, and the chain skills write theirs as YAML block scalars (`description: >-`) so strict parsers accept them; keep both rules when editing.
 
 ### Claude Code (CLI)
 
@@ -502,7 +619,7 @@ List installed skills with `/skills` inside a session, or this command in PowerS
 dir $env:USERPROFILE\.claude\skills
 ```
 
-Common failure causes if a skill does not appear: the session was not reloaded, Windows extraction created a double-nested folder, or the `SKILL.md` frontmatter is invalid. Two caveats for CLI use: the Miro MCP must be configured separately via `claude mcp add`, and the pre-BRD Excel export needs Python with `openpyxl` installed.
+Common failure causes if a skill does not appear: the session was not reloaded, Windows extraction created a double-nested folder, or the `SKILL.md` frontmatter is invalid. Three caveats for CLI use: the Miro MCP must be configured separately via `claude mcp add`; the pre-BRD Excel export needs Python with `openpyxl` installed; and `impl-tracker-unifier init` offers to add its optional Stop hook (Node.js) to the code repo's `.claude/settings.json`.
 
 ### Codex and Kimi Code
 
@@ -510,10 +627,12 @@ Both scan `~/.agents/skills` for user-level skills (Kimi also reads `~/.kimi-cod
 
 ```powershell
 $src = "$env:USERPROFILE\.claude\skills"; $dst = "$env:USERPROFILE\.agents\skills"
-foreach ($s in 'pre-brd-unifier','brd-unifier','sdd-unifier','lld-unifier','business-reviewer-unifier') {
+foreach ($s in 'pre-brd-unifier','brd-unifier','sdd-unifier','lld-unifier','business-reviewer-unifier','impl-tracker-unifier','tutorialize-unifier') {
   New-Item -ItemType Junction -Path "$dst\$s" -Target "$src\$s"
 }
 ```
+
+Add a junction whenever a skill joins this repo: a copied folder does not follow later edits. Start a new agent session to load a new skill, then check that it is listed.
 
 | Agent | List skills | Invoke explicitly | Automatic |
 | ----- | ----------- | ----------------- | --------- |
@@ -521,7 +640,7 @@ foreach ($s in 'pre-brd-unifier','brd-unifier','sdd-unifier','lld-unifier','busi
 | Codex (CLI, IDE, app) | `/skills` | `$brd-unifier chunks parts` | Yes, from the description |
 | Kimi Code | ask "which skills do you have" | `/skill:brd-unifier chunks parts` | Yes, from the description |
 
-Differences outside Claude Code: agents without sub-agents run the reviewer pass in the same context (weaker than Claude's fresh-context review), and questions are asked in chat instead of through a question tool. The BRD to-do's grill-me step starts the runtime's way (`$grill-me` in Codex, `/skill:grill-me` in Kimi); with no grill-me skill, paste its prompt into a new chat. The pre-BRD Excel export needs Python with `openpyxl` in every runtime.
+Differences outside Claude Code: agents without sub-agents run the reviewer pass in the same context (weaker than Claude's fresh-context review) and run the tracker's audit as a separate pass that starts from its fixed inputs only, and questions are asked in chat instead of through a question tool. The BRD to-do's grill-me step starts the runtime's way (`$grill-me` in Codex, `/skill:grill-me` in Kimi); with no grill-me skill, paste its prompt into a new chat. The pre-BRD Excel export needs Python with `openpyxl` in every runtime.
 
 ### How to use each skill
 
@@ -534,6 +653,8 @@ Call a skill by name with its arguments, or just describe the task in plain word
 | SDD | `[chunks\|combined] [parts\|whole]` | `/sdd-unifier chunks parts` | `$sdd-unifier chunks parts` | `/skill:sdd-unifier chunks parts` | "Derive an SDD from the BRD in ./brd-acme" |
 | LLD | `[chunks\|combined]` | `/lld-unifier chunks` | `$lld-unifier chunks` | `/skill:lld-unifier chunks` | "Write the LLD for the wallet service from the SDD" |
 | Business reviewer | `[panel\|walkthrough\|apply\|verify]` | `/business-reviewer-unifier panel` | `$business-reviewer-unifier panel` | `/skill:business-reviewer-unifier panel` | "Review the BRD and SDD from different angles" |
+| Implementation tracker | `<command> [target] [flags]` | `/impl-tracker-unifier next` | `$impl-tracker-unifier next` | `/skill:impl-tracker-unifier next` | "Plan the REFUNDS feature from its LLD", then "what's next?" |
+| Tutorial (companion) | plain words | `/tutorialize-unifier` | `$tutorialize-unifier` | `/skill:tutorialize-unifier` | "Tutorialize this system design question: ..." |
 
 Tips:
 
@@ -541,6 +662,7 @@ Tips:
 - Point each skill at its input: an idea, notes, or an existing pre-BRD for pre-BRD, a SoW, old BRD, or pre-BRD folder for BRD, the BRD folder for SDD, the SDD folder or a code path for LLD.
 - In `parts` mode the BRD and the SDD stop after parts 1 and 2; reply "continue" to go on, or "do the rest in one go".
 - Say "export to Excel" after approving a pre-BRD to get the `.xlsx`.
+- Run the tracker from the code repository: it writes `./tracking/` there and reaches the documents through the paths `init` records in `config.md`.
 
 ---
 
@@ -551,7 +673,8 @@ Tips:
 3. Run **SDD** on the finished BRD folder(s). Confirm the architecture and the ecosystem, review after parts 1 and 2, and decide the open items; settle the gate-blocking design choices and send owner-only questions to their owners; the end-to-end design follows once E1-E4 are met.
 4. Run **LLD** from the SDD, by default once for the whole system (or once per group of services): `from-sdd` before code exists, `hybrid` once it does. It registers itself in the SDD.
 5. Run the **business reviewer** at any point to challenge the document chain from several angles. It ends by handing the changed documents back to their skills (the BRD's to-do, the SDD's reconciliation, each LLD's refresh).
-6. Hand the LLD and its `17-specs.md` to SpecKit and Claude Code for the build. When the BRD changes later, update the SDD ("BRD `KEY` has a new version"); the SDD marks its child LLDs out of date, and each LLD offers a targeted refresh on its next run.
+6. Build with the **implementation tracker** in the code repository: `init`, then `plan KEY` (approve the plan), then `next`, `start`, and `done` for each task (or `wave` for several at once), with `standup`, `status`, and `report` for progress. Hand `17-specs.md` to SpecKit `/constitution` if you use it. Nothing counts as done without its audit, and the doc gaps the tracker finds go back to the owning skill.
+7. When the BRD changes later, update the SDD ("BRD `KEY` has a new version"); the SDD marks its child LLDs out of date, and each LLD offers a targeted refresh on its next run. Then run `sync` in the tracker: tasks that cite a changed anchor turn `Stale` or `Done-stale`, and it asks before moving its baseline.
 
 ---
 
@@ -563,3 +686,4 @@ The step 6 chain completed BRD migration and delivery gates, SDD derivation, a f
 - **Scenario reruns are saved.** S1 verified SDD version propagation and the targeted LLD refresh; its old fixture retains 37 explained SDD identifier/link problems and one historical Mermaid size issue. Its refreshed LLD trace has zero problems, with two legacy screen-ID notes. S2 preserved non-cover headings, links and body text through merge and re-chunk, with zero link/version/Mermaid issues. S3 mapped the approved-as-is pre-BRD to a fresh BRD with zero link/version/Mermaid issues, and both earlier defects are absent. The close-out review found two new S3 defects: the BRD drops the pre-BRD rule that hosting in Egypt needs a licensed provider, and its to-do register does not follow the template (generic Blocks text, chunk-only sources, merged decisions). Step 7 fixed both: its [S3 rerun](_fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07-s7/) carries the hosting rule as two numbered constraints and writes the to-do register to the template. Source questions remain open, and its delivery gate stays Shut. R2, R3d and LLD13 cover the modular-monolith direction on the five-module SDD. Details are in [Scenarios](_fixtures/README.md#scenarios).
 - **Coverage still has limits.** From-code and hybrid LLD directions have never run as fixtures. No fresh end-to-end pre-BRD market research or Excel export ran in this Codex close-out; the saved pre-BRD was used as directed. Exporter and checker tests cover 14 and 31 cases. The final policy edits have scenario and refresh evidence, not a completely new full chain generated from scratch under every final rule.
 - **Steps 7 and 8, the close-out, and what remains.** Step 7 fixed the [16 live skill findings, the two S3 hardening candidates, and the README-audit notes](_fixtures/notes/step6-handoffs/live-findings.md), then the 32 wording notes its proof runs raised ([triage](_fixtures/notes/step7-wording/)). Step 8 ran the final step 7 text once ([plan and scorecard](_fixtures/notes/step8-plan.md)): [S3](_fixtures/scenarios/pre-brd-to-brd/rerun-2026-10-07-s8/), and an SDD-then-LLD scenario on planted inputs in [run-2026-10-07-s8](_fixtures/chain/run-2026-10-07-s8/). It exercised an SDD update that only applies a pending decision, the carry of an applied decision, a confirmed faithfulness fix, the LLD retention mapping, flag removal, and how far an LLD refresh reaches; that run's SDD keeps three link and key misses as evidence. Step 8 then applied what its runs raised ([triage](_fixtures/notes/step8-triage/)), and no run has exercised those changes yet. Two of them change rules S3 measured: an assumption with a marker gets one to-do row, and a third-run fix that touches only chunk 14 or a companion record is applied at once. Two more extend what the LLD run measured: a refresh now also checks the LLD alert table against every SDD place that raises an alert, and a resolved item whose flag the change answers gets a `Settled by` row. No run triggered three cases: a review whose coverage rows alone change nothing, a BRD Reviewer Note needed to finish the BRD, and an LLD flag outside the chunks a change maps to. The plan closed without a third proof round: step 9 was planned ([plan](_fixtures/notes/step9-plan.md)) but not run. Two changes made at the close-out are unproven too: brd-unifier, like sdd-unifier, takes a business review's hand-off once, and SDD §11.4 Metrics and Dashboards now map to LLD 10 §13.3 and §13.6. Real-project use will test them, and the step 9 plan is ready if it shows trouble. The fixture design gaps were not in scope. The fixture backlog includes late membership notices, missing audit columns, publication/error naming, provider authentication and import/alert/idempotency details. In the baseline, LLD CONFIRM-23, CONFIRM-24 and TODO-38 remain routed to the SDD owner; the step 8 evidence run answers the first two. These gaps and the checker limits remain visible even though structural checks pass.
+- **The implementation tracker has no fixture evidence yet.** No saved chain run, scenario, or checker in `_fixtures/` exercises `impl-tracker-unifier`; the evidence above covers stages 1-5 only.

@@ -9,12 +9,12 @@ Runs: `init` (first inventory), `plan` (match to LLD units), `sync` (re-inventor
 
 ---
 
-## 1. Inventory — what to scan
+## 1. Inventory: what to scan
 
 Detect the stack from build files (`pom.xml`, `build.gradle`, `package.json`, `pyproject.toml`,
 `go.mod`, `*.csproj`), then scan only what applies. Record each item once.
 
-| Kind | Look for (examples — adapt to the stack found) |
+| Kind | Look for (examples; adapt to the stack found) |
 |---|---|
 | endpoint | Spring `@(Get|Post|Put|Patch|Delete|Request)Mapping` + class-level path; Express/Fastify `router.get(`…; NestJS `@Get(`; Next.js `app/**/route.ts`, `pages/api/**`; FastAPI/Flask decorators; Django `urls.py`; OpenAPI spec paths |
 | screen | Next.js `app/**/page.tsx`, `pages/**`; React Router `<Route path=` / route config; Angular `Routes`; Vue Router; mobile navigators |
@@ -43,15 +43,15 @@ For each LLD unit in scope, find candidate inventory items:
 1. **Exact:** same name as the LLD (class, table, `METHOD /path`, route path, event name).
 2. **Normalized:** case/plural/prefix differences (`/api/v1/` vs `/api/`, `match` vs `matches`,
    `RoutingService` vs `RoutingServiceImpl`).
-3. **Semantic:** same purpose under another name — only proposed, always flagged `low confidence`.
+3. **Semantic:** same purpose under another name: only proposed, always flagged `low confidence`.
 
 Then compare shape, not just name: endpoint fields/status codes vs `06-api-contracts`; columns vs
 `05-data-model`; screen states vs `14-frontend`; required logs/events vs observability sections.
 
 | Result | Rule | Task created as |
 |---|---|---|
-| **Match** | exact/normalized name and shape agrees | `Adopted` — Evidence pre-filled with files and commits; audit required |
-| **Partial** | exists but a layer or field is missing/different (e.g. endpoint without migration, screen without error state, no log) | `In progress` — DoD lists exactly what is missing; `layer-miss`/`code-drift` gap per difference |
+| **Match** | exact/normalized name and shape agrees | `Adopted`: Evidence pre-filled with files and commits; audit required |
+| **Partial** | exists but a layer or field is missing/different (e.g. endpoint without migration, screen without error state, no log) | `In progress`: DoD lists exactly what is missing; `layer-miss`/`code-drift` gap per difference |
 | **Missing** | nothing found | `Planned` (normal) |
 | **Not in LLD** | inventory item no LLD unit claims | gap `untracked-code`; user decides: adopt into a task, route to lld-unifier as `doc-gap`, or remove |
 | **Conflict** | two items claim one unit, or one item fits two units | gap `double-build`; ask |
@@ -89,7 +89,7 @@ task), gaps, and the plan's Coverage table with a **Exists** column.
 4. **Changed item** owned by a Done/Verified task, in a commit without its `Task:` trailer → flag for
    re-audit (task stays Done, gap `code-drift` minor, audit on next `done`/`audit`).
 5. Every new item built without the tracker → lesson candidate (root cause `false-done` or `scope-creep`)
-   if it repeats — lessons-rules.md § 3.
+   if it repeats (lessons-rules.md § 3).
 
 ## 6. Lessons from discovery
 

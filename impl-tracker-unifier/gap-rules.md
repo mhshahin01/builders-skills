@@ -17,5 +17,5 @@
 
 **Severity:** `blocker` (stops a task) · `major` (wrong behaviour possible) · `minor`.
 **Close** only with evidence (closing bug / code-drift / layer-miss / obs-gap / double-build /
-untracked-code also writes its lesson — lessons-rules.md § 1): the commit, the doc version that fixed it, or the user's decision quoted.
+untracked-code also writes its lesson, per lessons-rules.md § 1): the commit, the doc version that fixed it, or the user's decision quoted.
 

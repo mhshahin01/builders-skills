@@ -62,7 +62,7 @@ Support files (paths relative to this skill folder):
 
 | Command | Target | Does |
 |---|---|---|
-| `init` | — | Create `./tracking/` and `config.md`; detect doc roots and feature keys; inventory existing code. |
+| `init` | - | Create `./tracking/` and `config.md`; detect doc roots and feature keys; inventory existing code. |
 | `discover` | `[KEY]` | Re-scan the code; match new/changed items to tasks; open gaps (discovery-rules.md). |
 | `plan` | `KEY` or `KEY/UC-NN[,…]` or `KEY/P2`; flags `slice`, `reslice` | Split the LLD (and its BRD/SDD links) into tasks for that scope; with `slice`, group them into ordered end-to-end slices (slice-rules.md); `reslice` regroups existing tasks. |
 | `next` | `[KEY]` | Show the next ready task(s), with why it's next. |
@@ -124,7 +124,7 @@ Follow `task-splitting.md`. In short:
 4. Derive dependencies (layer order + LLD-stated order + cross-feature `INT-` links).
 5. Apply lessons (lessons-rules.md § 5): Promoted-DoD lessons → DoD items; skip anything superseded in
    `changes.md`.
-5b. For each task write the **Why** (task-splitting.md § Why rules) — cite the LLD pattern/ADR/BR.
+5b. For each task write the **Why** (task-splitting.md § Why rules): cite the LLD pattern/ADR/BR.
 5c. **Match existing code** (discovery-rules.md § 2): each unit → Match (`Adopted`), Partial
    (`In progress` + missing list + gaps), Missing (`Planned`); unclaimed inventory items → `untracked-code`.
 6. Run the ownership check: nothing owned twice (across all features).
@@ -132,7 +132,7 @@ Follow `task-splitting.md`. In short:
    every endpoint in scope has ≥ 1 task. Missing → `GAP` type `plan-gap` (the LLD has no unit for it)
    or task added.
 8. Show the plan summary (phases, counts, DAG Mermaid, gaps, **existing-code match table** with
-   confidence — discovery-rules.md § 3, and the **risk table**: each task's Risk with its reason,
+   confidence (discovery-rules.md § 3), and the **risk table**: each task's Risk with its reason,
    task-splitting.md § Risk) and **ask for approval** before writing
    task cards. On approval write `KEY/plan.md`, task cards, update `index.md`, `ownership.md`.
 
@@ -162,7 +162,7 @@ Builds several tasks in one pass without loosening any gate.
 2. Pick tasks in `next` order such that: no two share an owned item (ownership.md); none depends on
    another in the set; at most one is risk `high` unless the user asks for more; total size ≤ 3 M
    (S = ½, M = 1, L = 2), so the wave fits one session. Default at most 4 tasks; **at most 2 when the
-   current slice is mostly `high` risk** (e.g. auth, money, personal data) — short waves get audit
+   current slice is mostly `high` risk** (e.g. auth, money, personal data), since short waves get audit
    feedback sooner. "Mostly" = more than half of the slice's open (not Done/Dropped) tasks are risk `high`.
 3. Show the set (id, title, risk with reason, owned files, why grouped) and ask once for approval.
 4. On approval, for each task **in turn**: run `start` (all gates; this records the task's **own** start
@@ -211,16 +211,16 @@ Builds several tasks in one pass without loosening any gate.
    Stamp the start clock: `python <skill>/scripts/preflight.py --tracking <tracking> --history-start KEY/T-NNN`
    (writes `history-clock.json`, used by `history.md` for the task's span; run once, a second run keeps the first).
 5. Print the **task brief** for the implementer: Goal, Why, Doc refs (links), Owns, **Layers to touch**
-   (API / DB / UI / logs / security — derived from the LLD, each with its doc anchor), **Lessons that
+   (API / DB / UI / logs / security, derived from the LLD, each with its doc anchor), **Lessons that
    apply** (lessons-rules.md § 5, with their Checks), the **Design check** (high risk), Definition of done,
-   Tests to write — nothing else.
+   Tests to write; nothing else.
 
 ### done
 
 Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per task.
 
 1. Collect evidence: commits with `Task: KEY/T-NNN` (git log), changed files, unit tests added.
-   A Partial task with no start commit first runs `start` steps 1–4 (gates, start commit) — never a
+   A Partial task with no start commit first runs `start` steps 1–4 (gates, start commit), never a
    hand-picked start sha.
 1b. **Bring the test environment up** (audit-rules.md § 3a): if tests need Docker and the engine is down,
    start it yourself (Docker Desktop / `systemctl start docker` / `colima start`), wait until `docker info`
@@ -261,7 +261,7 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    `node_modules`, `npm ci` only when `package-lock.json` changed), so a live IDE or dev server in the main
    checkout is never disturbed and installs are not repeated (L-028). Copy the report back into the main
    tracking folder before committing it.
-3. Set `In review`. **Run the audit** (audit-rules.md) — mandatory; an agent cannot skip it, only the user
+3. Set `In review`. **Run the audit** (audit-rules.md), mandatory: an agent cannot skip it, only the user
    in chat (then record `audit skipped by user: "<quote>"` in History and open a major gap).
    - The audit runs on a **clean export** of the task's last commit (audit-rules.md § 1a), never on the
      working tree, and sees **only this task's commits** (§ 1, input 3).
@@ -305,7 +305,7 @@ slice-rules.md § 6. Reads `index.md`, slice cards, `gaps.md` only.
 
 ### verify
 
-1. For each BRD AC/BR the task (or UC) cites: find the test that proves it — unit test comment tag,
+1. For each BRD AC/BR the task (or UC) cites: find the test that proves it: unit test comment tag,
    e2e tag `@KEY/UC-NN`, `@KEY/TC-…` as `13-testing.md` defines.
 2. All proven and passing → `Verified`. Unproven AC → gap `untested-ac`. Behaviour differs from the
    AC → gap `code-drift` or `doc-gap` (gap-rules.md decides which).
@@ -345,7 +345,7 @@ type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code →
 ### status
 
 `index.md` + `gaps.md` only → table per feature: phase, tasks by status, % Done/Verified by UC,
-% existing-but-unaudited (Adopted) shown separately — never counted as done,
+% existing-but-unaudited (Adopted) shown separately, never counted as done,
 blocked chains, open gaps by severity. Mermaid progress optional.
 
 ### sync
@@ -418,7 +418,7 @@ asks before writing.
 ## Quality checks before finishing any write
 
 - [ ] Every task has: keyed ID, phase, layer, Doc refs (≥ 1 LLD anchor, ≥ 1 BRD UC/AC or a stated
-      reason why none — e.g. infra), Why, Owns, depends_on, DoD, Tests.
+      reason why none, e.g. infra), Why, Owns, depends_on, DoD, Tests.
 - [ ] Dependency graph has no cycles; every depends_on ID exists.
 - [ ] No item owned by two non-Dropped tasks.
 - [ ] Every link resolves (file + anchor).

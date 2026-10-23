@@ -102,7 +102,7 @@ def _task(tracking, key, tid, card_path, commits, clock, lessons, gaps, threshol
         signals.append("paused ×%d (%s)" % (len(idle), ", ".join(_fm((b - a).total_seconds() / 60) for a, b in idle)))
     if reopen:
         signals.append("reopened ×%d" % reopen)
-    slice_ = table_value(card, "Slice") or table_value(card, "Phase / Layer") or table_value(card, "Phase") or "—"
+    slice_ = table_value(card, "Slice") or table_value(card, "Phase / Layer") or table_value(card, "Phase") or "-"
     return dict(full=full, card=_rel(tracking, card_path), status=(table_value(card, "Status") or "?").split(" (")[0],
                 slice=re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", slice_).split(" ")[0],
                 risk=(table_value(card, "Risk") or "?").split()[0], size=table_value(card, "Size") or "?",
@@ -153,8 +153,8 @@ def write(tracking, code_root):
         out.append("| [%s](%s) | %s | %s | %s | %s | %s (%s) | %s | %s | %s | %d | %s | %d (%d) | %s | %d |" % (
             h["full"], h["card"], h["slice"], h["risk"], h["size"], h["status"], h["t0"].strftime("%Y-%m-%d %H:%M"),
             h["src"], _fm(h["span"]), _fm(h["active"]), "**yes**" if h["over"] else "no", len(h["commits"]),
-            " → ".join("[%s](%s)" % (v, p) for p, v in h["verdicts"]) or "—", h["pfs"], len(h["pf_fail"]),
-            ", ".join(r[0] for r in h["lessons"]) or "—", len(h["gaps"])))
+            " → ".join("[%s](%s)" % (v, p) for p, v in h["verdicts"]) or "-", h["pfs"], len(h["pf_fail"]),
+            ", ".join(r[0] for r in h["lessons"]) or "-", len(h["gaps"])))
     over = [h for h in tasks if h["over"]]
     out += ["", "## Over %d min: recorded signals" % threshold, "",
             "Counted from the files above; the cause of each signal is in the linked report or lesson.", "",

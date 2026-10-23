@@ -1,0 +1,1256 @@
+schema_version: "1.0.0"
+project:
+  id: "EXAMPLE-REGIONAL-CUSTOMER-PLATFORM"
+  name: "EXAMPLE · Regional customer platform"
+  change_type: "GF"
+  target_hosting: "CL"
+  source_to_target: "Not applicable"
+  project_status: "Provisional / review required"
+sources:
+  pre_sdd:
+    path: "Pre-SDD.md"
+    version: "v2.2"
+    approval_status: "discovery"
+  brds: []
+  sdd_skill:
+    name: "sdd-unifier"
+    sha256: "4ebb5e5375167a52b54d0c0ce77c7ebd57a29f2073d926ba3409abf6e7470e44"
+requirements:
+  -
+    id: "REQ-PLAT-001"
+    domain: "infrastructure"
+    description: "Change type"
+    value: "greenfield"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-PLAT-002"
+    domain: "infrastructure"
+    description: "Target hosting"
+    value: "cloud"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-CAP-001"
+    domain: "capacity"
+    description: "Daily transactions"
+    value: 1000000
+    unit: "transactions/day"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-CAP-002"
+    domain: "capacity"
+    description: "Peak factor"
+    value: 5
+    unit: "×"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-PERF-001"
+    domain: "performance"
+    description: "Critical P99"
+    value: 450
+    unit: "ms"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-CAP-003"
+    domain: "capacity"
+    description: "annualGrowth"
+    value: 35
+    unit: "%/yr"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-REL-001"
+    domain: "availability"
+    description: "Availability SLO"
+    value: 99.9
+    unit: "%"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-DR-001"
+    domain: "recovery"
+    description: "RTO"
+    value: 0
+    unit: "s"
+    scope: "Failure scope: az"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-DR-002"
+    domain: "recovery"
+    description: "RPO"
+    value: 0
+    unit: "s"
+    scope: "Failure scope: az"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-DR-003"
+    domain: "recovery"
+    description: "Failure scope"
+    value: "az"
+    unit: "enum"
+    scope: "Failure scope: az"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-ECO-001"
+    domain: "cost"
+    description: "budget"
+    value: "balanced"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-DAT-001"
+    domain: "data"
+    description: "Data workload"
+    value: "relational"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-DAT-002"
+    domain: "data"
+    description: "Consistency"
+    value: "strong"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-SEC-001"
+    domain: "security"
+    description: "Data sensitivity"
+    value: "internal"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-NET-001"
+    domain: "network"
+    description: "Connectivity"
+    value: "public"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-MIG-001"
+    domain: "migration"
+    description: "migration"
+    value: "no"
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "estimated"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+  -
+    id: "REQ-SEC-002"
+    domain: "security"
+    description: "residency"
+    value: null
+    unit: "enum"
+    scope: "Technical Pre-SDD discovery"
+    status: "open"
+    owner: "TBD"
+    source:
+      type: "architect_decision"
+      reference: "Unverified local calculator input / fictional scenario"
+calculations:
+  -
+    id: "CALC-01"
+    rule_id: "CALC-01"
+    rule_version: "2.2"
+    formula: "daily_transactions / 86400"
+    substitution: "1,000,000 / 86400"
+    input_requirement_ids:
+      - "REQ-CAP-001"
+    output:
+      value: 11.574074074074074
+      unit: "txn/s"
+    status: "estimated"
+    limitations: "Daily average is not peak or burst demand."
+  -
+    id: "CALC-02"
+    rule_id: "CALC-02"
+    rule_version: "2.2"
+    formula: "average_TPS × peak_factor"
+    substitution: "11.574 × 5"
+    input_requirement_ids:
+      - "REQ-CAP-001"
+      - "REQ-CAP-002"
+    output:
+      value: 57.870370370370374
+      unit: "txn/s"
+    status: "estimated"
+    limitations: "Peak multiplier requires measured demand curve or agreed forecast."
+  -
+    id: "CALC-03"
+    rule_id: "CALC-03"
+    rule_version: "2.2"
+    formula: "peak_TPS × calls_per_txn × request_amplification"
+    substitution: "57.87 × 3 × 1.1"
+    input_requirement_ids:
+      - "REQ-CAP-001"
+      - "REQ-CAP-002"
+    output:
+      value: 190.97222222222223
+      unit: "req/s"
+    status: "estimated"
+    limitations: "API calls, event fanout and retries must not be double-counted."
+  -
+    id: "CALC-04"
+    rule_id: "CALC-04"
+    rule_version: "2.2"
+    formula: "peak_API_RPS / utilization_fraction"
+    substitution: "190.972 / 0.65"
+    input_requirement_ids:
+      - "REQ-CAP-001"
+      - "REQ-PERF-001"
+    output:
+      value: 293.8034188034188
+      unit: "req/s"
+    status: "estimated"
+    limitations: "Throughput envelope, not number of nodes. Requires P99 load tests."
+  -
+    id: "CALC-05"
+    rule_id: "CALC-05"
+    rule_version: "2.2"
+    formula: "peak_API_RPS × mean_latency_ms / 1000"
+    substitution: "190.972 × 120 / 1000"
+    input_requirement_ids:
+      - "REQ-PERF-001"
+    output:
+      value: 22.916666666666668
+      unit: "requests"
+    status: "estimated"
+    limitations: "Little’s Law uses mean latency, not P99 or logged-in users."
+  -
+    id: "CALC-06"
+    rule_id: "CALC-06"
+    rule_version: "2.2"
+    formula: "peak_RPS × request_KB × 8 / 1000 × overhead"
+    substitution: "190.972 × 4 × 8 / 1000 × 1.2"
+    input_requirement_ids:
+      - "REQ-CAP-001"
+      - "REQ-NET-001"
+    output:
+      value: 7.333333333333334
+      unit: "Mbps"
+    status: "estimated"
+    limitations: "One selected network boundary; excludes replication/east-west flows."
+  -
+    id: "CALC-07"
+    rule_id: "CALC-07"
+    rule_version: "2.2"
+    formula: "peak_RPS × response_KB × 8 / 1000 × overhead"
+    substitution: "190.972 × 16 × 8 / 1000 × 1.2"
+    input_requirement_ids:
+      - "REQ-CAP-001"
+      - "REQ-NET-001"
+    output:
+      value: 29.333333333333336
+      unit: "Mbps"
+    status: "estimated"
+    limitations: "Directional egress is not a separate guaranteed link rating."
+  -
+    id: "CALC-08"
+    rule_id: "CALC-08"
+    rule_version: "2.2"
+    formula: "inbound_Mbps + outbound_Mbps"
+    substitution: "7.333 + 29.333"
+    input_requirement_ids:
+      - "REQ-NET-001"
+    output:
+      value: 36.66666666666667
+      unit: "Mbps"
+    status: "estimated"
+    limitations: "Sum of directional traffic; not a physical link-speed requirement."
+  -
+    id: "CALC-09"
+    rule_id: "CALC-09"
+    rule_version: "2.2"
+    formula: "avg_API_RPS × 86400 × (request_KB + response_KB) / 1e6"
+    substitution: "38.194 × 86400 × (4 + 16) / 1e6"
+    input_requirement_ids:
+      - "REQ-CAP-001"
+    output:
+      value: 66
+      unit: "GB/day"
+    status: "estimated"
+    limitations: "Decimal GB; excludes internal and replication traffic."
+  -
+    id: "CALC-10"
+    rule_id: "CALC-10"
+    rule_version: "2.2"
+    formula: "daily_txn × stored_KB_per_txn / 1e6"
+    substitution: "1,000,000 × 2 / 1e6"
+    input_requirement_ids:
+      - "REQ-DAT-001"
+    output:
+      value: 2
+      unit: "GB/day"
+    status: "estimated"
+    limitations: "Assumes every transaction contributes its stated logical size."
+  -
+    id: "CALC-11"
+    rule_id: "CALC-11"
+    rule_version: "2.2"
+    formula: "starting_GB + daily_new_GB × retention_days"
+    substitution: "0 + 2 × 365"
+    input_requirement_ids:
+      - "REQ-DAT-001"
+    output:
+      value: 730
+      unit: "GB"
+    status: "estimated"
+    limitations: "Steady-state simplified model; excludes historical growth and erasure."
+  -
+    id: "CALC-12"
+    rule_id: "CALC-12"
+    rule_version: "2.2"
+    formula: "logical_GB × index_factor × modeled_copies"
+    substitution: "730 × 1.4 × 2"
+    input_requirement_ids:
+      - "REQ-DAT-001"
+    output:
+      value: 2043.9999999999998
+      unit: "GB"
+    status: "estimated"
+    limitations: "Provider redundancy, snapshots, WAL, logs and backups are not fully modeled."
+  -
+    id: "CALC-13"
+    rule_id: "CALC-13"
+    rule_version: "2.2"
+    formula: "(1 − availability_pct/100) × 30 × 86400"
+    substitution: "(1 − 99.9 / 100) × 2592000"
+    input_requirement_ids:
+      - "REQ-REL-001"
+    output:
+      value: 2591.9999999997144
+      unit: "s"
+    status: "estimated"
+    limitations: "Calendar-time assumption; SLA exclusions may differ."
+  -
+    id: "CALC-14"
+    rule_id: "CALC-14"
+    rule_version: "2.2"
+    formula: "(1 − availability_pct/100) × 365 × 86400"
+    substitution: "(1 − 99.9 / 100) × 31536000"
+    input_requirement_ids:
+      - "REQ-REL-001"
+    output:
+      value: 31535.999999996526
+      unit: "s"
+    status: "estimated"
+    limitations: "SLO downtime budget is not an outage-specific RTO."
+  -
+    id: "CALC-15"
+    rule_id: "CALC-15"
+    rule_version: "2.2"
+    formula: "peak_TPS × RPO_seconds"
+    substitution: "57.87 × 0"
+    input_requirement_ids:
+      - "REQ-DR-002"
+      - "REQ-CAP-001"
+    output:
+      value: 0
+      unit: "txns"
+    status: "estimated"
+    limitations: "Potential exposure if peak persisted; not the number of lost committed writes."
+  -
+    id: "CALC-16"
+    rule_id: "CALC-16"
+    rule_version: "2.2"
+    formula: "peak_RPS × (1 + growth_pct/100)"
+    substitution: "190.972 × (1 + 35 / 100)"
+    input_requirement_ids:
+      - "REQ-CAP-003"
+    output:
+      value: 257.8125
+      unit: "req/s"
+    status: "estimated"
+    limitations: "Simple uniform growth scenario; not an adopted business forecast."
+architecture:
+  patterns:
+    -
+      id: "PAT-TOPO-001"
+      name: "Active-active application · multi-zone (DR scope may be open)"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-REL-001"
+        - "REQ-DR-003"
+      rationale: "Candidate only; validate against failure scopes and evidence."
+    -
+      id: "PAT-DR-001"
+      name: "Local HA only · broader DR not scoped"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-DR-001"
+        - "REQ-DR-002"
+        - "REQ-DR-003"
+      rationale: "AWS DR ladder taxonomy applied provider-neutrally; no recovery guarantee."
+    -
+      id: "PAT-DATA-001"
+      name: "Relational transactional store"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-DAT-001"
+        - "REQ-DAT-002"
+      rationale: "Assess commit durability, replication semantics, and failover data correctness explicitly."
+  components:
+    -
+      id: "NODE-CLIENT"
+      name: "Consumers"
+      kind: "actor_boundary"
+      placement: "External boundary"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-DNS"
+      name: "Routing & health checks"
+      kind: "edge"
+      placement: "Shared entry point"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-EDGE"
+      name: "L7 ingress + security"
+      kind: "edge"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-APP-A"
+      name: "Serving app tier A"
+      kind: "compute"
+      placement: "Zone A"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-CAP-001"
+        - "REQ-PERF-001"
+    -
+      id: "NODE-DB-PRIMARY"
+      name: "Authoritative write boundary"
+      kind: "database"
+      placement: "Zone A"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-DAT-001"
+        - "REQ-DR-002"
+    -
+      id: "NODE-BACKUP"
+      name: "Backups / restore points"
+      kind: "storage"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-DR-002"
+    -
+      id: "NODE-APP-B"
+      name: "Serving app tier B"
+      kind: "compute"
+      placement: "Zone B"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-CAP-001"
+        - "REQ-REL-001"
+    -
+      id: "NODE-DB-SECONDARY"
+      name: "HA commit partner · role TBD"
+      kind: "database"
+      placement: "Zone B"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-DR-001"
+        - "REQ-DR-002"
+    -
+      id: "NODE-DR-SCOPE"
+      name: "Backup / broader DR scope TBD"
+      kind: "other"
+      placement: "Recovery scope: az"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-DR-001"
+    -
+      id: "NODE-N-CLIENT"
+      name: "External clients"
+      kind: "actor_boundary"
+      placement: "Outside target"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-DNS"
+      name: "DNS / traffic direction"
+      kind: "edge"
+      placement: "Shared control plane"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-ENTRY"
+      name: "WAF / managed edge policy"
+      kind: "security"
+      placement: "Trust edge"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-PERIMETER"
+      name: "Internet ingress boundary"
+      kind: "network"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-LB"
+      name: "Layer-7 load balancer"
+      kind: "edge"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-APP-A"
+      name: "Serving private application A"
+      kind: "compute"
+      placement: "Availability Zone A / private subnets"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-DB-A"
+      name: "Restricted data access A"
+      kind: "database"
+      placement: "Availability Zone A / private subnets"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-EGRESS"
+      name: "NAT / outbound egress"
+      kind: "network"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-SERVICE"
+      name: "Private service endpoint"
+      kind: "network"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-APP-B"
+      name: "Serving private application B"
+      kind: "compute"
+      placement: "Availability Zone B / private subnets"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-N-DB-B"
+      name: "DB commit partner · not verified"
+      kind: "database"
+      placement: "Availability Zone B / private subnets"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-OBS"
+      name: "Detect / declare incident"
+      kind: "security"
+      placement: "Recovery procedure"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-TRAFFIC"
+      name: "Continuous traffic steering"
+      kind: "edge"
+      placement: "Recovery procedure"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-APP"
+      name: "Serving application A"
+      kind: "compute"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-DB"
+      name: "Acknowledged writes · owner TBD"
+      kind: "database"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-BACKUP"
+      name: "Protected recovery points"
+      kind: "storage"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-RECAPP"
+      name: "Serving application B"
+      kind: "other"
+      placement: "Alternate AZ / rack TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-RECDB"
+      name: "Commit partner / copy · TBD"
+      kind: "database"
+      placement: "Alternate AZ / rack TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-D-VERIFY"
+      name: "Business service verification"
+      kind: "security"
+      placement: "Alternate AZ / rack TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-DF-INPUT"
+      name: "Input / caller"
+      kind: "actor_boundary"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-DF-APP"
+      name: "Application services"
+      kind: "compute"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-DF-DB"
+      name: "Authoritative data · writer role TBD"
+      kind: "database"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+    -
+      id: "NODE-DF-BACK"
+      name: "Backup / archive"
+      kind: "storage"
+      placement: "Primary region · region TBD"
+      status: "proposed"
+      requirement_ids: []
+  connections:
+    -
+      id: "EDGE-E-I-01"
+      from: "NODE-CLIENT"
+      to: "NODE-DNS"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "request"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-I-02"
+      from: "NODE-DNS"
+      to: "NODE-EDGE"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "route"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-I-03"
+      from: "NODE-EDGE"
+      to: "NODE-APP-A"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "serve live traffic"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-I-04"
+      from: "NODE-APP-A"
+      to: "NODE-DB-PRIMARY"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "reads/writes"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-I-05"
+      from: "NODE-DB-PRIMARY"
+      to: "NODE-BACKUP"
+      relationship: "other"
+      direction: "unidirectional"
+      notes: "backup"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-I-06"
+      from: "NODE-EDGE"
+      to: "NODE-APP-B"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "serve live traffic"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-I-07"
+      from: "NODE-DB-PRIMARY"
+      to: "NODE-DB-SECONDARY"
+      relationship: "replication"
+      direction: "unidirectional"
+      notes: "sync/quorum TBD"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-I-10"
+      from: "NODE-BACKUP"
+      to: "NODE-DR-SCOPE"
+      relationship: "other"
+      direction: "unidirectional"
+      notes: "recover"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-01"
+      from: "NODE-N-CLIENT"
+      to: "NODE-N-DNS"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "DNS / access"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-02"
+      from: "NODE-N-DNS"
+      to: "NODE-N-ENTRY"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "request policy"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-03"
+      from: "NODE-N-ENTRY"
+      to: "NODE-N-LB"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "front-end request"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-04"
+      from: "NODE-N-LB"
+      to: "NODE-N-APP-A"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "serve live traffic"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-05"
+      from: "NODE-N-APP-A"
+      to: "NODE-N-DB-A"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "restricted DB"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-06"
+      from: "NODE-N-APP-A"
+      to: "NODE-N-EGRESS"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "outbound candidate"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-07"
+      from: "NODE-N-APP-A"
+      to: "NODE-N-SERVICE"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "private service"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-08"
+      from: "NODE-N-EGRESS"
+      to: "NODE-N-PERIMETER"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "egress route"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-09"
+      from: "NODE-N-LB"
+      to: "NODE-N-APP-B"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "serve live traffic"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-10"
+      from: "NODE-N-APP-B"
+      to: "NODE-N-DB-B"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "data access"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-N-11"
+      from: "NODE-N-DB-A"
+      to: "NODE-N-DB-B"
+      relationship: "replication"
+      direction: "unidirectional"
+      notes: "sync/quorum TBD"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-01"
+      from: "NODE-D-OBS"
+      to: "NODE-D-TRAFFIC"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "observe/steer"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-02"
+      from: "NODE-D-APP"
+      to: "NODE-D-DB"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "writes"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-03"
+      from: "NODE-D-DB"
+      to: "NODE-D-BACKUP"
+      relationship: "other"
+      direction: "unidirectional"
+      notes: "protect"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-04"
+      from: "NODE-D-DB"
+      to: "NODE-D-RECDB"
+      relationship: "replication"
+      direction: "unidirectional"
+      notes: "synchronous/quorum TBD"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-05"
+      from: "NODE-D-TRAFFIC"
+      to: "NODE-D-RECAPP"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "serve live requests"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-06"
+      from: "NODE-D-RECDB"
+      to: "NODE-D-RECAPP"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "data ready"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-07"
+      from: "NODE-D-RECAPP"
+      to: "NODE-D-VERIFY"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "check"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-E-D-08"
+      from: "NODE-D-TRAFFIC"
+      to: "NODE-D-APP"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "serve live requests"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-DF-E1"
+      from: "NODE-DF-INPUT"
+      to: "NODE-DF-APP"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "requests"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-DF-E2"
+      from: "NODE-DF-APP"
+      to: "NODE-DF-DB"
+      relationship: "request"
+      direction: "unidirectional"
+      notes: "transaction/data"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+    -
+      id: "EDGE-DF-E3"
+      from: "NODE-DF-DB"
+      to: "NODE-DF-BACK"
+      relationship: "other"
+      direction: "unidirectional"
+      notes: "protect"
+      status: "proposed"
+      requirement_ids:
+        - "REQ-NET-001"
+dr_scenarios:
+  -
+    id: "DR-SCOPE-001"
+    scope: "az"
+    status: "proposed"
+    rto_seconds: 0
+    rpo_seconds: 0
+    strategy_candidate: "Local HA only · broader DR not scoped"
+    component_ids:
+      - "NODE-D-OBS"
+      - "NODE-D-TRAFFIC"
+      - "NODE-D-APP"
+      - "NODE-D-DB"
+      - "NODE-D-BACKUP"
+      - "NODE-D-RECAPP"
+      - "NODE-D-RECDB"
+      - "NODE-D-VERIFY"
+    validation_tasks:
+      - "Define recovery critical path: detection → failover authorization → data promotion/restore → app/IAM connectivity → routing → business verification."
+      - "Demonstrate application-level recovery, data consistency, dependency reattachment, failback and split-brain protections."
+      - "Document separate recovery objective for every in-scope failure scenario, including cyber/data corruption where relevant."
+      - "Define end-user no-interruption test, routing convergence, fault injection and impaired-capacity measurement for RTO=0."
+      - "Verify acknowledged-write zero-loss guarantee under partition and abruptly lost fault domain; document synchronous quorum vs write availability trade-off."
+    notes: "No claim that selected pattern achieves RTO or RPO. Even confirmed input target is not a tested recovery result."
+decisions:
+  -
+    id: "ADR-CAND-ARCH-01"
+    topic: "Classification & hosting"
+    candidate: "Route to GF-CL; migration is a separate overlay."
+    status: "proposed"
+    rationale: "change=greenfield; target=cloud — Route to GF-CL; migration is a separate overlay."
+    rule_ids:
+      - "ARCH-01"
+    requirement_ids:
+      - "REQ-PLAT-001"
+      - "REQ-PLAT-002"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Confirm target-hosting responsibility and hard platform restrictions."
+    owner: "Not assigned"
+    open_validation:
+      - "Confirm target-hosting responsibility and hard platform restrictions."
+  -
+    id: "ADR-CAND-HA-02"
+    topic: "Multi-zone availability candidate"
+    candidate: "Use independent failure zones and avoid shared single points where feasible. This is HA, not proof of region DR."
+    status: "proposed"
+    rationale: "fault=az, availability=99.9% — Use independent failure zones and avoid shared single points where feasible. This is HA, not proof of region DR."
+    rule_ids:
+      - "HA-02"
+    requirement_ids:
+      - "REQ-REL-001"
+      - "REQ-DR-003"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Check zone support, shared dependencies, measured failover and supported availability."
+    owner: "Not assigned"
+    open_validation:
+      - "Check zone support, shared dependencies, measured failover and supported availability."
+  -
+    id: "ADR-CAND-CAP-04"
+    topic: "Workload-based capacity planning"
+    candidate: "Size and benchmark at sustained peak with headroom and failure-mode capacity."
+    status: "proposed"
+    rationale: "peak=57.87 TPS; 190.97 API RPS — Size and benchmark at sustained peak with headroom and failure-mode capacity."
+    rule_ids:
+      - "CAP-04"
+    requirement_ids:
+      - "REQ-CAP-001"
+      - "REQ-CAP-002"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Obtain peak duration, load profile, per-instance P99 throughput, storage IOPS and growth."
+    owner: "Not assigned"
+    open_validation:
+      - "Obtain peak duration, load profile, per-instance P99 throughput, storage IOPS and growth."
+  -
+    id: "ADR-CAND-DR-06"
+    topic: "Extremely short recovery objective"
+    candidate: "Explore automated detection/traffic switch and pre-provisioned recovery; do not promise objective."
+    status: "proposed"
+    rationale: "RTO=0 s for az — Explore automated detection/traffic switch and pre-provisioned recovery; do not promise objective."
+    rule_ids:
+      - "DR-06"
+    requirement_ids:
+      - "REQ-DR-001"
+      - "REQ-DR-003"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Measure recovery critical path and failback in destructive tests."
+    owner: "Not assigned"
+    open_validation:
+      - "Measure recovery critical path and failback in destructive tests."
+  -
+    id: "ADR-CAND-DR-ZERO-01"
+    topic: "Zero interruption target: continuous serving required"
+    candidate: "Show active-serving application capacity in independent fault domains for study. A drawn active-active topology is not proof of no interruption; data writes and external dependencies need separate protection."
+    status: "proposed"
+    rationale: "RTO=0 s; failure scope=az — Show active-serving application capacity in independent fault domains for study. A drawn active-active topology is not proof of no interruption; data writes and external dependencies need separate protection."
+    rule_ids:
+      - "DR-ZERO-01"
+    requirement_ids:
+      - "REQ-DR-001"
+      - "REQ-DR-003"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Define end-user interruption measurement, run disruptive failover/partition tests, and verify DNS, capacity, identity and SLI results."
+    owner: "Not assigned"
+    open_validation:
+      - "Define end-user interruption measurement, run disruptive failover/partition tests, and verify DNS, capacity, identity and SLI results."
+  -
+    id: "ADR-CAND-DR-ZERO-02"
+    topic: "Zero loss + no interruption: correctness/availability trade-off"
+    candidate: "Explore quorum or synchronous commit where feasible, including potential write unavailability and latency under partition. Dual serving application tiers do NOT imply safe multi-writer databases."
+    status: "proposed"
+    rationale: "RTO=0 s; RPO=0 s; consistency=strong — Explore quorum or synchronous commit where feasible, including potential write unavailability and latency under partition. Dual serving application tiers do NOT imply safe multi-writer databases."
+    rule_ids:
+      - "DR-ZERO-02"
+    requirement_ids:
+      - "REQ-DR-001"
+      - "REQ-DR-002"
+      - "REQ-DAT-002"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Verify acknowledged-write durability, partition behavior, commit latency, fencing, failback and end-to-end service recovery."
+    owner: "Not assigned"
+    open_validation:
+      - "Verify acknowledged-write durability, partition behavior, commit latency, fencing, failback and end-to-end service recovery."
+  -
+    id: "ADR-CAND-DATA-07"
+    topic: "Zero acknowledged-write loss objective"
+    candidate: "Asynchronous cross-region replicas alone do not prove zero-loss durability. Assess partitions, write acknowledgements and quorum/commit semantics."
+    status: "proposed"
+    rationale: "RPO=0 seconds — Asynchronous cross-region replicas alone do not prove zero-loss durability. Assess partitions, write acknowledgements and quorum/commit semantics."
+    rule_ids:
+      - "DATA-07"
+    requirement_ids:
+      - "REQ-DR-002"
+      - "REQ-DAT-002"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Design + exercise data correctness during abrupt writer loss and replica promotion."
+    owner: "Not assigned"
+    open_validation:
+      - "Design + exercise data correctness during abrupt writer loss and replica promotion."
+  -
+    id: "ADR-CAND-DB-10"
+    topic: "Per-workload data architecture"
+    candidate: "Recommend logical data-store pattern; compare provider products and failover semantics."
+    status: "proposed"
+    rationale: "type=relational; consistency=strong — Recommend logical data-store pattern; compare provider products and failover semantics."
+    rule_ids:
+      - "DB-10"
+    requirement_ids:
+      - "REQ-DAT-001"
+      - "REQ-DAT-002"
+    alternatives:
+      -
+        name: "Alternative requires trade-off review"
+        tradeoff: "Validate operations, constraints and benchmarks per workload."
+    owner: "Not assigned"
+    open_validation:
+      - "Validate operations, constraints and benchmarks per workload."
+diagrams:
+  -
+    id: "infrastructure"
+    type: "infrastructure"
+    status: "proposed"
+    component_ids:
+      - "NODE-CLIENT"
+      - "NODE-DNS"
+      - "NODE-EDGE"
+      - "NODE-APP-A"
+      - "NODE-DB-PRIMARY"
+      - "NODE-BACKUP"
+      - "NODE-APP-B"
+      - "NODE-DB-SECONDARY"
+      - "NODE-DR-SCOPE"
+    summary: "Active-active application · multi-zone (DR scope may be open) candidate, Relational transactional store. RTO 0 s; RPO 0 s; scope az. Serving application capacity is proposed across failure domains; this is not proof of an uninterrupted service or multiple safe DB writers. All nodes and links are proposed logical candidates, not verified deployment facts. Source of product use cases remains the BRD. Required validation: Confirm region/site and actual fault-domain independence; do not infer region or zone availability. | Benchmark compute and data tier throughput under peak and impaired-zone load. | Confirm database durability, failover behavior, backups, IAM, monitoring, and provider eligibility. | Zero-second RTO requires an explicit user-facing outage measurement and fault-injection evidence; continuously serving applications alone do not prove this target. | Zero-second RPO requires tested committed-write acknowledgement and quorum/replication semantics; evaluate latency, partition behavior and the risk of unavailable writes."
+    mermaid_file: "diagrams/infrastructure.mmd"
+    drawio_file: "diagrams/architecture.drawio"
+  -
+    id: "network"
+    type: "network"
+    status: "proposed"
+    component_ids:
+      - "NODE-N-CLIENT"
+      - "NODE-N-DNS"
+      - "NODE-N-ENTRY"
+      - "NODE-N-PERIMETER"
+      - "NODE-N-LB"
+      - "NODE-N-APP-A"
+      - "NODE-N-DB-A"
+      - "NODE-N-EGRESS"
+      - "NODE-N-SERVICE"
+      - "NODE-N-APP-B"
+      - "NODE-N-DB-B"
+    summary: "Region/VPC(or VNet)/private app and data segments. Trust boundaries, zones/subnets and public/private paths are provisional. Actual IPAM, public subnet associations, provider-managed interfaces, routing and firewall rules must be verified. Required validation: Confirm real CIDR/IPAM allocations, public/private subnet eligibility, zone placement, routes, DNS and security/firewall rules; no IP addresses are assigned here. | Provider networking differs: AWS VPCs regional with AZ subnets; GCP VPCs global with regional subnets; Azure VNets regional. Managed service resources may live on provider-owned boundaries. | Confirm public or private ingress, internet egress/NAT and private endpoint eligibility, independent availability zone paths, and hybrid/partner failover before SDD."
+    mermaid_file: "diagrams/network.mmd"
+    drawio_file: "diagrams/architecture.drawio"
+  -
+    id: "dr"
+    type: "dr"
+    status: "proposed"
+    component_ids:
+      - "NODE-D-OBS"
+      - "NODE-D-TRAFFIC"
+      - "NODE-D-APP"
+      - "NODE-D-DB"
+      - "NODE-D-BACKUP"
+      - "NODE-D-RECAPP"
+      - "NODE-D-RECDB"
+      - "NODE-D-VERIFY"
+    summary: "Failure scope: az; RTO=0 s; RPO=0 s; candidate: Local HA only · broader DR not scoped. Active-serving application capacity is proposed, but DB writer/quorum semantics are UNRESOLVED. These are targets, NOT achieved results. Required validation: Define recovery critical path: detection → failover authorization → data promotion/restore → app/IAM connectivity → routing → business verification. | Demonstrate application-level recovery, data consistency, dependency reattachment, failback and split-brain protections. | Document separate recovery objective for every in-scope failure scenario, including cyber/data corruption where relevant. | Define end-user no-interruption test, routing convergence, fault injection and impaired-capacity measurement for RTO=0. | Verify acknowledged-write zero-loss guarantee under partition and abruptly lost fault domain; document synchronous quorum vs write availability trade-off."
+    mermaid_file: "diagrams/dr.mmd"
+    drawio_file: "diagrams/architecture.drawio"
+  -
+    id: "data"
+    type: "data_flow"
+    status: "proposed"
+    component_ids:
+      - "NODE-DF-INPUT"
+      - "NODE-DF-APP"
+      - "NODE-DF-DB"
+      - "NODE-DF-BACK"
+    summary: "Only technical data paths are proposed here; product entities, use cases and APIs must come from BRDs. Required validation: Confirm authoritative data owners, transaction boundaries, query patterns, mutation/replay semantics and supported cross-region consistency. | Do not infer product schemas or event names."
+    mermaid_file: "diagrams/data.mmd"
+    drawio_file: "diagrams/architecture.drawio"
+conflicts: []
+governance:
+  pre_sdd_gate: "G1"
+  gate_status: "provisional"
+  approved_by: null
+  approved_at: null
+  authorized_to_start_sdd: false
+  exceptions: []
+  conditions:
+    - "All approvals shown in the browser are user-attested and not independently verified. Formal Pre-SDD G3 approval required before authorization."
+validation:
+  export_status: "provisional"
+  sdd_source_intake: "awaiting_brds"
+  blockers:
+    - "Regulatory and geographic restrictions have not been assessed."
+  warnings:
+    - "Accountable owner not identified"
+    - "No measurement or approval evidence reference supplied"
+    - "Zero-second RTO is a business aspiration, not a guaranteed failover result; define outage detection/SLI granularity and test end-to-end, including partitions."
+    - "Active-active application capacity is not proof of RPO=0. Require a validated acknowledgement/quorum/commit model, including latency and network partition trade-offs."
+  checked_at: "2026-10-17T18:15:13.331Z"

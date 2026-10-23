@@ -1,0 +1,32 @@
+{
+  "format": "Pre-SDD-Architecture-Studio-Manual-Handoff",
+  "version": "2.2",
+  "generated_at": "2026-10-17T20:18:15.849Z",
+  "readiness": "Provisional / review required",
+  "technical_handoff_user_attested": false,
+  "native_skill_adapter_installed": false,
+  "full_sdd_requires_separate_brd": true,
+  "sddu_skill_human_override_pre_sdd_conflicts": true,
+  "exported_diagram_ids": [
+    "infrastructure",
+    "network",
+    "dr",
+    "data"
+  ],
+  "provider_tab_is_visualization_only": true,
+  "files": [
+    "Pre-SDD.md",
+    "architecture-blueprint.json",
+    "architecture-blueprint.yaml",
+    "project-state.json",
+    "diagrams/architecture.drawio",
+    "diagrams/infrastructure.mmd",
+    "diagrams/network.mmd",
+    "diagrams/dr.mmd",
+    "diagrams/data.mmd",
+    "SDD-Unifier_Manual_Run_Brief.md",
+    "Validation_Report.md",
+    "Decision_Record.md",
+    "manifest.json"
+  ]
+}

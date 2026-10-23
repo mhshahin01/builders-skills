@@ -1,0 +1,28 @@
+flowchart LR
+  %% Recovery Architecture & Sequence — PROPOSED / NOT AN APPROVED DESIGN
+  %% canonical component NODE-D-OBS
+  D_OBS["Detect / declare incident - Health signals & decision"]
+  %% canonical component NODE-D-TRAFFIC
+  D_TRAFFIC["Continuous traffic steering - Routing to both serving zones/sites"]
+  %% canonical component NODE-D-APP
+  D_APP["Serving application A - Workload & state"]
+  %% canonical component NODE-D-DB
+  D_DB["Acknowledged writes · owner TBD - Commit/fencing validation TBD"]
+  %% canonical component NODE-D-BACKUP
+  D_BACKUP["Protected recovery points - Restore drills & isolation"]
+  %% canonical component NODE-D-RECAPP
+  D_RECAPP["Serving application B - Receives live routed traffic"]
+  %% canonical component NODE-D-RECDB
+  D_RECDB["Commit partner / copy · TBD - Quorum, replication, fencing TBD"]
+  %% canonical component NODE-D-VERIFY
+  D_VERIFY["Business service verification - IAM · correctness · customer access"]
+  D_OBS -->|observe/steer| D_TRAFFIC
+  D_APP -->|writes| D_DB
+  D_DB -->|protect| D_BACKUP
+  D_DB -->|synchronous/quorum TBD| D_RECDB
+  D_TRAFFIC -->|serve live requests| D_RECAPP
+  D_RECDB -->|data ready| D_RECAPP
+  D_RECAPP -->|check| D_VERIFY
+  D_TRAFFIC -->|serve live requests| D_APP
+  classDef proposed fill:#e8f3f6,stroke:#368b94,color:#15354b;
+  class D_OBS,D_TRAFFIC,D_APP,D_DB,D_BACKUP,D_RECAPP,D_RECDB,D_VERIFY proposed;

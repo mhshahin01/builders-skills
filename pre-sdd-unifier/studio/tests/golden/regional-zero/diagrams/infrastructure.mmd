@@ -1,0 +1,33 @@
+flowchart LR
+  %% Infrastructure Architecture · GF-CL — PROPOSED / NOT AN APPROVED DESIGN
+  %% canonical component NODE-CLIENT
+  CLIENT["Consumers - Product flows from BRD"]
+  %% canonical component NODE-DNS
+  DNS["Routing & health checks - global/shared boundary TBD"]
+  %% canonical component NODE-EDGE
+  EDGE["L7 ingress + security - Primary ingress · public candidate"]
+  %% canonical component NODE-APP-A
+  APP_A["Serving app tier A - Traffic-serving · candidate"]
+  %% canonical component NODE-DB-PRIMARY
+  DB_PRIMARY["Authoritative write boundary - Durable commit semantics TBD"]
+  %% canonical component NODE-BACKUP
+  BACKUP["Backups / restore points - retention & isolation TBD"]
+  %% canonical component NODE-APP-B
+  APP_B["Serving app tier B - Traffic-serving · candidate"]
+  %% canonical component NODE-DB-SECONDARY
+  DB_SECONDARY["HA commit partner · role TBD - Sync/quorum semantics unverified"]
+  %% canonical component NODE-RECOVERY-APP
+  RECOVERY_APP["Serving app tier · site B - Actively serves traffic · candidate"]
+  %% canonical component NODE-RECOVERY-DB
+  RECOVERY_DB["Remote data commit boundary TBD - Cross-site commit/quorum unverified"]
+  CLIENT -->|request| DNS
+  DNS -->|route| EDGE
+  EDGE -->|serve live traffic| APP_A
+  APP_A -->|reads/writes| DB_PRIMARY
+  DB_PRIMARY -->|backup| BACKUP
+  EDGE -->|serve live traffic| APP_B
+  DB_PRIMARY -->|sync/quorum TBD| DB_SECONDARY
+  DNS -->|serve live traffic| RECOVERY_APP
+  DB_PRIMARY -->|commit/quorum TBD| RECOVERY_DB
+  classDef proposed fill:#e8f3f6,stroke:#368b94,color:#15354b;
+  class CLIENT,DNS,EDGE,APP_A,DB_PRIMARY,BACKUP,APP_B,DB_SECONDARY,RECOVERY_APP,RECOVERY_DB proposed;

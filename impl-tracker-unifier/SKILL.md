@@ -3,15 +3,15 @@ name: impl-tracker-unifier
 description: >-
   Track implementation against the BRD, SDD and LLD. Use to plan implementation, split a feature into
   tasks, pick what to build next, start or finish a task, log a bug or gap, audit consistency, record a
-  lesson or direction change, write a standup, show progress, or check doc/code drift. Splits each LLD into
-  keyed tasks citing the BRD use case and ACs, with the why. Blocks tasks with unmet
-  dependencies, finds code that already exists (pages, endpoints, migrations) and maps it to the
-  LLD, prevents double builds via an ownership index, keeps gaps and a dated journal. Before any
-  task is Done, a fresh read-only auditor subagent checks API, DB migrations, frontend, logs/audit trail,
-  security and tests against the LLD. Mistakes, reopens, user corrections and direction changes become
-  checkable lessons and change-log rows replayed before the next matching task. Commands: init, plan,
-  next, wave, start, done, audit, discover, verify, gap, lesson, change, standup, status, sync, slice, report. Slice mode plans feature-by-feature end-to-end slices in the user's order and reports delivered slices for a manager. A pre-flight
-  script runs every mechanical check before an audit is spent. Writes ./tracking/ only.
+  lesson or direction change, write a standup or manager report, show progress, or check doc/code
+  drift. Splits each LLD into keyed tasks citing BRD use cases and ACs, with the why. Blocks tasks with
+  unmet dependencies, maps existing code to the LLD, prevents double builds via an ownership index,
+  keeps gaps and a journal. No task is Done until pre-flight passes and a fresh read-only auditor
+  checks API, DB migrations, frontend, logs/audit trail, security and tests against the LLD. Mistakes,
+  reopens, corrections and direction changes become checkable lessons replayed before the next
+  matching task. Slice mode builds feature by feature, end to end. Commands: init, plan, next, wave,
+  start, done, audit, discover, verify, gap, lesson, change, standup, status, sync, slice, report.
+  Writes ./tracking/ only.
 ---
 
 # Implementation Tracker

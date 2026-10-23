@@ -136,7 +136,7 @@ The reviewer/author presents the actual current question and recommendation befo
    returned before a refund, when the store's returns policy decides it and
    that policy is not attached, is a fact. A recommended option that adds
    behaviour no source states but offers options with tradeoffs is also a
-   choice the policy may take, and the residue report lists it: for
+   choice the policy may take, and the close-out summary lists it for the user's review: for
    example, how branches start using the portal, recommended as a pilot at
    two branches over all branches at once. Nor does the policy take a
    recommended option that makes a decision the user's standing
@@ -281,7 +281,7 @@ Versioning block in the tracker. Then write the Hand-offs block: the owning
 skills re-check the changed documents in chain order (`apply-and-verify.md`
 § Hand-off).
 Present the close-out summary: points by status, structural decisions list,
-the rejections an answer policy took (§ Answer policy, rule 2), skill changes requested, the files the session touched, new versions, and the
+the rejections an answer policy took (§ Answer policy, rule 2), the choices without a source it took (§ Answer policy, rule 3), skill changes requested, the files the session touched, new versions, and the
 hand-offs with the request to give each skill. Offer to start the first hand-off; each runs
 only on the user's word, or on an answer policy that names the hand-offs
 (§ Answer policy).

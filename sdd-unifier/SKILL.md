@@ -366,7 +366,7 @@ Runs at the end of step 8, and again whenever the user asks for the e2e design, 
 
 ### 9. Present
 
-In `parts`, parts 1 and 2 end with the short part summary of `parts-mode.md` § The checkpoint, not with this handoff. This full handoff closes part 3, or a `whole` run. A targeted update (step 10) ends with a short one: the files it changed, the new version, the step 6a result, the E2E gate line, and each step 9 line whose value changed (for example, a Child LLDs row now out of date). The next hops of the documents chain (step 9a) are run in the same request, not offered; the handoff names each with the version it produced, or the user's "later". It ends with the one-line offer only when a next step is left that no hop covers.
+In `parts`, parts 1 and 2 end with the short part summary of `parts-mode.md` § The checkpoint, not with this handoff. This full handoff closes part 3, or a `whole` run. A targeted update (step 10) ends with a short one: the files it changed, the new version, the step 6a result, the E2E gate line, and each step 9 line whose value changed (for example, a Child LLDs row now out of date). The next hops of the documents chain are reported on the Documents chain line below (step 9a), not offered. It ends with the one-line offer only when a next step is left that no hop covers.
 
 After the body, the Open Items chunk, and the acceptance loop, surface to the user:
 
@@ -380,6 +380,7 @@ After the body, the Open Items chunk, and the acceptance loop, surface to the us
 - API contracts: total `API-NN`, how many `Defined`, how many `TBD - external`, and how many `Flagged`, with the list of external providers whose documentation the user must supply (§15.6).
 - Proposed endpoints (derive-from-BRD), when no part 2 stop named them (a `whole` run, or an update that proposed new ones): each endpoint proposed for a §7.3 entry point, by method and path, named as a proposal to review.
 - Lineage: each source BRD with its key and version (and its cover Status when it is not `Approved`: the user chose to derive from it, `brd-to-sdd.md` § Source BRDs and lineage), the cross-BRD conflicts found and where each landed (ADR, clarification marker, open item), and the child LLDs (or `None yet`), with any row flagged by the Child LLDs check and each out-of-date LLD named (its SDD version older than this SDD's; refresh it through lld-unifier).
+- Documents chain (step 9a): each hop this update ran, with the version it produced (BRD vX.X through brd-unifier, each child LLD vX.X through lld-unifier), the tracker hop when one applies, `no change` with the reason, or the user's "later", named as pending.
 - Use-case traceability (derive-from-BRD), one line per source BRD: use cases (active, merged, removed), how many are fully traced, which carry a marker in §7.3 (by keyed ID), and that every UC link resolves (file and anchor). Example: `REFUNDS v1.0: 4 active, 4 traced, 0 flagged, 1 merged | WALLET v2.1: 9 active, 8 traced, 1 flagged (WALLET/UC-07); all UC links resolve`.
 - **E2E gate: `Open` or `Shut` (`Shut` covers the line values `Locked` and `Stale`; `Open` is `Open - Up to date`).** When open, chunk 19 was written (service, topic, event, in-process event, sync-edge, and saga counts), or verified current and kept unchanged (say so, with its E2E basis and, behind a Stale mark, its faithfulness check). When shut, say plainly that chunk 19 was not generated (or is `Stale`), list the conditions (E1-E4) that are not met with what is open behind each, and state that `Deferred` items count as open and that there is no override. Whenever this run wrote chunk 19, report its faithfulness check (step 8b): the mismatches by label (wrong, misleading, cosmetic), fixed in chunk 19 and confirmed, and each source-chunk problem, fixed in its chunk, raised as an open item, or recorded in chunk 18 Reviewer Notes for its owner.
 - Count of inline `[NEEDS CLARIFICATION: ...]` markers: explicit body-level gap inventory, with a list of the SDD-only sections that need the architect's input, read per intent (`source-transformation.md` § Gap inventory and thresholds).
@@ -390,12 +391,12 @@ After the body, the Open Items chunk, and the acceptance loop, surface to the us
 - Reminder line: "Specs (Mission / Tech Stack / Roadmap / Project Type) is synthesised by lld-unifier from this SDD."
 - One-line offer: "Want me to switch modes?" / "Want me to merge?" / "Want me to fill in section X now that you have decisions?"
 
-### 9a. Documents chain (every content-changing update, before the handoff)
+### 9a. Documents chain (every content-changing update; its result goes into the step 9 handoff)
 
 A change to this SDD is carried through the chain in the same request, each hop through its owning skill:
 
 - **Bottom-up**, when the change started at a child LLD or at this SDD and alters a business rule, a use case's behaviour, or another BRD-owned fact: brd-unifier for that BRD.
-- **Top-down**, for every child LLD the change reaches (its Child LLDs row is now out of date and a changed chunk maps to it): lld-unifier refreshes it (its step 3c); the decision that started the chain is the refresh's acceptance. The child LLD the change came from (bottom-up) is not refreshed again: it records this SDD version in its own step 7b, in the same request, so the handoff's Lineage line does not list it as out of date. An LLD that an implementation tracker cites then hands on to `impl-tracker-unifier sync`.
+- **Top-down**, for every child LLD the change reaches (its Child LLDs row is now out of date and a changed chunk maps to it): lld-unifier refreshes it (its step 3c); the decision that started the chain is the refresh's acceptance. The child LLD the change came from (bottom-up) is not refreshed again: it records this SDD version in its own step 7b, in the same request, so the handoff's Lineage line does not list it as out of date. An LLD that an implementation tracker cites then hands on to impl-tracker-unifier (`sync`, and `plan` for new scope).
 - A source BRD change reaches this SDD through step 10 ("BRD <KEY> has a new version") and continues down from here.
 
 The handoff names each hop with the version it produced, or why a document needed no change. A hop is left for later only when the user says so, and the handoff names it as pending.

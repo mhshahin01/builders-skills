@@ -307,4 +307,5 @@ condition already fails; a condition is never reported unverified.
 
 Offer to start the first row. Each row runs only on the user's word, or on
 an answer policy that names the hand-offs (SKILL.md § Answer policy), as
-that skill's own request with its own stops.
+that skill's own request with its own stops. Once a row runs, that skill's
+documents chain carries the change on inside that request.

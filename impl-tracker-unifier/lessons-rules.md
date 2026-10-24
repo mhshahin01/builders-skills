@@ -97,11 +97,11 @@ user made in chat, an approach the tracker or agent chose (pattern, library, sch
 | Why | One line. |
 | Affected | Tasks (status now), owned items, code files, lessons, earlier CHG rows. |
 | Supersedes | Earlier CHG / planning decision / lesson IDs. |
-| Follow-up | Rework tasks created (`depends_on` the affected ones), gaps routed (doc changes → owning doc skill as `doc-changed`/`doc-gap`). |
+| Follow-up | Rework tasks created (`depends_on` the affected ones); the documents chain run in the same change (SKILL.md § Documents chain), each document named with the version that records it, or `no change` with the reason; a `doc-gap` only for what is still undecided. |
 
 Effects:
 
-1. Affected not-started tasks → `Stale`; affected Done/Verified → `Done-stale`; rework task created.
+1. Affected not-started tasks → `Stale`; affected Done/Verified → `Done-stale`; rework task created. Exception: a task re-planned through the documents chain in the same change keeps its status (SKILL.md § Documents chain, which names the one Done / Verified case that still becomes `Done-stale`).
 2. Superseded planning decisions and lessons → marked `Superseded by CHG-NNN` (not deleted).
 3. **Anti-resurrection:** `start` and the double-build gate grep `changes.md` for every owned item; an item
    listed as removed/replaced in an active CHG → stop and show the CHG. Audit flags code that brings a

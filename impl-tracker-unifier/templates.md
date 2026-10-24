@@ -304,7 +304,7 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ~~~markdown
 | ID | Date | What changed (from → to) | Decided by | Why | Affected | Supersedes | Follow-up | Status |
 |---|---|---|---|---|---|---|---|---|
-| CHG-002 | 2026-10-19 | Score threshold per user → per mode | user: "make it per mode" | Hybrid needs its own bar | T-014 (Done-stale), table autoapply.profile | Plan decision #3, L-002 | T-041 rework; GAP-007 → lld-unifier | Active |
+| CHG-002 | 2026-10-19 | Score threshold per user → per mode | user: "make it per mode" | Hybrid needs its own bar | T-014 (Done-stale), table autoapply.profile | Plan decision #3, L-002 | T-041 rework; LLD v1.5 (lld-unifier); SDD and BRD: no change, neither states the threshold | Active |
 ~~~
 
 ## Audit report `tracking/AUTOAPPLY/audits/T-014-audit-1.md`

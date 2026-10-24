@@ -23,8 +23,9 @@ The sixth stage of the documentation chain:
 It turns an approved LLD into an ordered, dependency-checked task ledger, keeps that ledger true while
 code is written, and reports the gap between what the documents require and what the code does.
 
-It **never edits** BRD, SDD or LLD files. Doc problems become gap rows handed to the owning skill
-(brd-unifier, sdd-unifier, lld-unifier).
+It **never edits** BRD, SDD or LLD files by hand. A decided change to design runs the owning skills in chain
+order in the same change (§ Documents chain); a doc problem nobody has decided yet becomes a gap row for its
+owner (brd-unifier, sdd-unifier, lld-unifier).
 
 Support files (paths relative to this skill folder):
 
@@ -73,10 +74,10 @@ Support files (paths relative to this skill folder):
 | `verify` | `KEY/T-NNN` or `KEY/UC-NN` | Check BRD ACs and e2e spec tags against code/tests; set Verified or open gaps. |
 | `gap` | free text or `KEY/GAP-NNN close` | Log, update or close a gap. |
 | `lesson` | free text, `list [scope]`, or `L-NNN retire <reason>` | Record, list or retire a lesson (lessons-rules.md). |
-| `change` | free text | Record a direction/use-case/decision change; mark affected tasks Stale; create rework tasks. |
+| `change` | free text | Record a direction/use-case/decision change; mark affected tasks Stale (not those the documents chain re-plans: § Documents chain); create rework tasks. |
 | `standup` | `[date]` | Write today's journal: done since last, next, blockers, new gaps. |
 | `status` | `[KEY]` | Progress by feature/phase/UC; open gaps; blocked chain. |
-| `sync` | `[KEY]` | Compare doc versions with the baseline and owned files with the code; mark Stale; open gaps. |
+| `sync` | `[KEY]` | Compare doc versions with the baseline and owned files with the code; mark Stale; open gaps (as a hop of the documents chain it moves the baseline and re-plans instead: § Documents chain). |
 | `slice` | `deliver KEY/S-NN`, `list [KEY]`, `order KEY` | Slice mode: run the delivery gate, list slices, or change the order (slice-rules.md). |
 | `report` | `[KEY]` | Manager-ready summary: delivered slices, current slice, next, blockers (slice-rules.md § 6). |
 
@@ -325,12 +326,14 @@ and promotion. The `checks.json` entry is written in the same step as the lesson
 ### change
 
 Follow `lessons-rules.md` § 6. Needs a user quote or doc version as the decider; otherwise ask.
-Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, routes doc gaps.
+Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, and runs the documents chain
+(§ Documents chain) for every design point the change decides; only an undecided doc problem becomes a gap.
 
 ### gap
 
 Follow `gap-rules.md`: classify type and severity, link to task/UC/doc anchor, route the owner
-(code fix → new task; doc fix → owning skill), write to `gaps.md`. Closing needs evidence. Closing a gap of
+(code fix → new task; doc fix → the owning skill, run in the same change once the fix is decided: § Documents
+chain), write to `gaps.md`. Closing needs evidence. Closing a gap of
 type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code → capture its lesson.
 
 ### standup
@@ -351,9 +354,10 @@ blocked chains, open gaps by severity. Mermaid progress optional.
 ### sync
 
 Follow `sync-and-drift.md`: doc version bump → find changed anchors → mark citing tasks `Stale`
-(Done ones become `Done-stale`) and open `doc-changed` gaps; owned files missing or moved → `code-drift`;
+(Done / Verified ones become `Done-stale`) and open `doc-changed` gaps; owned files missing or moved → `code-drift`;
 code with no owning task (new top-level classes, migrations, routes) → `untracked-code`. Then re-run the
-inventory and diff it (discovery-rules.md § 5).
+inventory and diff it (discovery-rules.md § 5). Run as a hop of the documents chain, it moves the baseline
+and re-plans instead of marking `Stale` (§ Documents chain).
 
 ### discover
 
@@ -374,7 +378,8 @@ asks before writing.
 2. **Never renumber, never delete.** IDs are permanent. Removed scope → `Dropped` + reason.
 3. **Keyed IDs everywhere,** linked to the heading anchor, exactly as lld-unifier writes them:
    `[AUTOAPPLY/UC-23](<rel path>#uc-23-…) AC-3: <short label>`.
-4. **Never edit BRD/SDD/LLD.** Gaps route to the owning skill.
+4. **Never edit BRD/SDD/LLD by hand.** A decided design change runs the owning skills in chain order before
+   its code reaches In review (§ Documents chain); an undecided doc problem is a gap routed to its owner.
 5. **Never invent design.** If the LLD doesn't say how, the task says "LLD silent" and a `plan-gap`
    is opened; the implementer may propose, and the proposal goes to lld-unifier.
 6. **Ask only direction-level questions.** Local choices (task split, wording, ordering ties) are
@@ -400,6 +405,37 @@ asks before writing.
    no single task (slice delivery, config, lessons shared by several tasks). The trailer goes in the **last paragraph** of the message, together with any `Co-Authored-By` line
    (no blank line between them), or git does not read it as a trailer and push-check warns.
 
+## Documents chain (bottom-up and top-down)
+
+A decision that fills, narrows or changes a design point (the user's answer, a tracker choice, a gap or open
+item settled) goes through the documents chain in the same change, before the code that follows it reaches
+`In review`:
+
+| Change starts at | Hops, in this order | A hop runs when |
+|---|---|---|
+| Code or the LLD (an implementation decision, an LLD update) | lld-unifier, then sdd-unifier, then brd-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document states the changed fact otherwise, or must state it (a contract, a behaviour rule, a business rule), and the tracker hop when it cites or realises the changed item |
+| The SDD | sdd-unifier, then brd-unifier when a business rule changes, and lld-unifier for every child LLD the change reaches, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the same |
+| The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then sdd-unifier, then lld-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
+
+- Each hop is run through its owning skill; the tracker never writes the document itself.
+- The CHG row's Follow-up names every document the change reached with the version that records it, and every
+  document that needed no change with the reason (`SDD: no change, contract unchanged`).
+- A gap is closed by the version that records its fix. Only a question still waiting for its owner (a business
+  decision, a provider fact) stays an open gap.
+- After an upstream hop, move `config.md` baselines to the new versions and re-plan the tasks that cite the
+  changed anchors in the same step (card and index): they keep their status (`Planned`, `In progress`); `Stale`
+  and `Done-stale` are for a doc change that `sync` finds on its own, not for one made through the chain.
+  Exception: a Done or Verified task whose owned item the change alters becomes `Done-stale`, with its
+  rework task. A `sync` run as a hop of the chain does exactly this, instead of marking `Stale`, opening
+  `doc-changed` gaps and asking about the baseline: the decision that started the chain is the acceptance.
+- Scope the user leaves for later stays a gap (`Deferred` with the user's quote) that cites the document's TODO
+  or open question recording it.
+- A tracker hop (`sync`, `plan`) reports the doc versions its baseline now holds.
+- A task that already holds the change (it came from this tracker's own `change`) is not re-planned: the hop only
+  moves the `config.md` baselines to the new versions.
+- An answer policy set for a tracker run answers only the tracker's own questions. Each hop keeps its skill's own
+  stops and asks, unless the policy names that document.
+
 ## Read budget per command
 
 | Command | May read |
@@ -409,9 +445,9 @@ asks before writing.
 | start | + one task card, `ownership.md`, code grep for owned items, `lessons.md` / `changes.md` filtered by scope |
 | done, audit | + `git log`, diff since start commit, test/tool output, cited doc anchors, filtered lessons/changes, `checks.json`, pre-flight output, the previous audit report (delta re-audit) |
 | wave | `index.md`, `ownership.md`, the candidate task cards (Owns, Risk, depends_on) |
-| lesson, change | + `lessons.md` / `changes.md`, cited task cards |
+| lesson, change | + `lessons.md` / `changes.md`, cited task cards, `config.md` and the doc master headers (documents chain) |
 | standup | + last journal, `git log --since` |
-| gap | + the cited task card and the one cited doc section |
+| gap | + the cited task card and the one cited doc section, `config.md` and the doc master headers (documents chain) |
 | verify | + cited BRD AC sections, test files with matching tags |
 | plan, sync, discover | `inventory.md`, code scan per discovery-rules.md § 1, LLD scope files, SDD §7.3 rows for the scope, BRD sections by anchor, doc master headers |
 
@@ -435,3 +471,5 @@ asks before writing.
 - [ ] Every lesson with a mechanical Check has a `checks.json` entry (or a reason it can't).
 - [ ] No task went to `In review` without a linked pre-flight report (PASS) for its head commit.
 - [ ] After every audit (finished or stopped) the code tree was clean before the next commit.
+- [ ] Every design point decided this run went through the documents chain: each CHG Follow-up names the doc
+      versions that record it, or why a document needed no change.

@@ -101,7 +101,7 @@ user made in chat, an approach the tracker or agent chose (pattern, library, sch
 
 Effects:
 
-1. Affected not-started tasks → `Stale`; affected Done/Verified → `Done-stale`; rework task created. Exception: a task re-planned through the documents chain in the same change keeps its status (SKILL.md § Documents chain, which names the one Done case that still becomes `Done-stale`).
+1. Affected not-started tasks → `Stale`; affected Done/Verified → `Done-stale`; rework task created. Exception: a task re-planned through the documents chain in the same change keeps its status (SKILL.md § Documents chain, which names the one Done / Verified case that still becomes `Done-stale`).
 2. Superseded planning decisions and lessons → marked `Superseded by CHG-NNN` (not deleted).
 3. **Anti-resurrection:** `start` and the double-build gate grep `changes.md` for every owned item; an item
    listed as removed/replaced in an active CHG → stop and show the CHG. Audit flags code that brings a

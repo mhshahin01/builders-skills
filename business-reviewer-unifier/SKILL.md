@@ -282,9 +282,8 @@ skills re-check the changed documents in chain order (`apply-and-verify.md`
 § Hand-off).
 Present the close-out summary: points by status, structural decisions list,
 the rejections an answer policy took (§ Answer policy, rule 2), the choices without a source it took (§ Answer policy, rule 3), skill changes requested, the files the session touched, new versions, and the
-hand-offs with the request to give each skill. Offer to start the first hand-off; each runs
-only on the user's word, or on an answer policy that names the hand-offs
-(§ Answer policy).
+hand-offs with the request to give each skill. Offer to start the first hand-off; when each
+row runs is set in `apply-and-verify.md` § Hand-off.
 
 ---
 

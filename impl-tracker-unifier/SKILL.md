@@ -425,12 +425,16 @@ item settled) goes through the documents chain in the same change, before the co
 - After an upstream hop, move `config.md` baselines to the new versions and re-plan the tasks that cite the
   changed anchors in the same step (card and index): they keep their status (`Planned`, `In progress`); `Stale`
   and `Done-stale` are for a doc change that `sync` finds on its own, not for one made through the chain.
-  Exception: a Done task whose owned item the change alters becomes `Done-stale`, with its rework task. A
-  `sync` run as a hop of the chain does exactly this, instead of marking `Stale`, opening `doc-changed` gaps
-  and asking about the baseline: the decision that started the chain is the acceptance.
+  Exception: a Done or Verified task whose owned item the change alters becomes `Done-stale`, with its
+  rework task. A `sync` run as a hop of the chain does exactly this, instead of marking `Stale`, opening
+  `doc-changed` gaps and asking about the baseline: the decision that started the chain is the acceptance.
 - Scope the user leaves for later stays a gap (`Deferred` with the user's quote) that cites the document's TODO
   or open question recording it.
 - A tracker hop (`sync`, `plan`) reports the doc versions its baseline now holds.
+- A task that already holds the change (it came from this tracker's own `change`) is not re-planned: the hop only
+  moves the `config.md` baselines to the new versions.
+- An answer policy set for a tracker run answers only the tracker's own questions. Each hop keeps its skill's own
+  stops and asks, unless the policy names that document.
 
 ## Read budget per command
 

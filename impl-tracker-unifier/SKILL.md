@@ -354,7 +354,7 @@ blocked chains, open gaps by severity. Mermaid progress optional.
 ### sync
 
 Follow `sync-and-drift.md`: doc version bump → find changed anchors → mark citing tasks `Stale`
-(Done ones become `Done-stale`) and open `doc-changed` gaps; owned files missing or moved → `code-drift`;
+(Done / Verified ones become `Done-stale`) and open `doc-changed` gaps; owned files missing or moved → `code-drift`;
 code with no owning task (new top-level classes, migrations, routes) → `untracked-code`. Then re-run the
 inventory and diff it (discovery-rules.md § 5). Run as a hop of the documents chain, it moves the baseline
 and re-plans instead of marking `Stale` (§ Documents chain).

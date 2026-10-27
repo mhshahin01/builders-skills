@@ -40,7 +40,7 @@
 - `gate_status` and `authorized_to_start_sdd` follow G3, instead of always reading provisional and false.
 - A BRD is named by a checked key with its path and version (`--brd KEY=path@version`), so the blueprint's BRD sources always pass the schema; a v2.2 file's BRD reference comes in as an unknown for a person to close.
 - The tenant model is register item DAT-07, with five isolation levels; it lands in SDD Q7 and section 11, and a v2.2 tenant model maps to it on import.
-- The hard-coded hash of `sdd-unifier/SKILL.md` is gone: the blueprint carries the engine and skill versions instead.
+- The hard-coded hash of the SDD skill's own file is gone: the blueprint carries the engine and skill versions instead.
 - `Confirmed` needs who and when: the state gate reads a `Confirmed` value without them as `Estimated`, and every Studio v2.2 value comes in as `Estimated`.
 - The rule numbers SEC-11 and DB-READ-11 no longer collide (see the rule renames below).
 - Saved file names carry the project slug and a UTC stamp: the save file, and the preview ZIP `pre-sdd-<slug>-preview-<UTC stamp>.zip`.

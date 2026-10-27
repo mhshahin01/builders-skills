@@ -16,6 +16,8 @@ description: >-
 
 Author, transform, and unify a pre-BRD: 22 analysis and market-study frameworks across five tiers, ending in a mechanical go/no-go Executive Summary Scoreboard followed by an independent Investor Assessment (chunk 23). This is the discovery-layer companion to `brd-unifier` - it performs the analysis (market sizing, competitor scan, macro/competitive/internal factors) rather than templating requirements.
 
+You act as the Business development (Product Management & Business Development) in the unifier company.
+
 The embedded templates in `chunks/` are the authoritative section skeletons. The embedded `reference/PRE-BRD-v1.1.xlsx` is the authoritative styling + formula source for Excel export.
 
 ---
@@ -80,7 +82,7 @@ Excel is NOT a mode. It is the on-demand step in `xlsx-export.md`, run only afte
 4. **Fill the 22 framework chunks (01-22)** tier by tier from the bundle, per `frameworks.md`. Replicate per-persona blocks. Add rows for variable-row frameworks. Flag gaps with `[NEEDS CLARIFICATION: ...]`. A light run fills only its set (§ Light run).
 5. **Investor assessment pass** (dedicated investor agent) → fill `23-investor-assessment.md` (chunks) or an appended Investor Assessment section (combined). Runs first so chunk 23 exists for the reviewer to check. See "Investor assessment pass" below.
 6. **Reviewer pass** (cleared-context) → `24-open-items-and-assumptions-log.md` (chunks) or an appended section (combined). Runs last and reviews **01-23** (including the investor verdict). See "Reviewer pass" below.
-7. **Present** the Markdown deliverable with an inventory: chunks/sections, `[NEEDS CLARIFICATION]` count, open-items count, source count (distinct source links cited across the chunks), and the investor verdict (Go / Conditional / No-Go + composite). When they apply, also name the light run and its skipped frameworks (§ Light run), a zero-finding review (§ Reviewer pass), and each answer the answer policy gave (§ Answer policy). Before presenting, verify that every flagged source propagates a live question to its affected signal rows and that unanswered reserved intake values are marked at first use. Count live marker occurrences separately from unique questions; exclude template examples and light-run skip notes. **Stop. Do not produce Excel.** An answer policy never passes this stop (§ Answer policy).
+7. **Present** the Markdown deliverable with an inventory: chunks/sections, `[NEEDS CLARIFICATION]` count, open-items count, source count (distinct source links cited across the chunks), and the investor verdict (Go / Conditional / No-Go + composite). When they apply, also name the light run and its skipped frameworks (§ Light run), a zero-finding review (§ Reviewer pass), and each answer the answer policy gave (§ Answer policy). Before presenting, verify that every flagged source propagates a live question to its affected signal rows and that unanswered reserved intake values are marked at first use. Count live marker occurrences separately from unique questions; exclude template examples and light-run skip notes. Then name the next hop, the Product manager (`brd-unifier`), and raise the handoff request on the status board (§ Status board). On a Conditional or No-Go verdict the request needs the owner's explicit decision to go on, and its Why names the verdict; until the owner decides, no request is raised. **Stop. Do not produce Excel.** An answer policy never passes this stop (§ Answer policy), and it never gives the owner's decision on a Conditional or No-Go verdict.
 8. **On explicit approval** ("export excel" / "looks good, generate the sheet"): run the export per `xlsx-export.md`. Never after a light run (§ Light run), and never by an answer policy (§ Answer policy).
 
 ### Output modes
@@ -136,6 +138,60 @@ Dispatch a subagent (`Agent`, `subagent_type: general-purpose`) with no authorin
 - Never invents market figures without a source - unverifiable → `[NEEDS CLARIFICATION]`.
 - Never modifies the embedded `chunks/*.md` or `reference/PRE-BRD-v1.1.xlsx` during a run.
 - Never silently drops a framework; an empty framework keeps its heading with a flagged note (a light run's skipped framework follows § Light run).
+
+## Status board
+
+The chain skills hand work to each other through one shared file, the status board, and `tutorialize-unifier` reads it for context. Every skill that carries this section follows the same rules below, word for word.
+
+- **File:** `unifier-status.md` in the project root, the folder that holds the hop folders (`./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`). The first chain skill that runs creates it from the template below. Nobody deletes it.
+- **Template:**
+
+```markdown
+# Unifier status board
+
+Run mode: solo
+
+## Employees
+
+| Employee | Team | Skill | Folder | State | Version | Updated (UTC) | Next step | Waiting on |
+|---|---|---|---|---|---|---|---|---|
+| Business development | Product Management & Business Development | pre-brd-unifier | - | Not started | - | - | - | - |
+| Product manager | Product Management & Business Development | brd-unifier | - | Not started | - | - | - | - |
+| Business owner | Product Management & Business Development | business-reviewer-unifier | - | Not started | - | - | - | - |
+| E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
+| Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
+| Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+
+## Handoff requests
+
+| ID | From | To | Request | Why | Raised (UTC) | State | Closed (UTC) | Link |
+|---|---|---|---|---|---|---|---|---|
+```
+
+- **Times and text:** every time on the board is UTC. `Updated (UTC)`, `Raised (UTC)`, and `Closed (UTC)` use `YYYY-MM-DD HH:MM`. A cell with no value holds `-`. The board uses no em dash and no en dash.
+- **Run mode:** the header line reads `Run mode: solo` or `Run mode: team`.
+  - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
+  - Only the user changes it.
+  - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. "Later" sets the request State to `Later`.
+- **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
+  - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
+  - A skill writes only its own row, the one whose Skill cell names it.
+  - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+- **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
+  - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer. The receiving skill updates only State and Closed (UTC): `Accepted` when it takes the request (still pending: taken, not finished), then `Done` and Closed (UTC) at the stop where it finishes it.
+  - A new request takes the next number after the highest ID on the board. IDs are never renumbered.
+- **When a skill uses the board:**
+  - At the start of every run it reads the board: its own row, its pending requests (`Open`, `Later`, or `Accepted`), and the upstream states.
+  - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
+  - At its handoff points it raises requests.
+- **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
+- **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
+- **Writers outside the project root:**
+  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `tutorialize-unifier` only reads the board and has no row.
 
 ## Reference files
 

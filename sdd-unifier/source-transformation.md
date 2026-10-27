@@ -20,7 +20,7 @@ For deciding **which** intent to use (transform vs derive vs generate), see `tra
 
 ## Field-by-field mapping (SoW source; note: not the recommended path)
 
-A SoW alone is **not** a strong source for an SDD. SDDs depend on architectural decisions; SoWs typically don't have those. This skill recommends running `brd-unifier` first (SoW → BRD), then `sdd-unifier` (BRD → SDD) per `brd-to-sdd.md`.
+A SoW alone is **not** a strong source for an SDD. SDDs depend on architectural decisions; SoWs typically don't have those. This skill recommends running `brd-unifier` first (SoW → BRD), then `pre-sdd-unifier` (BRD → Pre-SDD, signed at G3), then `sdd-unifier` (BRD and Pre-SDD → SDD) per `brd-to-sdd.md` and SKILL.md step 2a.
 
 If the user insists on going directly from a SoW to an SDD, treat the SoW as raw context for GENERATE intent, not as a transformation target. Most SDD sections will be heavy with `[NEEDS CLARIFICATION: ...]` markers. Be explicit about this in the handoff: "This SDD was generated from a SoW directly, bypassing the BRD step. The marker count is high (N markers) because the SoW does not capture the technical decisions an SDD requires. Recommend either generating a BRD first (run brd-unifier) and re-deriving, or working through the markers with an architect."
 

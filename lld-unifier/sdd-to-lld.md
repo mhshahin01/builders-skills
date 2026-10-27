@@ -1,8 +1,8 @@
 # SDD → LLD Field Mapping (FROM-SDD direction)
 
-This file defines how to derive a Low-Level Design from a Solution Design Document. It is the equivalent of `brd-to-sdd.md` in `sdd-unifier`, but one stage further down the chain: SoW → BRD → SDD → **LLD**.
+This file defines how to derive a Low-Level Design from a Solution Design Document. It is the equivalent of `brd-to-sdd.md` in `sdd-unifier`, but one stage further down the chain: SoW → BRD → Pre-SDD → SDD → **LLD**.
 
-The default workflow shape is **SoW → BRD → SDD → LLD**, with one LLD per SDD.
+The default workflow shape is **SoW → BRD → Pre-SDD → SDD → LLD**, with one LLD per SDD.
 
 ---
 
@@ -17,6 +17,7 @@ Every fact has exactly one owning document and section. The LLD **references** S
 5. **Restated upstream content outside rule 3's sourced derived views is a review defect.** The reviewer flags it as Type `Duplication` with the reference-based rewrite as the Recommended Answer.
 6. **Standalone export also permits inlining.** When the user explicitly asks for a self-contained LLD for distribution, the merge step MAY inline referenced SDD sections, marked `> Inlined from SDD §X for standalone distribution`.
 7. **IDs belong to their document.** Use case, test case, screen, and mockup IDs are the BRD's; service names, `API-NN`, and event names are the SDD's. The LLD cites them exactly and never creates, renumbers, or re-titles one (§ Use-case traceability).
+8. **Pre-SDD values arrive through the SDD only.** A value a Pre-SDD settled (a `PSDD/<ID>` value) is cited from the SDD section that carries it (for example SDD §6 Notes, §8.6, §8.7, §11, §18, §19, §20), never from the Pre-SDD or its `pre-sdd-*` folder, which this skill never reads. A Pre-SDD change reaches the LLD as a new SDD version (SKILL.md step 3c).
 
 ---
 

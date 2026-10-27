@@ -15,7 +15,7 @@ PART OF: BRD - [Project Name]
 
 ## Technical Inputs for the SDD
 
-<!-- Optional. The BRD body carries no technical content. If the source material (SoW, existing docs, stakeholder input) states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The sdd-unifier reads this section as input. Remove this section if the source had none. -->
+<!-- Optional. The BRD body carries no technical content. If the source material (SoW, existing docs, stakeholder input) states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The Pre-SDD reads this section for shape and the SDD for products. Remove this section if the source had none. -->
 
 | Source Statement (verbatim) | Source Location | Relevant To |
 |-----------------------------|-----------------|-------------|

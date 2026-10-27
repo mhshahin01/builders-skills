@@ -54,7 +54,7 @@ For each clarification marker added, ask one independently answerable question. 
    - The review edits an SDD only where a decision targets it or makes its
      text wrong. Deriving new BRD content into the SDD (for a new use case,
      its owner in SDD 09 and its §7.3 row) goes to the SDD hand-off
-     (§ Hand-off, item 2), which the point's Decision cell names.
+     (§ Hand-off, item 3), which the point's Decision cell names.
    - New `BR-n` and `AC-n` items go at the end of their list, because other
      documents cite them by position. A merged or removed use case keeps
      its row and its status; nothing is deleted.
@@ -71,6 +71,9 @@ For each clarification marker added, ask one independently answerable question. 
      gated chunk's Stale mark (rule 7). The decision record names the
      owner's item it answers.
    - An LLD is never edited. Its hand-off carries the change.
+   - A Pre-SDD (pre-sdd-unifier), when the chain has one, is never edited
+     either. A decision that targets it goes to its hand-off (item 2), which
+     the point's Decision cell names.
    - A pre-BRD (pre-brd-unifier), when the chain has one, keeps its
      framework chunks, headings, and tables. A decision writes Answer cells
      only, with sourced figures, and recomputes the derived values it
@@ -261,7 +264,12 @@ did not change; write `None` when no document changed.
      delivery gate; a changed diagrammed use case reopens to-do step 5.
    - It keeps chunks 15-17 that exist Stale in all three places (the
      review set the mark, Apply rule 7) until their gate is open again.
-2. **Each SDD whose content or source BRDs changed (sdd-unifier):**
+2. **Each Pre-SDD a decision changes (pre-sdd-unifier):** "the business
+   review of [the tracker's Created date] decided points on this Pre-SDD
+   ([tracker path])". The review does not edit the Pre-SDD, so the row
+   names the decided points, and the Pre-SDD takes them through its own
+   update flow, with its own version and delta review.
+3. **Each SDD whose content or source BRDs changed (sdd-unifier):**
    - when source BRDs changed: "BRD [KEY] has a new version, after the
      business review of [the tracker's Created date] ([tracker path])",
      naming every changed source BRD in one request. The SDD takes them
@@ -281,7 +289,7 @@ did not change; write `None` when no document changed.
    out of date. It
    keeps chunk 19's Stale mark (Apply rule 7) and sets it for its own
    changes where its rules say so.
-3. **Each child LLD (lld-unifier):** "the SDD has a new version". Its
+4. **Each child LLD (lld-unifier):** "the SDD has a new version". Its
    SDD and BRD version check (step 3c) reads the `Chunks:` lists of the
    SDD Changes Log rows since the version the LLD recorded, and the
    source BRD versions, and makes one offer: the LLD chunks mapped from
@@ -296,6 +304,7 @@ Each row starts as `To run`. A hand-off row is `Done` when the user said it
 ran, or when the owner's own record shows it, whatever the tracker cell
 reads (owners never write the tracker):
 - BRD: a consistency check run in chunk 14 whose Trigger names the review.
+- Pre-SDD: a Changes Log row after the review that names it.
 - SDD: a Reconciled entry after the review, with its step 6a order
   evidence (a date alone does not prove the order).
 - LLD: 16 §19.1 naming the SDD version the review produced.

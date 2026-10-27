@@ -6,7 +6,7 @@ A multi-angle adversarial review panel for business and design documents, driven
 
 ## What
 
-`business-reviewer-unifier` runs a panel of five reviewer personas over a document chain (pure-business docs, domain identification, service boundaries, project preparation, a pre-BRD when there is one, BRDs, SDDs), merges their findings into a persistent tracker, walks the user through each finding one point at a time with full context, applies accepted decisions across every affected document (bumping each changed document's version once), verifies consistency, and hands the changed documents back to the skills that own them.
+`business-reviewer-unifier` runs a panel of five reviewer personas over a document chain (pure-business docs, domain identification, service boundaries, project preparation, a pre-BRD when there is one, BRDs, a Pre-SDD when there is one, SDDs), merges their findings into a persistent tracker, walks the user through each finding one point at a time with full context, applies accepted decisions across every affected document (bumping each changed document's version once), verifies consistency, and hands the changed documents back to the skills that own them.
 
 The default panel:
 
@@ -61,7 +61,7 @@ Invocation prefix depends on the agent: `/business-reviewer-unifier panel` in Cl
 4. **Walkthrough.** One point at a time, presented in chat with full prose: the issue and its exact location, why it matters, an options table with trade-offs, and an explicit recommendation. The tracker table is restated at each step.
 5. **Apply.** Immediately after each decision, the change is applied to every affected document, within the structure its owning skill defines, and the tracker row is updated. A document's first change in the session bumps its version and opens one Changes Log row naming the review.
 6. **Verify.** A fresh cleared-context agent re-reviews for stale remnants of the changes, structures that drifted from the owning skill's templates, and lineage rows that disagree with the other end; fixes are applied and the pass is scored in the tracker.
-7. **Close and hand off.** The Changes Log rows take the verify fixes, files are renamed where the version is in the filename, and the tracker lists the hand-offs in chain order: `brd-unifier` "update the todo" for each changed BRD, then `sdd-unifier` "BRD `KEY` has a new version" (or "the business review changed this SDD"), then `lld-unifier` "the SDD has a new version" for each child LLD (its version check also offers the trace refresh a changed BRD needs, in the same update). The close-out summary names each hand-off with its request; each runs on the user's word, or on an answer policy that names the hand-offs.
+7. **Close and hand off.** The Changes Log rows take the verify fixes, files are renamed where the version is in the filename, and the tracker lists the hand-offs in chain order: `brd-unifier` "update the todo" for each changed BRD, then `pre-sdd-unifier` "the business review decided points on this Pre-SDD" for each Pre-SDD a decision changes, then `sdd-unifier` "BRD `KEY` has a new version" (or "the business review changed this SDD"), then `lld-unifier` "the SDD has a new version" for each child LLD (its version check also offers the trace refresh a changed BRD needs, in the same update). The close-out summary names each hand-off with its request; each runs on the user's word, or on an answer policy that names the hand-offs.
 
 ### Outputs
 

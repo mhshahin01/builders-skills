@@ -7,7 +7,7 @@
 **Reviewers:** [Reviewer Name(s)]
 **Approvers:** [Approver Name(s)]
 **Date:** [YYYY-MM-DD]
-**Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
+**Lineage:** [Document Lineage](#document-lineage) (source BRDs, source Pre-SDD, and child LLDs)
 **Reconciled:** [Date, checker, request and checked content revision/hash (hash scope and method: SKILL.md step 8b, E4) or explicit final-edit-then-check order]
 **Review passes:** [N of 3 for the current request, N of 2 in a light run (baseline + N-1 application), or 0; only the baseline review and each scoped application pass increment it, a re-dispatch never does (SKILL.md step 7, Review limit)]
 **E2E gate (§24):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
@@ -38,6 +38,14 @@
 | Key | BRD | Version | Link | Covers |
 |-----|-----|---------|------|--------|
 | [KEY] | [BRD project name] | [X.X] | [[brd-slug]-brd-master.md](./brd-[brd-slug]/[brd-slug]-brd-master.md) | [What this BRD contributes] |
+
+### Source Pre-SDD
+
+<!-- Rules: brd-to-sdd.md § Source Pre-SDD. One row: the G3-signed Pre-SDD this SDD loaded (SKILL.md step 2a), key PSDD; every Pre-SDD ID this SDD cites is PSDD/<ID> with a link. Version and Gate: the version loaded and the gate its master's Gate line showed then (G3 Approved or G3 Approved with conditions). Link: the Pre-SDD master (chunked) or combined file, relative to this file. With none, one row whose Pre-SDD cell reads "None - <reason>" and the other cells "-": not derived from a BRD; declined, with the decision-log.md link; or not yet run, with the open request (HR-NNN). Checked on every run (SKILL.md step 1): a newer signed Pre-SDD version gets one offer. -->
+
+| Key | Pre-SDD | Version | Gate | Link |
+|-----|---------|---------|------|------|
+| PSDD | [Pre-SDD project name] | [X.X] | [G3 Approved / G3 Approved with conditions] | [[pre-sdd-slug]-pre-sdd-master.md](./pre-sdd-[pre-sdd-slug]/[pre-sdd-slug]-pre-sdd-master.md) |
 
 ### Child LLDs (children)
 
@@ -439,9 +447,10 @@ sequenceDiagram
 <!--
 Where the system runs (§8.6) and how traffic reaches it and leaves it (§8.7).
 INPUTS: in derive-from-BRD, the derivation inputs are the one list in brd-to-sdd.md § SDD-only sections, §8.6 / §8.7. In TRANSFORM, the inputs are the source SDD's infrastructure and network content (source-transformation.md). In GENERATE, they are the source material.
+PRE-SDD: with a loaded, G3-signed Pre-SDD (SKILL.md step 2a), the topology, the HA, the DR strategy per failure scope, the RPO and RTO, and the connectivity shape it settles cite it as PSDD/<ID> with a link and are locked: a Source cell names that entry, and §8.6.4 takes its RPO and RTO. Q7 and Q8 keep feeding this section within the lock. A disagreement with a locked value is a chunk 18 open item owned by the E2E Architect, never an edit (SKILL.md principle 20; brd-to-sdd.md § Pre-SDD inputs (locked)).
 ONE FACT, ONE HOME: each fact is linked to its home, never restated. A technology, version, or tier is its §6 row: a cell names a technology by its role (the primary database, the message broker) and links that row, and never restates its name or version, the TLS version (§11.6), or a timeout (§12). The deployment target is the §6 Compute / Infra row (questionnaire Q8), and its ADR when one records it. The deployables follow ADR-01 and §13. The tenancy strategy is §11.2. The deployment, resource, and security defaults are §11.3 and §11.6. The environments are §19 (in part 1, before §19 is written, the §11.3 promotion path). An external system's protocol, auth, and timeouts are its §12 row and its §15 contract. This section and §8.7 add only the topology and the network paths.
 LINKS: a section that a later part writes (§14, §15, §16, §17.X, §18, §19, §20) is named as plain text until it exists, and the back-fill links it (parts-mode.md § What every part does, step 3).
-SOURCE CELLS: a Source cell links the home of its fact: a §6 row, an ADR, a §11 default, a §12 row, §19, a BRD NFR or Technical Input as its keyed link, an eco-system file section, the source SDD section (TRANSFORM), or the source material (GENERATE). A design choice that no source states reads `recommended`, as a §6 basis does, with its evidence stated in the row. An unknown fact is a [NEEDS CLARIFICATION: ...] marker.
+SOURCE CELLS: a Source cell links the home of its fact: a §6 row, an ADR, a §11 default, a §12 row, §19, a BRD NFR or Technical Input as its keyed link, a locked entry of the loaded Pre-SDD as its PSDD/<ID> link, an eco-system file section, the source SDD section (TRANSFORM), or the source material (GENERATE). A design choice that no source states reads `recommended`, as a §6 basis does, with its evidence stated in the row. An unknown fact is a [NEEDS CLARIFICATION: ...] marker.
 NO INVENTION: never an IP range, CIDR, hostname, or vendor product that no source states (SKILL.md § Things this skill never does). A component the design needs that no source names is written by its role (for example a WAF), never by a product name.
 SIZE: never skipped. When the deployment is simple (for example one deployable on one managed container service), each sub-section is one line or one row, a part that does not apply reads `Not applicable for this release.` with the reason, and both diagrams are still drawn (chunking.md § Skip rules).
 -->
@@ -1773,6 +1782,8 @@ sequenceDiagram
 
 # 18. Performance & Capacity Planning
 
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), §18 cites its calculations as PSDD/CALC-NN with a link and never recomputes them: the load, throughput, latency budgets, growth, payload sizes, storage, and bandwidth are the Pre-SDD's, and this section adds what the Pre-SDD leaves to it: the per-service breakdown, sizing per deployable, caching, and the §18.4 stress testing strategy. Each §18.5 row cites the Pre-SDD entry that settles its NFR's target (brd-to-sdd.md § Pre-SDD inputs (locked)). A disagreement with one is a §23 open item owned by the E2E Architect, never an edit (SKILL.md principle 20). -->
+
 ## 18.1 Load Estimates
 
 | Dimension | Year 1 | Year 2 | Year 3 | Notes |
@@ -1981,6 +1992,7 @@ sequenceDiagram
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Section number (e.g., §6, §17.1), service name, or "global" if cross-cutting. |
 | **Type** | Architecture gap / Missing scenario / Corner case / Ambiguity / Risk / Inconsistency / NFR shortfall / ADR needed / Contract mismatch (topic, event, payload, consumer list, or role/permission divergence across chunks) / Duplication (BRD content or another chunk's content restated instead of referenced). |
+| **Owner** | Only on an item that disagrees with a locked item of the loaded Pre-SDD (SKILL.md principle 20): `E2E Architect (pre-sdd-unifier)`. The item cites the locked item as `PSDD/<ID>` and names its handoff request (`HR-NNN`). It is shown in the acceptance loop but not decided there; it stays `Open`, and keeps the gate shut like any other open item, until the E2E Architect answers ("Pre-SDD has a new version", SKILL.md step 10). Other items have no Owner line. |
 | **Concern** | One paragraph. What was missed and why it matters for downstream LLD or implementation. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
@@ -2017,6 +2029,23 @@ Write a closed Status as the literal legend value on its own line. Put the Resol
   - **B.** [...] - [...].
 - **Recommended Answer:** [...]
 - **Why:** [...]
+- **Status:** Open
+
+---
+
+### OI-03: [Short title of a disagreement with a locked Pre-SDD item]
+
+<!-- The Pre-SDD case (SKILL.md principle 20): the SDD never edits the locked item or the Pre-SDD. -->
+
+- **Where:** [§N where the locked item lands, e.g. §18 or the §6 row]
+- **Type:** [Inconsistency | NFR shortfall | Risk]
+- **Owner:** E2E Architect (pre-sdd-unifier)
+- **Concern:** [Which locked item, cited as [PSDD/<ID>](link), and why it is wrong or conflicts with a source, a project file, or a design need. Handoff request: HR-NNN.]
+- **Options:**
+  - **A.** [Change the locked item in a new Pre-SDD version] - [one-line tradeoff].
+  - **B.** [Keep the locked item; the SDD design adapts] - [one-line tradeoff].
+- **Recommended Answer:** [The change the E2E Architect is asked to decide, ready to read in the Pre-SDD's terms; the SDD applies the new version's value when it arrives.]
+- **Why:** [The evidence behind the request.]
 - **Status:** Open
 
 ---

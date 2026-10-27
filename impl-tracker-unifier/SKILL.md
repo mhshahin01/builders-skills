@@ -18,10 +18,12 @@ description: >-
 
 The sixth stage of the documentation chain:
 
-    SoW → BRD → SDD → LLD → **impl-tracker** → code
+    SoW → BRD → Pre-SDD → SDD → LLD → **impl-tracker** → code
 
 It turns an approved LLD into an ordered, dependency-checked task ledger, keeps that ledger true while
 code is written, and reports the gap between what the documents require and what the code does.
+
+You act as the Developer / software engineer (Software Development & Delivery) in the unifier company.
 
 It **never edits** BRD, SDD or LLD files by hand. A decided change to design runs the owning skills in chain
 order in the same change (§ Documents chain); a doc problem nobody has decided yet becomes a gap row for its
@@ -105,6 +107,8 @@ Natural language maps to commands: "what's next" → `next`; "do several at once
 3. Write `tracking/config.md` (incl. § Audit checks: detect migration tool, API spec, test, lint commands
    from the repo and propose them), empty `index.md`, `gaps.md`, `ownership.md`, `lessons.md`,
    `changes.md`, `journal/`.
+3a. **Record the board path.** Write the `Board` row of `config.md`'s table with `<docs root>/unifier-status.md` (the docs
+   root from step 1; § The tracker's board row).
 3b. **Inventory existing code** (discovery-rules.md § 1) → `tracking/inventory.md`. Print counts by kind
    and key guess ("found 14 endpoints, 6 screens, 9 migrations"). Nothing is marked done here.
 4. Install the Stop audit hook (audit-rules.md § 7) in the code repo's `.claude/settings.json`: ask once, then
@@ -221,7 +225,7 @@ Builds several tasks in one pass without loosening any gate.
 Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per task.
 
 1. Collect evidence: commits with `Task: KEY/T-NNN` (git log), changed files, unit tests added.
-   A Partial task with no start commit first runs `start` steps 1–4 (gates, start commit), never a
+   A Partial task with no start commit first runs `start` steps 1-4 (gates, start commit), never a
    hand-picked start sha.
 1b. **Bring the test environment up** (audit-rules.md § 3a): if tests need Docker and the engine is down,
    start it yourself (Docker Desktop / `systemctl start docker` / `colima start`), wait until `docker info`
@@ -319,7 +323,7 @@ trace; FAIL on a Done task → `Done` becomes `In progress` (reopened → lesson
 
 ### lesson
 
-Follow `lessons-rules.md` §§ 2–4: classify root cause, write Rule + Check + Scope, dedup, handle recurrence
+Follow `lessons-rules.md` §§ 2-4: classify root cause, write Rule + Check + Scope, dedup, handle recurrence
 and promotion. The `checks.json` entry is written in the same step as the lesson (rule 1a).
 `lesson list [layer|key|tag]` prints matching Active/Promoted lessons.
 
@@ -333,7 +337,8 @@ Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, an
 
 Follow `gap-rules.md`: classify type and severity, link to task/UC/doc anchor, route the owner
 (code fix → new task; doc fix → the owning skill, run in the same change once the fix is decided: § Documents
-chain), write to `gaps.md`. Closing needs evidence. Closing a gap of
+chain), write to `gaps.md`; for each doc gap routed to an owner, raise a handoff request on the board
+(§ The tracker's board row). Closing needs evidence. Closing a gap of
 type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code → capture its lesson.
 
 ### standup
@@ -413,9 +418,9 @@ item settled) goes through the documents chain in the same change, before the co
 
 | Change starts at | Hops, in this order | A hop runs when |
 |---|---|---|
-| Code or the LLD (an implementation decision, an LLD update) | lld-unifier, then sdd-unifier, then brd-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document states the changed fact otherwise, or must state it (a contract, a behaviour rule, a business rule), and the tracker hop when it cites or realises the changed item |
+| Code or the LLD (an implementation decision, an LLD update) | lld-unifier, then sdd-unifier, then pre-sdd-unifier, then brd-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document states the changed fact otherwise, or must state it (a contract, a behaviour rule, a business rule), and the tracker hop when it cites or realises the changed item |
 | The SDD | sdd-unifier, then brd-unifier when a business rule changes, and lld-unifier for every child LLD the change reaches, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the same |
-| The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then sdd-unifier, then lld-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
+| The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then pre-sdd-unifier, then sdd-unifier, then lld-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
 
 - Each hop is run through its owning skill; the tracker never writes the document itself.
 - The CHG row's Follow-up names every document the change reached with the version that records it, and every
@@ -436,6 +441,70 @@ item settled) goes through the documents chain in the same change, before the co
 - An answer policy set for a tracker run answers only the tracker's own questions. Each hop keeps its skill's own
   stops and asks, unless the policy names that document.
 
+## The tracker's board row
+
+The tracker runs in the code repo, and the status board lives in the docs root.
+
+- **Path:** `<docs root>/unifier-status.md`, taken from the `Board` row `init` records in `tracking/config.md`. The docs root may differ from the folder holding the hop folders; the tracker then uses the recorded path as written.
+- **Its row:** the tracker writes only the row whose Skill cell is `impl-tracker-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
+- **Requests:** for each doc gap it routes to an owner (brd-unifier, sdd-unifier, lld-unifier), it raises a handoff request on the board and links the gap row. It updates only the State and Closed cells of a request addressed to it.
+- **Missing file:** when the recorded path is reachable but `unifier-status.md` does not exist there, the tracker creates the board from the template in the Status board section below, as that section says the first skill to run does, then writes its row.
+- **Unreachable path:** when the recorded path cannot be reached or written, the tracker skips the board update and says so in a note in its reply; the run goes on.
+
+## Status board
+
+The chain skills hand work to each other through one shared file, the status board, and `tutorialize-unifier` reads it for context. Every skill that carries this section follows the same rules below, word for word.
+
+- **File:** `unifier-status.md` in the project root, the folder that holds the hop folders (`./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`). The first chain skill that runs creates it from the template below. Nobody deletes it.
+- **Template:**
+
+```markdown
+# Unifier status board
+
+Run mode: solo
+
+## Employees
+
+| Employee | Team | Skill | Folder | State | Version | Updated (UTC) | Next step | Waiting on |
+|---|---|---|---|---|---|---|---|---|
+| Business development | Product Management & Business Development | pre-brd-unifier | - | Not started | - | - | - | - |
+| Product manager | Product Management & Business Development | brd-unifier | - | Not started | - | - | - | - |
+| Business owner | Product Management & Business Development | business-reviewer-unifier | - | Not started | - | - | - | - |
+| E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
+| Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
+| Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+
+## Handoff requests
+
+| ID | From | To | Request | Why | Raised (UTC) | State | Closed (UTC) | Link |
+|---|---|---|---|---|---|---|---|---|
+```
+
+- **Times and text:** every time on the board is UTC. `Updated (UTC)`, `Raised (UTC)`, and `Closed (UTC)` use `YYYY-MM-DD HH:MM`. A cell with no value holds `-`. The board uses no em dash and no en dash.
+- **Run mode:** the header line reads `Run mode: solo` or `Run mode: team`.
+  - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
+  - Only the user changes it.
+  - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. "Later" sets the request State to `Later`.
+- **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
+  - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
+  - A skill writes only its own row, the one whose Skill cell names it.
+  - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+- **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
+  - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer. The receiving skill updates only State and Closed (UTC): `Accepted` when it takes the request (still pending: taken, not finished), then `Done` and Closed (UTC) at the stop where it finishes it.
+  - A new request takes the next number after the highest ID on the board. IDs are never renumbered.
+- **When a skill uses the board:**
+  - At the start of every run it reads the board: its own row, its pending requests (`Open`, `Later`, or `Accepted`), and the upstream states.
+  - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
+  - At its handoff points it raises requests.
+- **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
+- **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
+- **Writers outside the project root:**
+  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `tutorialize-unifier` only reads the board and has no row.
+
 ## Read budget per command
 
 | Command | May read |
@@ -450,6 +519,7 @@ item settled) goes through the documents chain in the same change, before the co
 | gap | + the cited task card and the one cited doc section, `config.md` and the doc master headers (documents chain) |
 | verify | + cited BRD AC sections, test files with matching tags |
 | plan, sync, discover | `inventory.md`, code scan per discovery-rules.md § 1, LLD scope files, SDD §7.3 rows for the scope, BRD sections by anchor, doc master headers |
+| every command | + `unifier-status.md` through the `Board` path in `config.md` (its own row and its requests) |
 
 ## Quality checks before finishing any write
 

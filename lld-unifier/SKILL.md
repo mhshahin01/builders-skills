@@ -17,12 +17,14 @@ description: >-
 
 Author, transform, and unify Low-Level Design Documents (LLDs) into the user's standardised template. This skill encapsulates the full LLD section structure, the per-service implementation chunk convention, the chunking model, the bidirectional input handling (from-code reverse engineering, from-sdd forward design, hybrid drift detection), the design-pattern rationale model, and the inline-Mermaid-first diagram policy.
 
+You act as the Tech Lead (Software Development & Delivery) in the unifier company.
+
 The embedded templates in this skill folder are the authoritative source: `TEMPLATE-COMBINED.md` for the single-file layout and `chunks/*.md` for the chunked layout.
 
 This skill is the **fourth and final stage** of the user's documentation chain:
 
 ```
-SoW → BRD (brd-unifier) → SDD (sdd-unifier) → LLD (lld-unifier) → implementation
+SoW → BRD (brd-unifier) → Pre-SDD (pre-sdd-unifier) → SDD (sdd-unifier) → LLD (lld-unifier) → implementation
 ```
 
 It is the bridge from architectural intent to executable code: the LLD it produces is intended to be consumed directly by an AI implementer (or human developer) to write the source code.
@@ -125,6 +127,7 @@ Without `light`, the run is a full run. A light run changes only this:
 16. **Decision history lives in the decision log, not in the body.** The body states the settled design in plain present tense ("Refund events are published through the transactional outbox"), never the decision narrative ("The user selected option B on...", "OI-04 remains partial", "walked through the stack"). The body is the content chunks and the service files; the Changes Log and the chunk 18 Resolution Log and Reviewer Notes are records (step 7). The decision story (the stack approval and its overrides, the clarification answers, which option was chosen, who decided, when, what was delegated, what was superseded) goes into `decision-log.md`, the companion file in `./lld-[project-slug]/` (structure and rules: the `decision-log.md` reference in this skill folder). A rationale a chunk already has a place for (a pattern's rationale, a Source cell) stays in the chunk, and the log links it and never restates it. Compact references to stable IDs (OI-NN, OQ-NN, and a use case as its keyed link) inside design text and table cells are allowed; storytelling is not.
 17. **Read the records before asking.** Before any question, read the records that may already answer it: the SDD (§1 Project Type, §6, §8.1 and ADR-01, and its decision log), the project instruction file, this LLD's `decision-log.md`, and the existing LLD. A record is a decision a person or a delegation made: an ADR, a decision log entry, or what an earlier run recorded (the Project Type in SDD §1 or in `17-specs.md`, the Direction in `00-metadata.md`). A proposal is not a record: a `Proposed` row, a `> Confirm:` or `> TODO:` flag, and a Recommended Answer nobody accepted set a default at most. A recorded answer is used and named in one short line; it is not asked again. A question is asked only when no record holds the answer, or when two records, or a record and the request, disagree. A question about a disagreement names both sources and what each says, for example: "SDD §1 records Greenfield, but `17-specs.md` § 4 records Brownfield. Which holds?" A record the project does not have is skipped, never requested. Confirmed stack rows are not re-asked: a row that the project instruction file states, or that the stack approval record in `decision-log.md` shows approved (an Approve all approves every row its table showed, except the rows step 3a item 1 says no path confirms: those stay proposals), stays confirmed on every later run, and is asked again only when its records now disagree (step 3a, Later runs). The direction is the one question asked even when a record answers it (principle 3, a resume of a `parts` build excepted): the records set its default. Steps 2, 3, 3a, 3b, 6b, and 7a apply this rule to their own questions.
 18. **Parts by default, with a real stop; one-shot on request.** In CHUNKS mode a first build is written in three parts (00 to 03a, then the `04-implementation/` files and 05 to 08, then 09 to 17 and the review). After parts 1 and 2 the skill shows a short summary, says what to review, and **stops until the user says to continue** (or until an answer policy that names part checkpoints passes the stop: step 7a, Answer policy). The frame, the stack, and the libraries are agreed before any service file is written; the service files and the contracts are agreed before the cross-cutting chunks and the review. `whole` writes everything in one run. Rules: `parts-mode.md`.
+19. **Pre-SDD content reaches this LLD only through the SDD.** A value a Pre-SDD settled (a `PSDD/<ID>` value, a locked number, shape, or hosting target) is read from the SDD section that carries it, and the LLD cites that SDD section (`../sdd-[sdd-slug]/NN-....md` § heading), never the `PSDD/<ID>` source. This skill never reads a `pre-sdd-*` folder and never writes into one. A Pre-SDD change reaches this LLD as a new SDD version (step 3c), and a disagreement with a Pre-SDD value is an SDD matter raised through step 7b.
 
 ---
 
@@ -494,6 +497,7 @@ After writing the body, the Specs chunk, and the Open Items chunk, and running t
 - **Implementation deck brief (chunk 19):** its state (`Locked`, `Up to date`, `Provisional (...)`, or `Stale`: step 7c) and, when the chunk exists, its slide count (retired slides excluded) and its Basis. When it is `Stale`, the change that made it so; when it is `Locked` or `Stale` because chunk 18 is not cleared, the items that are open (the list of step 7c item 2). The design standard it used (the constitution, `[KEY] chunk 11`, or `Recommendation:`), each `Recommendation:` the user must confirm (audience, purpose, length, color palette, typography, language and locale), the slides marked `Provisional` with their OI references, the open values the slides state as open, and each OI raised while writing it, by ID. A request that only makes or refreshes the deck ends with this item.
 - Parent SDD lineage (every run that reads an SDD, step 6c): this LLD's Child LLDs row added or updated, with its Direction and SDD version; on an existing LLD, the step 3c result (SDD and BRDs unchanged, or the newer versions and which chunks were refreshed or left); for an SDD without that table, the suggestion to upgrade it through sdd-unifier.
 - Chain handoff check: every `../sdd-[sdd-slug]/...` reference resolves; topic, event and role names and `API-NN` contract names and URIs match SDD §14/§15/§16 character-for-character; SDD content is referenced with an implementation delta, or restated in principle 13's derived views with a source per row; every BRD ID carries a key from the SDD's Source BRDs register.
+- **Next hop (Developer, `impl-tracker-unifier`):** name it and raise the request. Add a row to the board's Handoff requests table (From `Tech Lead`, To `Developer / software engineer`, Request `Start or sync the implementation tracker for LLD <slug> vX.X` (`plan` for new scope, `sync` for a tracked LLD), Why the LLD version and the open items it carries, State `Open`) and set this skill's own row to `Ready for handoff`, Next step pointing to the master. In `solo` mode offer "Next hop: Developer (impl-tracker-unifier). Start now, or later?" and follow the Status board section ("now" starts it in the same session where the runtime can; "later" sets the request State to `Later`). In `team` mode raise the request and stop without starting the tracker. When the handoff is made with the acceptance loop pending, the request says so.
 - One-line offer: "Want me to switch the output mode?" / "Want me to merge?" / "Want me to fill in section X now that you have decisions?" / "Want me to re-run from-code now that the missing services are scaffolded?" / "Want me to write the implementation deck brief?" (only when chunk 18 is cleared and chunk 19 does not exist; a decline is recorded in the decision log's Clarification register, so the offer is not repeated: principle 17)
 
 ### 9. Cross-mode conversion (on explicit request)
@@ -521,6 +525,60 @@ One request is one update (§ Output conventions, Versions); the parts of a firs
 | Any request that changes LLD content, on an LLD whose chunk 18 (or §21) still has `Recommendation` fields or `Resolved` statuses | Migrate it first: rename each `Recommendation` to `Recommended Answer`; a `Resolved (link)` item becomes `Accepted - applied`, or `Adjusted - applied` when its Resolution Log Outcome names an option other than the one its Recommendation picked, and moves its link to a separate Resolution line; the How to read table takes the current field and status rows. The migration alone changes no content (it adds nothing after `Chunks:`) and is named in the handoff. |
 
 ---
+
+## Status board
+
+The chain skills hand work to each other through one shared file, the status board, and `tutorialize-unifier` reads it for context. Every skill that carries this section follows the same rules below, word for word.
+
+- **File:** `unifier-status.md` in the project root, the folder that holds the hop folders (`./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`). The first chain skill that runs creates it from the template below. Nobody deletes it.
+- **Template:**
+
+```markdown
+# Unifier status board
+
+Run mode: solo
+
+## Employees
+
+| Employee | Team | Skill | Folder | State | Version | Updated (UTC) | Next step | Waiting on |
+|---|---|---|---|---|---|---|---|---|
+| Business development | Product Management & Business Development | pre-brd-unifier | - | Not started | - | - | - | - |
+| Product manager | Product Management & Business Development | brd-unifier | - | Not started | - | - | - | - |
+| Business owner | Product Management & Business Development | business-reviewer-unifier | - | Not started | - | - | - | - |
+| E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
+| Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
+| Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+
+## Handoff requests
+
+| ID | From | To | Request | Why | Raised (UTC) | State | Closed (UTC) | Link |
+|---|---|---|---|---|---|---|---|---|
+```
+
+- **Times and text:** every time on the board is UTC. `Updated (UTC)`, `Raised (UTC)`, and `Closed (UTC)` use `YYYY-MM-DD HH:MM`. A cell with no value holds `-`. The board uses no em dash and no en dash.
+- **Run mode:** the header line reads `Run mode: solo` or `Run mode: team`.
+  - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
+  - Only the user changes it.
+  - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. "Later" sets the request State to `Later`.
+- **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
+  - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
+  - A skill writes only its own row, the one whose Skill cell names it.
+  - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+- **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
+  - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer. The receiving skill updates only State and Closed (UTC): `Accepted` when it takes the request (still pending: taken, not finished), then `Done` and Closed (UTC) at the stop where it finishes it.
+  - A new request takes the next number after the highest ID on the board. IDs are never renumbered.
+- **When a skill uses the board:**
+  - At the start of every run it reads the board: its own row, its pending requests (`Open`, `Later`, or `Accepted`), and the upstream states.
+  - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
+  - At its handoff points it raises requests.
+- **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
+- **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
+- **Writers outside the project root:**
+  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `tutorialize-unifier` only reads the board and has no row.
 
 ## Reference files (read these when the situation calls for them)
 

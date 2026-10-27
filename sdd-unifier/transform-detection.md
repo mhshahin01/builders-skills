@@ -72,10 +72,10 @@ Signs:
 - Section headings include `Scope of Work`, `Vendor Responsibilities`, `Deliverables`, `Commercial Terms`.
 - Tone uses "The Vendor shall...", contractual passive constructions.
 
-**Important:** SoW → SDD is **not** a direct path in this skill. SDDs are technical design artefacts that depend on architectural decisions; SoWs don't have those. If the user gives you only a SoW and asks for an SDD:
+**Important:** SoW → SDD is **not** a direct path in this skill. The recommended path is SoW → BRD → Pre-SDD → SDD. SDDs are technical design artefacts that depend on architectural decisions; SoWs don't have those. If the user gives you only a SoW and asks for an SDD:
 
-1. Tell them clearly: "An SDD usually derives from a BRD, not directly from a SoW. The BRD captures the requirements (and is the source of truth for what the system does); the SDD captures the technical design (how to build it). Want me to first generate a BRD using brd-unifier, then derive the SDD from it? Or proceed with a fresh-generate SDD using the SoW as raw context but expect heavy `[NEEDS CLARIFICATION: ...]` markers?"
-2. If they choose option A (BRD first), the work is bigger than this skill: defer to brd-unifier for the BRD step.
+1. Tell them clearly: "An SDD usually derives from a BRD, not directly from a SoW. The BRD captures the requirements (and is the source of truth for what the system does); the SDD captures the technical design (how to build it). Want me to first generate a BRD using brd-unifier, then the Pre-SDD using pre-sdd-unifier, then derive the SDD from them? Or proceed with a fresh-generate SDD using the SoW as raw context but expect heavy `[NEEDS CLARIFICATION: ...]` markers?"
+2. If they choose option A (BRD first), the work is bigger than this skill: defer to brd-unifier for the BRD step and to pre-sdd-unifier for the Pre-SDD step (SKILL.md step 2a).
 3. If they choose option B (proceed anyway), treat the SoW as raw context for GENERATE intent, not as a transformation target.
 
 ### Different SDD format

@@ -12,6 +12,8 @@ Turns an interview scenario or a technical concept into one consistent teaching 
 3. 1 to 3 interactive diagrams shown inline
 4. An exported tutorial: one Markdown file plus one standalone HTML file per diagram, linked together
 
+You act as the Mentor / assistant (Software Development & Delivery) in the unifier company.
+
 The audience ranges from the user preparing for senior interviews to juniors they teach, so everything is simple, clear and easy to follow.
 
 ## Running in different agents
@@ -43,6 +45,7 @@ Never fail a step because a tool from one column is missing: use the other colum
 - **Concept mode:** the input is a topic ("explain CQRS", "teach me the strangler fig").
 - File name: scenario mode uses `interview-NNN.md` (look for existing `interview-*.md` in the working folder or connected folder and take the next number; start at 001). Concept mode uses `concept-<slug>.md`. HTML files use the same stem: `interview-NNN-diagram-1-<slug>.html`.
 - Don't ask questions unless the prompt is truly ambiguous. State assumptions inside the answer instead.
+- When the working folder or a connected folder holds `unifier-status.md`, read it for context only (which hops exist, their states, open handoff requests) and use it to frame the answer. This skill keeps no row and never writes the board; when the file is missing, carry on without it.
 
 If the task has several tool calls, set up a short task list (answer + diagrams, export, browser check). In the Claude app, load `SendUserMessage` first.
 
@@ -214,6 +217,60 @@ Build the pages with a short Python script that reads the CSS and each widget bo
 - In the Claude app: send the `.md` and `.html` files together with SendUserFile (display: attach), with a one-line caption reminding the user to keep them in the same folder. If a folder on the user's computer is connected and they asked for files there, also write them there.
 - In Claude Code, Codex or Kimi Code: write the files into the working directory (or the folder the user named), list their paths, and remind the user to keep them together.
 - Close in a few lines: the one-sentence recommendation, what each diagram lets them do, and what was checked. No recap of steps.
+
+## Status board
+
+The chain skills hand work to each other through one shared file, the status board, and `tutorialize-unifier` reads it for context. Every skill that carries this section follows the same rules below, word for word.
+
+- **File:** `unifier-status.md` in the project root, the folder that holds the hop folders (`./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`). The first chain skill that runs creates it from the template below. Nobody deletes it.
+- **Template:**
+
+```markdown
+# Unifier status board
+
+Run mode: solo
+
+## Employees
+
+| Employee | Team | Skill | Folder | State | Version | Updated (UTC) | Next step | Waiting on |
+|---|---|---|---|---|---|---|---|---|
+| Business development | Product Management & Business Development | pre-brd-unifier | - | Not started | - | - | - | - |
+| Product manager | Product Management & Business Development | brd-unifier | - | Not started | - | - | - | - |
+| Business owner | Product Management & Business Development | business-reviewer-unifier | - | Not started | - | - | - | - |
+| E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
+| Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
+| Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+
+## Handoff requests
+
+| ID | From | To | Request | Why | Raised (UTC) | State | Closed (UTC) | Link |
+|---|---|---|---|---|---|---|---|---|
+```
+
+- **Times and text:** every time on the board is UTC. `Updated (UTC)`, `Raised (UTC)`, and `Closed (UTC)` use `YYYY-MM-DD HH:MM`. A cell with no value holds `-`. The board uses no em dash and no en dash.
+- **Run mode:** the header line reads `Run mode: solo` or `Run mode: team`.
+  - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
+  - Only the user changes it.
+  - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. "Later" sets the request State to `Later`.
+- **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
+  - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
+  - A skill writes only its own row, the one whose Skill cell names it.
+  - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+- **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
+  - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer. The receiving skill updates only State and Closed (UTC): `Accepted` when it takes the request (still pending: taken, not finished), then `Done` and Closed (UTC) at the stop where it finishes it.
+  - A new request takes the next number after the highest ID on the board. IDs are never renumbered.
+- **When a skill uses the board:**
+  - At the start of every run it reads the board: its own row, its pending requests (`Open`, `Later`, or `Accepted`), and the upstream states.
+  - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
+  - At its handoff points it raises requests.
+- **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
+- **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
+- **Writers outside the project root:**
+  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `tutorialize-unifier` only reads the board and has no row.
 
 ## Follow-up requests this skill should handle the same way
 

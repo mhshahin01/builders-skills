@@ -9,9 +9,15 @@ def marker_question(text):
 
 CLOSED_STATUS=re.compile(r'(?:Accepted - applied|Adjusted - applied|Rejected)(?:$|(?: \(| - |: |; )(?!\s*(?i:open|deferred|decided|pending|reopen\w*|withdrawn|superseded|in part|partly)\b))')
 
+def without_comments(text):
+    return re.sub(r'<!--.*?-->','',text,flags=re.S)
+
+def item_ids(text):
+    return set(re.findall(r'^### (OI-\d+)\b',without_comments(text),re.M))
+
 def unclosed_items(text):
     out=[]
-    text=re.sub(r'<!--.*?-->','',text,flags=re.S)
+    text=without_comments(text)
     for m in re.finditer(r'^### (OI-\d+)\b(.*?)(?=^#{1,3} |\Z)',text,re.S|re.M):
         status=re.findall(r'^\s*-\s*\*\*Status:\*\*\s*(.*?)\s*$',m[2],re.M)
         if not status:out.append((m[1],'no Status line'))
@@ -97,8 +103,11 @@ def cut_sections(text,heading):
         if level is None:out.append(line)
     return '\n'.join(out)
 
+SERVICE_CHUNK=r'13[a-z]{1,2}\d?'
+BODY_CHUNK=r'(?:(?:0\d|1[0-2]|1[4-7])[a-z]?|13|'+SERVICE_CHUNK+')'
+
 def content_hash(sdd):
-    names=sorted(n for n in os.listdir(sdd) if re.match(r'^(0\d|1[0-7])[a-z]?-.*\.md$',n))
+    names=sorted(n for n in os.listdir(sdd) if re.match('^'+BODY_CHUNK+r'-.*\.md$',n))
     if not names:return None
     parts=[]
     for name in names:

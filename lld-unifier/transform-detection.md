@@ -24,7 +24,7 @@ After confirming output mode (chunks / combined), ask the direction question of 
 | Only a code path | from-code |
 | Only an SDD path | from-sdd |
 | Both code path and SDD path | hybrid |
-| Neither | from-sdd (the most common greenfield case); ask the user to provide an SDD |
+| Neither | from-sdd (the most common greenfield case); look for an SDD in the working folder first, then ask the user to provide one (SKILL.md step 3) |
 | An existing LLD (an update, a refresh, an added service) | The Direction its `00-metadata.md` records (`Mode` in an older LLD, SKILL.md step 9); for `partial`, the row its inputs match |
 
 **Project Type override.** Resolve the Project Type, recorded in the SDD §1 at SDD intake (legacy chains: SDD `15-specs.md` § 4 / combined `# 19. Specs`, or BRD `12-specs.md`), and apply this override BEFORE the smart defaults above (it later lands in this LLD's own `17-specs.md` § 4):
@@ -86,7 +86,7 @@ The skill primarily targets the user's CLAUDE.md stack (Java 21 / Spring Boot 3.
 **Chunked folder signs:**
 
 - Path is a folder ending in `sdd-*`.
-- Contains files named `00-cover-and-changelog.md`, `01-executive-summary-scope-risks.md`, `02-ecosystem-overview.md`, etc.
+- Contains files named `00-cover-and-changelog.md`, `01-executive-summary-scope-risks.md`, `02-ecosystem-overview.md`, etc. The SDD's `20-for-ppt.md` (its architecture deck brief) is derived from the SDD and is never read.
 - Each file starts with `<!-- CHUNK: NN ... PART OF: SDD - ... -->`.
 
 If 4+ of these match, it's an sdd-unifier chunked output.
@@ -102,7 +102,7 @@ In either case, the SDD is read in full; field mapping per `sdd-to-lld.md`.
 
 ### BRD (chunked folder OR combined file)
 
-Same recognition rules as in `sdd-unifier:transform-detection.md` (BRDs follow the brd-unifier convention).
+Recognise a BRD by these signs (BRDs follow the brd-unifier convention). Chunked folder: the path is a folder ending in `brd-*`; it holds files named like `00-cover-and-changelog.md`, `01-executive-summary-and-context.md`, `02-glossary-assumptions-facts.md`, `03-definitions-and-domain-concepts.md`, `04-scope-and-personas.md`, `05-user-journeys-overview.md`, `06a-use-cases-*.md`, `07-users-use-cases-matrix.md`, `08-integrations.md`, etc. (legacy BRDs: `05-fr-overview.md`, `06a-fr-*.md`, `07-integrations.md`); each file starts with `<!-- CHUNK: NN ... PART OF: BRD - ... -->`. Four or more of these signs make it a chunked BRD. Combined file: the filename starts with `BRD-` (for example `BRD-WalletManagement-v1.0.md`), and five or more of the BRD section names are present in template order (Executive Summary, Background, Business Objectives, Glossary, Assumptions / Constraints, Facts, Challenges, Dependencies, Definitions & Important Details, Project Scope, Personas, User Journeys & Use Cases (UC blocks with `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules / Acceptance Criteria / Future Enhancements / UI/UX`), Users & Use Cases Matrix, Integrations, Reporting, NFRs, Summary, UI/UX Expectations, Appendix, Wishlist; legacy BRDs: Functional Requirements with `What/Why/How` blocks and a Technical Implementation Expectations section). The structure decides, not the filename.
 
 A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location; an older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things: the IDs its use-case trace cites (use case headings in 05 and 06x, the `MK-NN` rows in 14 Mockup coverage (the screen references; the Figma link is reached through the row), any screen ID the BRD text carries from its source, test cases in 16; `sdd-to-lld.md` § Use-case traceability), and supplementary purpose, scope, and glossary content that the SDD might paraphrase.
 
@@ -131,7 +131,7 @@ See `code-extraction.md` for the full from-code workflow.
 
 1. Read the SDD chunks (or combined file) per `sdd-to-lld.md`.
 2. Read the BRD(s) the SDD names: the use case, screen, mockup, and test case IDs the trace cites, plus supplementary purpose / scope / glossary content.
-3. Apply CLAUDE.md pattern rules per `pattern-rules.md` aggressively.
+3. Apply the confirmed stack (SKILL.md step 3a) and rules per `pattern-rules.md`; a default no source states is applied as a proposal (SKILL.md principle 10).
 4. Trace every BRD use case per `sdd-to-lld.md` § Use-case traceability.
 5. For sections the SDD + CLAUDE.md cannot together fill (SLOs, threat notes, peak scenario multipliers): emit `> TODO: <best-guess> - verify`.
 6. Index every flag in `15-open-questions.md`.

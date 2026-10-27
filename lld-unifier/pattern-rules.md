@@ -4,7 +4,7 @@ This file maps the user's CLAUDE.md design defaults to **triggering conditions**
 
 It is used in two directions:
 
-- **FROM-SDD:** when a triggering condition is met (e.g., a service emits state-changing events), the corresponding pattern is *applied proactively* to the LLD with the rule attribution.
+- **FROM-SDD:** when a triggering condition is met (e.g., a service emits state-changing events), the corresponding pattern is *applied proactively* to the LLD with the rule attribution (§ How patterns appear in the LLD, item 2).
 - **FROM-CODE:** the same conditions are used as detection heuristics: if code matches the structural fingerprint, the pattern is *recognised* and documented.
 
 ---
@@ -14,7 +14,7 @@ It is used in two directions:
 Per `chunks/04-implementation-template.md` § 7.4, every applied pattern carries:
 
 1. **Pattern name.**
-2. **Triggering CLAUDE.md rule** (verbatim quote).
+2. **Triggering CLAUDE.md rule** (verbatim quote): the rule as the project instruction file or the SDD states it, which makes it a confirmed rule. When neither states it, the quote is this skill's default (SKILL.md principle 10), and the pattern is applied as a proposal with the gap flagged `> Confirm:`.
 3. **Roles**: which classes/methods play which part.
 4. **Rationale**: one-line specific to this service.
 5. **Mermaid class diagram**: pattern structure.
@@ -25,7 +25,7 @@ Per `chunks/04-implementation-template.md` § 7.4, every applied pattern carries
 
 ## Mandatory patterns (CLAUDE.md hard rules)
 
-These patterns MUST be applied in any service whose conditions match. From-sdd: applied unconditionally. From-code: missing pattern → `⚠ drift` with HIGH severity in hybrid direction.
+These patterns MUST be applied in any service whose conditions match. From-sdd: applied unconditionally, with the attribution of § How patterns appear in the LLD, item 2 (a rule no source states is applied as a proposal, flagged). From-code: missing pattern → `⚠ drift` with HIGH severity in hybrid direction. The rules that are also coding conventions (constructor injection, records for DTOs, Problem Details errors, idempotency keys) are listed with their source in `03a-libraries-and-conventions.md` § 6.5.2; each keeps its triggering condition and detection here.
 
 ### Outbox
 
@@ -111,6 +111,8 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **CLAUDE.md rule:** *"Records for DTOs."*
 
+**Home:** the DTOs row of `03a-libraries-and-conventions.md` § 6.5.1 Libraries by Concern, with the rule in its § 6.5.2. The row, its status, and any per-service departure are written there once; this section keeps the triggering condition and the detection.
+
 **Triggering condition:** any service exposing REST/event DTOs.
 
 **FROM-SDD detection:** always applied; DTO types listed in `04-implementation/<service>.md` § 7.2 Domain Types as `record`.
@@ -121,11 +123,13 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **CLAUDE.md rule:** *"Schema-per-tenant for high-volume services, shared-schema with tenant_id for low-volume. Every index in shared-schema includes tenant_id. Never log tenant_id, reseller_id, or PII at INFO level."*
 
+**Applied as:** in a shared-schema table every secondary index and unique key leads with `tenant_id`; the UUIDv7 primary key `id` is exempt (globally unique); a project file may tighten this. The rule applies only where a table is shared-schema.
+
 **Triggering condition:** any service with persistent storage.
 
 **FROM-SDD detection:** SDD §11 Cross-Cutting + per-service Multi-Tenancy Specifications.
 
-**FROM-CODE detection:** Flyway migrations enumerated; check that every CREATE INDEX on a shared-schema table includes `tenant_id` as the leading column. Missing → a `⚠ policy` finding, HIGH severity (§ Anti-patterns to flag).
+**FROM-CODE detection:** Flyway migrations enumerated; check that every CREATE INDEX or unique constraint on a shared-schema table, other than the primary key, has `tenant_id` as the leading column. Missing → a `⚠ policy` finding, HIGH severity (§ Anti-patterns to flag).
 
 ### Resilience4j (timeouts + retry + circuit breaker + bulkhead) on downstream provider calls
 
@@ -197,9 +201,11 @@ These are **discretionary**: applied only when the triggering condition is genui
 
 ## Anti-patterns to flag (FROM-CODE direction)
 
-The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-questions.md` § 18.6 Policy Findings, in every direction that reads code (from-code, hybrid, partial). It is not drift: it claims no SDD disagreement, so a from-code run with no SDD reports it the same way.
+The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-questions.md` § 18.6 Policy Findings, in every direction that reads code (from-code, hybrid, partial). It is not drift: it claims no SDD disagreement, so a from-code run with no SDD reports it the same way. The one exception is a use that breaks a § 6.5.1 row whose Source is an SDD §6 row: the SDD disagrees, so in hybrid it is `⚠ drift` with its two resolutions, not policy (`hybrid-drift.md` § Section-by-section diff rules).
 
-| Anti-pattern | CLAUDE.md rule violated | Severity |
+The last two rows cover `03a-libraries-and-conventions.md` § 6.5. A use is reported once. A use that a row above matches (a DTO class, field injection, a missing idempotency key, a `RestTemplate` call) is reported under that row, and its finding cites the § 6.5 row it also breaks; the last row covers only the uses that no row above matches. `RestTemplate` is reported whatever the Status of the HTTP client rows. A § 6.5.3 row that records a departure with its reason (an SDD section, or a decision in `decision-log.md`) removes the finding for the row or rule it names, in that service, whichever row above reports it.
+
+| Anti-pattern | Rule violated (CLAUDE.md, or § 6.5) | Severity |
 |--------------|------------------------|----------|
 | Field injection (`@Autowired` on fields) | "Constructor injection only" | MEDIUM |
 | DTO classes (not records) | "Records for DTOs" | LOW |
@@ -212,13 +218,15 @@ The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-quest
 | Distributed 2PC / `XA` transactions | "No distributed 2PC" | HIGH |
 | Cross-service shared DB schema | "A service's database is private" | HIGH |
 | Cross-tenant query without tenant_id filter | "Cross-tenant queries forbidden at the application layer" | HIGH |
-| Shared-schema index without `tenant_id` as its leading column | "Every index in shared-schema includes tenant_id" | HIGH |
+| Shared-schema secondary index or unique key without `tenant_id` as its leading column | "Every index in shared-schema includes tenant_id" | HIGH |
 | Logging tenant_id / PII at INFO | "Never log tenant_id, reseller_id, or PII at INFO level" | HIGH |
 | Schema migration that's not additive | "Backward compatibility on Kafka schemas: additive changes only" | HIGH |
 | Stack traces in error responses | "Errors are actionable; never expose stack traces or raw codes" | MEDIUM |
 | Missing health/readiness endpoint | "Every service exposes: ... health and readiness endpoints" | MEDIUM |
+| `RestTemplate` in new code: an HTTP call made through `RestTemplate` | "`RestTemplate` never in new code": `RestClient` for synchronous calls, `WebClient` for reactive or non-blocking ones (`03a-libraries-and-conventions.md` § 6.5.1) | LOW |
+| A use that breaks an `Approved` § 6.5.1 row (it uses what the row's Instead of column names) or a § 6.5.2 rule, when no row above matches it and no § 6.5.3 row records the departure | The § 6.5 row it breaks, cited | LOW |
 
-Each finding cites the rule it breaks and takes the severity above.
+Each finding cites the rule it breaks, and the § 6.5 row too when it breaks one, and takes the severity above.
 
 ---
 

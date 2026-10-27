@@ -33,7 +33,7 @@ This is the main TRANSFORM path. The source is already an SDD but in a different
 ### Approach
 
 1. **Build a section crosswalk first.** Map each source section to a target template section. Note any source sections with no target.
-2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs; they must use the sub-sections of `chunks/13a-service-detailed-template.md`, in order: `What / Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / Multi-Tenancy Specifications / API Standards / Event-Driven Architecture / Constraints / Error Handling / Observability & Monitoring / Developer Notes / Service-Level Diagrams / Compliance / Deployment Strategy / Future Enhancements`).
+2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs; they must use the sub-sections of `chunks/13a-service-detailed-template.md`, in order: `What / Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / Multi-Tenancy Specifications / API Standards / Event-Driven Architecture / Constraints / Error Handling / Observability & Monitoring / Developer Notes / Service-Level Diagrams / Compliance / Deployment Strategy / Future Enhancements`). Source tables are carried into the table format of Tables Design (Table name, Table purpose, Column details); a purpose that nothing in the source states (its own table notes, summaries, and business logic count first) becomes a `[NEEDS CLARIFICATION: why <table> exists]`. Infrastructure and network content (deployment views, environment topology, network zones, firewall rules, port tables) goes to §8.6 and §8.7 (chunk 05a), with its IP ranges, hostnames, and products carried verbatim; none is added.
 3. **Stub missing sections** with `[NEEDS CLARIFICATION: ...]`.
 4. **Drop irrelevant sections** silently (vendor sign-off blocks, commercial appendices) and note in the handoff.
 
@@ -79,9 +79,9 @@ Drop vendor scaffolding; keep behavioural and architectural commitments.
 
 Per `brd-unifier`'s pattern, surface the count in the handoff. These bands apply to TRANSFORM and GENERATE. A DERIVE-FROM-BRD count is read differently: `brd-to-sdd.md` § Workflow when deriving from BRD, step 11.
 
-- **0–5 markers:** healthy. Source was rich.
-- **6–14 markers:** typical. Recommend review.
-- **15–29 markers:** moderate gap. Recommend an architect-review session before circulating.
+- **0 to 5 markers:** healthy. Source was rich.
+- **6 to 14 markers:** typical. Recommend review.
+- **15 to 29 markers:** moderate gap. Recommend an architect-review session before circulating.
 - **30+ markers:** the source was severely under-specified for SDD purposes. Recommend rebuilding the source first (e.g., generate a proper BRD via brd-unifier) and re-running.
 
 Don't soften this recommendation. An SDD with 30+ open clarifications is a structured backlog, not a design document.

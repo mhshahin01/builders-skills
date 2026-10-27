@@ -98,10 +98,28 @@ erDiagram
 
 #### Tables Design
 
-| Table | Column | Type | Constraints | Notes |
-|-------|--------|------|-------------|-------|
-| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
-| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
+<!-- The one table format: a block per table, for every table this service owns, in the order of the ERD. §11.1 (chunk 07) points here and does not restate it. Required means the column does not accept null; Optional means it does. A unique key, index, or check that the design fixes is stated in the Description of the column it covers, with its `tenant_id` lead where the table is shared-schema; the implementation constraints and indexes are added in the LLD. -->
+
+**Table name:** `[table_name]`
+
+**Table purpose:** [Why the table exists, in one sentence.]
+
+**Column details:**
+
+| Column name | Data type | Required or optional | Description |
+|-------------|-----------|----------------------|-------------|
+| `[column_name]` | [Data type] | [Required / Optional] | [Short description; add any unique key, index, or check the design fixes on this column] |
+| `[column_name]` | [Data type] | [Required / Optional] | [Short description; add any unique key, index, or check the design fixes on this column] |
+
+**Table name:** `[table_name]`
+
+**Table purpose:** [Why the table exists, in one sentence.]
+
+**Column details:**
+
+| Column name | Data type | Required or optional | Description |
+|-------------|-----------|----------------------|-------------|
+| `[column_name]` | [Data type] | [Required / Optional] | [Short description; add any unique key, index, or check the design fixes on this column] |
 
 #### Migration Strategy
 

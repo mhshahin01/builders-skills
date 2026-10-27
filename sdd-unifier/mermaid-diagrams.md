@@ -19,6 +19,8 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 | §8.3 High-Level Architecture | Layers (edge, frontend, services, data, async backbone, external, observability) | `flowchart TB` with `subgraph` |
 | §8.4 Workflow Diagrams | One per critical end-to-end flow | `flowchart TD` |
 | §8.5 Sequence Diagrams | One per critical interaction (sync + async) | `sequenceDiagram` |
+| §8.6 Infrastructure Architecture | Deployment diagram: regions or sites, then zones, clusters, or the managed service as nested subgraphs, holding the deployables and data stores | `flowchart TB` with `subgraph` |
+| §8.7 Network Architecture | Network diagram: one subgraph per network zone, the ingress path, the egress to each external system, the administrative path; edges that cross a zone labelled with their protocol | `flowchart LR` with `subgraph` |
 | §12 Integrations | Integration topology, edges labelled with protocol/mechanism | `flowchart LR` |
 | §14.2 Event hub (chunk 10) | Async backbone mechanism + hub fan-out landscape | `flowchart LR` |
 | §17.X DB Modeling | ERD per service | `erDiagram` |
@@ -29,7 +31,7 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 
 **Do not** draw a diagram for:
 - Glossary, Assumptions, Risks, Ecosystem Overview, Principles/ADRs, Environments (tabular/list content).
-- Services whose logic fits in 3–6 bullets with no state machine.
+- Services whose logic fits in 3 to 6 bullets with no state machine.
 - Stateless services (no state machine) and one-step workflows.
 
 Fewer, more meaningful diagrams beat decorative ones.
@@ -56,8 +58,8 @@ sequenceDiagram
 - The **Summary** line after every diagram is mandatory: it is the no-renderer fallback.
 - Use named participants / meaningful node ids; annotate alt-paths for error scenarios.
 - In sequence diagrams, a synchronous call is `->>` and its reply `-->>`; an asynchronous message (an event or a queued job) is `-)`. Never put `;` or `#` in a sequence message: `;` ends a Mermaid statement, and `#` can start an entity code.
-- Keep diagrams scoped. A workflow or sequence diagram beyond about 30 lines is split into a happy-path and an error-path diagram. Layered views (§8.3, §24.3) and ERDs have no line cap; an ERD shows entities, keys (PK, FK), and relationships only, and the other columns stay in Tables Design.
-- Figure numbering is sequential across the whole SDD (not per chunk); every figure gets a row in chunk 00's Figures index with its chunk + section.
+- Keep diagrams scoped. A workflow or sequence diagram beyond about 30 lines is split into a happy-path and an error-path diagram. Layered views (§8.3, §24.3), the infrastructure and network views (§8.6, §8.7), and ERDs have no line cap; an ERD shows entities, keys (PK, FK), and relationships only, and the other columns stay in Tables Design.
+- Figure numbering is sequential across the whole SDD (not per chunk); every diagram that carries a `Figure N` label gets a row in chunk 00's Figures index with its chunk + section. The templates label the §7.2, §8.2, §8.3, §8.6.6, and §8.7.8 diagrams; every other diagram is named by its section and has no Figure label and no index row.
 
 ## Render-fail mitigation
 
@@ -67,7 +69,7 @@ sequenceDiagram
 
 ## Syntax quick reference
 
-The rules above do not depend on another skill. When `../lld-unifier/mermaid-diagrams.md` exists (lld-unifier installed next to this skill), its § Mermaid syntax quick reference has a cheatsheet for the dialects used here (`sequenceDiagram`, `classDiagram`, `stateDiagram-v2`, `erDiagram`, `flowchart`).
+The cheatsheet for the dialects used here (`sequenceDiagram`, `classDiagram`, `stateDiagram-v2`, `erDiagram`, `flowchart`) is `mermaid-syntax.md` in this skill folder.
 
 ---
 

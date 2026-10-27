@@ -41,7 +41,7 @@ PART OF: SDD - [Project Name]
 
 ## 18.5 NFR Targets
 
-<!-- Derive-from-BRD: one row per NFR of every source BRD, keyed (REFUNDS/NFR-02), with the technical target it is quantified into and where the design realises it (a §18 row, a §11 default, an ADR, or a §17.X section). A target the BRD does not imply is a [NEEDS CLARIFICATION: ...], never invented. -->
+<!-- Derive-from-BRD: one row per NFR of every source BRD, keyed (REFUNDS/NFR-02), with the technical target it is quantified into and where the design realises it (a §18 row, a §11 default, an ADR, or a §17.X section). A target the BRD does not imply is a [NEEDS CLARIFICATION: ...], never invented. The RPO and RTO of a recovery NFR live in §8.6.4 (chunk 05a): its row links there and holds neither a figure nor a marker of its own. -->
 
 | BRD NFR | Technical target | Realised in |
 |---------|------------------|-------------|

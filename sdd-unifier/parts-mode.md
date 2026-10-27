@@ -22,11 +22,11 @@ Intake (SKILL.md step 3), the Project Type ask (step 3a), the architecture quest
 
 | Part | Chunks | What it settles | The user reviews |
 |---|---|---|---|
-| **1** | 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, plus `[project-slug]-sdd-master.md` | The shape of the system: scope and risks, the ecosystem, actors, architecture style, context and high-level architecture, critical workflows and sequences, principles and ADRs, cross-cutting defaults, integrations, and the service decomposition | The architecture style and ADRs, the cross-cutting defaults (tenancy model, deployment, security), the integrations, and above all the **Services Decomposition** (09): service names, bounded contexts, data ownership, which BRD use cases each service owns (09 `Use cases (BRD)`, traced one row per use case in 03 §7.3). These drive part 2; changing the service list later is costly. |
+| **1** | 00, 01, 02, 03, 04, 05, 05a, 06, 07, 08, 09, plus `[project-slug]-sdd-master.md` | The shape of the system: scope and risks, the ecosystem, actors, architecture style, context and high-level architecture, critical workflows and sequences, the infrastructure and network architecture, principles and ADRs, cross-cutting defaults, integrations, and the service decomposition | The architecture style and ADRs, the infrastructure and network architecture (05a: where the system runs, backup and disaster recovery, ingress and egress), the cross-cutting defaults (tenancy model, deployment, security), the integrations, and above all the **Services Decomposition** (09): service names, bounded contexts, data ownership, which BRD use cases each service owns (09 `Use cases (BRD)`, traced one row per use case in 03 §7.3). These drive part 2; changing the service list later is costly. |
 | **2** | every `13x` service chunk, then 10, then 12, then 11, then the contract reconciliation (SKILL.md step 6a) | The per-service specs and the three contract registries: the Centralized Event Hub (10), the Service Integration API Contracts (11), and the Centralized User Roles (12) | Per-service boundaries, APIs, DB models, published and consumed events, error handling; the event contracts in chunk 10; the API contracts in chunk 11 (internal contracts defined, external ones `TBD - external` for you to complete); the role catalogue in chunk 12; every divergence flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12 |
 | **3** | 14, 15, 16, 17, then 18, then 19 (gated) | Performance and capacity, environments, runbook, appendix; the independent review; the end-to-end design once the open items are cleared | The open items (acceptance loop); then chunk 19 is written only if the e2e gate opens |
 
-The order is fixed: 1, then 2, then 3. A part is never skipped, and a later part is never started before the earlier one is complete.
+The order is fixed: 1, then 2, then 3. A part is never skipped, and a later part is never started before the earlier one is complete. Chunk 20 (the architecture deck brief) is outside the three parts: it is written only on request, after the e2e gate reads `Open - Up to date` and chunk 19 exists (SKILL.md step 8c).
 
 Inside part 2, keep the contract generation order from SKILL.md step 6: draft the per-service Event Models and List of APIs, consolidate into chunk 10, back-propagate fixes into the `13x` chunks, then write chunk 12 (roles), then chunk 11 (API contracts, which cite chunk 12's permission tokens), then run step 6a. Chunk 19 waits for part 3 and the e2e gate (SKILL.md step 8b), so it consolidates the final reviewed state.
 
@@ -34,14 +34,18 @@ Inside part 2, keep the contract generation order from SKILL.md step 6: draft th
 
 ## What every part does
 
-1. **Read first.** Read the source material (BRD, SoW, or existing SDD) and every chunk written by earlier parts, in full. Read `decision-log.md` if it exists. In a new session this is mandatory: nothing is remembered from the earlier run.
+1. **Read first.** Read the source material (BRD, SoW, or existing SDD, and an imported eco-system file: the master's **Source** line names them) and every chunk written by earlier parts, in full. Read `decision-log.md` if it exists. Read the project files again (SKILL.md principle 19): they can change between parts. In a new session this is mandatory: nothing is remembered from the earlier run.
 2. **Write the part's chunks** with the normal rules (templates, reference + delta to the BRD, one fact one home, Mermaid policy, no invented targets).
 3. **Back-fill earlier parts** (parts 2 and 3 only). Later work changes earlier chunks. Apply the change and list it in the part summary:
    - New terms and acronyms go into the Glossary (01 §5). New assumptions go into §3; new risks into §4.
    - A decision taken while writing a service or a registry that affects the whole platform becomes an ADR in 06 §10 (next free ADR ID). A deviation from a cross-cutting default is recorded as an override in the service chunk and, if it changes the default itself, in 07.
-   - The Services Decomposition (09) follows the service chunks: if part 2 renamed, split, merged, or re-scoped a service, the service chunk wins and 09 is updated, together with the service boxes in the 04 diagrams and any 05 workflow or sequence that names it. Say clearly that this is a change to what the user approved in part 1.
+   - The Services Decomposition (09) follows the service chunks: if part 2 renamed, split, merged, or re-scoped a service, the service chunk wins and 09 is updated, together with the service boxes in the 04 diagrams, any 05 workflow or sequence that names it, and the deployables in 05a. Say clearly that this is a change to what the user approved in part 1.
    - Integration rows in 08 gain the owning service and any protocol detail settled in the service chunk.
+   - The Integration landscape in 02 follows 08: an external system the back-fill adds to 08 gets its landscape row, linked to its new 08 row.
    - The §8.5 sequences in 05 take the event names from chunk 10 and the API IDs from chunk 11 on their messages and calls.
+   - §8.7 in 05a follows the contracts and the integrations: a synchronous call between deployables that chunk 11 adds or removes, and an 08 row the back-fill adds, change its network policies, egress rows, and ports and protocols.
+   - 05a links what part 2 writes, which it names as plain text until then: the platform-plane roles of §16.4.3 in §8.7.6 (after chunk 12), the `API-NN` of §15.2 in §8.7.2 and §8.7.7 (a provider callback, and a synchronous call between deployables; after chunk 11), and the §14.2 hub topology and each §17.X Deployment Strategy in §8.6.5 (after chunks 10 and `13x`).
+   - 05a links what part 3 writes, which it names as plain text until then: the §20.1.5 Database Failover procedure in §8.6.4 (after chunk 16) and the §18 targets in §8.6.5 (after chunk 14). The §8.6.2 environment columns follow §19 (after chunk 15).
    - Derive-from-BRD: §7.3 in 03 gets its Entry points, APIs, and Events columns in part 2 (after chunk 11, before step 6a), and each Owner becomes a link to its `13x` chunk. A service renamed, split, or merged updates 09 `Use cases (BRD)` and the §7.3 Owner cells in the same pass.
    - Figures index and Tables index in chunk 00.
 4. **Keep IDs stable.** Once the user has seen an ID, it is never renumbered and never reused: service chunk letters (`13a`, `13b`, ...), BRD keys, ADR-NN, AP-NN, API-NN, INT-NN, risk IDs, topic names, event names, role names, permission tokens, and OI-NN. A service added in part 2 takes the next free chunk letter and is appended to 09. A service merged away keeps its 09 row, marked `Merged into [service]`, and gets no chunk; a removed one keeps its row, marked `Removed: [reason]`. The §17.X number follows the chunk letter (`13c` is §17.3) even when an earlier letter has no chunk; the gap is expected. A renamed event or topic is a contract change: update chunk 10 and every `13x` chunk in the same pass, and add a Changes Log note if the old name was already shown to the user.
@@ -55,6 +59,7 @@ Show a short part summary:
 
 - The files written, and the chunks of earlier parts that were changed by the back-fill, with the reason.
 - Counts: services, ADRs, Mermaid figures, `[NEEDS CLARIFICATION: ...]` markers in this part. Derive-from-BRD: the source BRDs with their keys (part 1: say the keys are now fixed, and name any source BRD whose cover is not `Approved`), the cross-BRD conflicts found, and per BRD the use cases with an owner vs flagged in §7.3. In part 2 also: topics, events, roles, API contracts (`Defined`, `TBD - external`, `Flagged`), and the number of contract divergences flagged; derive-from-BRD, the endpoints proposed for the §7.3 entry points (method and path), named as proposals to review.
+- The project files found and used (SKILL.md principle 19), and each conflict one has with a source or a chunk, which is raised as an open item at the review (SKILL.md step 7, Author items).
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 
@@ -68,7 +73,7 @@ When the user gives corrections: apply them to the existing chunks first, rerun 
 
 ### End of part 3
 
-Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 18), the open items acceptance loop (step 8), the e2e gate check (step 8b: chunk 19 is written only if E1-E4 are met, otherwise it stays `Locked` and the handoff lists what is open), the final `[project-slug]-sdd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on chunks 00-17. Later updates run the review that SKILL.md step 7 (On an update) sets: a delta review, or the application check of applied pending items.
+Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 18), the open items acceptance loop (step 8), the e2e gate check (step 8b: chunk 19 is written only if E1-E4 are met, otherwise it stays `Locked` and the handoff lists what is open), the final `[project-slug]-sdd-master.md` and chunk 00, and the full handoff (step 9). Chunk 20 is not written here: it follows only on a request (step 8c). The independent reviewer runs **once**, here, on chunks 00-17. Later updates run the review that SKILL.md step 7 (On an update) sets: a delta review, or the application check of applied pending items.
 
 ---
 
@@ -76,12 +81,15 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 
 **Part 1**
 
-- [ ] Every §6 ecosystem row has its source in Notes (`BRD-mandated`, `source SDD`, `questionnaire`, `default`, `recommended`, `user override`); every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
+- [ ] Every §6 ecosystem row has its Status and Source (SKILL.md step 3c items 1 and 6), and no row is `Proposed` except as step 3c item 6 allows; every deviation from the doctrine or CLAUDE.md defaults has an ADR in 06.
+- [ ] The Integration landscape in 02 has one row per external system in 08, and per system an imported eco-system file describes; each row links its 08 row (or reads `-`) and restates no protocol, auth, timeout, or contract field.
 - [ ] §8.1 Architecture Style has What / Why / How at the bar of `sdd-quality.md`; the minimum ADR set is present or flagged.
+- [ ] Unless the Clarification register records that the user declined chunk 05a for an SDD written before it (SKILL.md step 10; `decision-log.md` § Companion file rules): 05a holds §8.6 and §8.7 at the bar of `sdd-quality.md`, each with its diagram and Summary; every fact links its home or source and restates none, every 08 row has its §8.7.3 egress row, and every unknown fact is a `[NEEDS CLARIFICATION: ...]`. No IP range, CIDR, hostname, or vendor product appears that no source states.
 - [ ] Every actor in 03 traces to a BRD persona (derive-from-BRD) or to the source; none is invented.
 - [ ] Authentication descriptions distinguish sourced existing capability from Proposed flows/reuse; an actor or persona alone is not authentication evidence (SKILL.md principle 8).
 - [ ] Every service in 09 has a bounded context, owns its data, and serves at least one use case or platform concern (a later-phase scope item of a phase-based BRD is neither until its use cases exist: `brd-to-sdd.md` § Phase-based BRDs). No entity is owned by two services.
 - [ ] Derive-from-BRD: chunk 00 § Document Lineage lists every source BRD with its key, version, and link, and Child LLDs reads `None yet` (or the LLDs found); every BRD reference in 00-09 carries its key; with two or more BRDs, every cross-BRD conflict is asked, recorded as an ADR, or flagged (`brd-to-sdd.md` § Source BRDs and lineage).
+- [ ] Derive-from-BRD: at this stop the §7.3 Entry points, APIs, and Events cells read `Pending (part 2)` and each Owner is plain text until part 2 links it (`brd-to-sdd.md`, the Parts bullet under its heading §7.3 Use Case Traceability).
 - [ ] Derive-from-BRD: every use case of every source BRD has its §7.3 row in 03, under its BRD's group (title as the BRD states it, status derived from its Description marker); every active one has exactly one owner in 09 `Use cases (BRD)`, or a `[NEEDS CLARIFICATION: ...]` in its Owner cell; every §8.4 and §8.5 diagram has its `**Use cases:**` line; every UC link resolves (file and anchor).
 - [ ] Every integration in 08 names the service that owns it, or is flagged.
 - [ ] Every integration's Input is the business input stated by its source/owning flow, not an invented substitute. Cross-cutting and CI/CD choices carry their source/default/Proposed labels just as ecosystem rows do; no proposal is described as adopted. Synchronous lookups and durable publication/provider writes have separate guarantees (SKILL.md principle 11).
@@ -100,16 +108,16 @@ Part 3 does not end with a checkpoint. After chunks 14-17 and the back-fill, run
 - [ ] Every divergence that could not be fixed is flagged in chunk 10 §14.8, chunk 11 §15.5, or chunk 12 §16.12 with Status `Open`, and every row in those registers has a Status (`Open` / `Fixed in vX.X`).
 - [ ] Per-service authorization notes agree with the BRD Users & Use Cases Matrix (derive-from-BRD), or the difference is flagged.
 - [ ] Derive-from-BRD: §7.3 Entry points, APIs, and Events are filled, every Owner links to its `13x` chunk, and the use-case traceability check of step 6a passes (every owned use case is cited in its owner's Business Logic; no active use case lacks an entry point, or it is flagged).
-- [ ] 09, 04, 05, and 08 match the service chunks after the back-fill.
+- [ ] 09, 04, 05, 05a, 08, and the Integration landscape in 02 match the service chunks after the back-fill.
 - [ ] No per-service DB model, API list, or Event Model was invented from the BRD alone; missing architect input is flagged. Derive-from-BRD: an endpoint proposed for a §7.3 entry point carries only its method and path, its fields are flagged, and the part summary names it as a proposal; an Event Model carries only the candidate events chunk 10 lists (`candidate` there), with their payload flagged (`brd-to-sdd.md` § SDD-only sections, §17.X).
 - [ ] No decision-process narration in content chunks. Clarifications raised or decided in this part are recorded in `decision-log.md` with working rule-home links.
 
 **Part 3**
 
-- [ ] Every BRD NFR is quantified into a technical target in 14, or flagged; no target, capacity number, or version pin was invented.
+- [ ] Every BRD NFR is quantified into a technical target in 14 (a recovery NFR's RPO and RTO: 05a §8.6.4), or flagged; no target, capacity number, or version pin was invented.
 - [ ] Every environment in 15 and every runbook procedure in 16 is concrete (the good-procedure bar of `sdd-quality.md`), or flagged.
 - [ ] Chunk 18 exists and every OI has a decision or is listed as open in the handoff; chunk 19 is written only when the e2e gate is open, and then its counts, names, edges, and claims trace to chunks 02 to 13x with nothing owned by those chunks restated, and its faithfulness check (SKILL.md step 8b) has run, with every mismatch fixed in chunk 19 and the fixes confirmed.
-- [ ] The back-fill of 00, 01, 06, 07, and 09 is done.
+- [ ] The back-fill of 00, 01, 05a (the §19 environments and the §20 procedures it links), 06, 07, and 09 is done.
 - [ ] No decision-process narration in content chunks. Accepted open items are applied as plain design text; their narrative is in `decision-log.md` with working rule-home links.
 
 ---
@@ -135,10 +143,11 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 **Review passes:** 0 of 3 (the baseline review has not run yet)
 **E2E gate (chunk 19):** Locked - E1 (chunk 18 not written yet)
 **E2E basis:** None (chunk 19 not written)
+**Deck brief (chunk 20):** Locked - not written
 ```
 
 - A first build given `light` writes `**Generation:** parts, light` (SKILL.md § Light run).
-- Write the **Source** line in part 1: the path of every source file (every source BRD's master or combined file), or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
+- Write the **Source** line in part 1: the path of every source file (every source BRD's master or combined file, and the eco-system file when one was imported: SKILL.md step 3c item 8), or "conversation" when there is none. A new session reads the source from there. If it cannot be found, ask the user for it before writing anything.
 - Status is `Pending`, `In progress ([last step done])`, or `Complete`. Parts 2 and 3 have several steps, so record each one as it finishes. Part 2: `13x written`, `10 written`, `12 written`, `11 written`, `7.3 filled` (derive-from-BRD), `reconciled`. Part 3: `14-17 written`, `18 written`, `acceptance loop done`, `19 written` or `19 Locked (gate shut)`. Part 3 becomes `Complete` when the gate check has run: chunk 19 is then either written or `Locked`, and a later request refreshes it through SKILL.md step 8b.
 - In the master's chunk tables, a chunk that is not written yet is plain text followed by `Pending (part N)`. It becomes a link when it is written.
 - Chunk 00 shows `**Status:** Draft - part N of 3` until part 3 is complete, then `Draft`.
@@ -146,7 +155,7 @@ Parts mode keeps its state in `[project-slug]-sdd-master.md`, so any later sessi
 - PREV / NEXT footers may point at a chunk that does not exist yet. That is expected until its part is written.
 - When part 3 is complete, remove nothing: keep the table with all three parts `Complete`. It is the record of how the SDD was built.
 
-In `whole` runs, **Generation:** reads `whole` and the Part table is left out; the Intent, Source, Reconciled, Review passes, E2E gate, and E2E basis lines and the E3 marker inventory stay. The Changes Log's Initial draft row, dated when the run completes, is the record of its completion.
+In `whole` runs, **Generation:** reads `whole` and the Part table is left out; the Intent, Source, Reconciled, Review passes, E2E gate, E2E basis, and Deck brief lines and the E3 marker inventory stay. The Changes Log's Initial draft row, dated when the run completes, is the record of its completion.
 
 ---
 
@@ -165,6 +174,6 @@ When the skill is invoked on a folder whose `[project-slug]-sdd-master.md` shows
 
 **The user asks for a later part while an earlier one is pending.** Explain the order and offer the next pending part. Do not skip.
 
-**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 18 that points into the part, and keep every ADR and ecosystem decision recorded in `decision-log.md` unless the user reverses it. Then, for every later part that is already complete: rerun its back-fill and exit checklist (for part 2, rerun step 6a), and tell the user what no longer fits (for example, a service chunk whose service was merged away, or events whose producer changed). If part 3 was complete, this is a content change: bump the version and add a Changes Log row, update chunk 18 by status only (the delta review of SKILL.md step 7 covers the redone part), and mark chunk 19 `Stale` if it exists (refresh only through SKILL.md step 8b).
+**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 18 that points into the part, and keep every ADR and ecosystem decision recorded in `decision-log.md` unless the user reverses it. Then, for every later part that is already complete: rerun its back-fill and exit checklist (for part 2, rerun step 6a), and tell the user what no longer fits (for example, a service chunk whose service was merged away, or events whose producer changed). If part 3 was complete, this is a content change: bump the version and add a Changes Log row, update chunk 18 by status only (the delta review of SKILL.md step 7 covers the redone part), mark chunk 19 `Stale` if it exists (refresh only through SKILL.md step 8b), and mark chunk 20 `Stale` if it exists (SKILL.md step 8c item 5).
 
 **The user switches to `whole` midway.** Write all remaining parts in one run, with no more checkpoints, and record `Generation: parts, completed whole from part N`.

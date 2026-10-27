@@ -19,6 +19,7 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Engine:** [Engine + version]
 - **PK strategy:** [Strategy]
 - **Auditing columns on every table:** [List]
+- **Table format:** Every table of a service's Tables Design follows the one format defined there, in each service's DB Modeling (§17.X).
 - **Soft delete:** [Approach]
 - **Migrations:** [Tool + workflow]
 - **Naming:** [Convention]
@@ -32,6 +33,7 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Tenant context:** [How resolved + propagated]
 - **Isolation enforcement:** [How enforced]
 - **Cross-tenant access:** [Policy]
+- **Index rule (shared-schema tables only):** [Every secondary index and unique key leads with `tenant_id`; the UUIDv7 primary key `id` is exempt, being globally unique; a project file may tighten this. Not applicable for schema-per-tenant or DB-per-tenant]
 
 ## 11.3 Deployment (Default)
 

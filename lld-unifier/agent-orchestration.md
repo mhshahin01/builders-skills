@@ -40,7 +40,7 @@ prompt: |
 
   6. **Kafka topology**: per service: topics produced (look for `KafkaTemplate.send`, outbox writes), topics consumed (look for `@KafkaListener`). Per topic: name, key strategy, partition count if discoverable, schema reference if found. In a modular monolith, also list the in-process domain events per module: publishers (`ApplicationEventPublisher.publishEvent`, domain event registration) and listeners (`@EventListener`, `@TransactionalEventListener` with its phase), with the event type and its DTO.
 
-  7. **REST contracts (per service)**: per controller method: HTTP method, path (combining class-level `@RequestMapping` + method-level), request body type, response body type, status codes, auth (`@PreAuthorize` expression), idempotency-key handling (`@RequestHeader("Idempotency-Key")` presence). In a modular monolith, also list the in-process ports between modules: the port interface and its operations, the calling module, the implementing adapter, and the permission check at the port.
+  7. **REST contracts (per service)**: per controller method: HTTP method, path (combining class-level `@RequestMapping` + method-level), request headers (`@RequestHeader`), path and query parameters (`@PathVariable`, `@RequestParam`: type, required, default), the request body record with each component's type and validation annotations, each response status with its body record (components with types) and response headers, the errors the controller advice maps for it (exception, status, problem `type`, `errorCode`), auth (`@PreAuthorize` expression), idempotency-key handling (`@RequestHeader("Idempotency-Key")` presence). In a modular monolith, also list the in-process ports between modules: the port interface and its operations, the calling module, the implementing adapter, the permission check at the port, and per operation its request and response records (components with types), the errors it raises with their `errorCode`, and whether it joins the caller's transaction.
 
   8. **Cross-cutting hooks**: interceptors (`HandlerInterceptor`), aspects (`@Around`), filters (servlet filters), guards (Spring Security `@Configuration`). Per hook: scope (which paths/methods), purpose (auth / tenant / logging / rate-limiting / audit).
 
@@ -69,19 +69,22 @@ prompt: |
       - SQL queries lacking `tenant_id` predicate on shared-schema tables.
       - Logging statements at INFO level that include `tenant_id` or PII.
       - DTO classes (`*Dto`, `*Request`, `*Response`) that are not records.
+      - An HTTP call made through `RestTemplate`.
       - Synchronous service-to-service REST chains more than one hop deep.
       - Distributed 2PC / `XA` transactions.
       - A service reading or writing another service's schema.
       - Schema migrations that are not additive.
       - Stack traces in error responses.
       - A service with no health or readiness endpoint.
-      - A shared-schema index without `tenant_id` as its leading column.
+      - A shared-schema secondary index or unique key without `tenant_id` as its leading column.
 
   14. **Frontend routes** (when a UI exists): per route, the path, component, guards, lazy loading, and its route `data` (note any `screen` and `useCases` keys).
 
   15. **E2E specs**: per e2e spec file, its tests and their tags (Playwright `tag` details and `@`-tokens in titles; JUnit 5 `@Tag`).
 
   16. **Use-case markers**: `@UseCase(...)` annotations, `use_case` MDC keys or span attributes, and any other place the code names a use case ID.
+
+  17. **Libraries and conventions in use**: per service, (a) every HTTP client in use (`RestClient`, `WebClient`, `RestTemplate`, or any other), with its class and file:line; (b) the DTO style: of the types named `*Dto`, `*Request`, or `*Response`, and the types its controllers and event publishers take and return, how many are records and how many are classes, with the file:line of one declaration of each kind; (c) from the dependency manifests, the libraries used for resilience, tracing, unit and integration testing, and, when a UI exists, for UI components, styling, i18n, and frontend and end-to-end testing; (d) every other direct dependency that the service's own code calls, with its manifest file and one call site (a transitive dependency is not reported). One line per finding, with the manifest file or file:line.
 
   Output format: Markdown with one section per ask above, file:line citations everywhere. NO narrative beyond what's needed to make the structural facts readable. The downstream agent will narrate.
 
@@ -114,7 +117,7 @@ prompt: |
 
   ## LLD SECTION SCHEMA (target chunks)
 
-  <paste the relevant chunks/04-implementation-template.md, 02-context.md, 03-architecture.md>
+  <paste the relevant chunks/04-implementation-template.md, 02-context.md, 03-architecture.md, 03a-libraries-and-conventions.md>
 
   ## SDD §7.3 USE CASE TRACEABILITY (only when an SDD was given)
 
@@ -216,7 +219,7 @@ Markdown with `<!-- target: ... -->` tags. The skill walks the output, splits by
 
 Once both agents have returned, the skill:
 
-1. **Validates Phase 1 output structure**: checks that all 16 sections of the discovery report are present (sections 14-16 may read "None found"). If any are missing, re-dispatches with a follow-up prompt.
+1. **Validates Phase 1 output structure**: checks that every ask briefed has its section (all 17 in a full run; sections 14-17 may read "None found"). A targeted run, such as ask 17 alone to add chunk 03a to an existing LLD (SKILL.md step 9), briefs and checks only the asks it needs. If any are missing, re-dispatches with a follow-up prompt.
 2. **Validates Phase 2 output tags**: every block has a `<!-- target: ... -->` tag. Untagged blocks are dropped with a warning.
 3. **Routes Phase 2 blocks into chunks**: splits by tag, walks the chunk files, inserts content at the matching `## section` heading.
 4. **Applies confidence flags**: per `confidence-rules.md`. If Phase 2 already flagged a block, carry the flag. If Phase 2 missed flagging a low-confidence block, the skill applies its own based on the source-of-evidence heuristics.

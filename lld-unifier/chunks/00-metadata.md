@@ -12,7 +12,7 @@ PART OF: LLD - [Project Name]
 |-------|-------|
 | **Document Title** | Low-Level Design - [Project Name] |
 | **Version** | [X.X] |
-| **Status** | [Draft / In Review / Approved] |
+| **Status** | [Draft / In Review / Approved / Draft - part N of 3 (parts build, until part 3 completes)] |
 | **Direction** | [from-code / from-sdd / hybrid / partial] |
 | **Date** | [YYYY-MM-DD] |
 | **Author(s)** | [Names] |

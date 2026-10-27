@@ -22,7 +22,7 @@ See `confidence-rules.md` for the structural-vs-semantic weighting.
 - Optional: SDD path (for cross-reference; helps the agent name services per SDD vocabulary).
 - The explicit asks (below).
 
-**Explicit asks:** the 16 asks of the Phase 1 dispatch template in `agent-orchestration.md` (Agent 1), their single home: entry points through use-case markers, including the anti-patterns that `pattern-rules.md` § Anti-patterns to flag reports as `⚠ policy`. Brief them unchanged.
+**Explicit asks:** the 17 asks of the Phase 1 dispatch template in `agent-orchestration.md` (Agent 1), their single home: entry points through the libraries and conventions in use, including the anti-patterns that `pattern-rules.md` § Anti-patterns to flag reports as `⚠ policy`. Brief them unchanged.
 
 **Output format expected from the agent:** structured Markdown with one section per ask of that template, file:line citations everywhere, no narrative.
 
@@ -61,6 +61,16 @@ For sections the agents cannot fill from code alone:
 
 ---
 
+## Libraries and conventions in use (03a § 6.5)
+
+Phase 1 ask 17 reports the HTTP clients in use (each client class, with file:line), the DTO style (how many DTO types are records and how many are classes), the libraries of the concerns that `03a-libraries-and-conventions.md` § 6.5.1 lists, and every other direct dependency that a service's own code calls, as the dependency manifests and call sites show them. They are structural claims: high confidence, no flag.
+
+1. **Fill § 6.5.1 from them.** A row's Scope names the services that use its `Use` library. Its Source cites the manifest (`manifest (<file>)`) for a dependency, and the declarations or call sites (`code (<file>:<line>)`) for a row no manifest shows: the DTOs row, and the `RestClient` row of a Spring MVC service. A direct dependency that a service's own code calls, for a concern that no row of § 6.3 or § 6.5.1 covers, gets a row of its own in § 6.5.1, with `-` in Instead of; a transitive dependency never does. Status follows the Convention under § 6.5.1.
+2. **The standard is not rewritten to match the code.** A service that uses what an `Approved` row's Instead of column names (a `RestTemplate` call, a DTO class), or that contradicts a § 6.5.2 rule, is a `⚠ policy` finding in `15-open-questions.md` § 18.6 (`pattern-rules.md` § Anti-patterns to flag); in hybrid, a row sourced from SDD §6 is `⚠ drift` instead (`hybrid-drift.md` § Section-by-section diff rules). It is a § 6.5.3 row instead when a source states the reason (an SDD section, or a decision in `decision-log.md`). The code alone never supplies a reason.
+3. **No approval runs in from-code.** The rules come from the project instruction file, and from the SDD when one is given (SKILL.md step 3a, item 9).
+
+---
+
 ## Tracing to BRD use cases (only with an SDD)
 
 Code carries no BRD use case IDs of its own, so a pure from-code LLD has no use-case trace: every trace slot reads `Not applicable - no source SDD`, and workflows are headed `### Workflow: [name]`. When an SDD path is given for cross-reference (and in hybrid), match the code to SDD §7.3 and the BRD, then apply `sdd-to-lld.md` § Use-case traceability to what matched.
@@ -84,6 +94,7 @@ Per `confidence-rules.md`:
 | Table / column / index / constraint | High | None |
 | Topic name, partition key, consumer group | High | None |
 | REST path, method, status code | High | None |
+| HTTP client, DTO style, or library in use, from a manifest or a call site | High | None |
 | Pattern detection (interface + multi-impl + context class) | Medium | `> Confirm: pattern detected via structural heuristic` |
 | Pattern rationale (why-this-pattern-here narrative) | Medium | `> Confirm: rationale inferred from code structure / naming` |
 | Method-level pseudocode | Medium | `> Confirm: pseudocode derived from method body - verify against current code` |

@@ -63,7 +63,7 @@ Start from the profile that matches Q1-Q3, then adjust per project.
 Rules that apply to every profile:
 
 - **Keep DDD boundaries and hexagonal structure in every style.** A modular monolith with clean module boundaries, ports, and an outbox can be split into services later at low cost; that is the main reason it is a safe default for small scopes.
-- **Q7 multi-tenancy follows the platform rule** (CLAUDE.md): schema per tenant for high-volume services or modules, shared schema with `tenant_id` for low-volume ones; every shared-schema index includes `tenant_id`. Recommend per module or service when volumes differ.
+- **Q7 multi-tenancy follows the platform rule** (CLAUDE.md): schema per tenant for high-volume services or modules, shared schema with `tenant_id` for low-volume ones; in a shared-schema table every secondary index and unique key leads with `tenant_id` (the UUIDv7 primary key `id` is exempt). Recommend per module or service when volumes differ.
 - **A BRD-mandated style wins** over these rules. Show it locked with its source.
 - **When in doubt between two styles, recommend the simpler one** and state the extraction trigger (the measurable condition that would justify splitting it later, for example "a second team takes over billing" or "notification volume exceeds N per minute"). A need for one part to scale, fail, or release on its own that no BRD NFR or Technical Input states counts as doubt.
 - **Never recommend microservices only because it is the house default.** The recommendation cites at least one driver (Q1-Q3) that needs it.
@@ -79,6 +79,7 @@ Rules that apply to every profile:
 | Hybrid | §13 marks each row as `module` (in the core deployable) or `service` (separate deployable). Chunk 10 catalogues the domain events between core modules in §14.10 and the integration events between the core and each service in §14.5. Chunk 11 holds HTTP contracts between the core and each service and `Internal (in-process)` port contracts inside the core (§15.3). The extraction trigger for each extracted service is in its ADR. |
 | Microservices | As the template describes: one service per bounded context, own database, HTTP contracts in chunk 11, events in chunk 10. |
 | Q5, Q6, Q7, Q8 | Feed §6 rows (broker, database topology, tenancy, runtime and deployment), §11 cross-cutting defaults, the ADRs for the broker, data ownership, tenancy, and synchronous vs event-driven calls, and the ecosystem proposal in step 3c (for example, no broker row is proposed for a monolith that needs none; a mesh row is `Not applicable` for one deployable). |
+| Q7, Q8 | Also feed §8.6 Infrastructure Architecture and §8.7 Network Architecture (chunk 05a). Q8 sets the deployment target; the deployables follow ADR-01 and §13. Q7 sets the tenant isolation in the data-store topology and the network policies. Both are linked there, never restated: Q8 through the §6 Compute / Infra row and its ADR, when one records it; Q7 through §11.2 and its ADR. They are two of the derivation inputs that `brd-to-sdd.md` § SDD-only sections, §8.6 / §8.7 lists. |
 
 ---
 

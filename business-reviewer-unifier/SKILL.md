@@ -317,7 +317,7 @@ Report local preservation/read-back checks by those names. A controller stage qu
 - Never batches tracker updates to the end of the session.
 - Never changes the template structure of a pre-BRD, BRD, or SDD (the list
   in `apply-and-verify.md`, Apply rule 6), and never edits an LLD or a gated
-  chunk's content (its Stale mark follows `apply-and-verify.md`, Apply rule
+  chunk's content (BRD 15-17, SDD 19, the SDD 20 and LLD 19 deck briefs; its Stale mark follows `apply-and-verify.md`, Apply rule
   7): a decision that needs a structural change becomes a skill change for
   the user, and what the owning skill updates goes to the hand-off.
 - Never leaves a document whose content changed at its old version, and

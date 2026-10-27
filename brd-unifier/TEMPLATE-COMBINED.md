@@ -431,7 +431,7 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 | **Options** | Concrete choices, each with a one-line tradeoff. At least 2 where a choice exists. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content. This is what gets injected into the body when accepted. A clarification marker it inserts asks one distinct question that can be answered on its own (SKILL.md principle 8). |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives: the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+| **Status** | Open (awaiting your decision) / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
 Write a closed Status as the literal legend value on its own line. Put the Resolution Log or update pointer on a separate `Resolution` line; rationale and decision metadata also have their own fields.
 
 ## Open Items

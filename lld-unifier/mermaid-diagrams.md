@@ -68,101 +68,9 @@ When a diagram has a richer Miro version (e.g., colour-coded ownership, stakehol
 
 ---
 
-## Mermaid syntax quick reference (the dialects we use)
+## Mermaid syntax quick reference
 
-### `sequenceDiagram`
-
-```mermaid
-sequenceDiagram
-  participant A
-  participant B
-  A->>B: synchronous call
-  B-->>A: synchronous response
-  A-)B: asynchronous call (no response expected)
-  B--xA: failed call
-  Note over A,B: Note text
-  alt happy path
-    A->>B: ok
-  else error
-    A--xB: failed
-  end
-```
-
-### `classDiagram`
-
-```mermaid
-classDiagram
-  class FooStrategy {
-    <<interface>>
-    +calculate(input) Result
-  }
-  class BasicStrategy
-  class ProStrategy
-  class FooContext {
-    -Map~Tier, FooStrategy~ strategies
-    +execute(input, tier) Result
-  }
-  FooStrategy <|.. BasicStrategy
-  FooStrategy <|.. ProStrategy
-  FooContext --> FooStrategy
-```
-
-Roles:
-- `<|--` inheritance.
-- `<|..` interface implementation.
-- `--*` composition.
-- `--o` aggregation.
-- `-->` association.
-
-### `stateDiagram-v2`
-
-```mermaid
-stateDiagram-v2
-  [*] --> DRAFT
-  DRAFT --> ACTIVE : activate [required fields present]
-  ACTIVE --> SUSPENDED : suspend
-  SUSPENDED --> ACTIVE : resume
-  ACTIVE --> DELETED : delete
-  DELETED --> [*]
-```
-
-### `erDiagram`
-
-```mermaid
-erDiagram
-  WALLET ||--o{ LEDGER_ENTRY : has
-  WALLET {
-    uuid id PK
-    uuid tenant_id FK
-  }
-  LEDGER_ENTRY {
-    uuid id PK
-    uuid wallet_id FK
-    uuid tenant_id FK
-  }
-```
-
-Cardinalities:
-- `||--||` one-to-one.
-- `||--o{` one-to-many.
-- `}o--o{` many-to-many.
-
-### `graph` / `flowchart`
-
-```mermaid
-graph TB
-  GW[API Gateway] --> SVC_A[Service A]
-  SVC_A --> DB_A[(PostgreSQL)]
-  SVC_A -.publish.-> KAFKA[(Kafka)]
-  KAFKA -.consume.-> SVC_B[Service B]
-```
-
-Node shapes:
-- `[ ]` rectangle.
-- `( )` rounded.
-- `(( ))` circle.
-- `[( )]` cylinder (DB).
-- `{ }` rhombus (decision).
+The cheatsheet for the dialects used here (`sequenceDiagram`, `classDiagram`, `stateDiagram-v2`, `erDiagram`, `flowchart`) is `mermaid-syntax.md` in this skill folder.
 
 ---
 
@@ -181,7 +89,7 @@ The skill leans toward fewer, more meaningful diagrams. A 6-line state machine t
 
 Mermaid syntax errors break the doc. The skill should:
 
-1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in this file and the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
+1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in `mermaid-syntax.md` and the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
 2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + a `> TODO: Mermaid syntax error: review and fix.` flag.
 3. Surface the fallback count in the handoff summary.
 

@@ -154,14 +154,14 @@ flowchart TD
 - Edge labels use the quoted form (`A -- "text" --> B`, `A -- "text" --- B`), never the pipe form (`A ---|text| B`): pipes break Markdown tables.
 - Node IDs use letters and digits only. Never use `end` as an ID. Keep a space on both sides of every link.
 - One statement or one chain per line. Every `subgraph` has its `end`.
-- If a Mermaid parser or renderer is available in the session, parse every block with it and look at one rendered use-case diagram and one rendered flowchart (a block can parse and still render a label wrongly); otherwise check each block line by line against the examples in this file.
-- A parser that works wherever Node and Chrome are installed is the Mermaid CLI through `npx` (`npx -y @mermaid-js/mermaid-cli -p <puppeteer-config.json> -i diagram.mmd -o diagram.svg`, with `executablePath` in the config pointing at the installed Chrome and `PUPPETEER_SKIP_DOWNLOAD=true` set). It downloads a tool on first use, so ask the user before running it; without a yes, use the line-by-line check. Write the test files to a scratch location, never into the BRD folder. An error message or a missing output file means the block does not parse.
+- If a Mermaid parser or renderer is available in the session, parse every block with it and look at one rendered use-case diagram and one rendered flowchart (a block can parse and still render a label wrongly); otherwise check each block line by line against the examples in this file and the label rules above.
+- Never download or install a parser for the check, and never ask whether to: without a parser or renderer in the session, the line-by-line check is the validation. Write any test files to a scratch location, never into the BRD folder.
 
 ---
 
 ## Syntax quick reference
 
-The rules above do not depend on another skill. When `../lld-unifier/mermaid-diagrams.md` exists (lld-unifier installed next to this skill), its § Mermaid syntax quick reference has a dialect cheatsheet.
+The dialect cheatsheet is `mermaid-syntax.md` in this skill folder. Its examples use unquoted labels for brevity: this file's § Label and syntax safety wins, so every label in a BRD diagram stays in double quotes.
 
 ---
 

@@ -283,22 +283,20 @@ test('handoffBlueprint_options_carryTheirRows', () => {
   assert.equal(excluded.options.chosen_option, null);
 });
 
-test('blueprint_v22_listsTwentyCalculations', () => {
+test('writers_importedFullRecord_listTwentyBaseCalculations', () => {
   let state = E.importV22(FULL_RECORD, OPTS);
   state = apply(state, [{ op: 'set-option', name: 'One region, multi-AZ' }, { op: 'set-option', name: 'Two regions, warm standby' }], agent);
   state = apply(state, ['OPT-01', 'OPT-02'].flatMap((option) => [{ op: 'set-cost', option, cost: 'one_time', value: 1000 }, { op: 'set-cost', option, cost: 'monthly', value: 10 }]).concat({ op: 'set-horizon', value: 12 }));
   const m = E.compute(state, { now: NOW });
   assert.equal(m.c.rows.length, 24);
   assert.ok(m.c.rows.filter((r) => r.id.startsWith('CALC-21@')).every((r) => E.known(r.result)), 'the option TCO rows hold results');
-  const ctx = { ...E.toCalcInputs(state).ctx, now: NOW };
-  const val = E.validate(m.v, m.c, m.a, ctx);
-  const graph = E.filteredGraph(m.graph, m.v, ctx);
-  const bp = E.blueprint(m.v, m.c, m.a, m.rules, val, graph, ctx);
+  const bp = E.handoffBlueprint(state, m, { now: NOW });
   const twenty = Array.from({ length: 20 }, (_, i) => `CALC-${String(i + 1).padStart(2, '0')}`);
   assert.deepEqual(bp.calculations.map((c) => c.id), twenty);
-  const report = E.markdownReport(m.v, m.c, m.a, m.rules, val, graph, bp, ctx);
-  assert.deepEqual(report.split('\n').filter((line) => line.startsWith('| CALC-')).map((line) => line.split(' ')[1]), twenty);
-  assert.equal(m.c.rows.length, 24, 'the v2.2 writers leave the model as it was');
+  assert.deepEqual(bp.options.list.flatMap((o) => o.calculations.map((c) => c.id)), ['CALC-21@OPT-01', 'CALC-22@OPT-01', 'CALC-21@OPT-02', 'CALC-22@OPT-02']);
+  const table = E.fragments(state, m, { now: NOW })['04-calculations.md'];
+  assert.deepEqual(table.split('\n').filter((line) => line.startsWith('| CALC-')).map((line) => line.split(' ')[1]), twenty);
+  assert.equal(m.c.rows.length, 24, 'the writers leave the model as it was');
 });
 
 test('writers_everyOutput_noEmOrEnDash', () => {

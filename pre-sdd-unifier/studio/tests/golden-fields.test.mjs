@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadEngine, goldenCase, readText } from './helpers.mjs';
+import { loadEngine, goldenCase, readText, digest } from './helpers.mjs';
 
 const E = loadEngine();
 const NOW = '2026-10-23T11:01:02Z';
@@ -11,6 +11,7 @@ const COUNTS = {
   'local-zero': { calculations: 16, rules: 8, components: 32, connections: 30 },
   demo: { calculations: 16, rules: 5, components: 32, connections: 29 },
 };
+const V22_FULL_RECORD_FIELDS = 'ebff90213656ff5584655748084708fe16c4b3f032bd17d092732554ea5ef0fc';
 const CONFLICTS = { 'regional-zero': ['CONFLICT-rpo0'], 'local-zero': [], demo: [] };
 const FULL = {
   solutionName: 'Refunds platform', brdRef: '', changeType: 'brownfield', target: 'hybrid',
@@ -52,6 +53,19 @@ function computedFields(state) {
     topology: E.topoNames[model.a.topo],
     dr: E.drNames[model.a.dr],
     rules: model.rules.map((r) => r.id),
+    components: graph.components.map((n) => `NODE-${n.id}`),
+    connections: graph.connections.map((e) => `EDGE-${e.id}`),
+  };
+}
+
+function v22Fields(v, ctx) {
+  const c = E.calculations(v), a = E.selectArchitecture(v, c);
+  const graph = E.filteredGraph(E.buildDiagrams(v, c, a, 'logical', ctx), v, ctx);
+  return {
+    calculations: c.rows.filter((r) => E.known(r.result)).map((r) => [r.id, r.result]),
+    topology: E.topoNames[a.topo],
+    dr: E.drNames[a.dr],
+    rules: E.decisionRules(v, c, a).map((r) => r.id),
     components: graph.components.map((n) => `NODE-${n.id}`),
     connections: graph.connections.map((e) => `EDGE-${e.id}`),
   };
@@ -154,8 +168,8 @@ test('compute_importedGolden_matchesV22ComputedFields', () => {
 
 test('compute_importedFullRecord_matchesV22Blueprint', () => {
   const ctx22 = { fieldStatus: {}, extras: FULL_EXTRAS, decisionHistory: [], scenario: 'blank', provider: 'logical', showOptional: false, now: NOW };
-  const m = E.modelV22(FULL, ctx22);
-  const want = blueprintFields(E.blueprint(m.v, m.c, m.a, m.rules, m.val, E.filteredGraph(m.graph, m.v, ctx22), ctx22));
+  const want = v22Fields(FULL, ctx22);
+  assert.equal(digest(want), V22_FULL_RECORD_FIELDS, 'the fields equal those the v2.2 blueprint gave (recorded before Task 3.4 removed it)');
   assert.deepEqual(sizes(want), { calculations: 20, rules: 9, components: 52, connections: 47 });
   assert.deepEqual([want.topology, want.dr], ['Primary + independent recovery location', 'Warm Standby']);
   assert.deepEqual(computedFields(E.importV22(FULL_RECORD, OPTS)), want);

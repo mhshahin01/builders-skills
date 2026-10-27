@@ -280,7 +280,8 @@ test('applyPatch_failedOp_rejectsWholeBatch', () => {
   assert.deepEqual(result.changes, []);
   assert.deepEqual(result.errors.map((e) => [e.index, e.op, e.target]), [[1, 'set', 'REL-05.1'], [3, 'launch', null], [4, 'set', 'REL-04.1'], [5, 'set', 'REL-04.9'], [6, 'set', 'CAP-07.1']]);
   const [scope, unknown, status, missing, text] = result.errors.map((e) => e.message);
-  assert.match(scope, /REL-05 takes one of host, az, site, region, provider, cyber/);
+  assert.equal(scope, E.fieldError('REL-05', 'value', 'zone'));
+  assert.match(scope, /^Choose one of host, az, site, region, provider or cyber\.$/);
   assert.match(unknown, /Unknown op "launch"/);
   assert.match(status, /set does not take status/);
   assert.match(missing, /REL-04 has no entry 9/);
@@ -304,7 +305,8 @@ test('applyPatch_batchWithError_atomic', () => {
 test('applyPatch_numberInputs_plainDecimalOnly', () => {
   const blank = apply(apply(fresh(), [{ op: 'set', entry: 'REL-04.1', value: 60 }], person), [{ op: 'set', entry: 'REL-04.1', value: '' }], person);
   assert.deepEqual([entry(blank, 'REL-04.1').value, entry(blank, 'REL-04.1').status], [null, 'Open']);
-  for (const [raw, want] of [['1e3', 1000], [' -2.5 ', -2.5], ['+.5', 0.5], ['5.', 5], ['0', 0]]) assert.equal(entry(apply(fresh(), [{ op: 'set', entry: 'REL-04.1', value: raw }], person), 'REL-04.1').value, want, raw);
+  for (const [raw, want] of [['1e3', 1000], ['+.5', 0.5], ['5.', 5], ['0', 0]]) assert.equal(entry(apply(fresh(), [{ op: 'set', entry: 'REL-04.1', value: raw }], person), 'REL-04.1').value, want, raw);
+  assert.equal(entry(apply(fresh(), [{ op: 'set', entry: 'CAP-05.1', value: ' -2.5 ' }], person), 'CAP-05.1').value, -2.5);
   for (const raw of ['0x3C', '1_000', 'Infinity', '1e999', '60s', '6 0', '0b11']) rejected(fresh(), { op: 'set', entry: 'REL-04.1', value: raw }, person, /REL-04 takes a number in s/);
   rejected(fresh(), { op: 'set-factor', entry: 'CAP-02.1', factor: 'callsPerTxn', value: '0x3C' }, person, /callsPerTxn on CAP-02 takes a number/);
   const option = apply(fresh(), [{ op: 'set-option', name: 'One region, multi-AZ' }], agent);

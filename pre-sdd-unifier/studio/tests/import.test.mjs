@@ -82,6 +82,11 @@ function droppedUnknown(id, entry, field, value, target, reason) {
   return unknown(id, entry, `The v2.2 file gives ${field} = ${value}, which ${target} does not accept (${reason}). What is the right value?`, DROPPED);
 }
 
+function v22Model(v, ctx) {
+  const c = E.calculations(v), a = E.selectArchitecture(v, c);
+  return { v, a, rules: E.decisionRules(v, c, a), graph: E.buildDiagrams(v, c, a, 'logical', ctx) };
+}
+
 test('importV22_goldenProjectState_everyValueEstimated', () => {
   for (const name of GOLDENS) {
     const state = E.importV22(goldenCase(name).projectState, OPTS);
@@ -256,7 +261,7 @@ test('importV22_drOverrideWithScope_keyedByScope', () => {
   const { v } = E.toCalcInputs(state);
   assert.deepEqual([v.topologyOverride, v.drOverride, v.overrideReason], ['regional', 'warm', 'Cost envelope agreed']);
   const model = E.compute(state, { now: NOW });
-  const v22 = E.modelV22(record.inputs, goldenCase('regional-zero').ctx);
+  const v22 = v22Model(record.inputs, goldenCase('regional-zero').ctx);
   assert.deepEqual([model.a.topo, model.a.dr], ['regional', 'warm']);
   assert.deepEqual([model.a.topo, model.a.dr], [v22.a.topo, v22.a.dr]);
   assert.deepEqual(model.rules.map((r) => r.id), v22.rules.map((r) => r.id));
@@ -327,7 +332,7 @@ test('importV22_showOptionalTrue_graphMatchesV22FilteredGraph', () => {
     const model = E.compute(state, { now: NOW });
     const got = E.filteredGraph(model.graph, model.v, E.toCalcInputs(state).ctx);
     const ctx22 = { ...g.ctx, showOptional: true };
-    const v22 = E.modelV22(g.projectState.inputs, ctx22);
+    const v22 = v22Model(g.projectState.inputs, ctx22);
     const want = E.filteredGraph(v22.graph, v22.v, ctx22);
     const shown = JSON.parse(readText(g.file('architecture-blueprint.json'))).architecture.components.length;
     assert.deepEqual(Object.keys(want.diagrams), all, name);

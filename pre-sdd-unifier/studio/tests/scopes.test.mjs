@@ -3,19 +3,29 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadEngine } from './helpers.mjs';
+import { loadEngine, digest } from './helpers.mjs';
 
 const E = loadEngine();
 const examplesDir = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'examples');
 const NOW = '2026-10-23T11:01:02Z';
 const person = { type: 'person', name: 'Mahmoud', label: '' };
-const CTX = { fieldStatus: {}, extras: [], decisionHistory: [], scenario: 'blank', provider: 'logical', showOptional: false };
 const CONFLICT_IDS = ['CONFLICT-region', 'CONFLICT-zone', 'CONFLICT-site', 'CONFLICT-active-dr', 'CONFLICT-provider', 'CONFLICT-zeroRTO-topology', 'CONFLICT-zeroRTO-strategy', 'CONFLICT-cyber-zero', 'CONFLICT-rpo0'];
 const TOPOLOGIES = ['undetermined', 'single', 'multiAZ', 'multiAZActive', 'regional', 'active'];
 const AZ_REGION = { scopes: ['az', 'region'], rto: [['az', 5], ['region', 600]], rpo: [['az', 0], ['region', 60]] };
 const REGION_PLAIN = [{ op: 'set', entry: 'REL-05.1', value: 'region' }, { op: 'set', entry: 'REL-03.1', value: 600 }, { op: 'set', entry: 'REL-04.1', value: 0 }];
 const REGION_DECISIONS = { topology_override: 'multiAZ', dr_overrides: { region: 'active' } };
 const REMOTE = ['site', 'region', 'provider'];
+const V22_GRID = {
+  digest: '42fab19f715bba259e593e5b4b0d312cb924044929717d65c2434e30750660e8',
+  counts: { 'CONFLICT-region': 1080, 'CONFLICT-zone': 180, 'CONFLICT-site': 180, 'CONFLICT-active-dr': 1224, 'CONFLICT-provider': 180, 'CONFLICT-zeroRTO-topology': 765, 'CONFLICT-zeroRTO-strategy': 1134, 'CONFLICT-cyber-zero': 540, 'CONFLICT-rpo0': 540 },
+};
+const V22_SAME = {
+  'changeType=unknown': V22_GRID.digest,
+  'target=unknown': '60bc3b7f0cc52eb89421dd358cd537760a42d0cab1173c53a7bef406f03794c8',
+  'tenantModel=shared': V22_GRID.digest,
+  'tenantModel=unknown': V22_GRID.digest,
+};
+const REGION_CONFLICT = { id: 'CONFLICT-region', msg: 'Selected single-region placement cannot independently survive an entire region/provider outage.', owner: 'Lead architect / responsible owner' };
 const THRESHOLDS = (() => {
   const v = (rtoSec, rpoSec, failureScope = 'region', budget = 'balanced') => ({ rtoSec, rpoSec, failureScope, budget });
   return [
@@ -38,6 +48,12 @@ function apply(state, ops) {
   const result = E.applyPatch(state, ops, person, { now: NOW });
   assert.deepEqual(result.errors, [], 'setup ops must apply');
   return result.state;
+}
+
+function forced(state, id, value) {
+  const out = structuredClone(state), [rowId, n] = id.split('.');
+  Object.assign(E.rowEntries(out, rowId).find((e) => e.n === Number(n)), { value, status: 'Estimated' });
+  return out;
 }
 
 function build({ scopes = [], rto = [], rpo = [], extra = [] } = {}) {
@@ -63,13 +79,7 @@ function scopesOf(state) {
 const shapeOf = (state) => E.targetShape(state, scopesOf(state));
 const scopeView = (v, s, topologyOverride, drOverride) => ({ ...v, failureScope: s.scope ?? 'unknown', rtoSec: s.rto, rpoSec: s.rpo, topologyOverride, drOverride });
 
-function v22Conflicts(v) {
-  return E.validate(v, null, E.selectArchitecture(v, null), CTX).blockers.filter((b) => b.id.startsWith('CONFLICT-'));
-}
-
-function ruled(list, v) {
-  return list.filter((x) => x.id !== 'CONFLICT-rpo0' || REMOTE.includes(v.failureScope));
-}
+const conflictsOf = (v) => E.conflictsFor(v, E.selectArchitecture(v, null));
 
 function* grid() {
   for (const failureScope of ['unknown', 'host', 'az', 'site', 'region', 'provider', 'cyber'])
@@ -82,26 +92,18 @@ function* grid() {
 }
 
 function sameAsV22(field, value3, value22) {
-  let fired = 0;
-  for (const base of grid()) {
-    const v3 = { ...base, [field]: value3 };
-    const v22 = { ...base, [field]: value22 };
-    const want = ruled(v22Conflicts(v22), v22);
-    assert.deepEqual(E.conflictsFor(v3, E.selectArchitecture(v3, null)), want, JSON.stringify(v3));
-    fired += want.length;
-  }
+  const got = [...grid()].map((base) => conflictsOf({ ...base, [field]: value3 }));
+  const fired = got.reduce((n, list) => n + list.length, 0);
+  assert.equal(digest(got), V22_SAME[`${field}=${value22}`], `${field} ${value3}: the conflicts equal those the v2.2 validate raised for ${value22} (recorded before Task 3.4 removed it)`);
   assert.ok(fired > 1000, `${field} ${value3}: the grid raises conflicts (${fired})`);
 }
 
-function throughState(ops, decisions, field, value3, value22, expected) {
+function throughState(ops, decisions, field, value3, expected) {
   const state = apply(fresh(), ops);
   Object.assign(state.decisions, decisions);
   const { v } = E.toCalcInputs(state);
   assert.equal(v[field], value3, `${field} reaches the calculator inputs`);
-  const v22 = { ...v, [field]: value22 };
-  const want = ids(ruled(v22Conflicts(v22), v22));
-  assert.deepEqual(want, expected);
-  assert.deepEqual(ids(E.compute(state, { now: NOW }).shape.conflicts), want.map((id) => `${id}@${v.failureScope}`));
+  assert.deepEqual(ids(E.compute(state, { now: NOW }).shape.conflicts), expected.map((id) => `${id}@${v.failureScope}`));
   return v;
 }
 
@@ -153,7 +155,7 @@ test('assessScopes_scopeWithoutRto_unresolved', () => {
   const [az, region] = scopesOf(build({ scopes: ['az', 'region'], rto: [['az', 5]], rpo: [['az', 0], ['region', 60]] }));
   assert.deepEqual([az.rto, az.strategy], [5, 'localHA']);
   assert.deepEqual([region.rto, region.rtoEntry, region.rpo, region.rpoEntry, region.strategy], [null, null, 60, 'REL-04.2', 'unresolved']);
-  const left = scopesOf(build({ scopes: ['region'], rto: [['region', null], ['region', -5]], rpo: [['region', 60]] }));
+  const left = scopesOf(forced(build({ scopes: ['region'], rto: [['region', null], ['region', 0]], rpo: [['region', 60]] }), 'REL-03.2', -5));
   assert.deepEqual([left[0].rto, left[0].rtoEntry, left[0].strategy], [null, null, 'unresolved']);
   const na = apply(build({ scopes: ['region'], rto: [['region', 600]], rpo: [['region', 60]] }), [{ op: 'na', entry: 'REL-03.1', reason: 'No recovery time is agreed yet' }]);
   assert.deepEqual(scopesOf(na).map((s) => [s.rto, s.strategy]), [[null, 'unresolved']]);
@@ -267,7 +269,6 @@ test('targetShape_azAndRegion_topologyRegional', () => {
   });
   const { v } = E.toCalcInputs(state);
   const azView = scopeView(v, scopes[0], 'regional', 'localHA');
-  assert.deepEqual(ids(v22Conflicts(azView)), ['CONFLICT-rpo0']);
   assert.deepEqual(E.conflictsFor(azView, E.selectArchitecture(azView, null)), []);
   assert.deepEqual(E.compute(state, { now: NOW }).shape, shape);
   const flipped = shapeOf(build({ scopes: ['region', 'az'], rto: [['region', 600], ['az', 5]], rpo: [['region', 60], ['az', 0]] }));
@@ -327,8 +328,8 @@ test('targetShape_overrideMultiAzWithRegion_conflictAtRegion', () => {
     conflicts: ['CONFLICT-region@region'],
   });
   const { v } = E.toCalcInputs(state);
-  const [region] = v22Conflicts(scopeView(v, scopes[1], 'multiAZ', 'warm'));
-  assert.deepEqual(shape.conflicts, [{ ...region, id: 'CONFLICT-region@region' }]);
+  assert.deepEqual(shape.conflicts, [{ ...REGION_CONFLICT, id: 'CONFLICT-region@region' }]);
+  assert.deepEqual(conflictsOf(scopeView(v, scopes[1], 'multiAZ', 'warm')), [REGION_CONFLICT]);
   assert.deepEqual(scopes.map((s) => s.topoCandidate), ['multiAZ', 'regional']);
   assert.deepEqual(E.compute(state, { now: NOW }).shape, shape);
 });
@@ -362,7 +363,6 @@ test('targetShape_openFailureScope_keyedUnknownNoConflict', () => {
   });
   const { v } = E.toCalcInputs(state);
   assert.equal(v.failureScope, 'unknown');
-  assert.deepEqual(ids(v22Conflicts(v)), ['CONFLICT-rpo0']);
   const twoOpen = apply(state, [{ op: 'add', row: 'REL-05' }]);
   assert.deepEqual(E.targetShape(twoOpen, scopesOf(twoOpen)), shape);
   const na = apply(state, [{ op: 'na', entry: 'REL-05.1', reason: 'The failure scope moves to a later phase' }]);
@@ -372,23 +372,21 @@ test('targetShape_openFailureScope_keyedUnknownNoConflict', () => {
 });
 
 test('conflictsFor_everyCombination_matchesV22ButRpo0RemoteOnly', () => {
-  const seen = new Set();
-  const dropped = new Set();
-  let cases = 0;
-  let most = 0;
+  const got = [];
+  const counts = {};
+  const rpo0 = new Set();
   for (const v of grid()) {
-    const a = E.selectArchitecture(v, null);
-    const all = E.validate(v, null, a, CTX).blockers.filter((b) => b.id.startsWith('CONFLICT-'));
-    const want = ruled(all, v);
-    assert.deepEqual(E.conflictsFor(v, a), want, JSON.stringify(v));
-    if (want.length < all.length) dropped.add(v.failureScope);
-    for (const x of want) seen.add(x.id);
-    most = Math.max(most, want.length);
-    cases++;
+    const list = conflictsOf(v);
+    got.push(list);
+    for (const x of list) counts[x.id] = (counts[x.id] || 0) + 1;
+    if (list.some((x) => x.id === 'CONFLICT-rpo0')) rpo0.add(v.failureScope);
   }
-  assert.equal(cases, 7560);
-  assert.deepEqual(CONFLICT_IDS.filter((id) => seen.has(id)), CONFLICT_IDS);
-  assert.deepEqual([...dropped].sort(), ['az', 'cyber', 'host', 'unknown']);
+  assert.equal(got.length, 7560);
+  assert.deepEqual(counts, V22_GRID.counts);
+  assert.equal(digest(got), V22_GRID.digest, 'the conflicts equal those the v2.2 validate raised, with CONFLICT-rpo0 kept for remote scopes only (recorded before Task 3.4 removed it)');
+  assert.deepEqual(Object.keys(counts).sort(), [...CONFLICT_IDS].sort());
+  assert.deepEqual([...rpo0].sort(), [...REMOTE].sort());
+  const most = Math.max(...got.map((list) => list.length));
   assert.ok(most >= 3, `some case raises ${most} conflicts at once`);
 });
 
@@ -401,7 +399,6 @@ test('targetShape_localScopeRpoZero_noRpo0Conflict', () => {
   const { v } = E.toCalcInputs(state);
   for (const s of scopes) {
     const view = scopeView(v, s, 'regional', s.strategy);
-    assert.ok(ids(v22Conflicts(view)).includes('CONFLICT-rpo0'), `v2.2 validate still raises CONFLICT-rpo0 for ${s.scope}`);
     assert.equal(ids(E.conflictsFor(view, E.selectArchitecture(view, null))).includes('CONFLICT-rpo0'), REMOTE.includes(s.scope), s.scope);
   }
   for (const [scope, override] of [['az', 'active'], ['host', 'active'], ['az', 'regional']]) {
@@ -415,24 +412,24 @@ test('targetShape_localScopeRpoZero_noRpo0Conflict', () => {
 
 test('conflictsFor_hdr07Mixed_sameAsV22Unknown', () => {
   sameAsV22('changeType', 'mixed', 'unknown');
-  throughState([{ op: 'set', entry: 'HDR-07.1', value: 'mixed' }, ...REGION_PLAIN], REGION_DECISIONS, 'changeType', 'mixed', 'unknown', ['CONFLICT-region', 'CONFLICT-active-dr']);
+  throughState([{ op: 'set', entry: 'HDR-07.1', value: 'mixed' }, ...REGION_PLAIN], REGION_DECISIONS, 'changeType', 'mixed', ['CONFLICT-region', 'CONFLICT-active-dr']);
 });
 
 test('conflictsFor_hdr08Undecided_sameAsV22Unknown', () => {
   sameAsV22('target', 'undecided', 'unknown');
   const ops = [{ op: 'set', entry: 'HDR-08.1', value: 'undecided' }, { op: 'set', entry: 'REL-05.1', value: 'provider' }, { op: 'set', entry: 'REL-03.1', value: 600 }, { op: 'set', entry: 'REL-04.1', value: 0 }];
-  const v = throughState(ops, { topology_override: 'regional' }, 'target', 'undecided', 'unknown', ['CONFLICT-rpo0']);
-  assert.deepEqual(ids(v22Conflicts({ ...v, target: 'cloud' })), ['CONFLICT-provider', 'CONFLICT-rpo0']);
+  const v = throughState(ops, { topology_override: 'regional' }, 'target', 'undecided', ['CONFLICT-rpo0']);
+  assert.deepEqual(ids(conflictsOf({ ...v, target: 'cloud' })), ['CONFLICT-provider', 'CONFLICT-rpo0']);
 });
 
 test('conflictsFor_dat07SharedLogical_sameAsV22Shared', () => {
   sameAsV22('tenantModel', 'shared-logical', 'shared');
-  throughState([{ op: 'set', entry: 'DAT-07.1', value: 'shared-logical' }, ...REGION_PLAIN], REGION_DECISIONS, 'tenantModel', 'shared-logical', 'shared', ['CONFLICT-region', 'CONFLICT-active-dr']);
+  throughState([{ op: 'set', entry: 'DAT-07.1', value: 'shared-logical' }, ...REGION_PLAIN], REGION_DECISIONS, 'tenantModel', 'shared-logical', ['CONFLICT-region', 'CONFLICT-active-dr']);
 });
 
 test('conflictsFor_dat07SchemaIsolated_sameAsV22Unknown', () => {
   sameAsV22('tenantModel', 'schema-isolated', 'unknown');
-  throughState([{ op: 'set', entry: 'DAT-07.1', value: 'schema-isolated' }, ...REGION_PLAIN], REGION_DECISIONS, 'tenantModel', 'schema-isolated', 'unknown', ['CONFLICT-region', 'CONFLICT-active-dr']);
+  throughState([{ op: 'set', entry: 'DAT-07.1', value: 'schema-isolated' }, ...REGION_PLAIN], REGION_DECISIONS, 'tenantModel', 'schema-isolated', ['CONFLICT-region', 'CONFLICT-active-dr']);
 });
 
 test('recoveryTier_examples', () => {

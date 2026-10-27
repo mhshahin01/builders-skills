@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadEngine, goldenCase, readText } from './helpers.mjs';
+import { loadEngine, goldenCase, readText, digest } from './helpers.mjs';
 
 const E = loadEngine();
 const NOW = '2026-10-23T11:01:02Z';
@@ -10,6 +10,10 @@ const fixture = { type: 'fixture', name: 'Fixture Owner', label: '' };
 const OWNER = 'Lead architect / responsible owner';
 const DR_FAMILY = ['DR-03', 'DR-06', 'DR-ZERO-01', 'DR-ZERO-02', 'DATA-07', 'DATA-08', 'SLO-15'];
 const DROPPED = ['EVID-01', 'EVID-02'];
+const V22_WARNING_IDS = ['OPEN-01', 'EVID-01', 'EVID-02', 'DB-atomicity', 'DR-zeroRTO-unverified', 'DR-zero-scope', 'DATA-commit-protocol', 'DR-restore', 'DR-location', 'OVERRIDE-review', 'MIG-transfer', 'BF-inventory', 'DB-mixed', 'REL-test'];
+const V22_ADVISORIES = { 'changeType=unknown': 'edd968e676517b1f98a20bd6fba2c8e4b74847f702416e73350c4a1441a94618', 'target=unknown': 'be662bebd949d68fd0457b412e7ed9ffe3e63d481718c86c40237ea6f02ef997' };
+const V22_GRID = { advisories: 'f181a247a3dd2364b67caf3de02e603d129114d867304fd9d8b111a622abe6fa', carried: 'c002e3e8302b6d11753c74340989ccd178053a975fbc084712a0077498389d27' };
+const ZERO_RTO_WARNING = { id: 'DR-zeroRTO-unverified', msg: 'Zero-second RTO is a business aspiration, not a guaranteed failover result; define outage detection/SLI granularity and test end-to-end, including partitions.', owner: 'Architecture / platform owner' };
 const HARD = ['BUS-07.1', 'BUS-08.1', 'DAT-03.1', 'DAT-04.1', 'DAT-06.1', 'SEC-01.1', 'SEC-04.1'];
 const OPEN_MSG = (id) => `${id} is a hard constraint and is Open; give its value, or mark it N/A with a reason, or have a named person grant a time-bound exception.`;
 const CLEAR = [
@@ -96,6 +100,15 @@ function apply(state, ops, actor = person) {
   return result.state;
 }
 
+function forced(state, writes) {
+  const out = structuredClone(state);
+  for (const [id, factor, value] of writes) {
+    const [rowId, n] = id.split('.'), entry = E.rowEntries(out, rowId).find((e) => e.n === Number(n));
+    Object.assign(factor ? entry.factors[factor] : entry, { value, status: 'Estimated' });
+  }
+  return out;
+}
+
 function build({ scopes = [], rto = [], rpo = [], extra = [] } = {}) {
   const ops = [];
   scopes.forEach((scope, i) => {
@@ -111,11 +124,9 @@ function build({ scopes = [], rto = [], rpo = [], extra = [] } = {}) {
   return apply(fresh(), [...ops, ...extra]);
 }
 
-function v22Model(v, ctx) {
+function v22Rules(v) {
   const c = E.calculations(v);
-  const a = E.selectArchitecture(v, c);
-  const checked = E.validate(v, c, a, ctx);
-  return { rules: E.decisionRules(v, c, a), warnings: checked.warnings.filter((w) => !DROPPED.includes(w.id)), blockers: checked.blockers };
+  return E.decisionRules(v, c, E.selectArchitecture(v, c));
 }
 
 function sourceIds(fn, call) {
@@ -153,19 +164,21 @@ function* smallGrid(skip) {
 
 function sameAsV22(field, row, value3, value22, label) {
   const seen = new Set();
+  const advisories = [];
   let compared = 0;
   for (const inputs of smallGrid(field)) {
     const state = apply(E.importV22({ inputs }, OPTS), [{ op: 'set', entry: `${row}.1`, value: value3 }]);
-    const { v, ctx } = E.toCalcInputs(state);
+    const { v } = E.toCalcInputs(state);
     assert.equal(v[field], value3, `${field} reaches the calculator inputs`);
-    const want = v22Model({ ...v, [field]: value22 }, ctx);
-    const shown = label ? want.rules.map((r) => ({ ...r, trigger: r.trigger.replace(`${label}=${value22}`, `${label}=${value3}`) })) : want.rules;
+    const want = v22Rules({ ...v, [field]: value22 });
+    const shown = label ? want.map((r) => ({ ...r, trigger: r.trigger.replace(`${label}=${value22}`, `${label}=${value3}`) })) : want;
     const model = E.compute(state, { now: NOW });
     assert.deepEqual(model.rules, shown, JSON.stringify(inputs));
-    assert.deepEqual(model.validation.advisories, want.warnings, JSON.stringify(inputs));
+    advisories.push(model.validation.advisories);
     for (const x of [...model.rules, ...model.validation.advisories]) seen.add(x.id);
     compared += model.rules.length + model.validation.advisories.length;
   }
+  assert.equal(digest(advisories), V22_ADVISORIES[`${field}=${value22}`], `${field} ${value3}: the advisories equal the warnings the v2.2 validate gave for ${value22} (recorded before Task 3.4 removed it)`);
   assert.ok(compared > 500, `${field} ${value3}: the grid compares rules and advisories (${compared})`);
   for (const id of ['ARCH-01', 'NET-12', 'DR-03', 'DR-ZERO-01', 'DR-zeroRTO-unverified', 'DR-location', 'MIG-transfer']) assert.ok(seen.has(id), `${field} ${value3}: ${id} fires in the grid`);
   return seen;
@@ -223,11 +236,10 @@ test('validateState_reviewAfterExpiry_exceptionNotValid', () => {
 });
 
 test('validateState_exception_liftsOnlyItsEntryAndItsDtBlock', () => {
-  const base = apply(fresh(), [
+  const base = forced(apply(fresh(), [
     { op: 'set', entry: 'CAP-07.1', priority: 'Must', kind: 'hard', reason: 'Checkout latency is contractual' },
-    { op: 'set-factor', entry: 'CAP-04.1', factor: 'utilization', value: 1.5 },
     { op: 'set', entry: 'REL-05.1', value: 'region' }, { op: 'add', row: 'REL-05' }, { op: 'set', entry: 'REL-05.2', value: 'region' },
-  ]);
+  ]), [['CAP-04.1', 'utilization', 1.5]]);
   const before = blockerIds(base);
   for (const id of ['OPEN-CAP-07.1', 'DT-02-BLOCK@CAP-07.1', 'INVALID-CAP-04.1.utilization', 'DT-03-BLOCK@region', 'DUPLICATE-SCOPE@region', 'DT-01-STOP', 'DT-15-BLOCK']) assert.ok(before.includes(id), id);
   const lifted = apply(base, ['CAP-07.1', 'CAP-04.1', 'REL-05.1', 'REL-05.2', 'BUS-01.1'].map((entry) => exception(entry)));
@@ -329,11 +341,10 @@ test('validateState_overlayWithout7R_dt11Block', () => {
 
 test('validateState_invalidUtilization_invalidBlocker', () => {
   const invalid = (state) => validation(state).blockers.filter((b) => b.id.startsWith('INVALID-'));
-  const state = apply(fresh(), [{ op: 'set-factor', entry: 'CAP-04.1', factor: 'utilization', value: 1.5 }]);
+  const state = forced(fresh(), [['CAP-04.1', 'utilization', 1.5]]);
   assert.deepEqual(invalid(state), [{ id: 'INVALID-CAP-04.1.utilization', msg: 'CAP-04.1.utilization is 1.5, which is above 1, so the calculations treat it as TBD; correct the value.', owner: 'B+E', entry: 'CAP-04.1' }]);
-  const more = apply(state, [
-    { op: 'set', entry: 'REL-01.1', value: 120 }, { op: 'add', row: 'REL-03' }, { op: 'set', entry: 'REL-03.2', value: -5 },
-    { op: 'set', entry: 'CAP-02.1', value: -1 }, { op: 'set-factor', entry: 'INT-08.1', factor: 'cidrPrefix', value: 20.5 },
+  const more = forced(apply(state, [{ op: 'add', row: 'REL-03' }]), [
+    ['REL-01.1', null, 120], ['REL-03.2', null, -5], ['CAP-02.1', null, -1], ['INT-08.1', 'cidrPrefix', 20.5],
   ]);
   assert.deepEqual(invalid(more).map((b) => [b.id, b.entry, b.msg.split(', which is ')[1].split(', so')[0]]), [
     ['INVALID-CAP-02.1.value', 'CAP-02.1', 'below 0'], ['INVALID-CAP-04.1.utilization', 'CAP-04.1', 'above 1'],
@@ -508,10 +519,7 @@ test('validateState_twoScopes_drAdvisoriesSuffixed', () => {
   const state = build(TWO);
   const { advisories } = validation(state);
   assert.deepEqual(ids(advisories), ['OPEN-01', 'DR-zeroRTO-unverified@az', 'DR-location@region']);
-  const { v, ctx } = E.toCalcInputs(state);
-  const v22 = v22Model(v, ctx).warnings;
-  assert.deepEqual(ids(v22), ['OPEN-01', 'DR-zeroRTO-unverified', 'DATA-commit-protocol'], 'v2.2 sees only the primary az scope, under its own multiAZActive topology');
-  assert.deepEqual({ ...advisories[1], id: 'DR-zeroRTO-unverified' }, v22[1]);
+  assert.deepEqual({ ...advisories[1], id: 'DR-zeroRTO-unverified' }, ZERO_RTO_WARNING);
   const single = build({ scopes: ['region'], rto: [['region', 3000]], rpo: [['region', 5]] });
   assert.deepEqual(ids(validation(single).advisories), ['OPEN-01', 'DR-location']);
 });
@@ -665,9 +673,9 @@ test('rules_twoScopes_ha02TriggerListsScopes', () => {
   assert.equal(ha(multi).trigger, 'fault=az, region, availability=99.9%');
   assert.equal(ha(build({ scopes: [null, 'az'], extra: availability })).trigger, 'fault=unknown, az, availability=99.9%');
   const single = build({ scopes: ['az'], rto: [[null, 600]], rpo: [[null, 60]], extra: availability });
-  const { v, ctx } = E.toCalcInputs(single);
+  const { v } = E.toCalcInputs(single);
   assert.equal(ha(single).trigger, 'fault=az, availability=99.9%');
-  assert.equal(ha(single).trigger, v22Model(v, ctx).rules.find((r) => r.id === 'HA-02').trigger, 'one scope keeps the v2.2 text');
+  assert.equal(ha(single).trigger, v22Rules(v).find((r) => r.id === 'HA-02').trigger, 'one scope keeps the v2.2 text');
   assert.equal(ha(build({ scopes: ['az', 'az'], extra: availability })).trigger, 'fault=az, availability=99.9%', 'one distinct scope');
 });
 
@@ -711,7 +719,7 @@ test('validateState_overlayNotApplying_hardOverlayRowNoBlocker', () => {
 });
 
 test('validateState_overlayNotApplying_invalidFactorNoBlocker', () => {
-  const state = apply(fresh(), [...CLEAR, { op: 'set-factor', entry: 'OVL-08.1', factor: 'linkMbps', value: 0 }]);
+  const state = forced(apply(fresh(), CLEAR), [['OVL-08.1', 'linkMbps', 0]]);
   assert.deepEqual([state.register.overlay.applies, E.rowEntries(state, 'OVL-08')[0].factors.linkMbps.value], [false, 0]);
   assert.deepEqual(validation(state).blockers, [], 'no INVALID, and nothing for DT-15 to count');
   const applies = structuredClone(state);
@@ -722,7 +730,7 @@ test('validateState_overlayNotApplying_invalidFactorNoBlocker', () => {
 });
 
 test('decisionRules_readPercentKnown_emitsDbRead17', () => {
-  const rulesOf = (v) => ids(v22Model(v, E.toCalcInputs(fresh()).ctx).rules);
+  const rulesOf = (v) => ids(v22Rules(v));
   assert.ok(rulesOf({ ...BLANK, readPercent: 70 }).includes('DB-READ-17'));
   assert.ok(!rulesOf({ ...BLANK, readPercent: 70 }).includes('DB-READ-11'));
   assert.ok(!rulesOf(BLANK).includes('DB-READ-17'));
@@ -739,10 +747,10 @@ test('decisionRules_capacityRule_emitsLoad04', () => {
   assert.deepEqual([load.title, load.trigger], ['Workload-based capacity planning', `peak=${E.fmt(c.peakTPS, 2)} TPS; ${E.fmt(c.rps, 2)} API RPS`]);
   assert.ok(!ids(rules).includes('CAP-04'));
   assert.ok(ids(E.compute(imported({ dailyTxn: 864000 }), { now: NOW }).rules).includes('LOAD-04'));
-  const g = goldenCase('demo');
-  const files = E.exportFiles(E.modelV22(g.projectState.inputs, g.ctx), g.ctx);
-  assert.ok(files['Decision_Record.md'].includes('## LOAD-04: Workload-based capacity planning'));
-  assert.ok(!files['Decision_Record.md'].includes('## CAP-04:'), 'the v2.2 page shows the new ID');
+  const demo = E.importV22(goldenCase('demo').projectState, OPTS);
+  const record = E.previewFiles(demo, E.compute(demo, { now: NOW }), { now: NOW })['Decision_Record.md'];
+  assert.ok(record.includes('| LOAD-04 | Workload-based capacity planning |'));
+  assert.ok(!record.includes('| CAP-04 |'), 'the preview decision record shows the new ID');
 });
 
 test('rules_twoScopes_drFamilySuffixed', () => {
@@ -753,8 +761,8 @@ test('rules_twoScopes_drFamilySuffixed', () => {
   for (const r of model.rules) assert.equal(r.id.includes('@'), DR_FAMILY.includes(r.id.split('@')[0]), r.id);
   const byId = Object.fromEntries(model.rules.map((r) => [r.id, r]));
   assert.deepEqual([byId['DR-06@az'].trigger, byId['DR-03@region'].trigger, byId['SLO-15@region'].trigger], ['RTO=0 s for az', 'failure scope=region', 'RTO=50 min; 30-day budget=43.2 min']);
-  const { v, ctx } = E.toCalcInputs(state);
-  assert.deepEqual(ids(v22Model(v, ctx).rules), ['ARCH-01', 'HA-02', 'LOAD-04', 'DR-06', 'DR-ZERO-01', 'DR-ZERO-02', 'DATA-07', 'DB-09'], 'v2.2 sees only the primary az scope');
+  const { v } = E.toCalcInputs(state);
+  assert.deepEqual(ids(v22Rules(v)), ['ARCH-01', 'HA-02', 'LOAD-04', 'DR-06', 'DR-ZERO-01', 'DR-ZERO-02', 'DATA-07', 'DB-09'], 'v2.2 sees only the primary az scope');
   const order = sourceIds(E.decisionRules, 'add').ids;
   const checked = (list, many = true) => {
     const at = list.map((id) => order.indexOf(id.split('@')[0]));
@@ -788,9 +796,9 @@ test('rules_drOverrideOnSecondScope_adr16Fires', () => {
   Object.assign(state.decisions, { dr_overrides: { region: 'active' }, override_reason: 'Payments need it' });
   assert.equal(adr(state).trigger, 'topology=auto; DR=active@region');
   assert.ok(ids(validation(state).advisories).includes('OVERRIDE-review'));
-  const { v, ctx } = E.toCalcInputs(state);
+  const { v } = E.toCalcInputs(state);
   assert.equal(v.drOverride, 'auto');
-  assert.ok(!ids(v22Model(v, ctx).rules).includes('ADR-16'), 'v2.2 reads the override of the primary az scope only');
+  assert.ok(!ids(v22Rules(v)).includes('ADR-16'), 'v2.2 reads the override of the primary az scope only');
   Object.assign(state.decisions, { topology_override: 'active', dr_overrides: { az: 'warm', region: 'active' } });
   assert.equal(adr(state).trigger, 'topology=active; DR=warm@az, active@region');
   Object.assign(state.decisions, { topology_override: 'auto', dr_overrides: { site: 'warm' } });
@@ -804,7 +812,7 @@ test('rules_drOverrideOnSecondScope_adr16Fires', () => {
   assert.equal(adr(odd), undefined, 'the shape reads an undetermined override as none');
   const view = E.toCalcInputs(odd);
   assert.equal(view.v.topologyOverride, 'auto');
-  assert.ok(!ids(v22Model(view.v, view.ctx).rules).includes('ADR-16'), 'v2.2 reads it as none too');
+  assert.ok(!ids(v22Rules(view.v)).includes('ADR-16'), 'v2.2 reads it as none too');
   odd.decisions.topology_override = 'sideways';
   assert.throws(() => adr(odd), SIDEWAYS, 'the gate rejects a topology outside the enum before the rules read it');
 });
@@ -893,10 +901,9 @@ test('rules_everyRuleId_hasTriggerCase', () => {
   assert.equal(fromCode.length, sites, 'every rule in decisionRules has a literal or renamed ID');
   assert.equal(new Set(fromCode).size, fromCode.length);
   assert.deepEqual(TRIGGERS.map(([id]) => id), fromCode, 'one case per rule ID, in code order');
-  const { ctx } = E.toCalcInputs(fresh());
   for (const [id, inputs] of TRIGGERS) {
     const once = (list) => list.filter((r) => r.id === id).length;
-    assert.equal(once(v22Model({ ...BLANK, ...inputs }, ctx).rules), 1, `decisionRules: ${id}`);
+    assert.equal(once(v22Rules({ ...BLANK, ...inputs })), 1, `decisionRules: ${id}`);
     const rules = E.compute(imported(inputs), { now: NOW }).rules;
     assert.equal(once(rules), 1, `3.0 rules: ${id}`);
     for (const r of rules) assert.ok(fromCode.includes(r.id.split('@')[0]), `${r.id} comes from decisionRules`);
@@ -909,33 +916,36 @@ test('compute_importedV22Grid_rulesAndAdvisoriesMatchV22', () => {
   const carried = new Map(CARRIED_BLOCKERS.map((id) => [id, new Set()]));
   const pick = (list) => ids(list).filter((id) => CARRIED_BLOCKERS.includes(id));
   let cases = 0;
+  const advisories = [], picked = [];
   for (const record of v22Grid()) {
     const state = E.importV22(record, OPTS);
     const model = E.compute(state, { now: NOW });
-    const { v, ctx } = E.toCalcInputs(state);
-    const want = v22Model(v, ctx);
-    assert.deepEqual(model.rules, want.rules, JSON.stringify(record));
-    assert.deepEqual(model.validation.advisories, want.warnings, JSON.stringify(record));
-    assert.deepEqual(pick(model.validation.blockers), pick(want.blockers), JSON.stringify(record));
-    for (const id of CARRIED_BLOCKERS) carried.get(id).add(pick(want.blockers).includes(id));
+    const { v } = E.toCalcInputs(state);
+    assert.deepEqual(model.rules, v22Rules(v), JSON.stringify(record));
+    advisories.push(model.validation.advisories);
+    picked.push(pick(model.validation.blockers));
+    for (const id of CARRIED_BLOCKERS) carried.get(id).add(pick(model.validation.blockers).includes(id));
     for (const r of model.rules) rulesSeen.add(r.id);
     for (const x of model.validation.advisories) advisoriesSeen.add(x.id);
     cases++;
   }
   assert.equal(cases, 3444);
+  assert.equal(digest(advisories), V22_GRID.advisories, 'the advisories equal the warnings the v2.2 validate gave (recorded before Task 3.4 removed it)');
+  assert.equal(digest(picked), V22_GRID.carried, 'the carried blockers equal those the v2.2 validate gave (recorded before Task 3.4 removed it)');
   for (const [id, outcomes] of carried) assert.equal(outcomes.size, 2, `${id} both fires and stays quiet in the grid`);
   assert.deepEqual([...rulesSeen].sort(), [...sourceIds(E.decisionRules, 'add').ids].sort(), 'every rule fires in the grid');
-  const { ids: warnings, sites } = sourceIds(E.validate, 'W');
-  assert.equal(warnings.length, sites);
-  assert.deepEqual([...advisoriesSeen].sort(), warnings.filter((id) => !DROPPED.includes(id)).sort(), 'every carried v2.2 warning fires in the grid');
+  const source = readText(new URL('../src/engine.js', import.meta.url));
+  const start = source.indexOf('const CARRIED_WARNINGS=[');
+  const carriedIds = [...source.slice(start, source.indexOf(']];', start)).matchAll(/^ \['([A-Za-z0-9-]+)',(?:true|false),/gm)].map((m) => m[1]);
+  assert.deepEqual(carriedIds, V22_WARNING_IDS.filter((id) => !DROPPED.includes(id)), 'CARRIED_WARNINGS holds every v2.2 warning except the dropped ones, in v2.2 order');
+  assert.deepEqual([...advisoriesSeen].sort(), [...carriedIds].sort(), 'every carried v2.2 warning fires in the grid');
 });
 
 test('compute_hdr07Mixed_sameAsV22Unknown', () => {
   sameAsV22('changeType', 'HDR-07', 'mixed', 'unknown', 'change');
   const state = apply(imported({ migration: 'no' }), [{ op: 'set', entry: 'HDR-07.1', value: 'mixed' }]);
-  const { v, ctx } = E.toCalcInputs(state);
-  const brownfield = v22Model({ ...v, changeType: 'brownfield' }, ctx);
-  assert.ok(ids(brownfield.rules).includes('MIG-13') && ids(brownfield.warnings).includes('BF-inventory'), 'a real v2.2 value would differ');
+  const brownfield = E.compute(apply(state, [{ op: 'set', entry: 'HDR-07.1', value: 'brownfield' }]), { now: NOW });
+  assert.ok(ids(brownfield.rules).includes('MIG-13') && ids(brownfield.validation.advisories).includes('BF-inventory'), 'a real brownfield value would differ');
   assert.ok(!ids(E.compute(state, { now: NOW }).rules).includes('MIG-13'));
 });
 
@@ -943,9 +953,9 @@ test('compute_hdr08Undecided_sameAsV22Unknown', () => {
   const seen = sameAsV22('target', 'HDR-08', 'undecided', 'unknown', 'target');
   assert.ok(seen.has('MIG-13') && seen.has('BF-inventory'));
   const state = apply(imported({ changeType: 'greenfield' }), [{ op: 'set', entry: 'HDR-08.1', value: 'undecided' }]);
-  const { v, ctx } = E.toCalcInputs(state);
+  const { v } = E.toCalcInputs(state);
   assert.equal(E.compute(state, { now: NOW }).rules[0].assessment, 'Keep eligible hosting candidates open. No forced provider.');
-  assert.equal(v22Model({ ...v, target: 'cloud' }, ctx).rules[0].assessment, 'Route to GF-CL; migration is a separate overlay.', 'a real v2.2 value would differ');
+  assert.equal(v22Rules({ ...v, target: 'cloud' })[0].assessment, 'Route to GF-CL; migration is a separate overlay.', 'a real v2.2 value would differ');
 });
 
 test('rulesAndWarnings_neverReadTenantModel', () => {

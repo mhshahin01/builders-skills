@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,4 +43,14 @@ export function goldenCase(name) {
     now: blueprint.validation.checked_at,
   };
   return { dir, file, manifest, projectState, ctx };
+}
+
+function canonical(x) {
+  if (Array.isArray(x)) return `[${x.map(canonical).join(',')}]`;
+  if (x && typeof x === 'object') return `{${Object.keys(x).sort().map((k) => `${JSON.stringify(k)}:${canonical(x[k])}`).join(',')}}`;
+  return JSON.stringify(x) ?? 'undefined';
+}
+
+export function digest(value) {
+  return createHash('sha256').update(canonical(value)).digest('hex');
 }

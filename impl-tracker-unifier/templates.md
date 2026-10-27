@@ -41,6 +41,44 @@ Prefer `paths:` over `always`, so a suite runs only when its own code changed; `
 deletes each suite's `Reports` matches before its run). Split independent projects (two Angular apps) into
 their own rows so they run side by side.
 
+## Always-run tests
+
+Run by `preflight.py --quick` with the task's own test classes: cross-cutting rules a task can break without
+touching their files (module/architecture rules, schema version gates, full table or index lists).
+
+| Test class | Why |
+|---|---|
+| <e.g. ModuleArchitectureTest> | <module and adapter boundaries> |
+
+## Mutation suites
+
+| Suite | Command | Report | Path prefix | Ext | Exclude |
+|---|---|---|---|---|---|
+| backend | <e.g. cd api && mvn -B -q test-compile org.pitest:pitest-maven:mutationCoverage -DtargetClasses={classes} -DoutputFormats=XML -DtimestampedReports=false -Dthreads=4> | <e.g. api/target/pit-reports/mutations.xml> | api/src/main/ | .java | <optional globs, e.g. `*Constants.java`> |
+| frontend | <e.g. cd web && npx stryker run --mutate {files} --reporters json> | <e.g. web/reports/mutation/mutation.json> | web/ | .ts | <optional globs, e.g. `*-constants.ts`> |
+
+Pre-flight P10 runs these after the test suites pass, **only on the task's changed production files**
+(`{classes}` = Java class names, `{files}` = paths relative to the prefix), so a run takes minutes, not an
+audit round. A mutant that survives fails P10 unless the card's `## Equivalent mutants` lists its
+`File.ext:line` with a reason. Quote the line's code in a second backtick group (P10 prints it): the
+entry then also matches after the line moves, so an edit above it never forces a rerun. `--mutate` runs
+the same suites locally on the task's own tests first (minutes, L-060). The full P10 targets the covering
+tests (the task's tests, tests naming a changed class or its interfaces, tests in its package); survivors
+are re-checked against the suite default for their classes only (Spring beans and constructors run only
+while a context starts), so a run takes minutes. This replaces the hand sweep (L-046): the builder fixes survivors before the
+audit; the auditor reads the report. PIT needs the `pitest-maven` plugin with `pitest-junit5-plugin` in
+the pom; Stryker needs `@stryker-mutator/core` and its runner. No table → P10 is INFO (not checked).
+
+What P10 skips (L-054); everything else still needs a killing test or a reasoned card line:
+- **Files with no logic** are never mutated: `*-options.ts`, `*.routes.ts`, `guides.ts`, `index.ts`, tool
+  configs, plus the suite's `Exclude` globs (comma-separated, matched on the file name or the path).
+- **Starting values (auto):** a surviving BooleanLiteral, ArrayDeclaration or ObjectLiteral mutant on a field or
+  constant declaration line (`readonly x = signal(false)`, `o = { … }`, `private y: T | null = null`), and a
+  StringLiteral there only inside `signal(…)`, `model(…)` or `input(…)`. The P10 row lists them as
+  `auto (initial values, L-054): file:line mutator` so the auditor still sees them; they never fail P10.
+- **Still checked:** number literals (limits), constant strings (UI messages), `computed(…)` and arrow-function
+  fields, and every condition, call, return and statement in components, services and pages.
+
 ## Verify worktree
 
 | Item | Value |
@@ -149,7 +187,17 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 - `route_reviewQueueFull_doesNotKeepMatch` — AUTOAPPLY/UC-23 A1
 
 ## Lessons that apply (filled by start)
-- L-004: Always add a migration with any entity field change — Check: diff has `db/migration/V*.sql`
+- [L-004](../../lessons.md#l-004) — links only; the rule and Check live in lessons.md (never copied, so never stale)
+
+## Template bindings (P11: each behaviour binding this task adds to an .html template)
+- `[disabled]="busy()"` → `disablesSaveWhileSaving`
+- `(click)="pickOpen.set(true)"` → `opensPickerOnPick`
+
+## Removals (risk high: every Design check guard; run `preflight.py --removals`)
+- `api/src/main/java/.../RoutingServiceImpl.java` `requireOwner(account, offer);` → `RoutingServiceTest#refusesAnotherAccountsOffer`
+
+## Equivalent mutants (only if P10 reports survivors that no test can kill)
+- `RoutingServiceImpl.java:42` `if (score >= threshold) {` ConditionalsBoundary — `>=` and `>` give the same result: the value is never equal here
 
 ## Evidence (filled by done/verify)
 | Date | Agent | Commits | Tests | Audit | Note |
@@ -313,6 +361,7 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 # AUTOAPPLY/T-014 audit 1 — FAIL
 
 Auditor: <agent/model> · risk <low|high> · 2026-10-19 · commits <shas> · export <head>
+Time: started <HH:MM> · finished <HH:MM> · <n> min (budget 25; delta 10)
 Pre-flight: [T-014-<sha>.md](../preflight/T-014-<sha>.md) · auditor verdict <as written> · recomputed <verdict>
 Tests: <full run in export | reused pre-flight <file> (tree = head) + ran <classes>> · Scope: <full | delta of audit-<n>> · Export: <fresh | reused, clean, HEAD = <sha>>
 

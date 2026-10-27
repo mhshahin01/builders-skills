@@ -109,6 +109,9 @@ Natural language maps to commands: "what's next" → `next`; "do several at once
 4. Install the Stop audit hook (audit-rules.md § 7) in the code repo's `.claude/settings.json`: ask once, then
    merge it into existing `hooks.Stop` (create the file if missing; never drop other settings or hooks;
    skip if the same command is already there).
+4b. Offer the post-commit lint hook (`hooks/post-commit-lint.sh` → the repo's `.git/hooks/post-commit`; ask
+   once, never overwrite an existing hook): after every commit it lints the commit's `Task:` and prints only
+   FAIL rows, so paperwork is fixed at commit time, never found by a pre-flight. It never blocks a commit.
 5. Add the agent rules block (templates.md § Agent rules block) to `AGENTS.md` / `CLAUDE.md` of the
    code repo, if the user agrees.
 
@@ -169,7 +172,8 @@ Builds several tasks in one pass without loosening any gate.
    commit, so no two wave tasks share one), implement it, commit it (one or more commits, **each with
    exactly one `Task:` trailer**, never two tasks in one commit), then go to the next task. A task that
    needs to change a file outside its Owns declares it under `## Touches` with the reason, or stops and
-   becomes a gap.
+   becomes a gap. Never sit idle on a long run: while one task's pre-flight or audit runs (minutes), read
+   and design-check the next task; commit only one task's files per commit.
 5. Finish with `done KEY/T-a,KEY/T-b,…`.
 6. **Bookkeeping once per wave:** during the wave write only what a gate needs (card status, History row,
    audit/pre-flight links). Journal entry, minor-finding gaps, lesson dedup/promotion, `checks.json`
@@ -180,7 +184,9 @@ Builds several tasks in one pass without loosening any gate.
 
 1. Read the task card + `index.md` + `ownership.md`.
 2. **Readiness gate** (status-rules.md § Gate): every `depends_on` Done/Verified; task not Stale;
-   no open `blocker` gap linked to it. If it fails: refuse, print the blocking chain down to the first
+   no open `blocker` gap linked to it; for risk `high`, no open `plan-gap`/`doc-gap` or LLD open item
+   (OI) on an anchor the task cites — settle the doc first, so the design does not move mid-task (PLATFORM/T-055
+   waited on LLD v1.3 then v1.4 mid-build). If it fails: refuse, print the blocking chain down to the first
    ready task, and offer to start that one. Override only per status-rules.md § Override.
 3. **Double-build gate**: grep the code repo for each owned symbol/table/route/file. Exists already →
    stop and ask: is it the same thing (then link it, maybe the task is already done) or a clash (gap
@@ -194,16 +200,21 @@ Builds several tasks in one pass without loosening any gate.
    - **State or timing table**: every state, event and clock the task touches, including the other side's
      rule (server throttle, job predicate, retry), and what the code does in each cell.
    - **Neighbour scan**: grep the jobs, filters, listeners and handlers that select, change or delete each
-     state, table or route the task creates or changes; list each with its predicate (L-034).
+     state, table or route the task creates or changes; list each with its predicate (L-034). Search
+     `src/main` **and** `src/test`: a new bean, table or route also has test-side users (L-061).
    - **Contract check**: everything the code needs from an API or event is in the LLD contract. If not,
      stop: open a `plan-gap` and ask the user (a contract change is direction-level) before coding.
    - **Test plan from the rules**: which fakes or models stand in for the other side and how each answers
-     by the real rule (L-035).
+     by the real rule (L-035). For every claim, lease or fencing token: a test where the stale holder
+     finishes while the new holder is still mid-flight, and the token conjunct on its own line so
+     `## Removals` can delete it (L-062).
    Then one fresh reviewer (Agent tool, `general-purpose`, faster model, about 5 minutes, read-only) checks
    the design check against the cited docs and returns missing invariants, cells or neighbours. Fix and
    record "design check: reviewed" in History. It never replaces the audit.
 3d. **Lint at start (seconds):** run `preflight.py … --task KEY/T-NNN --lint` now, so Owns paths, Risk
-   floor and card/index mismatches are fixed before any code, not found at `done`.
+   floor and card/index mismatches are fixed before any code, not found at `done`. Re-lint after every
+   commit (the post-commit hook does it when installed): a pre-flight must never be the first to find
+   paperwork. Also run `preflight.py --tracking <t> --doctor` (seconds) when the task has tests.
 3e. **Fresh stack (tasks with e2e or integration tests):** any local service (API, worker, dev server)
    started before the current head commit is restarted now, as part of bringing the environment up
    (audit-rules.md § 3a); never mid-task, never by asking the user.
@@ -222,16 +233,27 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
 1. Collect evidence: commits with `Task: KEY/T-NNN` (git log), changed files, unit tests added.
    A Partial task with no start commit first runs `start` steps 1–4 (gates, start commit) — never a
    hand-picked start sha.
-1b. **Bring the test environment up** (audit-rules.md § 3a): if tests need Docker and the engine is down,
-   start it yourself (Docker Desktop / `systemctl start docker` / `colima start`), wait until `docker info`
-   answers (≤ 3 min); start the local compose stack if the project has one. Never ask the user first;
-   never install or reconfigure Docker. Still down after the wait → stop, report the cause, task stays
-   `In progress`. (The tests themselves run once, in pre-flight.)
+1b. **Bring the test environment up:** `preflight.py --tracking <t> --doctor` (seconds). It starts Docker
+   when down (never installs or reconfigures it), recreates a missing verify worktree, checks Node against
+   every `engines.node`, and checks the shared test database's connection headroom (classes × pool under
+   80% of `max_connections`). Start the local compose stack if the project has one. Any doctor FAIL → fix it
+   before pre-flight; never ask the user first. The full pre-flight also runs the doctor first, and **fails
+   fast**: when a doctor, paperwork or lint row fails, it skips the suites (seconds, no report written)
+   instead of spending minutes on tests whose result cannot count.
 1c. **Lint first (seconds).** `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --lint`
    runs every check except tests and the stack, accepts uncommitted work, and prints ready-to-paste
    `## Touches` lines for files outside Owns. Fix everything it reports before the full pre-flight: Touches
    paths, Risk floor, trailers, card/index status, lesson coverage (`checks.json`). It writes no report, ends with
-   `LINT: PASS|FAIL`, and never stands in for the pre-flight.
+   `LINT: PASS|FAIL`, and never stands in for the pre-flight. Lint fails on an uncommitted doc or binary
+   (`.md`, `.pdf`, images, Office files): commit it now, never after `--removals`.
+1d. **Quick tests (a minute or two).** `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --quick`
+   runs the task's own test classes plus config.md `## Always-run tests` (architecture rules, schema gates: what a
+   task breaks without touching their files). P12 also names any test that still pins a schema's previous
+   highest migration. Green here before `--mutate`, `--removals` or the full run.
+   **Fast path, in this order, each once (target: one full pre-flight, one audit):** lint → `--quick` →
+   `--mutate` (fix or list every survivor) → commit everything (code, docs, binaries: tree clean) → `--removals`
+   on the final code → full pre-flight → audit. A commit of only docs or binaries no longer makes the removals
+   report or the suite cache stale; any code change does, so code fixes come before `--removals`, never after.
 2. Check: every owned item exists in code; DoD checklist ticked. Missing → stay `In progress` and list
    what's missing, or the user splits it (new task, `depends_on` this one).
 2a. **Self-replay lessons.** Every lesson created or hit during this task, and every lesson in the brief,
@@ -245,10 +267,31 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    diff has its LLD check (authZ, ownership, session/token end, clock source); errors logged once, no
    PII. Record "self-check: OK" or the fixes in the History row. The self-check is never audit evidence;
    it is not passed to the auditor and never replaces pre-flight or the audit.
+   **Removals are done, not claimed:** list each Design check guard under `## Removals` as
+   `` `file` `guard code` → `Test#method` `` (a line that can go alone: a call, a `throw`, a `return`; add
+   ` @N` for the Nth identical line), then run
+   `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --removals`: it runs the named
+   tests on the unchanged code (positive control), deletes each guard line, expects its tests to fail,
+   restores the file byte for byte and writes `<T-NNN>-removals.md`. A "never" rule needs a recorder test
+   with a positive control (L-059). Pre-flight P14 fails a card with a Design check and no passing removals
+   report for the current code.
+2a++. **Local mutation (minutes, before the first full pre-flight; L-060):**
+   `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --mutate` runs mutation on the
+   task's changed classes (uncommitted work included) against the task's own test classes only (PIT
+   `-DtargetTests`), and prints each survivor with its code ready to paste under `## Equivalent mutants`.
+   It is stricter than the full run (only the task's tests may kill a mutant). Fix or list every survivor,
+   then run the full pre-flight once. Record "local mutation: N classes, 0 survivors / listed" in the
+   self-check row.
 2b. **Pre-flight (mandatory before any audit that can set a task Done):**
    `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-a [--task KEY/T-b …]`.
    It checks: clean tree; commits (start commit, exactly one `Task:` trailer each); card/index status;
-   every owned item; every required test suite (counted by `<testcase>`; any skip, failure, error, zero
+   every owned item; **P14** removals report current and passing; **P12** an added migration is above every version present at start (L-014); **P13** no
+   second bean of a single-instance type (AWS clients, `HttpClient`, `JsonMapper`…; L-061) — both also in
+   `--lint`; **P10 mutation** on the task's changed production files (templates.md § Mutation
+   suites: every surviving mutant gets a test or a reasoned `## Equivalent mutants` line — fix these here,
+   never leave them for the audit); **P11 template bindings** (each behaviour binding the task adds to an
+   `.html` template is mapped under `## Template bindings` to a spec test that exists; also in `--lint`);
+   every required test suite (counted by `<testcase>`; any skip, failure, error, zero
    tests, or fewer tests than last time fails); the local stack; every lesson's check (each Active lesson
    must be covered); task isolation (files changed only within Owns or `## Touches`); and the risk floor
    (a `low` task touching high-risk code fails). FAIL → fix and re-run; no audit until it passes.
@@ -391,7 +434,15 @@ asks before writing.
     is reused; a re-audit checks only the delta. Anything re-run must have a reason: sha/tree differs from
     the task head, report missing, any non-zero failures/errors/skipped, count below the last passing run,
     or the fix touched the layer. Auditors reuse a valid pre-flight and run only the task's test classes
-    (twice for risk `high`, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
+    (twice only when the task owns concurrency or timing logic, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
+    The pre-flight caches its suite rows and raw mutation survivors (`tracking/preflight-cache.json`): a
+    re-run whose code is unchanged (only tracking/ files changed, e.g. a card, an equivalent-mutant line or a
+    Touches line) reuses both and re-judges in seconds. Never re-run a full pre-flight to fix paperwork: fix
+    it, `--lint`, then re-run (it reuses). Budget: one full pre-flight per task; a second needs a code fix.
+8e. **Fewer, tighter rounds.** Audit claims freeze at audit 1; only the 7 big points (audit-rules.md § 4)
+    can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
+    strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
+    round. Audit budget 15–25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
 8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
     gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →
     the audit. A task that fails its first audit records which earlier gate should have caught it.

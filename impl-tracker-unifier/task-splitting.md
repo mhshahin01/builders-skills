@@ -32,6 +32,11 @@ foundation work on its own:
 **Sizing:** a task must fit one agent session: ≤ ~400 changed lines, ≤ 1 aggregate, clear DoD.
 Bigger → split by AC or by alternate flow (A1, E1 …). Trivial (< ~30 lines) → merge into neighbour.
 
+**Split UI by concern.** A screen task holds one component and its API call. Accessibility (focus,
+announcements, reduced motion), styling against Figma, and wiring into several pages are a second task
+when together they pass ~6 test claims. (Source: AUTOAPPLY/T-111 bundled all of it, two pages included,
+and failed five audits.)
+
 **Isolate hard logic.** Risk-`high` timing, concurrency or state logic (idle and session timers, countdowns,
 retries and polls, locks and claims, job state transitions) is its own task, never folded into a screen or
 endpoint task. It owns the logic unit (service, store, timer class), its Goal names its invariants, and its
@@ -57,12 +62,15 @@ only wires it. (Source: PLATFORM/T-018 failed three audits on an idle timer buil
 Every task card has `Risk`: `low` or `high`, with a short reason. It sets audit depth (audit-rules.md § 1),
 never the gates.
 
-- `high` when the task touches any of: encryption or keys, authentication/authorization, concurrency
-  (locks, caches, claims, queues), sending or money (submissions, replies, caps), consent, personal data
-  writes, data deletion or retention, migrations that change existing data, external adapters with
-  side effects.
-- `low` otherwise: read-only endpoints, stubs and ports, additive migrations of new tables, UI that only
-  displays, docs-only tests.
+- `high` when the task **adds or changes the logic** of any of: encryption or keys,
+  authentication/authorization, concurrency (a lock, cache, claim or queue it creates or changes), sending
+  or money (submissions, replies, caps), consent, personal data writes, data deletion or retention,
+  migrations that change existing data, external adapters with side effects.
+- `low` otherwise, including: logging and observability fields, tests-only tasks (race tests too), stubs
+  and ports, read-only endpoints, additive migrations of new tables, UI that displays or uploads through an
+  existing endpoint, docs-only work. Calling high-risk code that another task owns does not make a task
+  `high`. (S-06: SHAREDKERNEL/T-013 log field, RESUME/T-003 test, AUTOAPPLY/T-003 stubs were `high` and
+  cost 2 to 13 h each.)
 - Unsure → `high`. A task becomes `high` when its diff turns out to touch any item above; pre-flight P9
   enforces this mechanically. Only the user can lower `high` to `low`, quoted on the card.
 

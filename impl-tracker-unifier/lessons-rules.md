@@ -77,10 +77,15 @@ Never delete a lesson. Retire it with a reason and the superseding CHG/L ID.
 | Command | Uses lessons how |
 |---|---|
 | `plan` | For each new task: matching Promoted-DoD lessons → DoD items `L-NNN: <rule>`; matching Active lessons → one line in **Why this way** if they change the design. |
-| `start` | Task brief gets a **Lessons that apply** section: filter Active/Promoted by layer ∩ task layers, key, and tags ∩ owned-item kinds. Max 7, Promoted first, then by Hits. Each with its Check. |
+| `start` | Task brief gets a **Lessons that apply** section: filter Active/Promoted by layer ∩ task layers, key, and tags ∩ owned-item kinds. **Max 4**, Promoted first, then by Hits. Lessons a pre-flight check already enforces mechanically (a `command` or `builtin` entry in `checks.json`, or P10) are left out: the script catches them. The card links each lesson (`[L-NNN](../../lessons.md#l-nnn)`), never copies its text. |
 | `done` | Implementer must tick each listed lesson's Check; the audit re-runs them independently. |
 | audit | Every applicable lesson's Check is run; violation of Promoted-rule = blocker, others = major. |
 | `standup` | New lessons and recurrences since last entry. |
+
+**Merge before adding.** Before a new lesson row, look for an Active lesson with the same root cause and
+layer: sharpen its Rule and Check instead of adding a row (L-NNN keeps its ID, hits +1). When Active +
+Promoted lessons pass 25, the next `standup` proposes merges and retirements (lessons a mechanical check
+fully covers become `Retired: covered by <check id>`).
 
 Read budget: `start`/`done`/audit read `lessons.md` filtered by scope — grep the Scope column, don't load
 all of it when it is large.

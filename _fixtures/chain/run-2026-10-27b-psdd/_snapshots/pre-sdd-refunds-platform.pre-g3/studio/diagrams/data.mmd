@@ -1,0 +1,18 @@
+flowchart LR
+  %% Data Flow · Candidate Ownership - PROPOSED / NOT AN APPROVED DESIGN
+  %% canonical component NODE-DF-INPUT
+  DF_INPUT["Input / caller - UC not invented"]
+  %% canonical component NODE-DF-APP
+  DF_APP["Application services - BRD-derived behavior in SDD"]
+  %% canonical component NODE-DF-DB
+  DF_DB["Authoritative data workload - Relational transactional store"]
+  %% canonical component NODE-DF-BACK
+  DF_BACK["Backup / archive - Retention/restore evidence"]
+  %% canonical component NODE-DF-EXTRA-1
+  DF_EXTRA_1["Additional store: Points ledger - relational; consistency: strong"]
+  DF_INPUT -->|requests| DF_APP
+  DF_APP -->|transaction/data| DF_DB
+  DF_DB -->|protect| DF_BACK
+  DF_APP -->|access pattern TBD| DF_EXTRA_1
+  classDef proposed fill:#e8f3f6,stroke:#368b94,color:#15354b;
+  class DF_INPUT,DF_APP,DF_DB,DF_BACK,DF_EXTRA_1 proposed;

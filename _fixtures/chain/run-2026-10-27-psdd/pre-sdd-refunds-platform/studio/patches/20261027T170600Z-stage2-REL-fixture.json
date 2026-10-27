@@ -1,0 +1,26 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "REL-02.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "REL-07.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "REL-09.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    }
+  ]
+}

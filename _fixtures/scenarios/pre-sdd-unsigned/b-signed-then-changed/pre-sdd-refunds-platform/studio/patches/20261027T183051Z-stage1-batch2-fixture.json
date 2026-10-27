@@ -1,0 +1,30 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "CAP-01.2",
+      "value": 40
+    },
+    {
+      "op": "confirm",
+      "entry": "CAP-01.2"
+    },
+    {
+      "op": "set",
+      "entry": "CAP-03.1",
+      "value": "300 peak simultaneously active users (customers, members and branch managers)"
+    },
+    {
+      "op": "confirm",
+      "entry": "CAP-03.1"
+    },
+    {
+      "op": "confirm",
+      "entry": "CAP-04.1"
+    }
+  ]
+}

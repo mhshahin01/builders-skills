@@ -1,0 +1,15 @@
+{
+  "actor": {
+    "type": "person",
+    "name": "Product Owner (fixture owner)"
+  },
+  "ops": [
+    {
+      "op": "add-exception",
+      "entry": "SEC-01.1",
+      "reason": "The applicable data-protection law is a hard BRD dependency needed before go-live (REFUNDS 02 and LOYALTY 02 Dependencies), not before the SDD; the SDD may start while Legal Counsel confirms it by 2026-12-15.",
+      "expires": "2027-12-31",
+      "review": "2027-03-31"
+    }
+  ]
+}

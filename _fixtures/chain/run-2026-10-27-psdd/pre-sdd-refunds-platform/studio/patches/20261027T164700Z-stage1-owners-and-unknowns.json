@@ -1,0 +1,10 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "set", "entry": "BUS-05.1", "owner_name": "Refunds and Loyalty Product Owner", "due": "2026-11-20" },
+    { "op": "add-unknown", "entry": "BUS-05.1", "question": "What is the launch date of each part, which branches form the Refunds Portal pilot group, how long does the pilot run, and in which order do the other branches start (REFUNDS 04)? When does Loyalty Points go live (LOYALTY 04)?", "impact": "Sets the delivery envelope (ECO-04) and the rollout (OPS-07); without it the cost and delivery envelope of G3-08 has no date.", "owner": "Refunds and Loyalty Product Owner", "due": "2026-11-20" },
+    { "op": "add-unknown", "entry": "SEC-01.1", "question": "Which data-protection law applies to customer personal data and to members' points and purchase data, and which consumer refund rights apply beyond the 30-day refund window (REFUNDS 02, LOYALTY 02 Dependencies)?", "impact": "Can change residency (DAT-04), retention and erasure (DAT-06) and the security controls; SEC-01.1 is a hard entry and stays Open until it is answered.", "owner": "Legal Counsel", "due": "2026-11-20" },
+    { "op": "add-unknown", "entry": "CAP-07.1", "question": "Within how many seconds must an everyday action in the Refunds Portal complete (REFUNDS/NFR-05)? The Pre-SDD takes 2000 ms at P99 as the target until the BRD states it.", "impact": "Confirms or replaces the P99 target CAP-07.1 that the latency budget and the mean requests in flight (CALC-05) rest on.", "owner": "Refunds and Loyalty Product Owner", "due": "2026-11-20" },
+    { "op": "add-unknown", "entry": "REL-01.2", "question": "How many minutes per month may the points screens be unavailable, planned maintenance included (LOYALTY/NFR-04)? The Pre-SDD takes 99.9% as the target until the BRD states it.", "impact": "Confirms or replaces the availability target REL-01.2 of the points screens.", "owner": "Refunds and Loyalty Product Owner", "due": "2026-11-20" }
+  ]
+}

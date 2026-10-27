@@ -1,0 +1,3151 @@
+{
+  "v": {
+    "solutionName": "Refunds Platform",
+    "brdRef": "REFUNDS, LOYALTY",
+    "changeType": "greenfield",
+    "target": "cloud",
+    "dailyTxn": 2000,
+    "peakFactor": 3,
+    "p99Ms": 2000,
+    "annualGrowth": null,
+    "availability": 99.9,
+    "failureScope": "region",
+    "rtoSec": 14400,
+    "rpoSec": 900,
+    "budget": "balanced",
+    "dataKind": "relational",
+    "dataConsistency": "strong",
+    "connectivity": "public",
+    "sensitiveData": "sensitive",
+    "callsPerTxn": 3,
+    "requestFactor": 1.1,
+    "meanLatencyMs": 120,
+    "utilization": 0.65,
+    "requestKB": 4,
+    "responseKB": 16,
+    "networkOverhead": 1.2,
+    "storedKB": 8,
+    "retentionDays": 3653,
+    "initialGB": 1,
+    "indexFactor": 1.4,
+    "copies": 2,
+    "cidrPrefix": null,
+    "transactionNeed": "yes",
+    "queryShape": "unknown",
+    "readPercent": null,
+    "tenantModel": "unknown",
+    "regionLabel": "Within the European Union",
+    "recoveryLabel": "Within the European Union, in a second region",
+    "residency": "yes",
+    "migration": "no",
+    "sourcePlatform": "unknown",
+    "migrationGB": null,
+    "linkMbps": null,
+    "cutoverHours": null,
+    "businessProblem": "REFUNDS: cut the average time from request to payout from 10 days to 3 days; stop lost refund requests, so every request is recorded and visible to the customer; give branch managers one place to decide for their own branch; refund complaints fall from 18% of all complaints to customer care (target and date not stated); a share of refund requests made through the portal (target and date not stated). LOYALTY: members trust their points balance (zero upheld balance complaints a month, LOYALTY/NFR-01); members check their points without calling a branch (baseline, target and date not stated).",
+    "evidenceRef": "",
+    "owner": "",
+    "topologyOverride": "auto",
+    "drOverride": "auto",
+    "overrideReason": "",
+    "approver": "",
+    "approveReqs": false,
+    "approveSecurity": false,
+    "approveArchitecture": false,
+    "approveRisks": false
+  },
+  "c": {
+    "readRate": null,
+    "writeRate": null,
+    "avg": 0.023148148148148147,
+    "peakTPS": 0.06944444444444445,
+    "rps": 0.22916666666666669,
+    "throughput": 0.3525641025641026,
+    "inflight": 0.0275,
+    "ingress": 0.0088,
+    "egress": 0.0352,
+    "mbps": 0.044000000000000004,
+    "dailyTraffic": 0.13200000000000003,
+    "dailyStored": 0.016,
+    "logical": 59.448,
+    "footprint": 166.4544,
+    "down30": 2591.9999999997144,
+    "down365": 31535.999999996526,
+    "exposure": 62.5,
+    "yearPeak": null,
+    "migrationH": null,
+    "addr": null,
+    "rows": [
+      {
+        "id": "CALC-01",
+        "label": "Average business TPS",
+        "formula": "daily_transactions / 86400",
+        "substitution": "2,000 / 86400",
+        "result": 0.023148148148148147,
+        "unit": "txn/s",
+        "note": "Daily average is not peak or burst demand.",
+        "requirement_ids": [
+          "REQ-CAP-001"
+        ]
+      },
+      {
+        "id": "CALC-02",
+        "label": "Peak business TPS",
+        "formula": "average_TPS × peak_factor",
+        "substitution": "0.023 × 3",
+        "result": 0.06944444444444445,
+        "unit": "txn/s",
+        "note": "Peak multiplier requires measured demand curve or agreed forecast.",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-CAP-002"
+        ]
+      },
+      {
+        "id": "CALC-03",
+        "label": "Peak API RPS",
+        "formula": "peak_TPS × calls_per_txn × request_amplification",
+        "substitution": "0.069 × 3 × 1.1",
+        "result": 0.22916666666666669,
+        "unit": "req/s",
+        "note": "API calls, event fanout and retries must not be double-counted.",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-CAP-002"
+        ]
+      },
+      {
+        "id": "CALC-04",
+        "label": "Headroom throughput budget",
+        "formula": "peak_API_RPS / utilization_fraction",
+        "substitution": "0.229 / 0.65",
+        "result": 0.3525641025641026,
+        "unit": "req/s",
+        "note": "Throughput envelope, not number of nodes. Requires P99 load tests.",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-PERF-001"
+        ]
+      },
+      {
+        "id": "CALC-05",
+        "label": "Mean requests in flight",
+        "formula": "peak_API_RPS × mean_latency_ms / 1000",
+        "substitution": "0.229 × 120 / 1000",
+        "result": 0.0275,
+        "unit": "requests",
+        "note": "Little’s Law uses mean latency, not P99 or logged-in users.",
+        "requirement_ids": [
+          "REQ-PERF-001"
+        ]
+      },
+      {
+        "id": "CALC-06",
+        "label": "Peak inbound network",
+        "formula": "peak_RPS × request_KB × 8 / 1000 × overhead",
+        "substitution": "0.229 × 4 × 8 / 1000 × 1.2",
+        "result": 0.0088,
+        "unit": "Mbps",
+        "note": "One selected network boundary; excludes replication/east-west flows.",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-NET-001"
+        ]
+      },
+      {
+        "id": "CALC-07",
+        "label": "Peak outbound network",
+        "formula": "peak_RPS × response_KB × 8 / 1000 × overhead",
+        "substitution": "0.229 × 16 × 8 / 1000 × 1.2",
+        "result": 0.0352,
+        "unit": "Mbps",
+        "note": "Directional egress is not a separate guaranteed link rating.",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-NET-001"
+        ]
+      },
+      {
+        "id": "CALC-08",
+        "label": "Combined modeled boundary traffic",
+        "formula": "inbound_Mbps + outbound_Mbps",
+        "substitution": "0.009 + 0.035",
+        "result": 0.044000000000000004,
+        "unit": "Mbps",
+        "note": "Sum of directional traffic; not a physical link-speed requirement.",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ]
+      },
+      {
+        "id": "CALC-09",
+        "label": "Daily API payload transfer",
+        "formula": "avg_API_RPS × 86400 × (request_KB + response_KB) / 1e6",
+        "substitution": "0.076 × 86400 × (4 + 16) / 1e6",
+        "result": 0.13200000000000003,
+        "unit": "GB/day",
+        "note": "Decimal GB; excludes internal and replication traffic.",
+        "requirement_ids": [
+          "REQ-CAP-001"
+        ]
+      },
+      {
+        "id": "CALC-10",
+        "label": "New logical data per day",
+        "formula": "daily_txn × stored_KB_per_txn / 1e6",
+        "substitution": "2,000 × 8 / 1e6",
+        "result": 0.016,
+        "unit": "GB/day",
+        "note": "Assumes every transaction contributes its stated logical size.",
+        "requirement_ids": [
+          "REQ-DAT-001"
+        ]
+      },
+      {
+        "id": "CALC-11",
+        "label": "Retained logical data",
+        "formula": "starting_GB + daily_new_GB × retention_days",
+        "substitution": "1 + 0.016 × 3,653",
+        "result": 59.448,
+        "unit": "GB",
+        "note": "Steady-state simplified model; excludes historical growth and erasure.",
+        "requirement_ids": [
+          "REQ-DAT-001"
+        ]
+      },
+      {
+        "id": "CALC-12",
+        "label": "Planning storage footprint",
+        "formula": "logical_GB × index_factor × modeled_copies",
+        "substitution": "59.448 × 1.4 × 2",
+        "result": 166.4544,
+        "unit": "GB",
+        "note": "Provider redundancy, snapshots, WAL, logs and backups are not fully modeled.",
+        "requirement_ids": [
+          "REQ-DAT-001"
+        ]
+      },
+      {
+        "id": "CALC-13",
+        "label": "30-day downtime budget",
+        "formula": "(1 − availability_pct/100) × 30 × 86400",
+        "substitution": "(1 − 99.9 / 100) × 2592000",
+        "result": 2591.9999999997144,
+        "unit": "s",
+        "note": "Calendar-time assumption; SLA exclusions may differ.",
+        "requirement_ids": [
+          "REQ-REL-001"
+        ]
+      },
+      {
+        "id": "CALC-14",
+        "label": "Annual downtime budget",
+        "formula": "(1 − availability_pct/100) × 365 × 86400",
+        "substitution": "(1 − 99.9 / 100) × 31536000",
+        "result": 31535.999999996526,
+        "unit": "s",
+        "note": "SLO downtime budget is not an outage-specific RTO.",
+        "requirement_ids": [
+          "REQ-REL-001"
+        ]
+      },
+      {
+        "id": "CALC-15",
+        "label": "Hypothetical RPO exposure",
+        "formula": "peak_TPS × RPO_seconds",
+        "substitution": "0.069 × 900",
+        "result": 62.5,
+        "unit": "txns",
+        "note": "Potential exposure if peak persisted; not the number of lost committed writes.",
+        "requirement_ids": [
+          "REQ-DR-002",
+          "REQ-CAP-001"
+        ]
+      },
+      {
+        "id": "CALC-16",
+        "label": "One-year projected peak API RPS",
+        "formula": "peak_RPS × (1 + growth_pct/100)",
+        "substitution": "0.229 × (1 + TBD / 100)",
+        "result": null,
+        "unit": "req/s",
+        "note": "Simple uniform growth scenario; not an adopted business forecast.",
+        "requirement_ids": [
+          "REQ-CAP-003"
+        ]
+      },
+      {
+        "id": "CALC-17",
+        "label": "Ideal migration bulk transfer",
+        "formula": "migration_GB × 8000 / (effective_Mbps × 3600)",
+        "substitution": "TBD × 8000 / (TBD × 3600)",
+        "result": null,
+        "unit": "hours",
+        "note": "Only bulk-copy lower bound: excludes transform, CDC, verification and rollback.",
+        "requirement_ids": [
+          "REQ-MIG-001"
+        ]
+      },
+      {
+        "id": "CALC-18",
+        "label": "Proposed address block count",
+        "formula": "2 ^ (32 − prefix)",
+        "substitution": "2 ^ (32 − TBD)",
+        "result": null,
+        "unit": "IPv4 addresses",
+        "note": "Planning block only; no CIDR allocation. Per-provider reserved subnet addresses and IPAM need confirmation.",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ]
+      },
+      {
+        "id": "CALC-19",
+        "label": "Estimated business read TPS",
+        "formula": "peak_business_TPS × read_percent / 100",
+        "substitution": "0.069 × TBD / 100",
+        "result": null,
+        "unit": "reads/s",
+        "note": "Assumes read fraction applies to business transactions; not DB query rate.",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-DAT-001"
+        ]
+      },
+      {
+        "id": "CALC-20",
+        "label": "Estimated business write TPS",
+        "formula": "peak_business_TPS × (100 − read_percent) / 100",
+        "substitution": "0.069 × (100 − TBD) / 100",
+        "result": null,
+        "unit": "writes/s",
+        "note": "Business operations do not map one-to-one to physical DB writes.",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-DAT-001"
+        ]
+      },
+      {
+        "id": "CALC-21@OPT-01",
+        "label": "Option total cost of ownership",
+        "formula": "one_time_cost + horizon_months × monthly_cost",
+        "substitution": "180,000 + 36 × 6,500",
+        "result": 414000,
+        "unit": "currency units",
+        "note": "Undiscounted: no discount rate, inflation or price change over the horizon; one-time and monthly costs come from a person.",
+        "requirement_ids": [],
+        "option": "OPT-01"
+      },
+      {
+        "id": "CALC-22@OPT-01",
+        "label": "Option weighted score",
+        "formula": "sum(weight × score) / sum(weight)",
+        "substitution": "(3 × 4 + 1 × 4 + 2 × 4 + 1 × 4 + 2 × 3 + 2 × 4 + 1 × 4 + 1 × 3) / (3 + 1 + 2 + 1 + 2 + 2 + 1 + 1)",
+        "result": 3.769230769230769,
+        "unit": "score (1 to 5)",
+        "note": "Counts every criterion with an approved weight above 0, and each needs a score; an option is ranked only when every hard check passes.",
+        "requirement_ids": [],
+        "option": "OPT-01"
+      },
+      {
+        "id": "CALC-21@OPT-02",
+        "label": "Option total cost of ownership",
+        "formula": "one_time_cost + horizon_months × monthly_cost",
+        "substitution": "210,000 + 36 × 9,800",
+        "result": 562800,
+        "unit": "currency units",
+        "note": "Undiscounted: no discount rate, inflation or price change over the horizon; one-time and monthly costs come from a person.",
+        "requirement_ids": [],
+        "option": "OPT-02"
+      },
+      {
+        "id": "CALC-22@OPT-02",
+        "label": "Option weighted score",
+        "formula": "sum(weight × score) / sum(weight)",
+        "substitution": "(3 × 5 + 1 × 3 + 2 × 2 + 1 × 3 + 2 × 3 + 2 × 4 + 1 × 3 + 1 × 4) / (3 + 1 + 2 + 1 + 2 + 2 + 1 + 1)",
+        "result": 3.5384615384615383,
+        "unit": "score (1 to 5)",
+        "note": "Counts every criterion with an approved weight above 0, and each needs a score; an option is ranked only when every hard check passes.",
+        "requirement_ids": [],
+        "option": "OPT-02"
+      }
+    ]
+  },
+  "a": {
+    "path": "GF-CL",
+    "topo": "regional",
+    "dr": "pilot",
+    "isMultiRegion": true,
+    "needsRegion": true,
+    "providerScope": false,
+    "db": "Relational transactional store",
+    "approach": "Assess commit durability, replication semantics, and failover data correctness explicitly.",
+    "effectiveKind": "relational",
+    "network": "Region/VPC(or VNet)/private app and data segments",
+    "hasHybrid": false,
+    "strong": true,
+    "continuousTarget": false,
+    "zeroLossTarget": false,
+    "activeServing": false,
+    "globalActive": false
+  },
+  "rules": [
+    {
+      "id": "ARCH-01",
+      "level": "info",
+      "title": "Classification & hosting",
+      "trigger": "change=greenfield; target=cloud",
+      "assessment": "Route to GF-CL; migration is a separate overlay.",
+      "verify": "Confirm target-hosting responsibility and hard platform restrictions.",
+      "requirement_ids": [
+        "REQ-PLAT-001",
+        "REQ-PLAT-002"
+      ]
+    },
+    {
+      "id": "DR-03@region",
+      "level": "caution",
+      "title": "Independent region/provider failure",
+      "trigger": "failure scope=region",
+      "assessment": "Assess independent recovery locations plus identity, data, DNS, networks and application dependencies.",
+      "verify": "Prove full service recovery and RPO after the specified failure scenario.",
+      "requirement_ids": [
+        "REQ-DR-001",
+        "REQ-DR-002",
+        "REQ-DR-003"
+      ]
+    },
+    {
+      "id": "LOAD-04",
+      "level": "info",
+      "title": "Workload-based capacity planning",
+      "trigger": "peak=0.07 TPS; 0.23 API RPS",
+      "assessment": "Size and benchmark at sustained peak with headroom and failure-mode capacity.",
+      "verify": "Obtain peak duration, load profile, per-instance P99 throughput, storage IOPS and growth.",
+      "requirement_ids": [
+        "REQ-CAP-001",
+        "REQ-CAP-002"
+      ]
+    },
+    {
+      "id": "DATA-08@az",
+      "level": "caution",
+      "title": "Near-real-time recovery data",
+      "trigger": "RPO=5 s",
+      "assessment": "Measure replication lag/backup point age against scoped dataset and failure.",
+      "verify": "Exercise writer failure and measure committed-record recovery point.",
+      "requirement_ids": [
+        "REQ-DR-002"
+      ]
+    },
+    {
+      "id": "DB-10",
+      "level": "info",
+      "title": "Per-workload data architecture",
+      "trigger": "type=relational; consistency=strong",
+      "assessment": "Recommend logical data-store pattern; compare provider products and failover semantics.",
+      "verify": "Validate operations, constraints and benchmarks per workload.",
+      "requirement_ids": [
+        "REQ-DAT-001",
+        "REQ-DAT-002"
+      ]
+    },
+    {
+      "id": "SEC-11",
+      "level": "caution",
+      "title": "Data sensitivity/residency",
+      "trigger": "classification=sensitive; geographic restrictions=yes",
+      "assessment": "Cloud regions, DR copies, data transfers, encryption and access must satisfy applicable controls.",
+      "verify": "Obtain compliance authority, permitted locations, data lineage and control evidence.",
+      "requirement_ids": [
+        "REQ-SEC-001",
+        "REQ-SEC-002"
+      ]
+    },
+    {
+      "id": "SLO-15@region",
+      "level": "review",
+      "title": "One outage can consume SLO budget",
+      "trigger": "RTO=4 h; 30-day budget=43.2 min",
+      "assessment": "One full-length, user-visible outage in the measurement window may exceed the availability allowance; not inherently contradictory.",
+      "verify": "Clarify measurement exclusions and design impact on customer journeys.",
+      "requirement_ids": [
+        "REQ-REL-001",
+        "REQ-DR-001"
+      ]
+    }
+  ],
+  "graph": {
+    "diagrams": {
+      "infrastructure": {
+        "id": "infrastructure",
+        "title": "Infrastructure Architecture · GF-CL",
+        "width": 1320,
+        "height": 760,
+        "nodes": [
+          {
+            "id": "CLIENT",
+            "title": "Consumers",
+            "subtitle": "Product flows from BRD",
+            "x": 24,
+            "y": 39,
+            "w": 184,
+            "h": 67,
+            "kind": "client",
+            "placement": "External boundary",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "DNS",
+            "title": "Routing & health checks",
+            "subtitle": "global/shared boundary TBD",
+            "x": 273,
+            "y": 39,
+            "w": 184,
+            "h": 67,
+            "kind": "edge",
+            "placement": "Shared entry point",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "EDGE",
+            "title": "L7 ingress + security",
+            "subtitle": "Primary ingress · public candidate",
+            "x": 510,
+            "y": 39,
+            "w": 230,
+            "h": 67,
+            "kind": "edge",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "APP-A",
+            "title": "Application tier",
+            "subtitle": "Application execution A",
+            "x": 280,
+            "y": 263,
+            "w": 238,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Zone A",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-CAP-001",
+              "REQ-PERF-001"
+            ]
+          },
+          {
+            "id": "DB-PRIMARY",
+            "title": "Relational transactional store",
+            "subtitle": "System of record (candidate)",
+            "x": 280,
+            "y": 397,
+            "w": 238,
+            "h": 67,
+            "kind": "database",
+            "placement": "Zone A",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-DAT-001",
+              "REQ-DR-002"
+            ]
+          },
+          {
+            "id": "BACKUP",
+            "title": "Backups / restore points",
+            "subtitle": "retention & isolation TBD",
+            "x": 489,
+            "y": 561,
+            "w": 234,
+            "h": 67,
+            "kind": "storage",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-DR-002"
+            ]
+          },
+          {
+            "id": "APP-B",
+            "title": "Application tier",
+            "subtitle": "Application execution B",
+            "x": 600,
+            "y": 263,
+            "w": 238,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Zone B",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-CAP-001",
+              "REQ-REL-001"
+            ]
+          },
+          {
+            "id": "DB-SECONDARY",
+            "title": "HA standby / replica",
+            "subtitle": "Same-region failover semantics TBD",
+            "x": 600,
+            "y": 397,
+            "w": 238,
+            "h": 67,
+            "kind": "database",
+            "placement": "Zone B",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-DR-001",
+              "REQ-DR-002"
+            ]
+          },
+          {
+            "id": "RECOVERY-APP",
+            "title": "Recovery app capacity",
+            "subtitle": "DR: Pilot Light",
+            "x": 950,
+            "y": 275,
+            "w": 290,
+            "h": 67,
+            "kind": "dr",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-DR-001"
+            ]
+          },
+          {
+            "id": "RECOVERY-DB",
+            "title": "Recoverable data copy",
+            "subtitle": "Lag & promotion semantics TBD",
+            "x": 950,
+            "y": 423,
+            "w": 290,
+            "h": 67,
+            "kind": "database",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-DR-002"
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "id": "E-I-01",
+            "from": "CLIENT",
+            "to": "DNS",
+            "label": "request",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-02",
+            "from": "DNS",
+            "to": "EDGE",
+            "label": "route",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-03",
+            "from": "EDGE",
+            "to": "APP-A",
+            "label": "traffic",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-04",
+            "from": "APP-A",
+            "to": "DB-PRIMARY",
+            "label": "reads/writes",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-05",
+            "from": "DB-PRIMARY",
+            "to": "BACKUP",
+            "label": "backup",
+            "relationship": "backup",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-06",
+            "from": "EDGE",
+            "to": "APP-B",
+            "label": "route",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-07",
+            "from": "DB-PRIMARY",
+            "to": "DB-SECONDARY",
+            "label": "replicate",
+            "relationship": "replication",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-08",
+            "from": "DNS",
+            "to": "RECOVERY-APP",
+            "label": "failover",
+            "relationship": "failover",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-I-09",
+            "from": "DB-PRIMARY",
+            "to": "RECOVERY-DB",
+            "label": "replicate/restore",
+            "relationship": "replication",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          }
+        ],
+        "groups": [
+          {
+            "id": "G-PRIMARY",
+            "label": "Within the European Union",
+            "x": 230,
+            "y": 170,
+            "w": 660,
+            "h": 500,
+            "kind": "region",
+            "status": "proposed"
+          },
+          {
+            "id": "G-ZA",
+            "label": "Zone A",
+            "x": 248,
+            "y": 212,
+            "w": 301,
+            "h": 285,
+            "kind": "az",
+            "status": "proposed"
+          },
+          {
+            "id": "G-ZB",
+            "label": "Zone B",
+            "x": 569,
+            "y": 212,
+            "w": 301,
+            "h": 285,
+            "kind": "az",
+            "status": "proposed"
+          },
+          {
+            "id": "G-RECOVERY",
+            "label": "Within the European Union, in a second region",
+            "x": 915,
+            "y": 170,
+            "w": 365,
+            "h": 500,
+            "kind": "region",
+            "status": "proposed"
+          }
+        ],
+        "summary": "Primary + independent recovery location candidate, Relational transactional store. RTO 4 h; RPO 15 min; scope region. All nodes and links are proposed logical candidates, not verified deployment facts. Source of product use cases remains the BRD.",
+        "instructions": [
+          "Confirm region/site and actual fault-domain independence; do not infer region or zone availability.",
+          "Benchmark compute and data tier throughput under peak and impaired-zone load.",
+          "Confirm database durability, failover behavior, backups, IAM, monitoring, and provider eligibility."
+        ]
+      },
+      "network": {
+        "id": "network",
+        "title": "Network Architecture · LOGICAL",
+        "width": 1780,
+        "height": 940,
+        "nodes": [
+          {
+            "id": "N-CLIENT",
+            "title": "External clients",
+            "subtitle": "Boundary / requests",
+            "x": 18,
+            "y": 46,
+            "w": 200,
+            "h": 67,
+            "kind": "client",
+            "placement": "Outside target",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-DNS",
+            "title": "DNS / traffic direction",
+            "subtitle": "Global / shared managed control",
+            "x": 258,
+            "y": 46,
+            "w": 205,
+            "h": 67,
+            "kind": "edge",
+            "placement": "Shared control plane",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-ENTRY",
+            "title": "WAF / managed edge policy",
+            "subtitle": "Public access candidate",
+            "x": 512,
+            "y": 46,
+            "w": 235,
+            "h": 67,
+            "kind": "security",
+            "placement": "Trust edge",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-PERIMETER",
+            "title": "Internet ingress boundary",
+            "subtitle": "Internet edge / approved routes TBD",
+            "x": 297,
+            "y": 677,
+            "w": 245,
+            "h": 67,
+            "kind": "network",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-LB",
+            "title": "Layer-7 load balancer",
+            "subtitle": "LB ingress in allowed public zone(s)",
+            "x": 516,
+            "y": 254,
+            "w": 260,
+            "h": 67,
+            "kind": "edge",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-APP-A",
+            "title": "Private application tier A",
+            "subtitle": "Compute in Availability Zone A / private subnets",
+            "x": 276,
+            "y": 390,
+            "w": 288,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Availability Zone A / private subnets",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-DB-A",
+            "title": "Restricted data access A",
+            "subtitle": "Private DB network / endpoint",
+            "x": 285,
+            "y": 526,
+            "w": 272,
+            "h": 67,
+            "kind": "database",
+            "placement": "Availability Zone A / private subnets",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-EGRESS",
+            "title": "NAT / outbound egress",
+            "subtitle": "Candidate only if internet egress needed",
+            "x": 602,
+            "y": 677,
+            "w": 251,
+            "h": 67,
+            "kind": "network",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-SERVICE",
+            "title": "Private service endpoint",
+            "subtitle": "Service network interface/boundary TBD",
+            "x": 875,
+            "y": 677,
+            "w": 238,
+            "h": 67,
+            "kind": "network",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-APP-B",
+            "title": "Private application tier B",
+            "subtitle": "Compute in Availability Zone B / private subnets",
+            "x": 709,
+            "y": 390,
+            "w": 291,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Availability Zone B / private subnets",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-DB-B",
+            "title": "Standby / data access B",
+            "subtitle": "Replication and failover TBD",
+            "x": 713,
+            "y": 526,
+            "w": 286,
+            "h": 67,
+            "kind": "database",
+            "placement": "Availability Zone B / private subnets",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-DR-NET",
+            "title": "Standby recovery ingress",
+            "subtitle": "Failover path & trust controls TBD",
+            "x": 1283,
+            "y": 245,
+            "w": 328,
+            "h": 67,
+            "kind": "dr",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-DR-APP",
+            "title": "Recovery application capacity",
+            "subtitle": "Standby activation/scale-up TBD",
+            "x": 1210,
+            "y": 407,
+            "w": 240,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "N-DR-DB",
+            "title": "Recovery database / replica",
+            "subtitle": "Replication lag & promotion TBD",
+            "x": 1470,
+            "y": 526,
+            "w": 232,
+            "h": 67,
+            "kind": "database",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": []
+          }
+        ],
+        "edges": [
+          {
+            "id": "E-N-01",
+            "from": "N-CLIENT",
+            "to": "N-DNS",
+            "label": "DNS / access",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-02",
+            "from": "N-DNS",
+            "to": "N-ENTRY",
+            "label": "request policy",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-03",
+            "from": "N-ENTRY",
+            "to": "N-LB",
+            "label": "front-end request",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-04",
+            "from": "N-LB",
+            "to": "N-APP-A",
+            "label": "L7/private app",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-05",
+            "from": "N-APP-A",
+            "to": "N-DB-A",
+            "label": "restricted DB",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-06",
+            "from": "N-APP-A",
+            "to": "N-EGRESS",
+            "label": "outbound candidate",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-07",
+            "from": "N-APP-A",
+            "to": "N-SERVICE",
+            "label": "private service",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-08",
+            "from": "N-EGRESS",
+            "to": "N-PERIMETER",
+            "label": "egress route",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-09",
+            "from": "N-LB",
+            "to": "N-APP-B",
+            "label": "AZ balance",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-10",
+            "from": "N-APP-B",
+            "to": "N-DB-B",
+            "label": "data access",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-11",
+            "from": "N-DB-A",
+            "to": "N-DB-B",
+            "label": "replicate",
+            "relationship": "replication",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-13",
+            "from": "N-DNS",
+            "to": "N-DR-NET",
+            "label": "recovery route",
+            "relationship": "failover",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-14",
+            "from": "N-DR-NET",
+            "to": "N-DR-APP",
+            "label": "activate / route",
+            "relationship": "failover",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-15",
+            "from": "N-DR-APP",
+            "to": "N-DR-DB",
+            "label": "data access",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-N-16",
+            "from": "N-DB-A",
+            "to": "N-DR-DB",
+            "label": "replicate / lag TBD",
+            "relationship": "replication",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          }
+        ],
+        "groups": [
+          {
+            "id": "N-REGION",
+            "label": "Within the European Union",
+            "x": 175,
+            "y": 157,
+            "w": 980,
+            "h": 717,
+            "kind": "region",
+            "status": "proposed"
+          },
+          {
+            "id": "N-VPC",
+            "label": "Logical network boundary · VPC/VNet scope TBD by provider",
+            "x": 212,
+            "y": 209,
+            "w": 910,
+            "h": 620,
+            "kind": "zone",
+            "status": "proposed"
+          },
+          {
+            "id": "N-ZA",
+            "label": "Availability Zone A / private subnets",
+            "x": 239,
+            "y": 331,
+            "w": 413,
+            "h": 279,
+            "kind": "zone",
+            "status": "proposed"
+          },
+          {
+            "id": "N-ZB",
+            "label": "Availability Zone B / private subnets",
+            "x": 670,
+            "y": 331,
+            "w": 416,
+            "h": 279,
+            "kind": "zone",
+            "status": "proposed"
+          },
+          {
+            "id": "N-RECOVERY",
+            "label": "Independent recovery environment · Within the European Union, in a second region",
+            "x": 1168,
+            "y": 157,
+            "w": 568,
+            "h": 717,
+            "kind": "region",
+            "status": "proposed"
+          }
+        ],
+        "summary": "Region/VPC(or VNet)/private app and data segments. Trust boundaries, zones/subnets and public/private paths are provisional. Actual IPAM, public subnet associations, provider-managed interfaces, routing and firewall rules must be verified.",
+        "instructions": [
+          "Confirm real CIDR/IPAM allocations, public/private subnet eligibility, zone placement, routes, DNS and security/firewall rules; no IP addresses are assigned here.",
+          "Provider networking differs: AWS VPCs regional with AZ subnets; GCP VPCs global with regional subnets; Azure VNets regional. Managed service resources may live on provider-owned boundaries.",
+          "Confirm public or private ingress, internet egress/NAT and private endpoint eligibility, independent availability zone paths, and hybrid/partner failover before SDD.",
+          "Verify physically independent recovery network and provider/region/site boundaries. Active-active servicing does not ensure zero client-visible failover time."
+        ]
+      },
+      "dr": {
+        "id": "dr",
+        "title": "Recovery Architecture & Sequence",
+        "width": 1320,
+        "height": 760,
+        "nodes": [
+          {
+            "id": "D-OBS",
+            "title": "Detect / declare incident",
+            "subtitle": "Health signals & decision",
+            "x": 60,
+            "y": 46,
+            "w": 220,
+            "h": 67,
+            "kind": "security",
+            "placement": "Recovery procedure",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "D-TRAFFIC",
+            "title": "Traffic switching",
+            "subtitle": "DNS / LB / global route",
+            "x": 370,
+            "y": 46,
+            "w": 220,
+            "h": 67,
+            "kind": "edge",
+            "placement": "Recovery procedure",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "D-APP",
+            "title": "Primary application",
+            "subtitle": "Workload & state",
+            "x": 80,
+            "y": 266,
+            "w": 206,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "D-DB",
+            "title": "Primary committed data",
+            "subtitle": "Durability contract",
+            "x": 355,
+            "y": 266,
+            "w": 208,
+            "h": 67,
+            "kind": "database",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "D-BACKUP",
+            "title": "Protected recovery points",
+            "subtitle": "Restore drills & isolation",
+            "x": 225,
+            "y": 480,
+            "w": 231,
+            "h": 67,
+            "kind": "storage",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "D-RECAPP",
+            "title": "Scale pilot-light app",
+            "subtitle": "Strategy: Pilot Light",
+            "x": 714,
+            "y": 266,
+            "w": 230,
+            "h": 67,
+            "kind": "dr",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "D-RECDB",
+            "title": "Recovery copy / restore",
+            "subtitle": "Lag & promotion require proof",
+            "x": 1000,
+            "y": 266,
+            "w": 231,
+            "h": 67,
+            "kind": "database",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "D-VERIFY",
+            "title": "Business service verification",
+            "subtitle": "IAM · correctness · customer access",
+            "x": 837,
+            "y": 488,
+            "w": 260,
+            "h": 67,
+            "kind": "security",
+            "placement": "Within the European Union, in a second region",
+            "status": "proposed",
+            "requirement_ids": []
+          }
+        ],
+        "edges": [
+          {
+            "id": "E-D-01",
+            "from": "D-OBS",
+            "to": "D-TRAFFIC",
+            "label": "authorize",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-D-02",
+            "from": "D-APP",
+            "to": "D-DB",
+            "label": "writes",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-D-03",
+            "from": "D-DB",
+            "to": "D-BACKUP",
+            "label": "protect",
+            "relationship": "backup",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-D-04",
+            "from": "D-DB",
+            "to": "D-RECDB",
+            "label": "replicate / restore",
+            "relationship": "replication",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-D-05",
+            "from": "D-TRAFFIC",
+            "to": "D-RECAPP",
+            "label": "reroute",
+            "relationship": "failover",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-D-06",
+            "from": "D-RECDB",
+            "to": "D-RECAPP",
+            "label": "data ready",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "E-D-07",
+            "from": "D-RECAPP",
+            "to": "D-VERIFY",
+            "label": "check",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          }
+        ],
+        "groups": [
+          {
+            "id": "D-PRIM",
+            "label": "Within the European Union",
+            "x": 40,
+            "y": 180,
+            "w": 575,
+            "h": 445,
+            "kind": "region",
+            "status": "proposed"
+          },
+          {
+            "id": "D-REC",
+            "label": "Within the European Union, in a second region",
+            "x": 673,
+            "y": 180,
+            "w": 590,
+            "h": 445,
+            "kind": "region",
+            "status": "proposed"
+          }
+        ],
+        "summary": "Failure scope: region; RTO=4 h; RPO=15 min; candidate: Pilot Light. These are targets, NOT achieved results.",
+        "instructions": [
+          "Define recovery critical path: detection → failover authorization → data promotion/restore → app/IAM connectivity → routing → business verification.",
+          "Demonstrate application-level recovery, data consistency, dependency reattachment, failback and split-brain protections.",
+          "Document separate recovery objective for every in-scope failure scenario, including cyber/data corruption where relevant."
+        ]
+      },
+      "data": {
+        "id": "data",
+        "title": "Data Flow · Candidate Ownership",
+        "width": 1320,
+        "height": 760,
+        "nodes": [
+          {
+            "id": "DF-INPUT",
+            "title": "Input / caller",
+            "subtitle": "UC not invented",
+            "x": 30,
+            "y": 190,
+            "w": 250,
+            "h": 67,
+            "kind": "client",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "DF-APP",
+            "title": "Application services",
+            "subtitle": "BRD-derived behavior in SDD",
+            "x": 390,
+            "y": 190,
+            "w": 260,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "DF-DB",
+            "title": "Authoritative data workload",
+            "subtitle": "Relational transactional store",
+            "x": 785,
+            "y": 140,
+            "w": 350,
+            "h": 67,
+            "kind": "database",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "DF-BACK",
+            "title": "Backup / archive",
+            "subtitle": "Retention/restore evidence",
+            "x": 785,
+            "y": 370,
+            "w": 350,
+            "h": 67,
+            "kind": "storage",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "DF-EXTRA-1",
+            "title": "Additional store: Points ledger",
+            "subtitle": "relational; consistency: strong",
+            "x": 785,
+            "y": 515,
+            "w": 350,
+            "h": 67,
+            "kind": "database",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          }
+        ],
+        "edges": [
+          {
+            "id": "DF-E1",
+            "from": "DF-INPUT",
+            "to": "DF-APP",
+            "label": "requests",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "DF-E2",
+            "from": "DF-APP",
+            "to": "DF-DB",
+            "label": "transaction/data",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "DF-E3",
+            "from": "DF-DB",
+            "to": "DF-BACK",
+            "label": "protect",
+            "relationship": "backup",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "DF-E-X1",
+            "from": "DF-APP",
+            "to": "DF-EXTRA-1",
+            "label": "access pattern TBD",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          }
+        ],
+        "groups": [],
+        "summary": "Only technical data paths are proposed here; product entities, use cases and APIs must come from BRDs.",
+        "instructions": [
+          "Confirm authoritative data owners, transaction boundaries, query patterns, mutation/replay semantics and supported cross-region consistency.",
+          "Do not infer product schemas or event names."
+        ]
+      },
+      "security": {
+        "id": "security",
+        "title": "Security Boundaries · Candidate",
+        "width": 1320,
+        "height": 760,
+        "nodes": [
+          {
+            "id": "S-CALLER",
+            "title": "Client / partner",
+            "subtitle": "Identity requirements TBD",
+            "x": 65,
+            "y": 245,
+            "w": 245,
+            "h": 67,
+            "kind": "client",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "S-WAF",
+            "title": "Ingress security control",
+            "subtitle": "WAF/firewall + TLS policy",
+            "x": 439,
+            "y": 245,
+            "w": 270,
+            "h": 67,
+            "kind": "security",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "S-IAM",
+            "title": "IAM / key authority",
+            "subtitle": "Recovery dependency",
+            "x": 460,
+            "y": 422,
+            "w": 252,
+            "h": 67,
+            "kind": "security",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "S-DB",
+            "title": "Protected data",
+            "subtitle": "At-rest / transit encryption",
+            "x": 873,
+            "y": 245,
+            "w": 270,
+            "h": 67,
+            "kind": "database",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          }
+        ],
+        "edges": [
+          {
+            "id": "S-E1",
+            "from": "S-CALLER",
+            "to": "S-WAF",
+            "label": "authenticated request",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "S-E2",
+            "from": "S-WAF",
+            "to": "S-DB",
+            "label": "authorized data path",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "S-E3",
+            "from": "S-IAM",
+            "to": "S-DB",
+            "label": "key/permission",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          }
+        ],
+        "groups": [
+          {
+            "id": "SC-EDGE",
+            "label": "Untrusted / edge boundary",
+            "x": 30,
+            "y": 130,
+            "w": 330,
+            "h": 450,
+            "kind": "zone",
+            "status": "proposed"
+          },
+          {
+            "id": "SC-APP",
+            "label": "Trusted application network",
+            "x": 401,
+            "y": 130,
+            "w": 384,
+            "h": 450,
+            "kind": "zone",
+            "status": "proposed"
+          },
+          {
+            "id": "SC-DATA",
+            "label": "Restricted data boundary",
+            "x": 826,
+            "y": 130,
+            "w": 410,
+            "h": 450,
+            "kind": "zone",
+            "status": "proposed"
+          }
+        ],
+        "summary": "Network trust boundaries are logical; identity provider, data classification and compliance controls need owner validation.",
+        "instructions": [
+          "Validate authentication/authorization ownership from BRD and architecture questionnaire.",
+          "Review segmentation, encryption, key recovery, sensitive data location, audit/retention and source-to-target trust."
+        ]
+      },
+      "integration": {
+        "id": "integration",
+        "title": "Integration Boundaries · Candidate",
+        "width": 1320,
+        "height": 760,
+        "nodes": [
+          {
+            "id": "I-CONSUMER",
+            "title": "Consumer / external systems",
+            "subtitle": "Contracts from BRD",
+            "x": 40,
+            "y": 230,
+            "w": 244,
+            "h": 67,
+            "kind": "client",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "I-ENTRY",
+            "title": "API / integration boundary",
+            "subtitle": "API/event/file candidates",
+            "x": 390,
+            "y": 230,
+            "w": 264,
+            "h": 67,
+            "kind": "edge",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "I-SYSTEM",
+            "title": "Target workload",
+            "subtitle": "Domain services from BRD",
+            "x": 771,
+            "y": 230,
+            "w": 270,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "I-PEER",
+            "title": "Partner / legacy systems",
+            "subtitle": "Contracts/source inventory TBD",
+            "x": 771,
+            "y": 464,
+            "w": 270,
+            "h": 67,
+            "kind": "external",
+            "placement": "Within the European Union",
+            "status": "proposed",
+            "requirement_ids": []
+          }
+        ],
+        "edges": [
+          {
+            "id": "I-E1",
+            "from": "I-CONSUMER",
+            "to": "I-ENTRY",
+            "label": "protocol TBD",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "I-E2",
+            "from": "I-ENTRY",
+            "to": "I-SYSTEM",
+            "label": "request/event",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "I-E3",
+            "from": "I-SYSTEM",
+            "to": "I-PEER",
+            "label": "integration",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          }
+        ],
+        "groups": [],
+        "summary": "Only connectivity and dependency patterns are generated. External APIs and events are unknown until BRD/SDD discovery.",
+        "instructions": [
+          "Inventory upstream/downstream systems and contracts from BRDs, integration owners and source-architecture telemetry.",
+          "Validate protocol, authentication, rate limits, idempotency, error queues and cross-site RTT."
+        ]
+      },
+      "deployment": {
+        "id": "deployment",
+        "title": "Deployment & Fault Domains · Candidate",
+        "width": 1320,
+        "height": 760,
+        "nodes": [
+          {
+            "id": "P-APP-A",
+            "title": "Execution instance(s)",
+            "subtitle": "Replicas / compute class TBD",
+            "x": 135,
+            "y": 254,
+            "w": 300,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Zone A",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "P-DB-A",
+            "title": "Persistent data tier",
+            "subtitle": "Failover service / quorum TBD",
+            "x": 135,
+            "y": 440,
+            "w": 300,
+            "h": 67,
+            "kind": "database",
+            "placement": "Zone A",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "P-APP-B",
+            "title": "Execution instance(s)",
+            "subtitle": "Replicas / compute class TBD",
+            "x": 751,
+            "y": 254,
+            "w": 300,
+            "h": 67,
+            "kind": "compute",
+            "placement": "Zone B",
+            "status": "proposed",
+            "requirement_ids": []
+          },
+          {
+            "id": "P-DB-B",
+            "title": "Standby / replica data tier",
+            "subtitle": "Recovery consistency TBD",
+            "x": 751,
+            "y": 440,
+            "w": 300,
+            "h": 67,
+            "kind": "database",
+            "placement": "Zone B",
+            "status": "proposed",
+            "requirement_ids": []
+          }
+        ],
+        "edges": [
+          {
+            "id": "P-E1",
+            "from": "P-APP-A",
+            "to": "P-APP-B",
+            "label": "redundancy",
+            "relationship": "ha",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "P-E2",
+            "from": "P-DB-A",
+            "to": "P-DB-B",
+            "label": "replication",
+            "relationship": "replication",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          },
+          {
+            "id": "P-E3",
+            "from": "P-APP-A",
+            "to": "P-DB-A",
+            "label": "data path",
+            "relationship": "request",
+            "direction": "unidirectional",
+            "status": "proposed",
+            "requirement_ids": [
+              "REQ-NET-001"
+            ]
+          }
+        ],
+        "groups": [
+          {
+            "id": "P-FD-A",
+            "label": "Zone A",
+            "x": 55,
+            "y": 140,
+            "w": 535,
+            "h": 480,
+            "kind": "zone",
+            "status": "proposed"
+          },
+          {
+            "id": "P-FD-B",
+            "label": "Zone B",
+            "x": 640,
+            "y": 140,
+            "w": 535,
+            "h": 480,
+            "kind": "zone",
+            "status": "proposed"
+          }
+        ],
+        "summary": "Deployable unit boundaries are provisional until BRD scope, selected platform and runtime profiles are confirmed.",
+        "instructions": [
+          "Verify runtime deployment units, rolling deployment, instance recovery, observability and resource sharing.",
+          "Do not infer Kubernetes replicas, node counts or physical allocations from TPS alone."
+        ]
+      }
+    },
+    "components": [
+      {
+        "id": "CLIENT",
+        "name": "Consumers",
+        "kind": "client",
+        "placement": "External boundary",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "DNS",
+        "name": "Routing & health checks",
+        "kind": "edge",
+        "placement": "Shared entry point",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "EDGE",
+        "name": "L7 ingress + security",
+        "kind": "edge",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "APP-A",
+        "name": "Application tier",
+        "kind": "compute",
+        "placement": "Zone A",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-PERF-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "DB-PRIMARY",
+        "name": "Relational transactional store",
+        "kind": "database",
+        "placement": "Zone A",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-DAT-001",
+          "REQ-DR-002"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "BACKUP",
+        "name": "Backups / restore points",
+        "kind": "storage",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-DR-002"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "APP-B",
+        "name": "Application tier",
+        "kind": "compute",
+        "placement": "Zone B",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-CAP-001",
+          "REQ-REL-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "DB-SECONDARY",
+        "name": "HA standby / replica",
+        "kind": "database",
+        "placement": "Zone B",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-DR-001",
+          "REQ-DR-002"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "RECOVERY-APP",
+        "name": "Recovery app capacity",
+        "kind": "dr",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-DR-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "RECOVERY-DB",
+        "name": "Recoverable data copy",
+        "kind": "database",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-DR-002"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "N-CLIENT",
+        "name": "External clients",
+        "kind": "client",
+        "placement": "Outside target",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-DNS",
+        "name": "DNS / traffic direction",
+        "kind": "edge",
+        "placement": "Shared control plane",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-ENTRY",
+        "name": "WAF / managed edge policy",
+        "kind": "security",
+        "placement": "Trust edge",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-PERIMETER",
+        "name": "Internet ingress boundary",
+        "kind": "network",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-LB",
+        "name": "Layer-7 load balancer",
+        "kind": "edge",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-APP-A",
+        "name": "Private application tier A",
+        "kind": "compute",
+        "placement": "Availability Zone A / private subnets",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-DB-A",
+        "name": "Restricted data access A",
+        "kind": "database",
+        "placement": "Availability Zone A / private subnets",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-EGRESS",
+        "name": "NAT / outbound egress",
+        "kind": "network",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-SERVICE",
+        "name": "Private service endpoint",
+        "kind": "network",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-APP-B",
+        "name": "Private application tier B",
+        "kind": "compute",
+        "placement": "Availability Zone B / private subnets",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-DB-B",
+        "name": "Standby / data access B",
+        "kind": "database",
+        "placement": "Availability Zone B / private subnets",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-DR-NET",
+        "name": "Standby recovery ingress",
+        "kind": "dr",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-DR-APP",
+        "name": "Recovery application capacity",
+        "kind": "compute",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "N-DR-DB",
+        "name": "Recovery database / replica",
+        "kind": "database",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "network"
+      },
+      {
+        "id": "D-OBS",
+        "name": "Detect / declare incident",
+        "kind": "security",
+        "placement": "Recovery procedure",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "D-TRAFFIC",
+        "name": "Traffic switching",
+        "kind": "edge",
+        "placement": "Recovery procedure",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "D-APP",
+        "name": "Primary application",
+        "kind": "compute",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "D-DB",
+        "name": "Primary committed data",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "D-BACKUP",
+        "name": "Protected recovery points",
+        "kind": "storage",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "D-RECAPP",
+        "name": "Scale pilot-light app",
+        "kind": "dr",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "D-RECDB",
+        "name": "Recovery copy / restore",
+        "kind": "database",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "D-VERIFY",
+        "name": "Business service verification",
+        "kind": "security",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "DF-INPUT",
+        "name": "Input / caller",
+        "kind": "client",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "data"
+      },
+      {
+        "id": "DF-APP",
+        "name": "Application services",
+        "kind": "compute",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "data"
+      },
+      {
+        "id": "DF-DB",
+        "name": "Authoritative data workload",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "data"
+      },
+      {
+        "id": "DF-BACK",
+        "name": "Backup / archive",
+        "kind": "storage",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "data"
+      },
+      {
+        "id": "DF-EXTRA-1",
+        "name": "Additional store: Points ledger",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "data"
+      },
+      {
+        "id": "S-CALLER",
+        "name": "Client / partner",
+        "kind": "client",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "security"
+      },
+      {
+        "id": "S-WAF",
+        "name": "Ingress security control",
+        "kind": "security",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "security"
+      },
+      {
+        "id": "S-IAM",
+        "name": "IAM / key authority",
+        "kind": "security",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "security"
+      },
+      {
+        "id": "S-DB",
+        "name": "Protected data",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "security"
+      },
+      {
+        "id": "I-CONSUMER",
+        "name": "Consumer / external systems",
+        "kind": "client",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "integration"
+      },
+      {
+        "id": "I-ENTRY",
+        "name": "API / integration boundary",
+        "kind": "edge",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "integration"
+      },
+      {
+        "id": "I-SYSTEM",
+        "name": "Target workload",
+        "kind": "compute",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "integration"
+      },
+      {
+        "id": "I-PEER",
+        "name": "Partner / legacy systems",
+        "kind": "external",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "integration"
+      },
+      {
+        "id": "P-APP-A",
+        "name": "Execution instance(s)",
+        "kind": "compute",
+        "placement": "Zone A",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "deployment"
+      },
+      {
+        "id": "P-DB-A",
+        "name": "Persistent data tier",
+        "kind": "database",
+        "placement": "Zone A",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "deployment"
+      },
+      {
+        "id": "P-APP-B",
+        "name": "Execution instance(s)",
+        "kind": "compute",
+        "placement": "Zone B",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "deployment"
+      },
+      {
+        "id": "P-DB-B",
+        "name": "Standby / replica data tier",
+        "kind": "database",
+        "placement": "Zone B",
+        "status": "proposed",
+        "requirement_ids": [],
+        "diagram_id": "deployment"
+      }
+    ],
+    "connections": [
+      {
+        "id": "E-I-01",
+        "from": "CLIENT",
+        "to": "DNS",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "request",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-02",
+        "from": "DNS",
+        "to": "EDGE",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "route",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-03",
+        "from": "EDGE",
+        "to": "APP-A",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "traffic",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-04",
+        "from": "APP-A",
+        "to": "DB-PRIMARY",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "reads/writes",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-05",
+        "from": "DB-PRIMARY",
+        "to": "BACKUP",
+        "relationship": "backup",
+        "direction": "unidirectional",
+        "description": "backup",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-06",
+        "from": "EDGE",
+        "to": "APP-B",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "route",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-07",
+        "from": "DB-PRIMARY",
+        "to": "DB-SECONDARY",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "description": "replicate",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-08",
+        "from": "DNS",
+        "to": "RECOVERY-APP",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "description": "failover",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-I-09",
+        "from": "DB-PRIMARY",
+        "to": "RECOVERY-DB",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "description": "replicate/restore",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "infrastructure"
+      },
+      {
+        "id": "E-N-01",
+        "from": "N-CLIENT",
+        "to": "N-DNS",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "DNS / access",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-02",
+        "from": "N-DNS",
+        "to": "N-ENTRY",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "request policy",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-03",
+        "from": "N-ENTRY",
+        "to": "N-LB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "front-end request",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-04",
+        "from": "N-LB",
+        "to": "N-APP-A",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "L7/private app",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-05",
+        "from": "N-APP-A",
+        "to": "N-DB-A",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "restricted DB",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-06",
+        "from": "N-APP-A",
+        "to": "N-EGRESS",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "outbound candidate",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-07",
+        "from": "N-APP-A",
+        "to": "N-SERVICE",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "private service",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-08",
+        "from": "N-EGRESS",
+        "to": "N-PERIMETER",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "egress route",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-09",
+        "from": "N-LB",
+        "to": "N-APP-B",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "AZ balance",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-10",
+        "from": "N-APP-B",
+        "to": "N-DB-B",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "data access",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-11",
+        "from": "N-DB-A",
+        "to": "N-DB-B",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "description": "replicate",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-13",
+        "from": "N-DNS",
+        "to": "N-DR-NET",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "description": "recovery route",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-14",
+        "from": "N-DR-NET",
+        "to": "N-DR-APP",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "description": "activate / route",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-15",
+        "from": "N-DR-APP",
+        "to": "N-DR-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "data access",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-N-16",
+        "from": "N-DB-A",
+        "to": "N-DR-DB",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "description": "replicate / lag TBD",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "network"
+      },
+      {
+        "id": "E-D-01",
+        "from": "D-OBS",
+        "to": "D-TRAFFIC",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "authorize",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "E-D-02",
+        "from": "D-APP",
+        "to": "D-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "writes",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "E-D-03",
+        "from": "D-DB",
+        "to": "D-BACKUP",
+        "relationship": "backup",
+        "direction": "unidirectional",
+        "description": "protect",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "E-D-04",
+        "from": "D-DB",
+        "to": "D-RECDB",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "description": "replicate / restore",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "E-D-05",
+        "from": "D-TRAFFIC",
+        "to": "D-RECAPP",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "description": "reroute",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "E-D-06",
+        "from": "D-RECDB",
+        "to": "D-RECAPP",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "data ready",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "E-D-07",
+        "from": "D-RECAPP",
+        "to": "D-VERIFY",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "check",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "dr"
+      },
+      {
+        "id": "DF-E1",
+        "from": "DF-INPUT",
+        "to": "DF-APP",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "requests",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "data"
+      },
+      {
+        "id": "DF-E2",
+        "from": "DF-APP",
+        "to": "DF-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "transaction/data",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "data"
+      },
+      {
+        "id": "DF-E3",
+        "from": "DF-DB",
+        "to": "DF-BACK",
+        "relationship": "backup",
+        "direction": "unidirectional",
+        "description": "protect",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "data"
+      },
+      {
+        "id": "DF-E-X1",
+        "from": "DF-APP",
+        "to": "DF-EXTRA-1",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "access pattern TBD",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "data"
+      },
+      {
+        "id": "S-E1",
+        "from": "S-CALLER",
+        "to": "S-WAF",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "authenticated request",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "security"
+      },
+      {
+        "id": "S-E2",
+        "from": "S-WAF",
+        "to": "S-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "authorized data path",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "security"
+      },
+      {
+        "id": "S-E3",
+        "from": "S-IAM",
+        "to": "S-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "key/permission",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "security"
+      },
+      {
+        "id": "I-E1",
+        "from": "I-CONSUMER",
+        "to": "I-ENTRY",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "protocol TBD",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "integration"
+      },
+      {
+        "id": "I-E2",
+        "from": "I-ENTRY",
+        "to": "I-SYSTEM",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "request/event",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "integration"
+      },
+      {
+        "id": "I-E3",
+        "from": "I-SYSTEM",
+        "to": "I-PEER",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "integration",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "integration"
+      },
+      {
+        "id": "P-E1",
+        "from": "P-APP-A",
+        "to": "P-APP-B",
+        "relationship": "ha",
+        "direction": "unidirectional",
+        "description": "redundancy",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "deployment"
+      },
+      {
+        "id": "P-E2",
+        "from": "P-DB-A",
+        "to": "P-DB-B",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "description": "replication",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "deployment"
+      },
+      {
+        "id": "P-E3",
+        "from": "P-APP-A",
+        "to": "P-DB-A",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "description": "data path",
+        "status": "proposed",
+        "requirement_ids": [
+          "REQ-NET-001"
+        ],
+        "diagram_id": "deployment"
+      }
+    ]
+  },
+  "scopes": [
+    {
+      "entry": "REL-05.1",
+      "scope": "region",
+      "rto": 14400,
+      "rpo": 900,
+      "rtoEntry": "REL-03.1",
+      "rpoEntry": "REL-04.1",
+      "strategy": "pilot",
+      "topoCandidate": "regional",
+      "arch": {
+        "path": "GF-CL",
+        "topo": "regional",
+        "dr": "pilot",
+        "isMultiRegion": true,
+        "needsRegion": true,
+        "providerScope": false,
+        "db": "Relational transactional store",
+        "approach": "Assess commit durability, replication semantics, and failover data correctness explicitly.",
+        "effectiveKind": "relational",
+        "network": "Region/VPC(or VNet)/private app and data segments",
+        "hasHybrid": false,
+        "strong": true,
+        "continuousTarget": false,
+        "zeroLossTarget": false,
+        "activeServing": false,
+        "globalActive": false
+      },
+      "blockers": []
+    },
+    {
+      "entry": "REL-05.2",
+      "scope": "az",
+      "rto": 300,
+      "rpo": 5,
+      "rtoEntry": "REL-03.2",
+      "rpoEntry": "REL-04.2",
+      "strategy": "localHA",
+      "topoCandidate": "multiAZ",
+      "arch": {
+        "path": "GF-CL",
+        "topo": "multiAZ",
+        "dr": "localHA",
+        "isMultiRegion": false,
+        "needsRegion": false,
+        "providerScope": false,
+        "db": "Relational transactional store",
+        "approach": "Assess commit durability, replication semantics, and failover data correctness explicitly.",
+        "effectiveKind": "relational",
+        "network": "Region/VPC(or VNet)/private app and data segments",
+        "hasHybrid": false,
+        "strong": true,
+        "continuousTarget": false,
+        "zeroLossTarget": false,
+        "activeServing": false,
+        "globalActive": false
+      },
+      "blockers": []
+    }
+  ],
+  "shape": {
+    "topology": "regional",
+    "topologySource": "REL-05.1",
+    "strategies": {
+      "region": "pilot",
+      "az": "localHA"
+    },
+    "replication": {
+      "region": "asynchronous",
+      "az": "asynchronous"
+    },
+    "conflicts": []
+  },
+  "options": {
+    "list": [
+      {
+        "id": "OPT-01",
+        "name": "One primary region with a pilot-light recovery region",
+        "hardPass": true,
+        "oneTime": 180000,
+        "monthly": 6500,
+        "tco": 414000,
+        "weighted": 3.769230769230769,
+        "unknowns": [],
+        "failures": []
+      },
+      {
+        "id": "OPT-02",
+        "name": "One primary region with a warm-standby recovery region",
+        "hardPass": true,
+        "oneTime": 210000,
+        "monthly": 9800,
+        "tco": 562800,
+        "weighted": 3.5384615384615383,
+        "unknowns": [],
+        "failures": []
+      }
+    ],
+    "horizonMonths": 36,
+    "weighted": true,
+    "flags": []
+  },
+  "validation": {
+    "blockers": [],
+    "conflicts": [],
+    "advisories": [
+      {
+        "id": "PRIMARY-ONLY-CAP-01",
+        "msg": "CAP-01.1 holds 2000 transactions/day. Not read: CAP-01.2 holds 40 transactions/day. The calculations and rules read only CAP-01.1; make the primary entry the one to size for, or carry the others to the SDD.",
+        "owner": "B+E",
+        "entry": "CAP-01.1"
+      }
+    ]
+  },
+  "gate": {
+    "g0": {
+      "met": true,
+      "missing": []
+    },
+    "g1": {
+      "met": true,
+      "missing": []
+    },
+    "g2": {
+      "result": "shortlist",
+      "missing": []
+    },
+    "g3": {
+      "status": "Not signed",
+      "missingRoles": [
+        "business_sponsor",
+        "product_owner_business_process_owner",
+        "lead_principal_architect",
+        "infrastructure_platform_owner",
+        "network_owner",
+        "security_and_privacy_compliance",
+        "data_owner",
+        "sre_operations",
+        "finance_procurement",
+        "architecture_review_authority"
+      ],
+      "problems": [
+        "Business sponsor has not signed.",
+        "Product owner / business process owner has not signed.",
+        "Lead / principal architect has not signed.",
+        "Infrastructure / platform owner has not signed.",
+        "Network owner has not signed.",
+        "Security and privacy/compliance has not signed.",
+        "Data owner has not signed.",
+        "SRE / operations has not signed.",
+        "Finance / procurement has not signed.",
+        "Architecture review authority has not signed.",
+        "G3-01 is Open: A named business sponsor and product owner approved the problem, scope and success measures.",
+        "G3-02 is Open: The Greenfield/Brownfield × On-prem/Cloud path is recorded (including mixed/hybrid logic where needed).",
+        "G3-03 is Open: Source-to-target migration direction is explicit, or `N/A` with reason.",
+        "G3-04 is Open: Every critical journey has measurable capacity and performance outcomes, including measurement methodology.",
+        "G3-05 is Open: Availability, RTO, RPO, data correctness and tolerated failure scopes have business approval.",
+        "G3-06 is Open: Security/privacy/legal/data residency requirements are mapped to owners and feasibility checked.",
+        "G3-07 is Open: Integration/dependency graph and network boundary assumptions are validated.",
+        "G3-08 is Open: Cost and delivery envelopes, operating model and team capability have owners.",
+        "G3-09 is Open: For brownfield, baseline metrics, inventory, constraints and major defects are evidenced.",
+        "G3-10 is Open: For migrations, per-workload 7R, dependency waves, data path, fallback and no-return point are documented.",
+        "G3-11 is Open: All hard-constraint conflicts and high risks have been closed or formally accepted by an empowered owner.",
+        "G3-12 is Open: The option comparison, recommended path, rationale, open PoCs and proposed ADRs are recorded.",
+        "G3-13 is Open: SDD acceptance-test matrix and responsibilities are established.",
+        "G3-14 is Open: Required approvals, dates, conditions and next-review trigger are captured."
+      ]
+    },
+    "label": "G2",
+    "authorized": false
+  }
+}

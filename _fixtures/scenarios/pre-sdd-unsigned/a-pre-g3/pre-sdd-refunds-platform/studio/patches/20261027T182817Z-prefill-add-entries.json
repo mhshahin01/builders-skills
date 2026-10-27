@@ -1,0 +1,68 @@
+{
+  "actor": {
+    "type": "agent",
+    "name": "pre-sdd-unifier"
+  },
+  "ops": [
+    {
+      "op": "add",
+      "row": "BUS-02",
+      "label": "Branch manager decision and payout journey (REFUNDS UC-04)"
+    },
+    {
+      "op": "add",
+      "row": "BUS-02",
+      "label": "Member points journey (LOYALTY UC-01, UC-02)"
+    },
+    {
+      "op": "add",
+      "row": "BUS-02",
+      "label": "Points earned on a branch purchase (LOYALTY 03 Earning points; no use case)"
+    },
+    {
+      "op": "add",
+      "row": "CAP-01",
+      "label": "Refund request"
+    },
+    {
+      "op": "add",
+      "row": "CAP-07",
+      "label": "Member points balance and history screens (LOYALTY UC-01, UC-02)"
+    },
+    {
+      "op": "add",
+      "row": "REL-01",
+      "label": "Member points balance and history screens (LOYALTY UC-01, UC-02)"
+    },
+    {
+      "op": "add",
+      "row": "DAT-01",
+      "label": "Points ledger"
+    },
+    {
+      "op": "add",
+      "row": "DAT-05",
+      "label": "Points ledger"
+    },
+    {
+      "op": "add",
+      "row": "INT-01",
+      "label": "Point-of-Sale Records (Retail IT team)"
+    },
+    {
+      "op": "add",
+      "row": "INT-01",
+      "label": "Notification Partner (MsgHub)"
+    },
+    {
+      "op": "add",
+      "row": "INT-03",
+      "label": "Point-of-Sale Records (Retail IT team)"
+    },
+    {
+      "op": "add",
+      "row": "INT-03",
+      "label": "Notification Partner (MsgHub)"
+    }
+  ]
+}

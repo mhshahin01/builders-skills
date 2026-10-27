@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "finance_procurement",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

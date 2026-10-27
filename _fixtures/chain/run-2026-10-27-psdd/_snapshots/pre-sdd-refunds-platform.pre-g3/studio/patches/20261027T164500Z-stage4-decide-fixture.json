@@ -1,0 +1,6 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "decide", "option": "OPT-01" }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "SEC-04.1",
+      "value": "Customer personal data, payout records and points data are encrypted at rest and in transit; the business holds the keys and rotates them at least once a year."
+    },
+    {
+      "op": "confirm",
+      "entry": "SEC-04.1"
+    },
+    {
+      "op": "set",
+      "entry": "SEC-01.1",
+      "owner_name": "Legal Counsel",
+      "due": "2026-12-15"
+    },
+    {
+      "op": "set",
+      "entry": "SEC-03.1",
+      "owner_name": "Security Lead",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "SEC-06.1",
+      "owner_name": "Security Lead",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "SEC-08.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "REL-03.2",
+      "value": 300
+    },
+    {
+      "op": "confirm",
+      "entry": "REL-03.2"
+    },
+    {
+      "op": "set",
+      "entry": "REL-04.1",
+      "label": "All refund and points data, region loss",
+      "scope": "region",
+      "value": 900
+    },
+    {
+      "op": "confirm",
+      "entry": "REL-04.1"
+    },
+    {
+      "op": "set",
+      "entry": "REL-04.2",
+      "value": 5
+    },
+    {
+      "op": "confirm",
+      "entry": "REL-04.2"
+    },
+    {
+      "op": "set",
+      "entry": "REL-05.1",
+      "label": "Loss of a whole region",
+      "value": "region"
+    },
+    {
+      "op": "confirm",
+      "entry": "REL-05.1"
+    }
+  ]
+}

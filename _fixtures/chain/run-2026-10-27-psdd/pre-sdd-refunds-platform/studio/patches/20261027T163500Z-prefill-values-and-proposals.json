@@ -1,0 +1,586 @@
+{
+  "actor": {
+    "type": "agent",
+    "name": "pre-sdd-unifier"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "BUS-01.1",
+      "value": "REFUNDS: cut the average time from request to payout from 10 days to 3 days; stop lost refund requests, so every request is recorded and visible to the customer; give branch managers one place to decide for their own branch; refund complaints fall from 18% of all complaints to customer care (target and date not stated); a share of refund requests made through the portal (target and date not stated). LOYALTY: members trust their points balance (zero upheld balance complaints a month, LOYALTY/NFR-01); members check their points without calling a branch (baseline, target and date not stated).",
+      "evidence": "REFUNDS 01 Business Objectives 1 to 5; LOYALTY 01 Business Objectives 1 and 2.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-02.1",
+      "label": "Request a refund (REFUNDS/UC-01)",
+      "value": "The customer requests a refund for items on a branch receipt within the 30-day refund window; it needs the receipt lookup from Point-of-Sale Records (Critical); when receipts cannot be checked, the customer is asked to try again later.",
+      "evidence": "REFUNDS/UC-01, UC-01 E5; REFUNDS 08.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-02.2",
+      "value": "The customer sees each own refund request with its status and history (Business Objective 2).",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-02.3",
+      "value": "The customer cancels an own request while it is Submitted; Loyalty Points is told the outcome.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-02.4",
+      "value": "The branch manager approves a request in full or in part, or rejects it with a reason; the payout goes to the original card through the Payment Provider (Critical); a failed payout is tried again, and the branch manager is told after one day.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-02.5",
+      "value": "The member sees the current points balance; when points cannot be shown, the member is asked to try again later and is never shown a balance of 0.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/UC-01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-02.6",
+      "value": "The member sees every points movement, newest first, with the purchase or refund behind it.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/UC-02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-02.7",
+      "value": "Points are earned at 1 point per 1 EUR on each branch purchase received from POS Records; a purchase that arrives late keeps its purchase date.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY 03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-03.1",
+      "value": "In scope: online refund requests for branch purchases; customers follow and cancel their own requests; branch manager decisions in full or in part; payout to the original card; email and SMS messages; refund outcomes sent to Loyalty Points; a daily branch refund report (REFUNDS 04). Earning points on branch purchases; points balance and history; taking points back after a paid refund (LOYALTY 04). Out of scope: refunds for online-shop purchases, cash refunds, a customer mobile app (REFUNDS 04); redeeming points, handling points complaints and correcting points by hand (LOYALTY 04). The Refunds Portal starts in a pilot group of branches and Loyalty Points goes live in all branches at once; neither waits for the other.",
+      "evidence": "REFUNDS 04 Project Scope; LOYALTY 04 Project Scope.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-05.1",
+      "evidence": "No launch date is stated. REFUNDS 04: a pilot group of branches first; the pilot branches, its length and the order of the other branches are not stated. REFUNDS 02: the CardPay Ltd answer is needed before the build of UC-04, the Point-of-Sale receipt lookup before the build of UC-01, the Legal confirmation before go-live. LOYALTY 04: all branches at once after BAT sign-off.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-06.1",
+      "value": "Customers of 40 retail branches and loyalty members; customer and member screens work in a web browser on phones and computers; purchases are counted in EUR. Not stated: the countries the branches operate in, the languages, the date and number formats, and the accessibility standard.",
+      "evidence": "REFUNDS 02 Facts 1; REFUNDS 11; LOYALTY 11; LOYALTY 02 Glossary (EUR); REFUNDS/NFR-07 (countries open).",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-07.1",
+      "value": "Payouts go only to the card used for the purchase. Non-goals: refunds for online-shop purchases, cash refunds and a customer mobile app; redeeming points, handling points complaints and correcting points by hand.",
+      "evidence": "REFUNDS 02 Assumptions / Constraints 2; REFUNDS 04 Out of Scope; LOYALTY 04 Out of Scope.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "BUS-08.1",
+      "evidence": "REFUNDS/NFR-07: every paid refund carries the refund document and records the tax law requires; the countries, the document and the register are not stated. REFUNDS 02: the CardPay Ltd refund conditions and consumer refund rights beyond the 30-day window are open. No penalty condition is stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-07"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "CAP-01.1",
+      "label": "Refund request",
+      "evidence": "REFUNDS 02 Facts 1: about 1,200 refund requests a month across 40 branches. A daily figure needs a month length, so it is not stated for this row.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "CAP-01.2",
+      "evidence": "LOYALTY states no volume of purchases or points movements.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY 02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "CAP-04.1",
+      "value": 3,
+      "window": "About 3 weeks of seasonal sales",
+      "evidence": "REFUNDS 02 Facts 2: seasonal sales triple the number of requests for about 3 weeks. REFUNDS/NFR-03: 3 times the normal number of requests for 3 weeks, while still meeting NFR-05.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "CAP-07.1",
+      "label": "Everyday portal actions: enter a receipt number, submit a request, open a request list (REFUNDS/NFR-05)",
+      "evidence": "REFUNDS/NFR-05: each everyday action completes within a number of seconds that is not stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-05"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "CAP-07.2",
+      "evidence": "LOYALTY states no response time for the points screens.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY 10"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "CAP-09.1",
+      "value": "Points taken back after a paid refund show within 1 hour of the refund being paid; a payout that still fails after one day is reported to the branch manager; the branch refund report is daily. The deadline for points earned on a purchase is not stated.",
+      "evidence": "LOYALTY/NFR-02; REFUNDS/UC-04 E1; REFUNDS 09; LOYALTY/NFR-03 (open).",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/NFR-02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "CAP-11.1",
+      "value": "A refused or sent-back payout stays Approved and is tried again; the customer is told it is delayed, and the branch manager is told after one day. When Point-of-Sale Records cannot be reached, the customer is asked to try again later. A message that does not reach the customer never stops a request. Points or history that cannot be shown ask the member to try again later. How long a failed payout is tried again is not stated.",
+      "evidence": "REFUNDS/UC-04 E1; REFUNDS/UC-01 E5; REFUNDS 03 Customer messages; LOYALTY/UC-01 E1, UC-02 E1.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-01.1",
+      "label": "Refund journeys for customers and branch managers (REFUNDS/UC-01 to UC-04)",
+      "evidence": "REFUNDS/NFR-02: no more than 2 hours of disruption a month, planned maintenance included. A percentage needs a month length, so it is not stated for this row.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-01.2",
+      "evidence": "LOYALTY/NFR-04: the points screens open at any time of day, every day; the minutes per month are not stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/NFR-04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-03.1",
+      "evidence": "Neither BRD states a recovery time after a failure.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 10"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-04.1",
+      "evidence": "REFUNDS/NFR-01: refund money is never lost or paid twice. Neither BRD states an acceptable data loss.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-05.1",
+      "evidence": "Neither BRD states a failure scope to survive.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 10"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-06.1",
+      "value": "A staff member records a payout result by hand and a second staff member confirms it; a monthly check makes sure no payout is missing or paid twice (its owner is not stated); a customer whose purchase cannot be refunded online can visit the branch.",
+      "evidence": "REFUNDS 03 Decision record; REFUNDS 04 Personas; REFUNDS/UC-01 E1, E4.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-08.1",
+      "value": "Planned maintenance is allowed and counts toward the 2 hours of disruption a month of the refund journeys; for the points screens it counts toward a monthly limit that is not stated.",
+      "evidence": "REFUNDS/NFR-02; LOYALTY/NFR-04.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "REL-10.1",
+      "value": "Refund money is never lost or paid twice: zero missing or duplicate payouts a month. The decision record of every status change cannot be changed. Every points movement follows the points rules; each paid refund takes points back once, even when reported more than once; the balance always equals the sum of the movements.",
+      "evidence": "REFUNDS/NFR-01; REFUNDS 03 Decision record; LOYALTY/NFR-01; LOYALTY/UC-02 BR-3; LOYALTY 03.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-01.1",
+      "label": "Refund requests, decisions and payouts",
+      "value": "Refund request with its lifecycle (Submitted, Approved, Rejected, Paid, Cancelled), the decision record of every status change, and the payout to the original card; the Refunds Portal records them.",
+      "evidence": "REFUNDS 03 Refund request, Decision record.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      }
+    },
+    {
+      "op": "set-factor",
+      "entry": "DAT-01.1",
+      "factor": "storeKind",
+      "value": "relational",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 12 (TI-02)"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-01.2",
+      "value": "Points balance and points movements (earned, taken back) for each member, with the purchase and refund details behind each movement; the balance is the sum of the movements; Loyalty Points keeps them.",
+      "evidence": "LOYALTY 03 Points movement, Keeping points history.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY 03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-03.1",
+      "value": "sensitive",
+      "evidence": "REFUNDS/NFR-04: customer personal data is protected; REFUNDS 08: card payout records; LOYALTY/NFR-05: points, history and purchase details visible only to the member.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-04.1",
+      "evidence": "No residency or allowed location is stated; the applicable data-protection law is open (REFUNDS 02, LOYALTY 02 Dependencies).",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-05.1",
+      "label": "Refund requests, decisions and payouts",
+      "evidence": "REFUNDS/NFR-01: refund money is never lost or paid twice. The consistency model is not stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-05.2",
+      "evidence": "LOYALTY/NFR-01: every points movement follows the points rules. The consistency model is not stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/NFR-01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-06.1",
+      "evidence": "REFUNDS/NFR-06: the retention of refund records and of customer contact details is not stated; REFUNDS 03: the decision record is deleted only when the NFR-06 period ends; LOYALTY 03: how long movement details are kept, and when the data of a member who leaves is deleted, are not stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-06"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "DAT-08.1",
+      "value": "A daily branch refund report for each branch manager: requests per status, amounts paid, average time from Submitted to decision and to Paid. A monthly check that no payout is missing or paid twice (owner not stated). Loyalty Points has no reporting in this release.",
+      "evidence": "REFUNDS 09; REFUNDS 04 Personas; LOYALTY 09.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 09"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "SEC-01.1",
+      "evidence": "REFUNDS 02 and LOYALTY 02 Dependencies: the Legal confirmation of the applicable data-protection law (and, for REFUNDS, of consumer refund rights) is a hard dependency needed before go-live, owner not stated; REFUNDS/NFR-04 and NFR-07 wait on it.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "SEC-02.1",
+      "value": "Customers prove who they are before they see receipt items or their requests (method not stated); branch managers act only for their own branch; staff members record and confirm a payout result by hand; members sign in (the sign-in party is not stated). Partners: Payment Provider, Notification Partner, Point-of-Sale Records.",
+      "evidence": "REFUNDS 03 Customer identity, Branch ownership, Decision record; LOYALTY/UC-01 Preconditions; REFUNDS 08; LOYALTY 08.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "SEC-04.1",
+      "evidence": "Neither BRD states encryption or key custody.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 10"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "SEC-05.1",
+      "value": "Every refund status change is recorded with who made it, the date and time, the amount and the reason; a payout result recorded by hand needs a second staff member to confirm it; nobody can change the record, and it is deleted only when the retention period ends.",
+      "evidence": "REFUNDS 03 Decision record.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "SEC-07.1",
+      "value": "A branch manager decides only for the own branch and never on a request they submitted as a customer; a payout result recorded by hand is confirmed by a second staff member. A second approver above an amount is not stated.",
+      "evidence": "REFUNDS/UC-04 BR-1, BR-6, BR-7; REFUNDS 03 Decision record.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-01.1",
+      "label": "Payment Provider (CardPay Ltd)",
+      "value": "Payment Provider, CardPay Ltd: payout requests, payout results, card disputes and their outcome; both ways; Critical.",
+      "evidence": "REFUNDS 08.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-01.2",
+      "value": "Point-of-Sale Records, Retail IT team: receipt, items, amounts, branch, purchase date and how the purchase was paid, for the refund lookup; member purchases for earning points; we receive; Critical.",
+      "evidence": "REFUNDS 08; LOYALTY 08.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-01.3",
+      "value": "Notification Partner, MsgHub: customer contact details and message content for email and SMS; we send; Important.",
+      "evidence": "REFUNDS 08.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-02.1",
+      "value": "The receipt lookup runs when the customer enters a receipt number; payout requests and results go both ways with the Payment Provider; refund outcomes go to Loyalty Points at each change to Paid, Rejected, Cancelled or back to Approved, and are kept and sent later while Loyalty Points has not started; branch purchases are known the same day.",
+      "evidence": "REFUNDS/UC-01 step 2; REFUNDS 08; REFUNDS 04; REFUNDS/UC-04 Business Rules; LOYALTY 02 Assumption 1.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-03.1",
+      "label": "Payment Provider (CardPay Ltd)",
+      "evidence": "REFUNDS 08: integration details and availability targets are left to the SDD; no quota, latency or SLA is stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-04.1",
+      "value": "A refused or sent-back payout is tried again and the request stays Approved; when Point-of-Sale Records cannot be reached, the customer is asked to try again later; a failed message never stops a request; refund outcomes are kept and sent when Loyalty Points starts; a paid refund whose purchase has not earned points waits up to 30 days.",
+      "evidence": "REFUNDS/UC-04 E1; REFUNDS/UC-01 E5; REFUNDS 03; REFUNDS 04; LOYALTY/UC-02 BR-5.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-05.1",
+      "value": "Each paid refund takes points back once, even when it is reported more than once; points taken back show within 1 hour of the refund being paid; a purchase that arrives late keeps its purchase date.",
+      "evidence": "LOYALTY/UC-02 BR-3; LOYALTY/NFR-02; LOYALTY 03 Earning points.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/UC-02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "INT-07.1",
+      "value": "Customers and members use a web browser on phones and computers; branch managers work in 40 branches; no offline operation is stated; the devices for the branch manager screens are not stated.",
+      "evidence": "REFUNDS 11; LOYALTY 11; REFUNDS 02 Facts.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 11"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "OPS-01.1",
+      "value": "Users reach the refund journeys and the points screens at any time of day, every day. Support hours, incident severities and escalation are not stated.",
+      "evidence": "REFUNDS/NFR-02; LOYALTY/NFR-04.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-02"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "OPS-07.1",
+      "value": "The Refunds Portal starts in a pilot group of branches, then the other branches; until a branch starts, it handles refunds as today. The pilot branches, its length, the order of the other branches and the handling of open paper requests are not stated. Loyalty Points goes live in all branches at once after BAT sign-off.",
+      "evidence": "REFUNDS 04 Project Scope; LOYALTY 04 Project Scope.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 04"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "OPS-08.1",
+      "value": "Business acceptance testing before go-live; a seasonal load of 3 times the normal number of requests for 3 weeks while meeting REFUNDS/NFR-05. The accessibility standard is not stated.",
+      "evidence": "REFUNDS 02 Glossary (BAT); LOYALTY 04; REFUNDS/NFR-03; REFUNDS 11.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-03"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "ECO-01.1",
+      "evidence": "REFUNDS 01: the cost today and the expected saving are not stated; LOYALTY 01: the cost to build and run is not stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "HDR-07.1",
+      "evidence": "REFUNDS 01: refunds are handled on paper and by phone today; LOYALTY 01: the current state is not stated.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 01"
+      }
+    },
+    {
+      "op": "set",
+      "entry": "HDR-08.1",
+      "evidence": "Neither BRD states who hosts and runs the system; REFUNDS 12 Technical Inputs name products only, which are left to the SDD.",
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 12"
+      }
+    },
+    {
+      "op": "propose",
+      "entry": "CAP-07.1",
+      "value": 2000,
+      "reason": "REFUNDS/NFR-05 asks that customers and branch managers do not wait during everyday actions and leaves the seconds open; 2 seconds at P99 is a responsive ceiling for entering a receipt number, submitting a request or opening a list."
+    },
+    {
+      "op": "propose",
+      "entry": "CAP-07.2",
+      "value": 2000,
+      "reason": "No LOYALTY source gives a response time; the same everyday-action ceiling as the refund journeys keeps one screen target for the platform."
+    },
+    {
+      "op": "propose",
+      "entry": "REL-01.1",
+      "value": 99.9,
+      "reason": "REFUNDS/NFR-02 allows no more than 2 hours of disruption a month, planned maintenance included; 99.9% keeps the monthly downtime the engine computes inside that limit."
+    },
+    {
+      "op": "propose",
+      "entry": "REL-01.2",
+      "value": 99.9,
+      "reason": "LOYALTY/NFR-04 asks for the points screens at any time of day, every day, and leaves the minutes open; the target of the refund journeys keeps one availability target for the platform."
+    },
+    {
+      "op": "propose",
+      "entry": "REL-03.1",
+      "value": 3600,
+      "reason": "REFUNDS/NFR-02 allows 2 hours of disruption a month in total; a recovery inside 1 hour leaves room for planned maintenance in the same month."
+    },
+    {
+      "op": "propose",
+      "entry": "REL-04.1",
+      "value": 0,
+      "reason": "REFUNDS/NFR-01: refund money is never lost or paid twice, so an accepted decision or payout result must not be lost."
+    }
+  ]
+}

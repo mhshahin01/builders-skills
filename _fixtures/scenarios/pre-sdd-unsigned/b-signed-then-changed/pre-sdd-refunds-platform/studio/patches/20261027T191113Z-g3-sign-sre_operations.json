@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "sre_operations",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

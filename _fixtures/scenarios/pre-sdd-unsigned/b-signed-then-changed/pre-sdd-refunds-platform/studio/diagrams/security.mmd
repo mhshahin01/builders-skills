@@ -1,0 +1,15 @@
+flowchart LR
+  %% Security Boundaries · Candidate - PROPOSED / NOT AN APPROVED DESIGN
+  %% canonical component NODE-S-CALLER
+  S_CALLER["Client / partner - Identity requirements TBD"]
+  %% canonical component NODE-S-WAF
+  S_WAF["Ingress security control - WAF/firewall + TLS policy"]
+  %% canonical component NODE-S-IAM
+  S_IAM["IAM / key authority - Recovery dependency"]
+  %% canonical component NODE-S-DB
+  S_DB["Protected data - At-rest / transit encryption"]
+  S_CALLER -->|authenticated request| S_WAF
+  S_WAF -->|authorized data path| S_DB
+  S_IAM -->|key/permission| S_DB
+  classDef proposed fill:#e8f3f6,stroke:#368b94,color:#15354b;
+  class S_CALLER,S_WAF,S_IAM,S_DB proposed;

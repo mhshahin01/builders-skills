@@ -1,0 +1,58 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "confirm",
+      "entry": "DAT-02.1"
+    },
+    {
+      "op": "set",
+      "entry": "BUS-05.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20"
+    },
+    {
+      "op": "add-unknown",
+      "entry": "REL-01.2",
+      "question": "How many minutes per month may the points balance and history screens be unavailable, planned maintenance included (LOYALTY/NFR-04)?",
+      "impact": "Confirms or replaces the policy-accepted 99.9 % availability target for the member points journey.",
+      "owner": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20"
+    },
+    {
+      "op": "add-unknown",
+      "entry": "CAP-07.1",
+      "question": "Within how many seconds must an everyday action in the Refunds Portal complete (REFUNDS/NFR-05)?",
+      "impact": "Confirms or replaces the policy-accepted 2000 ms P99 latency target for the refund actions.",
+      "owner": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20"
+    },
+    {
+      "op": "add-unknown",
+      "entry": "BUS-05.1",
+      "question": "What are the launch dates, hard deadlines and change windows of the Refunds Portal pilot, its rollout, and Loyalty Points (REFUNDS 04, LOYALTY 04)?",
+      "impact": "Sets the delivery envelope the option comparison reads (delivery time) and the change-freeze windows.",
+      "owner": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20"
+    },
+    {
+      "op": "add-unknown",
+      "entry": "INT-03.1",
+      "question": "Has CardPay Ltd confirmed refunds to the original card for branch card purchases, with its merchant account model, time limit, needed payment details, and whether it reports card disputes (REFUNDS 02 Dependencies)?",
+      "impact": "Can change how the payout integration works; needed before the build of REFUNDS UC-04.",
+      "owner": "CardPay Ltd",
+      "due": "2026-11-20"
+    },
+    {
+      "op": "add-unknown",
+      "entry": "INT-03.2",
+      "question": "Has the Retail IT team agreed to give the receipt lookup and the member purchase feed, and how soon after a purchase can a receipt be found (REFUNDS 02 Assumption 4 and Dependencies, LOYALTY 02)?",
+      "impact": "Every refund request and every earned point depends on Point-of-Sale Records; needed before the build of REFUNDS UC-01.",
+      "owner": "Retail IT team",
+      "due": "2026-11-20"
+    }
+  ]
+}

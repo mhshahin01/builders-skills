@@ -1,0 +1,23 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "BUS-08.1",
+      "value": "No customer-facing contract or penalty applies; payouts follow the refund terms agreed with the payment provider (CardPay Ltd)."
+    },
+    {
+      "op": "confirm",
+      "entry": "BUS-08.1"
+    },
+    {
+      "op": "set",
+      "entry": "BUS-04.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    }
+  ]
+}

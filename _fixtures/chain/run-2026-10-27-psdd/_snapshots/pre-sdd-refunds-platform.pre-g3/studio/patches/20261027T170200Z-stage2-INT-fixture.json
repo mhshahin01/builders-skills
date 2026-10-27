@@ -1,0 +1,47 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "INT-08.1",
+      "value": "public"
+    },
+    {
+      "op": "confirm",
+      "entry": "INT-08.1"
+    },
+    {
+      "op": "set",
+      "entry": "INT-03.1",
+      "owner_name": "CardPay Ltd",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "INT-03.2",
+      "owner_name": "Retail IT team",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "INT-03.3",
+      "owner_name": "MsgHub",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "INT-06.1",
+      "owner_name": "Lead Architect, Retail IT",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "INT-09.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    }
+  ]
+}

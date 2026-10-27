@@ -1,0 +1,2417 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pre-SDD project state",
+  "description": "The project file of pre-sdd-unifier and the Pre-SDD Architecture Studio 3.0: the register (header rows, the 70 checklist items and the migration overlay rows, each with its entries), the options, decisions, gate, unknowns and history. Schema 3.0.0; every timestamp is UTC.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schema_version",
+    "engine_version",
+    "project",
+    "run",
+    "register",
+    "options",
+    "decisions",
+    "gate",
+    "unknowns",
+    "history",
+    "ui"
+  ],
+  "properties": {
+    "kind": {
+      "const": "pre-sdd-project-state"
+    },
+    "schema_version": {
+      "const": "3.0.0"
+    },
+    "engine_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "slug",
+        "pre_sdd_version",
+        "brds"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "pre_sdd_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+$"
+        },
+        "brds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/brd"
+          }
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "input",
+        "light",
+        "stage",
+        "group",
+        "policy"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "full",
+            "quick"
+          ]
+        },
+        "input": {
+          "enum": [
+            "web",
+            "prompt"
+          ]
+        },
+        "light": {
+          "type": "boolean"
+        },
+        "stage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "group": {
+          "enum": [
+            "BUS",
+            "SEC",
+            "DAT",
+            "INT",
+            "CAP",
+            "REL",
+            "OPS",
+            "ECO",
+            "HDR",
+            "OVL",
+            null
+          ]
+        },
+        "policy": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/policy"
+            }
+          ]
+        }
+      }
+    },
+    "register": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "header",
+        "items",
+        "overlay"
+      ],
+      "properties": {
+        "header": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "HDR-01",
+            "HDR-02",
+            "HDR-03",
+            "HDR-04",
+            "HDR-05",
+            "HDR-06",
+            "HDR-07",
+            "HDR-08",
+            "HDR-09",
+            "HDR-10"
+          ],
+          "properties": {
+            "HDR-01": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "HDR-02": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "HDR-03": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "HDR-04": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "HDR-05": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "HDR-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "HDR-07": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "greenfield",
+                      "brownfield",
+                      "mixed",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "HDR-08": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "onprem",
+                      "cloud",
+                      "hybrid",
+                      "undecided",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "HDR-09": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "HDR-10": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "none",
+                      "onprem-to-cloud",
+                      "cloud-to-cloud",
+                      "cloud-to-onprem",
+                      "same-platform",
+                      "mixed",
+                      null
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "BUS-01",
+            "BUS-02",
+            "BUS-03",
+            "BUS-04",
+            "BUS-05",
+            "BUS-06",
+            "BUS-07",
+            "BUS-08",
+            "CAP-01",
+            "CAP-02",
+            "CAP-03",
+            "CAP-04",
+            "CAP-05",
+            "CAP-06",
+            "CAP-07",
+            "CAP-08",
+            "CAP-09",
+            "CAP-10",
+            "CAP-11",
+            "CAP-12",
+            "REL-01",
+            "REL-02",
+            "REL-03",
+            "REL-04",
+            "REL-05",
+            "REL-06",
+            "REL-07",
+            "REL-08",
+            "REL-09",
+            "REL-10",
+            "DAT-01",
+            "DAT-02",
+            "DAT-03",
+            "DAT-04",
+            "DAT-05",
+            "DAT-06",
+            "DAT-07",
+            "DAT-08",
+            "DAT-09",
+            "SEC-01",
+            "SEC-02",
+            "SEC-03",
+            "SEC-04",
+            "SEC-05",
+            "SEC-06",
+            "SEC-07",
+            "SEC-08",
+            "INT-01",
+            "INT-02",
+            "INT-03",
+            "INT-04",
+            "INT-05",
+            "INT-06",
+            "INT-07",
+            "INT-08",
+            "INT-09",
+            "OPS-01",
+            "OPS-02",
+            "OPS-03",
+            "OPS-04",
+            "OPS-05",
+            "OPS-06",
+            "OPS-07",
+            "OPS-08",
+            "ECO-01",
+            "ECO-02",
+            "ECO-03",
+            "ECO-04",
+            "ECO-05",
+            "ECO-06"
+          ],
+          "properties": {
+            "BUS-01": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "BUS-02": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "BUS-03": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "BUS-04": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "BUS-05": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "BUS-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "BUS-07": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "BUS-08": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "CAP-01": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "CAP-02": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "CAP-03": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "CAP-04": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "CAP-05": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "CAP-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "CAP-07": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "CAP-08": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "CAP-09": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "CAP-10": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "CAP-11": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "CAP-12": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "REL-01": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "REL-02": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "REL-03": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "REL-04": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "REL-05": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "host",
+                      "az",
+                      "site",
+                      "region",
+                      "provider",
+                      "cyber",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "REL-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "REL-07": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "REL-08": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "REL-09": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "REL-10": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "DAT-01": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "DAT-02": {
+              "$ref": "#/$defs/numberEntries"
+            },
+            "DAT-03": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "public",
+                      "internal",
+                      "sensitive",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "DAT-04": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "yes",
+                      "no",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "DAT-05": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "strong",
+                      "mixed",
+                      "eventual",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "DAT-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "DAT-07": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "single",
+                      "shared-logical",
+                      "schema-isolated",
+                      "database-isolated",
+                      "deployment-isolated",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "DAT-08": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "DAT-09": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-01": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-02": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-03": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-04": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-05": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-07": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "SEC-08": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-01": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-02": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-03": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-04": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-05": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-07": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "INT-08": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/entry",
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "public",
+                      "private",
+                      "hybrid",
+                      "partner",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            "INT-09": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-01": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-02": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-03": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-04": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-05": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-06": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-07": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "OPS-08": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "ECO-01": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "ECO-02": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "ECO-03": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "ECO-04": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "ECO-05": {
+              "$ref": "#/$defs/textEntries"
+            },
+            "ECO-06": {
+              "$ref": "#/$defs/textEntries"
+            }
+          }
+        },
+        "overlay": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "applies",
+            "source",
+            "workloads",
+            "rows"
+          ],
+          "properties": {
+            "applies": {
+              "type": "boolean"
+            },
+            "source": {
+              "enum": [
+                "unknown",
+                "onprem",
+                "samecloud",
+                "othercloud",
+                "mixed"
+              ]
+            },
+            "workloads": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/workload"
+              }
+            },
+            "rows": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "OVL-01",
+                "OVL-02",
+                "OVL-03",
+                "OVL-04",
+                "OVL-05",
+                "OVL-06",
+                "OVL-07",
+                "OVL-08",
+                "OVL-09",
+                "OVL-10",
+                "OVL-11",
+                "OVL-12"
+              ],
+              "properties": {
+                "OVL-01": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-02": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-03": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-04": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-05": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-06": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-07": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-08": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-09": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-10": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-11": {
+                  "$ref": "#/$defs/textEntries"
+                },
+                "OVL-12": {
+                  "$ref": "#/$defs/textEntries"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "list",
+        "weights",
+        "horizon_months"
+      ],
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        },
+        "weights": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/weights"
+            }
+          ]
+        },
+        "horizon_months": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/horizon"
+            }
+          ]
+        }
+      }
+    },
+    "decisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "topology_override",
+        "dr_overrides",
+        "override_reason",
+        "chosen_option"
+      ],
+      "properties": {
+        "topology_override": {
+          "enum": [
+            "auto",
+            "single",
+            "multiAZ",
+            "multiAZActive",
+            "regional",
+            "active"
+          ]
+        },
+        "dr_overrides": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "host": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "az": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "site": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "region": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "provider": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "cyber": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            }
+          }
+        },
+        "override_reason": {
+          "type": "string"
+        },
+        "chosen_option": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^OPT-\\d{2,}$"
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checklist",
+        "signoffs",
+        "conditions",
+        "exceptions",
+        "reopened"
+      ],
+      "properties": {
+        "checklist": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "G3-01": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-02": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-03": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-04": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-05": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-06": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-07": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-08": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-09": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-10": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-11": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-12": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-13": {
+              "$ref": "#/$defs/checkLine"
+            },
+            "G3-14": {
+              "$ref": "#/$defs/checkLine"
+            }
+          }
+        },
+        "signoffs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/signoff"
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/exception"
+          }
+        },
+        "reopened": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/reopened"
+            }
+          ]
+        }
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unknown"
+      }
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/change"
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "person",
+        "provider",
+        "diagram",
+        "show_optional"
+      ],
+      "properties": {
+        "person": {
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "logical",
+            "aws",
+            "azure",
+            "gcp",
+            "onprem"
+          ]
+        },
+        "diagram": {
+          "enum": [
+            "infrastructure",
+            "network",
+            "dr",
+            "data",
+            "security",
+            "integration",
+            "deployment"
+          ]
+        },
+        "show_optional": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "textOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "stamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$"
+    },
+    "stampOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "dateOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "entryId": {
+      "type": "string",
+      "pattern": "^(HDR|BUS|CAP|REL|DAT|SEC|INT|OPS|ECO|OVL)-\\d{2}\\.[1-9]\\d*$"
+    },
+    "status": {
+      "enum": [
+        "Confirmed",
+        "Estimated",
+        "Open",
+        "N/A"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "none",
+            "brd",
+            "derived",
+            "answer",
+            "default",
+            "policy",
+            "fixture",
+            "import"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "proposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "reason",
+        "by",
+        "at"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "string"
+          ],
+          "minLength": 1
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        },
+        "by": {
+          "$ref": "#/$defs/text"
+        },
+        "at": {
+          "$ref": "#/$defs/stamp"
+        }
+      }
+    },
+    "numberFactor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "status",
+        "source",
+        "confirmed_by",
+        "confirmed_at"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "confirmed_by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "confirmed_at": {
+          "$ref": "#/$defs/stampOrNull"
+        }
+      }
+    },
+    "textFactor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "status",
+        "source",
+        "confirmed_by",
+        "confirmed_at"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "confirmed_by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "confirmed_at": {
+          "$ref": "#/$defs/stampOrNull"
+        }
+      }
+    },
+    "factors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "callsPerTxn": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "requestFactor": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "utilization": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "meanLatencyMs": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "requestKB": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "responseKB": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "networkOverhead": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "storedKB": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "initialGB": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "retentionDays": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "indexFactor": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "copies": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "cidrPrefix": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "transactionNeed": {
+          "$ref": "#/$defs/textFactor"
+        },
+        "queryShape": {
+          "$ref": "#/$defs/textFactor"
+        },
+        "storeKind": {
+          "$ref": "#/$defs/textFactor"
+        },
+        "budgetPressure": {
+          "$ref": "#/$defs/textFactor"
+        },
+        "primaryLocation": {
+          "$ref": "#/$defs/textFactor"
+        },
+        "recoveryLocation": {
+          "$ref": "#/$defs/textFactor"
+        },
+        "migrationGB": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "linkMbps": {
+          "$ref": "#/$defs/numberFactor"
+        },
+        "cutoverHours": {
+          "$ref": "#/$defs/numberFactor"
+        }
+      }
+    },
+    "entryFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "primary": {
+          "type": "boolean"
+        },
+        "label": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "scope": {
+          "enum": [
+            "host",
+            "az",
+            "site",
+            "region",
+            "provider",
+            "cyber",
+            null
+          ]
+        },
+        "workload": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^WL-\\d{2,}$"
+        },
+        "value": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "unit": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "window": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "measured_at": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "priority": {
+          "enum": [
+            "Must",
+            "Should",
+            "Could",
+            null
+          ]
+        },
+        "kind": {
+          "enum": [
+            "hard",
+            "target",
+            "forecast",
+            "assumption"
+          ]
+        },
+        "verification": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "na_reason": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "owner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^(B|E|D|Sec|Ops|Fin|Legal)(\\+(B|E|D|Sec|Ops|Fin|Legal))*$"
+        },
+        "owner_name": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "due": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "evidence": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "confirmed_by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "confirmed_at": {
+          "$ref": "#/$defs/stampOrNull"
+        },
+        "proposal": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/proposal"
+            }
+          ]
+        },
+        "factors": {
+          "$ref": "#/$defs/factors"
+        }
+      }
+    },
+    "entry": {
+      "$ref": "#/$defs/entryFields",
+      "required": [
+        "n",
+        "primary",
+        "label",
+        "scope",
+        "workload",
+        "value",
+        "unit",
+        "window",
+        "measured_at",
+        "priority",
+        "kind",
+        "verification",
+        "status",
+        "na_reason",
+        "source",
+        "owner",
+        "owner_name",
+        "due",
+        "evidence",
+        "confirmed_by",
+        "confirmed_at",
+        "proposal",
+        "factors"
+      ],
+      "if": {
+        "$ref": "#/$defs/entryFields",
+        "required": [
+          "n"
+        ],
+        "properties": {
+          "n": {
+            "const": 1
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/entryFields",
+        "properties": {
+          "primary": {
+            "const": true
+          }
+        }
+      },
+      "else": {
+        "if": {
+          "$ref": "#/$defs/entryFields",
+          "required": [
+            "n"
+          ]
+        },
+        "then": {
+          "$ref": "#/$defs/entryFields",
+          "properties": {
+            "primary": {
+              "const": false
+            }
+          }
+        }
+      }
+    },
+    "numberEntries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/entry",
+        "properties": {
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "textEntries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/entry",
+        "properties": {
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "brd": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "path",
+        "version",
+        "status"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]+(-[A-Z0-9]+)*$"
+        },
+        "path": {
+          "$ref": "#/$defs/text"
+        },
+        "version": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "$ref": "#/$defs/textOrNull"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "set_by",
+        "set_at",
+        "stand_ins"
+      ],
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "set_by": {
+          "$ref": "#/$defs/text"
+        },
+        "set_at": {
+          "$ref": "#/$defs/stamp"
+        },
+        "stand_ins": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^WL-\\d{2,}$"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "shape": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hosting",
+        "topology",
+        "dr",
+        "data",
+        "network"
+      ],
+      "properties": {
+        "hosting": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "topology": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "dr": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "data": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "network": {
+          "$ref": "#/$defs/textOrNull"
+        }
+      }
+    },
+    "costFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "Estimated",
+            "Confirmed"
+          ]
+        },
+        "by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "at": {
+          "$ref": "#/$defs/stampOrNull"
+        }
+      }
+    },
+    "cost": {
+      "$ref": "#/$defs/costFields",
+      "required": [
+        "value",
+        "status",
+        "by",
+        "at"
+      ],
+      "if": {
+        "$ref": "#/$defs/costFields",
+        "properties": {
+          "status": {
+            "const": "Confirmed"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/costFields",
+        "properties": {
+          "by": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "at": {
+            "$ref": "#/$defs/stamp"
+          }
+        }
+      }
+    },
+    "scoreFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "enum": [
+            "Estimated",
+            "Confirmed"
+          ]
+        },
+        "by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "at": {
+          "$ref": "#/$defs/stampOrNull"
+        }
+      }
+    },
+    "score": {
+      "$ref": "#/$defs/scoreFields",
+      "required": [
+        "value",
+        "reason",
+        "status",
+        "by",
+        "at"
+      ],
+      "if": {
+        "$ref": "#/$defs/scoreFields",
+        "properties": {
+          "status": {
+            "const": "Confirmed"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/scoreFields",
+        "properties": {
+          "by": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "at": {
+            "$ref": "#/$defs/stamp"
+          }
+        }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nfr_fit": {
+          "$ref": "#/$defs/score"
+        },
+        "one_time_cost": {
+          "$ref": "#/$defs/score"
+        },
+        "recurring_tco": {
+          "$ref": "#/$defs/score"
+        },
+        "delivery_time": {
+          "$ref": "#/$defs/score"
+        },
+        "operability": {
+          "$ref": "#/$defs/score"
+        },
+        "security_compliance": {
+          "$ref": "#/$defs/score"
+        },
+        "reversibility": {
+          "$ref": "#/$defs/score"
+        },
+        "uncertainty": {
+          "$ref": "#/$defs/score"
+        }
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entry",
+        "reason"
+      ],
+      "properties": {
+        "entry": {
+          "$ref": "#/$defs/entryId"
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "optionFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^OPT-\\d{2,}$"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "shape": {
+          "$ref": "#/$defs/shape"
+        },
+        "one_time": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/cost"
+            }
+          ]
+        },
+        "monthly": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/cost"
+            }
+          ]
+        },
+        "scores": {
+          "$ref": "#/$defs/scores"
+        },
+        "excluded": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/exclusion"
+            }
+          ]
+        }
+      }
+    },
+    "option": {
+      "$ref": "#/$defs/optionFields",
+      "required": [
+        "id",
+        "name",
+        "shape",
+        "one_time",
+        "monthly",
+        "scores"
+      ]
+    },
+    "weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "values",
+        "approved_by",
+        "approved_at"
+      ],
+      "properties": {
+        "values": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "nfr_fit": {
+              "type": "number",
+              "minimum": 0
+            },
+            "one_time_cost": {
+              "type": "number",
+              "minimum": 0
+            },
+            "recurring_tco": {
+              "type": "number",
+              "minimum": 0
+            },
+            "delivery_time": {
+              "type": "number",
+              "minimum": 0
+            },
+            "operability": {
+              "type": "number",
+              "minimum": 0
+            },
+            "security_compliance": {
+              "type": "number",
+              "minimum": 0
+            },
+            "reversibility": {
+              "type": "number",
+              "minimum": 0
+            },
+            "uncertainty": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "approved_by": {
+          "$ref": "#/$defs/text"
+        },
+        "approved_at": {
+          "$ref": "#/$defs/stamp"
+        }
+      }
+    },
+    "horizon": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "checkLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "na_reason",
+        "by",
+        "at"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "Done",
+            "N/A"
+          ]
+        },
+        "na_reason": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "by": {
+          "$ref": "#/$defs/text"
+        },
+        "at": {
+          "$ref": "#/$defs/stamp"
+        }
+      }
+    },
+    "signoffFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "business_sponsor",
+            "product_owner_business_process_owner",
+            "lead_principal_architect",
+            "infrastructure_platform_owner",
+            "network_owner",
+            "security_and_privacy_compliance",
+            "data_owner",
+            "sre_operations",
+            "finance_procurement",
+            "migration_owner",
+            "architecture_review_authority"
+          ]
+        },
+        "applicable": {
+          "type": "boolean"
+        },
+        "na_reason": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "decision": {
+          "enum": [
+            "Approved",
+            "Approved with conditions",
+            "Rejected",
+            null
+          ]
+        },
+        "at": {
+          "$ref": "#/$defs/stamp"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "stand_in": {
+          "type": "boolean"
+        }
+      }
+    },
+    "signoff": {
+      "$ref": "#/$defs/signoffFields",
+      "required": [
+        "role",
+        "applicable",
+        "na_reason",
+        "name",
+        "decision",
+        "at",
+        "content_hash",
+        "stand_in"
+      ],
+      "if": {
+        "$ref": "#/$defs/signoffFields",
+        "required": [
+          "applicable"
+        ],
+        "properties": {
+          "applicable": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/signoffFields",
+        "properties": {
+          "na_reason": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "decision": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "if": {
+          "$ref": "#/$defs/signoffFields",
+          "required": [
+            "applicable"
+          ]
+        },
+        "then": {
+          "$ref": "#/$defs/signoffFields",
+          "properties": {
+            "decision": {
+              "enum": [
+                "Approved",
+                "Approved with conditions",
+                "Rejected"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "owner",
+        "due"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^COND-\\d{2,}$"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "owner": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "due": {
+          "$ref": "#/$defs/dateOrNull"
+        }
+      }
+    },
+    "exception": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entry",
+        "reason",
+        "granted_by",
+        "granted_at",
+        "expires",
+        "review"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^EXC-\\d{2,}$"
+        },
+        "entry": {
+          "$ref": "#/$defs/entryId"
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        },
+        "granted_by": {
+          "$ref": "#/$defs/text"
+        },
+        "granted_at": {
+          "$ref": "#/$defs/stamp"
+        },
+        "expires": {
+          "$ref": "#/$defs/date"
+        },
+        "review": {
+          "$ref": "#/$defs/date"
+        }
+      }
+    },
+    "reopened": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "at",
+        "by",
+        "reason"
+      ],
+      "properties": {
+        "at": {
+          "$ref": "#/$defs/stamp"
+        },
+        "by": {
+          "$ref": "#/$defs/text"
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "unknownFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^QD-\\d{2,}$"
+        },
+        "entry": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/entryId"
+            }
+          ]
+        },
+        "question": {
+          "$ref": "#/$defs/text"
+        },
+        "impact": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "owner": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "due": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "closed"
+          ]
+        },
+        "resolution": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "closed_by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "closed_at": {
+          "$ref": "#/$defs/stampOrNull"
+        }
+      }
+    },
+    "unknown": {
+      "$ref": "#/$defs/unknownFields",
+      "required": [
+        "id",
+        "entry",
+        "question",
+        "impact",
+        "owner",
+        "due",
+        "status"
+      ],
+      "if": {
+        "$ref": "#/$defs/unknownFields",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "const": "closed"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/unknownFields",
+        "required": [
+          "resolution",
+          "closed_by",
+          "closed_at"
+        ],
+        "properties": {
+          "resolution": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "closed_by": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "closed_at": {
+            "$ref": "#/$defs/stamp"
+          }
+        }
+      },
+      "else": {
+        "if": {
+          "$ref": "#/$defs/unknownFields",
+          "required": [
+            "status"
+          ]
+        },
+        "then": {
+          "$ref": "#/$defs/unknownFields",
+          "properties": {
+            "resolution": {
+              "type": "null"
+            },
+            "closed_by": {
+              "type": "null"
+            },
+            "closed_at": {
+              "type": "null"
+            }
+          }
+        }
+      }
+    },
+    "runFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "full",
+            "quick"
+          ]
+        },
+        "input": {
+          "enum": [
+            "web",
+            "prompt"
+          ]
+        },
+        "light": {
+          "type": "boolean"
+        },
+        "stage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "group": {
+          "enum": [
+            "BUS",
+            "SEC",
+            "DAT",
+            "INT",
+            "CAP",
+            "REL",
+            "OPS",
+            "ECO",
+            "HDR",
+            "OVL",
+            null
+          ]
+        }
+      }
+    },
+    "overlayFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "applies": {
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "unknown",
+            "onprem",
+            "samecloud",
+            "othercloud",
+            "mixed"
+          ]
+        }
+      }
+    },
+    "decisionFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "topology_override": {
+          "enum": [
+            "auto",
+            "single",
+            "multiAZ",
+            "multiAZActive",
+            "regional",
+            "active"
+          ]
+        },
+        "dr_overrides": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "host": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "az": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "site": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "region": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "provider": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            },
+            "cyber": {
+              "enum": [
+                "backup",
+                "pilot",
+                "warm",
+                "active"
+              ]
+            }
+          }
+        },
+        "override_reason": {
+          "type": "string"
+        },
+        "chosen_option": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^OPT-\\d{2,}$"
+        }
+      }
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "name",
+        "label"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "person",
+            "policy",
+            "fixture",
+            "agent"
+          ]
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "label": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "noOverride": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^\\s*$"
+        },
+        {
+          "enum": [
+            "auto",
+            "undetermined"
+          ]
+        }
+      ]
+    },
+    "snapshot": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/entryFields"
+        },
+        {
+          "$ref": "#/$defs/optionFields"
+        },
+        {
+          "$ref": "#/$defs/costFields"
+        },
+        {
+          "$ref": "#/$defs/scoreFields"
+        },
+        {
+          "$ref": "#/$defs/weights"
+        },
+        {
+          "$ref": "#/$defs/horizon"
+        },
+        {
+          "$ref": "#/$defs/checkLine"
+        },
+        {
+          "$ref": "#/$defs/signoff"
+        },
+        {
+          "$ref": "#/$defs/condition"
+        },
+        {
+          "$ref": "#/$defs/exception"
+        },
+        {
+          "$ref": "#/$defs/reopened"
+        },
+        {
+          "$ref": "#/$defs/policy"
+        },
+        {
+          "$ref": "#/$defs/unknown"
+        },
+        {
+          "$ref": "#/$defs/noOverride"
+        },
+        {
+          "$ref": "#/$defs/decisionFields"
+        },
+        {
+          "$ref": "#/$defs/runFields"
+        },
+        {
+          "$ref": "#/$defs/overlayFields"
+        },
+        {
+          "$ref": "#/$defs/workload"
+        },
+        {
+          "$ref": "#/$defs/brd"
+        },
+        {
+          "$ref": "#/$defs/version"
+        }
+      ]
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "at",
+        "actor",
+        "op",
+        "target",
+        "from",
+        "to",
+        "reason"
+      ],
+      "properties": {
+        "at": {
+          "$ref": "#/$defs/stamp"
+        },
+        "actor": {
+          "$ref": "#/$defs/actor"
+        },
+        "op": {
+          "enum": [
+            "set",
+            "add",
+            "remove",
+            "set-factor",
+            "confirm",
+            "confirm-group",
+            "propose",
+            "accept-proposal",
+            "na",
+            "open",
+            "set-option",
+            "set-cost",
+            "set-score",
+            "set-weights",
+            "set-horizon",
+            "check",
+            "sign",
+            "add-condition",
+            "add-exception",
+            "reopen",
+            "set-policy",
+            "add-unknown",
+            "close-unknown",
+            "decide",
+            "set-run",
+            "set-overlay",
+            "add-workload",
+            "rename-workload",
+            "remove-workload",
+            "set-brd",
+            "remove-brd",
+            "set-version",
+            "exclude-option",
+            "include-option",
+            "set-condition",
+            "remove-condition",
+            "revoke-exception",
+            "remove-option",
+            "normalize"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "from": {
+          "$ref": "#/$defs/snapshot"
+        },
+        "to": {
+          "$ref": "#/$defs/snapshot"
+        },
+        "reason": {
+          "$ref": "#/$defs/textOrNull"
+        }
+      }
+    }
+  }
+}

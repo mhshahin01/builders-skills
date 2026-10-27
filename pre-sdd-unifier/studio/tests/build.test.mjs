@@ -48,8 +48,10 @@ test('buildStudio_sourceWithDollarPatterns_keepsLiteral', (t) => {
 });
 
 test('buildStudio_hostileStateText_roundTrips', () => {
-  const state = { name: "</script><!-- $& $' \u2028 x" };
+  const markers = ['/* UI */', '/* ENGINE */', '/* STYLES */', '/* PROJECT_STATE */'];
+  const state = { name: "</script><!-- $& $' \u2028 \u2029 x", note: markers.join(' '), [markers[0]]: markers[3] };
   const html = buildStudio({ srcDir, state });
+  for (const marker of markers) assert.equal(html.split(marker).length - 1, marker === '/* UI */' || marker === '/* PROJECT_STATE */' ? 2 : 1, marker);
   assert.equal(html.match(/<script/gi).length, 3);
   assert.equal(html.match(/<\/script/gi).length, 3);
   const [, embedded] = scripts(html);

@@ -366,19 +366,23 @@ Run mode: solo
   - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
   - Only the user changes it.
   - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
-  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. "Later" sets the request State to `Later`.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. On "later", the raiser sets the request State to `Later` (Handoff requests table, below).
 - **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
   - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
   - A skill writes only its own row, the one whose Skill cell names it.
   - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+  - The Folder cell holds the path of the skill's output folder once that folder exists, and `-` until then.
+  - The Waiting on cell holds `<employee> (HR-NNN)` for each pending request (`Open`, `Later`, or `Accepted`) whose answer this skill waits on to go on, separated by `; `, or `-` when it waits on none.
 - **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
   - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
-  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer. The receiving skill updates only State and Closed (UTC): `Accepted` when it takes the request (still pending: taken, not finished), then `Done` and Closed (UTC) at the stop where it finishes it.
-  - A new request takes the next number after the highest ID on the board. IDs are never renumbered.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer, and owns every cell of it but State and Closed (UTC). On State, the raiser sets only `Open` or `Later`, and only on its own request while it reads `Open` or `Later`. The receiving skill alone sets `Accepted` when it takes the request (still pending: taken, not finished), then `Done`, or `Declined` when it declines it, with Closed (UTC), at the stop where it finishes it.
+  - One request per blocker: before raising a request, the raiser looks for its own request to the same receiver about the same thing that is still `Open`, `Later`, or `Accepted`. When one exists, it raises no new request: it updates that request's Why, its Request wording when the blocker changed, and its own row's Waiting on cell, and uses that request at this stop.
+  - When the user answers "later" at a handoff offer, the raiser itself sets State `Later` on the request it raised or reused at that stop; an `Accepted` request stays `Accepted`. A later run that offers again may move its own request from `Later` back to `Open`, for example when the user answers "now".
+  - A new request takes the next number after the highest ID on the board. IDs are never reused or renumbered.
 - **When a skill uses the board:**
-  - At the start of every run it reads the board: its own row, its pending requests (`Open`, `Later`, or `Accepted`), and the upstream states.
+  - At the start of every run it reads the board: its own row, the pending requests (`Open`, `Later`, or `Accepted`) addressed to it and the ones it raised, and the upstream states.
   - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
-  - At its handoff points it raises requests.
+  - At its handoff points it raises requests, or reuses its own pending one (Handoff requests table).
 - **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
 - **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
 - **Writers outside the project root:**

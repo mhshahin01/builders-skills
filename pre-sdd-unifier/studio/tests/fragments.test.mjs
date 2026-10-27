@@ -66,7 +66,7 @@ test('fragments_register_rowsAndValues', () => {
   const rel = f['03c-register-reliability.md'];
   assert.deepEqual(headOf(rel, 'Entry'), ENTRY_HEAD);
   assert.deepEqual(rowOf(rel, 'REL-03.1'), ['REL-03.1', 'TBD', '600', 's', 'TBD', 'TBD', 'target', 'Confirmed (Mahmoud, 2026-10-23T11:01:02Z)', 'Answer: Mahmoud, 2026-10-23', 'B', 'TBD']);
-  assert.deepEqual(rowOf(rel, 'REL-03.2'), ['REL-03.2', 'Refund payout; scope region', '1800', 's', 'per incident', 'TBD', 'target', 'Estimated', 'BRD: REFUNDS/NFR-04', 'B (Dana Reyes)', '2026-12-01']);
+  assert.deepEqual(rowOf(rel, 'REL-03.2'), ['REL-03.2', 'Refund payout; scope region', '1,800', 's', 'per incident', 'TBD', 'target', 'Estimated', 'BRD: REFUNDS/NFR-04', 'B (Dana Reyes)', '2026-12-01']);
   assert.deepEqual(rowOf(rel, 'REL-04.1').slice(2, 4).concat(rowOf(rel, 'REL-04.1')[7]), ['TBD', 's', 'Open']);
   const lines = rel.split('\n');
   assert.ok(lines.findIndex((l) => l.startsWith('| REL-03.1 |')) < lines.findIndex((l) => l.startsWith('| REL-03.2 |')), 'entries in number order');
@@ -126,20 +126,35 @@ test('fragments_calculations_tbdNeverZero', () => {
 test('fragments_lockedItems_usesLandings', () => {
   const state = approvedState();
   const text = frag(state)['12-locked-items.md'];
-  assert.deepEqual(headOf(text, 'ID'), ['ID', 'Value', 'Status', 'Lands in the SDD']);
+  assert.deepEqual(headOf(text, 'ID'), ['ID', 'Measures', 'Value', 'Status', 'Owner', 'Lands in the SDD']);
+  const rowOfLock = (t, id) => {
+    const c = rowOf(t, id);
+    return [c[0], c[2], c[3], c[5]];
+  };
   const ids = [...E.HEADER_FIELDS, ...E.ITEMS].filter((row) => E.LANDINGS.rows[row.id]).flatMap((row) => E.rowEntries(state, row.id).map((e) => E.entryId(row.id, e.n)));
   const listed = text.split('\n').filter((l) => /^\| [A-Z]{3}-\d{2}\.\d+ \|/.test(l)).map((l) => cells(l)[0]);
   assert.deepEqual(listed, ids);
-  assert.deepEqual(rowOf(text, 'CAP-01.1'), ['CAP-01.1', '864000 transactions/day', 'Confirmed', '§18, Q3']);
-  assert.deepEqual(rowOf(text, 'HDR-07.1'), ['HDR-07.1', 'greenfield', 'Confirmed', 'Project Type']);
-  assert.deepEqual(rowOf(text, 'DAT-07.1'), ['DAT-07.1', 'schema-isolated', 'Estimated', 'Q7, §11']);
-  assert.deepEqual(rowOf(text, 'CAP-02.1'), ['CAP-02.1', 'TBD', 'Open', '§18, Q3']);
-  assert.deepEqual(rowOf(text, 'REL-03.1'), ['REL-03.1', '600 s', 'Confirmed', '§8.6, §11, §18.5, §19, §20']);
-  assert.deepEqual(rowOf(text, 'INT-06.1'), ['INT-06.1', 'TBD', 'Open', '§8.7']);
-  assert.deepEqual(rowOf(text, '§8.6'), ['§8.6', 'HDR-08, REL-01, REL-03, REL-04, REL-05, DAT-04, DAT-09, INT-07']);
+  assert.deepEqual(rowOfLock(text, 'CAP-01.1'), ['CAP-01.1', '864,000 transactions/day', 'Confirmed', '§18, Q3']);
+  assert.deepEqual(rowOfLock(text, 'HDR-07.1'), ['HDR-07.1', 'greenfield', 'Confirmed', 'Project Type']);
+  assert.deepEqual(rowOfLock(text, 'DAT-07.1'), ['DAT-07.1', 'schema-isolated', 'Estimated', 'Q7, §11']);
+  assert.deepEqual(rowOfLock(text, 'CAP-02.1'), ['CAP-02.1', 'TBD', 'Open', '§18, Q3']);
+  assert.deepEqual(rowOfLock(text, 'REL-03.1'), ['REL-03.1', '600 s', 'Confirmed', '§8.6, §11, §18.5, §19, §20']);
+  assert.deepEqual(rowOfLock(text, 'INT-06.1'), ['INT-06.1', 'TBD', 'Open', '§8.7']);
+  assert.deepEqual(rowOf(text, '§8.6'), ['§8.6', 'HDR-08, REL-01, REL-03, REL-04, REL-05, REL-10, DAT-04, DAT-09, INT-07']);
+  assert.deepEqual(rowOfLock(text, 'DAT-01.1'), ['DAT-01.1', 'Refund ledger, the system of record (storeKind: relational)', 'Confirmed', '§6 Notes, §8.3']);
+  assert.deepEqual(['BUS-07.1', 'BUS-08.1'].map((id) => rowOfLock(text, id)), [['BUS-07.1', 'No card data leaves the EU', 'Estimated', '§11'], ['BUS-08.1', 'Refund within 5 days or pay the penalty', 'Estimated', '§11']]);
+  assert.match(rowOf(text, '§11')[1], /^BUS-07, BUS-08, /);
+  const noKind = frag(apply(state, [{ op: 'set-factor', entry: 'DAT-01.1', factor: 'storeKind', value: null }]))['12-locked-items.md'];
+  assert.equal(rowOf(noKind, 'DAT-01.1')[2], 'Refund ledger, the system of record (storeKind: TBD)');
+  const sentence = frag(apply(state, [{ op: 'set', entry: 'DAT-01.1', value: 'Refund requests and their decisions (REFUNDS 03).' }]))['12-locked-items.md'];
+  assert.equal(rowOf(sentence, 'DAT-01.1')[2], 'Refund requests and their decisions (REFUNDS 03) (storeKind: relational)', 'no trailing period before the factor');
+  const naData = frag(apply(state, [{ op: 'add', row: 'DAT-01', label: 'Audit trail' }, { op: 'na', entry: 'DAT-01.2', reason: 'No second store' }]))['12-locked-items.md'];
+  assert.equal(rowOf(naData, 'DAT-01.2')[2], 'N/A: No second store');
+  assert.deepEqual(['INT-03.1', 'CAP-08.1', 'REL-10.1'].map((id) => rowOf(text, id)[5]), ['§8.3, §18', '§18, §18.5', '§8.6, §11, §18.5']);
   assert.deepEqual(rowOf(text, '§8.7'), ['§8.7', 'DAT-04, SEC-03, SEC-04, SEC-07, INT-06, INT-07, INT-08']);
-  const decisions = text.split('\n').filter((l) => /^\| (Hosting|Topology|DR strategy, scope \S+|Chosen option) \|/.test(l)).map(cells);
-  assert.deepEqual(decisions, [['Hosting', 'cloud'], ['Topology', 'Multi-zone · single region (multiAZ)'], ['DR strategy, scope az', 'Local HA only · broader DR not scoped (localHA), replication asynchronous']]);
+  const decisions = text.split('\n').filter((l) => /^\| (Hosting|Topology|DR strategy, scope \S+|Data|Chosen option) \|/.test(l)).map(cells);
+  assert.deepEqual(decisions, [['Hosting', 'cloud'], ['Topology', 'Multi-zone · single region (multiAZ)'], ['DR strategy, scope az', 'Local HA only · broader DR not scoped (localHA), replication asynchronous'], ['Data', 'kind relational, consistency strong']]);
+  assert.equal(rowOf(frag(state)['05-target-shape.md'], 'Data')[1].split(', replication')[0], rowOf(text, 'Data')[1], 'the same words as the target shape');
   const chosen = frag(apply(state, [{ op: 'decide', option: 'OPT-01' }]))['12-locked-items.md'];
   assert.deepEqual(rowOf(chosen, 'Chosen option'), ['Chosen option', 'OPT-01 (One region, multi-AZ)']);
   const landing = headOf(text, 'Lands in the SDD');
@@ -148,6 +163,125 @@ test('fragments_lockedItems_usesLandings', () => {
     const rows = [...E.HEADER_FIELDS, ...E.ITEMS].filter((row) => (E.LANDINGS.rows[row.id] || []).includes(target)).map((row) => row.id);
     assert.deepEqual(rowOf(text, target), [target, rows.join(', ')], target);
   }
+});
+
+test('fragments_lockedItems_saysWhatEachEntryMeasuresAndWhoOwnsIt', () => {
+  const state = apply(approvedState(), [{ op: 'add', row: 'REL-03', label: 'Refund payout', scope: 'region' }, { op: 'set', entry: 'REL-03.2', owner: null, owner_name: null }]);
+  const f = frag(state);
+  const text = f['12-locked-items.md'];
+  const register = (id) => {
+    const name = Object.keys(f).find((n) => /^0[13]/.test(n) && f[n].includes(`### ${id}\n`));
+    assert.ok(name, `no register block for ${id}`);
+    const lines = f[name].split('\n');
+    return { title: lines[lines.indexOf(`### ${id}`) + 2].replace(/^\*\*|\*\*$/g, ''), text: f[name] };
+  };
+  const listed = text.split('\n').filter((l) => /^\| [A-Z]{3}-\d{2}\.\d+ \|/.test(l)).map(cells);
+  assert.ok(listed.length > 50, 'every locked entry is checked');
+  for (const [id, measures, , , owner] of listed) {
+    const reg = register(id.split('.')[0]);
+    const entry = rowOf(reg.text, id);
+    assert.equal(measures, entry[1] === 'TBD' ? reg.title : `${reg.title}; ${entry[1]}`, `${id} measures what its register row and entry say`);
+    if (entry[9] !== 'TBD') assert.equal(owner, entry[9], `${id} owner as the register prints it`);
+  }
+  assert.deepEqual(rowOf(text, 'REL-03.1').slice(0, 3), ['REL-03.1', 'RTO per service/journey and disaster scenario: acceptable elapsed time to restored usable service', '600 s']);
+  assert.equal(rowOf(text, 'REL-03.2')[1], 'RTO per service/journey and disaster scenario: acceptable elapsed time to restored usable service; Refund payout; scope region');
+  assert.match(rowOf(text, 'REL-04.1')[1], /^RPO per dataset/);
+  assert.deepEqual(rowOf(text, 'INT-06.1').slice(1, 5), ['Existing public IP, allowlists, firewall change process, proxies, DNS and certificate dependencies', 'TBD', 'Open', 'E+Sec (Dana Reyes)']);
+  assert.deepEqual([rowOf(text, 'HDR-07.1')[1], rowOf(text, 'REL-03.1')[4]], ['Change type', 'B (Dana Reyes)']);
+  assert.equal(rowOf(register('REL-03').text, 'REL-03.2')[9], 'TBD');
+  assert.equal(rowOf(text, 'REL-03.2')[4], 'B', 'the row owner stands in when the entry has none');
+});
+
+test('fragments_lockedItems_carryTheCalculations', () => {
+  const state = E.derive(E.applyDefaults(approvedState(), { now: NOW }).state, { now: NOW }).state;
+  const f = frag(state);
+  const lines = f['12-locked-items.md'].split('\n');
+  const start = lines.indexOf('| ID | Measures | Value |');
+  assert.ok(start > 0, 'a calculations table after the entries');
+  const calcs = lines.slice(start + 2).filter((l) => l.startsWith('| CALC-')).map(cells);
+  const chunk04 = f['04-calculations.md'].split('\n').filter((l) => l.startsWith('| CALC-')).map(cells).map((c) => [c[0], c[1], c[4]]);
+  assert.equal(chunk04.length, 20);
+  assert.deepEqual(calcs, chunk04, 'the IDs, words and values chunk 04 prints');
+  assert.deepEqual(calcs.find((c) => c[0] === 'CALC-03'), ['CALC-03', 'Peak API RPS', rowOf(f['04-calculations.md'], 'CALC-03')[4]]);
+  assert.ok(!calcs.some((c) => c[0].includes('@')), 'option rows stay in chunk 07');
+  assert.ok(calcs.some((c) => c[2] === 'TBD'), 'an open calculation reads TBD');
+});
+
+test('fragments_numbers_printThroughEngineFormatter', () => {
+  let state = apply(approvedState(), [{ op: 'set', entry: 'CAP-01.1', value: 2200 }, { op: 'set-factor', entry: 'DAT-02.1', factor: 'storedKB', value: 0.123456789 }]);
+  state = E.derive(E.applyDefaults(state, { now: NOW }).state, { now: NOW }).state;
+  const held = E.primaryEntry(state, 'CAP-02').value;
+  assert.ok(String(held).length > 12, `a long binary fraction: ${held}`);
+  const f = frag(state);
+  const calc03 = rowOf(f['04-calculations.md'], 'CALC-03')[4];
+  assert.equal(calc03, `${E.fmt(held, 4)} req/s`);
+  assert.equal(rowOf(f['03b-register-capacity.md'], 'CAP-02.1')[2], E.fmt(held, 4));
+  assert.equal(rowOf(f['12-locked-items.md'], 'CAP-02.1')[2], calc03, 'CAP-02.1 prints as CALC-03 does');
+  assert.deepEqual([rowOf(f['03b-register-capacity.md'], 'CAP-01.1')[2], rowOf(f['12-locked-items.md'], 'CAP-01.1')[2]], ['2,200', '2,200 transactions/day']);
+  const stored = f['03d-register-data.md'].split('\n').filter((l) => l.startsWith('| DAT-02.1 |')).map(cells).find((c) => c[1] === 'storedKB');
+  assert.equal(stored[2], '0.1235');
+  assert.equal(rowOf(f['03d-register-data.md'], 'DAT-02.1')[2], rowOf(f['04-calculations.md'], 'CALC-10')[4].split(' ')[0], 'DAT-02.1 prints as CALC-10 does');
+  for (const [name, text] of Object.entries(f)) assert.doesNotMatch(text, /\d\.\d{5,}/, name);
+  const proposed = frag(apply(newProject(), [{ op: 'propose', entry: 'REL-03.1', value: 1234.5, reason: 'BRD REFUNDS/NFR-04' }], agent))['03c-register-reliability.md'];
+  assert.equal(rowOf(proposed, 'REL-03.1')[2], 'TBD (proposed: 1,234.5; BRD REFUNDS/NFR-04)');
+  const costs = apply(approvedState(), [{ op: 'set-cost', option: 'OPT-01', cost: 'one_time', value: 180000 }, { op: 'set-cost', option: 'OPT-01', cost: 'monthly', value: 6500 }]);
+  const scores = frag(costs)['07-options.md'].split('\n').filter((l) => l.startsWith('| OPT-01 |')).map(cells);
+  assert.deepEqual(scores.filter((c) => ['one_time', 'monthly'].includes(c[1])).map((c) => c.slice(1, 3)), [['one_time', '180,000'], ['monthly', '6,500']]);
+});
+
+test('fragments_options_scoresAndCostsShowWhen', () => {
+  let state = apply(approvedState(), [{ op: 'set-cost', option: 'OPT-01', cost: 'one_time', value: 180000 }]);
+  state = apply(state, [{ op: 'set-score', option: 'OPT-01', criterion: 'nfr_fit', value: 4, reason: 'Meets REL-03.1' }], person, LATER);
+  const text = frag(state)['07-options.md'].split('**Scores and costs**')[1].split('**Unknowns**')[0];
+  assert.deepEqual(headOf(text, 'Option'), ['Option', 'Item', 'Value', 'Status', 'By', 'At', 'Reason']);
+  const rows = text.split('\n').filter((l) => l.startsWith('| OPT-01 |')).map(cells);
+  const option = state.options.list.find((x) => x.id === 'OPT-01');
+  assert.deepEqual([option.one_time.at, option.scores.nfr_fit.at], [NOW, LATER]);
+  assert.deepEqual(rows.map((c) => [c[1], c[4], c[5], c[6]]), [['one_time', option.one_time.by, NOW, 'TBD'], ['nfr_fit', option.scores.nfr_fit.by, LATER, 'Meets REL-03.1']]);
+});
+
+test('fragments_tco_namesCurrencyFromEco02', () => {
+  const base = apply(approvedState(), [{ op: 'set-cost', option: 'OPT-01', cost: 'one_time', value: 180000 }, { op: 'set-cost', option: 'OPT-01', cost: 'monthly', value: 6500 }, { op: 'set-horizon', value: 36 }]);
+  const tco = (ops) => {
+    const state = ops.length ? apply(base, ops) : base;
+    const f = frag(state)['07-options.md'];
+    return [rowOf(f, 'OPT-01')[3], rowOf(f, 'CALC-21@OPT-01')[3], E.compute(state, { now: NOW }).c.rows.find((r) => r.id === 'CALC-21@OPT-01').unit];
+  };
+  assert.deepEqual(tco([]), ['414,000 currency units', '414,000 currency units', 'currency units'], 'no currency given');
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'Currency EUR; operating expense preferred' }]), ['414,000 EUR', '414,000 EUR', 'EUR']);
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'USD' }]), ['414,000 USD', '414,000 USD', 'USD']);
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'Operating expense preferred', unit: 'GBP' }]), ['414,000 GBP', '414,000 GBP', 'GBP'], 'the unit names it');
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'costs in EUR' }]), ['414,000 EUR', '414,000 EUR', 'EUR'], 'a code anywhere in the value');
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'EUR 120k a year, operating expense preferred' }]), ['414,000 EUR', '414,000 EUR', 'EUR']);
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'budget: USD' }]), ['414,000 USD', '414,000 USD', 'USD']);
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'Operating expense preferred', unit: 'per month in CHF' }]), ['414,000 CHF', '414,000 CHF', 'CHF'], 'a code anywhere in the unit');
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'Operating expense preferred over a 36 month commitment' }]), ['414,000 currency units', '414,000 currency units', 'currency units'], 'a value that names no currency');
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'TCO over 36 months in USD' }]), ['414,000 USD', '414,000 USD', 'USD'], 'TCO is no currency code');
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'SLA AWS budget' }]), ['414,000 currency units', '414,000 currency units', 'currency units'], 'acronyms are no currency codes');
+  assert.deepEqual(tco([{ op: 'set', entry: 'ECO-02.1', value: 'Paid in JPY', unit: 'TCO' }]), ['414,000 JPY', '414,000 JPY', 'JPY'], 'a unit without a code falls through to the value');
+});
+
+test('fragments_calculations_inputsAreTheRowsRead', () => {
+  const calc = frag(approvedState())['04-calculations.md'];
+  const inputs = (id) => rowOf(calc, id)[3];
+  const rps = 'CAP-01.1, CAP-04.1, CAP-02.1.callsPerTxn, CAP-02.1.requestFactor';
+  assert.equal(inputs('CALC-01'), 'CAP-01.1');
+  assert.equal(inputs('CALC-03'), rps);
+  assert.equal(inputs('CALC-04'), `${rps}, CAP-04.1.utilization`);
+  assert.equal(inputs('CALC-05'), `${rps}, CAP-07.1.meanLatencyMs`);
+  assert.equal(inputs('CALC-06'), `${rps}, CAP-06.1.requestKB, CAP-06.1.networkOverhead`);
+  assert.equal(inputs('CALC-07'), `${rps}, CAP-06.1.responseKB, CAP-06.1.networkOverhead`);
+  assert.equal(inputs('CALC-10'), 'CAP-01.1, DAT-02.1.storedKB');
+  assert.equal(inputs('CALC-11'), 'CAP-01.1, DAT-02.1.storedKB, DAT-02.1.initialGB, DAT-02.1.retentionDays');
+  assert.equal(inputs('CALC-12'), 'CAP-01.1, DAT-02.1.storedKB, DAT-02.1.initialGB, DAT-02.1.retentionDays, DAT-02.1.indexFactor, DAT-02.1.copies');
+  assert.equal(inputs('CALC-13'), 'REL-01.1');
+  assert.equal(inputs('CALC-15'), 'CAP-01.1, CAP-04.1, REL-04.1');
+  assert.equal(inputs('CALC-18'), 'INT-08.1.cidrPrefix');
+  assert.equal(inputs('CALC-19'), 'CAP-01.1, CAP-04.1, CAP-10.1');
+  assert.equal(inputs('CALC-17'), 'none', 'no overlay, no migration rows');
+  for (const line of calc.split('\n').filter((l) => l.startsWith('| CALC-'))) assert.doesNotMatch(cells(line)[3], /DAT-01|INT-08\.1(,|$)|CAP-07\.1(,|$)/, cells(line)[0]);
+  const migrating2 = migrating(approvedState());
+  assert.equal(rowOf(frag(migrating2)['04-calculations.md'], 'CALC-17')[3], 'OVL-07.1.migrationGB, OVL-08.1.linkMbps');
 });
 
 test('fragments_everyChunkFragment_noEmOrEnDash', () => {

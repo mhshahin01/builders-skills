@@ -85,7 +85,7 @@ MAINTENANCE: New decisions are added here, never narrated in the content chunks.
 
 ## Walkthrough and delegation history
 
-[How the input was collected and the decisions taken: the input path per stage (web or prompt, and each switch with who asked), the batches answered and by whom, each group confirm, the stage 4 decisions (topology and DR overrides with their reasons, the chosen option, each by who decided), the cost, horizon, and weight approvals, and every delegation the user gave. An answer policy is recorded once, the first time it answers: `Policy: <policy> (set by <name>, <date>)`, with the stops it may pass and the Approver stand-in it names. Progress notes live here, never in the chunks.]
+[How the input was collected and the decisions taken: the input path per stage (web or prompt, and each switch with who asked), the batches answered and by whom, each group confirm, the stage 4 decisions (topology and DR overrides with their reasons, the chosen option with the reason for the choice and the condition that would reverse it, each by who decided), the cost, horizon, and weight approvals, and every delegation the user gave. An answer policy is recorded once, the first time it answers: `Policy: <policy> (set by <name>, <date>)`, with the stops it may pass and the Approver stand-in it names. Progress notes live here, never in the chunks.]
 
 ### Action entries
 

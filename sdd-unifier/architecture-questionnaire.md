@@ -9,7 +9,7 @@ The architecture style is not fixed in advance. When the SDD is derived from a B
 | Intent | Questionnaire |
 |---|---|
 | DERIVE-FROM-BRD | **Runs**, before any chunk is written, after the Project Type answer (step 3a). |
-| GENERATE (SoW, notes, topic seed) | Runs only when the user asks for it ("ask me about the architecture"). Otherwise the style comes from the source or is flagged `[NEEDS CLARIFICATION: ...]` in §8.1, and the ecosystem flow (step 3c) proposes it. |
+| GENERATE (SoW, notes, topic seed) | Does not run: the request writes nothing until its BRD and a G3-signed Pre-SDD exist, and the SDD is then derived (SKILL.md step 2), so the DERIVE-FROM-BRD row applies. |
 | TRANSFORM (an existing SDD) | Does not run. The source SDD's architecture is kept verbatim; a mismatch with the drivers becomes an open item for the reviewer, never a silent change. |
 | Brownfield (any intent) | Q2-Q6 start from the existing system's style, shown as `existing` and recommended unless a driver clearly argues for change. |
 
@@ -90,8 +90,8 @@ When SKILL.md step 2a loaded a G3-signed Pre-SDD, its chunk 12 lock list arrives
 | Question | What the Pre-SDD gives | How it is shown |
 |---|---|---|
 | Project Type (SKILL.md step 3a) | The classification, `PSDD/HDR-07` | Pre-filled and cited. A brownfield Pre-SDD with no codebase to extend gives Greenfield, with the migration context in §1. |
-| Q3 Load and availability | Its numbers: the `PSDD/CALC-NN` values and the rows its chunk 12 lands in Q3 | The Evidence column cites them as `PSDD/<ID>`. The answer stays this SDD's choice, recommended from them. |
-| Q7 Multi-tenancy model | The isolation level, `PSDD/DAT-07` | Only the options the level allows are offered, and the constraint is shown under the question: `single` allows Single tenant; `shared-logical` allows Shared schema with `tenant_id`, Schema per tenant, or Database per tenant; `schema-isolated` allows Schema per tenant or Database per tenant; `database-isolated` and `deployment-isolated` allow Database per tenant. The platform rule of § Recommendation rules picks within them. |
+| Q3 Load and availability | Its numbers: the `PSDD/CALC-NN` values (the calculations table of its chunk 12 § 12.2, each linked to its chunk 04 anchor) and the rows its chunk 12 lands in Q3 | The Evidence column cites them as `PSDD/<ID>`. The answer stays this SDD's choice, recommended from them. |
+| Q7 Multi-tenancy model | The isolation level, `PSDD/DAT-07` | Only the options the level allows are offered, and the constraint is shown under the question: `single` allows Single tenant; `shared-logical` allows Shared schema with `tenant_id`, Schema per tenant, or Database per tenant; `schema-isolated` allows Schema per tenant or Database per tenant; `database-isolated` and `deployment-isolated` allow Database per tenant. The platform rule of § Recommendation rules picks within them. When the locked isolation entry (`PSDD/DAT-07.1`) reads `TBD` or `Open`, Q7 is recorded open, waiting for that entry's owner (the Owner column of chunk 12's lock list), the multi-tenancy ADR is `Proposed` with a `[NEEDS CLARIFICATION: ...]` marker citing the entry, and Accept all still applies to the other questions and does not by itself make the walkthrough recommended. |
 | Q8 Deployment target | The hosting target: cloud, on-prem, or hybrid, and a named provider only when the Pre-SDD records it as a hard constraint | The hosting target is shown locked, with source `Pre-SDD` (`PSDD/<ID>`), and is not asked. The runtime option (Kubernetes, a managed container service, or a simple container or VM setup) stays this SDD's choice, recommended within that target. |
 
 - **Q1, Q2, Q4, Q5, and Q6 are unchanged.** The Pre-SDD gives their drivers at most, never their answers.

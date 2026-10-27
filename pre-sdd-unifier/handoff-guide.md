@@ -22,14 +22,14 @@ The template is `chunks/12-sdd-handoff-guide.md`; in COMBINED mode, the § 12 se
 |---|---|---|
 | Opening note | What the guide is; numbers and shape are locked once G3 is signed; products and style are the SDD's | The template, unchanged |
 | 12.1 Pre-SDD, Gate and Signers | The Pre-SDD version, the source BRDs with keys, the engine's gate label, the G3 status, whether the SDD may start, each signer by role with decision and date, and the engine version; then how the SDD reads the gate | The master, chunk 00, the gate fragment (`11-gate.md`), `cli.mjs --version` |
-| 12.2 Locked Items | The lock list: each entry with its value, unit, status, and SDD landings; the target-shape decisions; and the landing table, each SDD place with the rows that land there | The fragment `12-locked-items.md`, pasted unchanged |
+| 12.2 Locked Items | The lock list: each entry with what it measures, its value, unit (and a data workload's store kind), status, owner, and SDD landings; the calculations §18 cites, each with what it measures and its value; the target-shape decisions; and the landing table, each SDD place with the rows that land there | The fragment `12-locked-items.md`, pasted unchanged |
 | 12.3 Where Each Item Lands in the SDD | How the SDD applies what lands in each place; the rows themselves are the landing table of § 12.2, never copied here | The template |
 | 12.4 Left to the SDD | Everything the SDD decides | The template |
 | 12.5 Conditions, Exceptions and Unknowns | Each condition (`COND-NN`), exception (`EXC-NN`), and unknown (`QD-NN`) that did not block G3, with owner and due date | The gate fragment (`11-gate.md`) and the validation fragment (`10-validation.md`) |
 | 12.6 When the SDD Disagrees | The open-item rule | The template |
 | 12.7 Citing This Pre-SDD | `PSDD/<ID>` with a link, per kind of ID | The template, with this Pre-SDD's slug |
 
-Every value in chunk 12 comes from an engine fragment or the master; none is restated from memory or worked out by hand. The gate line in § 12.1 reads exactly as the master's.
+Every value in chunk 12 comes from an engine fragment or the master; none is restated from memory or worked out by hand. The Gate row in § 12.1 holds the engine's gate label only, as the master's gate line opens with it; the G3 status and the authorization have their own rows, and the master keeps the full gate line (label, G3 status, and authorization).
 
 ---
 
@@ -49,17 +49,17 @@ The engine's landing map (`LANDINGS` in `studio/src/engine.js`) says which rows 
 | Q3 | The evidence for Q3 (load and availability), cited as `PSDD/<ID>`. Q3 stays the SDD's choice. |
 | Q7 | Q7 (multi-tenancy model) is chosen within the isolation level (below). |
 | Q8 | The hosting target is locked: cloud, on-prem, or hybrid, and a provider only when the business made it a hard constraint. The runtime option is the SDD's. |
-| §6 Notes | Each affected ecosystem row carries the constraint in its Notes. A product that breaks one becomes an open item. |
-| §8.3 | The high-level architecture follows the hosting, data, integration, and network shape. |
-| §8.6 | The infrastructure architecture follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations. §8.6.4 is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. |
+| §6 Notes | Each affected ecosystem row carries the constraint in its Notes; the data-store row carries the store kind of each data workload (DAT-01), and the product stays the SDD's. A product that breaks one becomes an open item. |
+| §8.3 | The high-level architecture follows the hosting, data, integration, and network shape: the data workloads and their store kind (DAT-01), and the external dependencies with the partner quotas, latencies, SLAs, maintenance windows, and rate limits they impose (INT-03). |
+| §8.6 | The infrastructure architecture follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations. §8.6.4 is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. The storage redundancy and replication meet the durability and correctness targets (REL-10). |
 | §8.7 | The network architecture follows the network constraints: address ranges and private connectivity, allow-lists, firewall, DNS and proxy dependencies, client and edge locations, where residency lets data flow, the threat posture, encryption in transit, and privileged access. |
-| §11 | The cross-cutting defaults follow the DR strategy, the classification, residency, retention, the isolation level, and the security obligations. |
-| §18 | §18 cites the `PSDD/CALC-NN` values (the calculations) and never recomputes them. |
-| §18.5 | The settled targets for the BRD NFRs. |
+| §11 | The cross-cutting defaults follow the DR strategy, the classification, residency, retention, the isolation level, the security obligations, the business prohibitions and obligations (BUS-07, BUS-08), and the durability and correctness targets (REL-10). |
+| §18 | §18 cites the `PSDD/CALC-NN` values from the calculations table of § 12.2, each linked to its chunk 04 anchor, and never recomputes them. It sizes within the partner quotas and latencies (INT-03) and for the peak simultaneously active users (CAP-03), which no calculation reads, and its latency targets are measured where CAP-08 says, with what counts as a failure. |
+| §18.5 | The settled targets for the BRD NFRs. A latency target states its measurement point and what counts as a failure (CAP-08); a durability or correctness NFR takes its target from REL-10. |
 | §19 | The environments follow the DR strategy and the environment list. |
 | §20 | The runbook follows the DR strategy, the recovery sequence, the failover authority, and the restore granularity. |
 
-The target-shape decisions (hosting, topology, the DR strategy per failure scope, and the chosen option) are locked with the rows.
+The target-shape decisions (hosting, topology, the DR strategy per failure scope, the data shape, and the chosen option) are locked with the rows.
 
 ### The isolation level and Q7
 
@@ -101,7 +101,7 @@ Chunk 12 never names a product, a version, or the architecture style, and never 
 - **Exceptions** (`EXC-NN`): only a named person grants one, never a stand-in, an answer policy, a fixture owner, or the skill. Chunk 12 lists each with its entry, who granted it, its expiry, and its review date. An expired exception no longer lifts its entry, and the engine's gate shows it.
 - **Unknowns** (`QD-NN`): every open unknown that did not block G3, with its question, its entry, its owner, and its due date. The SDD carries each as an open question and never fills it.
 
-An entry the lock list shows as `TBD` or `Open` is locked as open: the SDD designs around it, links it to its register row through its `PSDD/<ID>` link (where its owner and due date stand), and never invents a value for it.
+An entry the lock list shows as `TBD` or `Open` is locked as open: the lock list says what it measures and names its owner, and the SDD designs around it, links it to its register row through its `PSDD/<ID>` link (where its due date stands), and never invents a value for it.
 
 ---
 

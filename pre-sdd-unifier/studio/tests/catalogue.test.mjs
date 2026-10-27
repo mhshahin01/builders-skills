@@ -251,7 +251,29 @@ test('LANDINGS_rows_matchPlan', () => {
     ...land(['INT-08'], ['§8.3', '§8.7', '§11']),
     ...land(['OPS-04'], ['§19']),
     ...land(['ECO-01', 'ECO-03'], ['§6 Notes']),
+    ...land(['DAT-01'], ['§6 Notes', '§8.3']),
+    ...land(['INT-03'], ['§8.3', '§18']),
+    ...land(['CAP-08'], ['§18', '§18.5']),
+    ...land(['REL-10'], ['§8.6', '§11', '§18.5']),
+    ...land(['BUS-07', 'BUS-08'], ['§11']),
   ]));
+});
+
+test('LANDINGS_hardRows_allLandInTheSdd', () => {
+  const hard = rowIds(allRows().filter((row) => row.defaultKind === 'hard'));
+  assert.deepEqual(hard, ['BUS-07', 'BUS-08', 'DAT-03', 'DAT-04', 'DAT-06', 'SEC-01', 'SEC-04']);
+  for (const id of hard) assert.ok((E.LANDINGS.rows[id] || []).includes('§11'), id);
+  assert.deepEqual(E.LANDINGS.factors, { 'DAT-01': ['storeKind'] });
+});
+
+test('LANDINGS_preSddAnswers_landInTheSdd', () => {
+  assert.deepEqual(['DAT-01', 'INT-03', 'CAP-08', 'REL-10', 'CAP-03'].map((id) => [id, rowById(id).landing]), [
+    ['DAT-01', ['§6 Notes', '§8.3']],
+    ['INT-03', ['§8.3', '§18']],
+    ['CAP-08', ['§18', '§18.5']],
+    ['REL-10', ['§8.6', '§11', '§18.5']],
+    ['CAP-03', ['§18', 'Q3']],
+  ]);
 });
 
 test('SIGNOFF_ROLES_matchStandardRegister', () => {

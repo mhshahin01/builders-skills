@@ -86,6 +86,7 @@ Every other row holds exactly one entry. `add` works only on the repeating rows,
 - **DAT-01 and DAT-05 are read per data workload:** entry 2 onwards of both rows describe the extra workloads, matched by entry number.
 - **CAP-01, CAP-07, and REL-01 are read through their primary entry**, and so are DAT-05's factor `transactionNeed` and the OVL-07, OVL-08, and OVL-09 factors (`migrationGB`, `linkMbps`, `cutoverHours`), which the transfer math reads only from the primary entry, the first workload's. The calculations and rules size for the primary entry. When another entry holds a different value, the engine raises the advisory `PRIMARY-ONLY-<row>`, which names the entries it did not read. So make the primary entry the one to size for (the busiest transaction type, the strictest journey), and let the others carry their own values to the chunks and the SDD.
 - **BUS-02, INT-01, and INT-03 feed no calculation.** Their entries carry their values to the chunks and the SDD.
+- **CAP-03 feeds no calculation either.** No calculation of engine 3.0 reads CAP-03, the peak simultaneously active users (a stage 1 row), so its value feeds no `CALC-NN`: it is locked and lands in the SDD for the SDD's sizing, in §18 (concurrency and session sizing) and as evidence for Q3 (load and availability), as the locked-items fragment's landing table shows.
 
 **Labels.** Give every entry of a repeating row a `label` that names its journey, transaction type, dataset, workload, or external system, as the BRD names it, and a `scope` where the row is read per scope (REL-03, REL-04).
 
@@ -212,7 +213,7 @@ Record each proposal and its outcome in `decision-log.md` § Proposal record.
 
 **Facts only a person gives** (`factOnly`): CAP-01, CAP-03, CAP-04, CAP-05, CAP-06, CAP-10, CAP-12, DAT-02, INT-03, BUS-04, ECO-01, HDR-01 to HDR-06, the fact factors on those rows, and every option cost. They are never proposed, and an answer policy never sets, confirms, or answers them: the engine refuses it. The skill may pre-fill one from a BRD that states it, as `Estimated`, for a person to confirm. The engine also refuses the skill and an answer policy every owner name and due date, on any entry. Beyond what the engine refuses, the skill's own rule is wider: an answer policy never supplies any other forecast or measurement (SKILL.md § Answer policy).
 
-**Protected values.** A value that is `Confirmed`, or that a person or a fixture owner answered, is protected: only a person (or a fixture owner) changes it, and the engine refuses the skill and an answer policy. The engine still lets them write its owner code; the owner name and the due date come only from a person or a fixture owner, on any entry (`stages-and-input.md`).
+**Protected values.** A value that is `Confirmed`, or that a person or a fixture owner answered, is protected: only a person (or a fixture owner) changes it, and the engine refuses the skill and an answer policy. The engine still lets them write its owner code; the owner name and the due date come only from a person or a fixture owner, on any entry (`stages-and-input.md`). The rule holds for a label or a wording fix too, so an open item whose accepted answer changes a protected value waits for a person under an answer policy (`Decided - waiting for a person`, `review-and-open-items.md` § The accept loop).
 
 ---
 
@@ -232,7 +233,7 @@ An unknown is an open question the run cannot answer yet, recorded as `QD-NN` in
 | `resolution`, `closed_by`, `closed_at` | How it was answered, by whom, and when (UTC); set when it closes, empty while it is open |
 
 - **`add-unknown`** records one. Any actor may, since recording a question changes no value; the skill records the questions it finds. No op changes an unknown once it is added, so collect its owner and due date from a person first, and write them with the question.
-- **`close-unknown`** closes one, with its resolution. A person or a fixture owner may close one; the skill and an answer policy never do (the engine refuses both): the skill asks the person who owns the question. A closed unknown stays closed: when the question comes back, add a new unknown.
+- **`close-unknown`** closes one, with its resolution. A person or a fixture owner may close one; the skill and an answer policy never do (the engine refuses both): the skill asks the person who owns the question. A closed unknown stays closed: when the question comes back, add a new unknown. To correct an unknown's owner or due date, close it and add a new unknown with the corrected owner or due date.
 
 ---
 
@@ -249,7 +250,7 @@ IDs are stable once seen, and never renumbered or reused (SKILL.md § Output con
 | Calculation | `CALC-NN`; per option `CALC-21@OPT-NN` (TCO) and `CALC-22@OPT-NN` (weighted score) | `CALC-03`, `CALC-21@OPT-02` |
 | Rule | The Studio's rule IDs, with two renamed so no rule ID equals an item ID (Q2): `LOAD-04` (was `CAP-04`) and `DB-READ-17` (was `DB-READ-11`) | `DR-03`, `LOAD-04` |
 | Option, cost, score | `OPT-NN`; `OPT-NN.one_time`, `OPT-NN.monthly`; `OPT-NN.<criterion>` | `OPT-01.monthly` |
-| Others | Conditions `COND-NN`, exceptions `EXC-NN`, checklist lines `G3-01` to `G3-14`, decision rules `DT-01` to `DT-15`, unknowns `QD-NN`, open items `OI-NN`, ADRs `ADR-<AREA>-NNN` | `QD-03` |
+| Others | Conditions `COND-NN`, exceptions `EXC-NN`, checklist lines `G3-01` to `G3-14`, decision rules `DT-01` to `DT-15`, unknowns `QD-NN`, risks `R-NN`, open items `OI-NN`, ADRs `ADR-<AREA>-NNN` | `QD-03` |
 
 An entry number is one above the highest number the row has ever used, removed entries included, so a removed `REL-03.3` never comes back as another entry. The engine gives the number when it adds the entry; read it from the change `derive` prints before citing it. Options, workloads, conditions, and exceptions are numbered the same way, one above the highest number in the list and in the history, so a removed `OPT-02`, `WL-02`, `COND-02`, or `EXC-02` never comes back as another one.
 

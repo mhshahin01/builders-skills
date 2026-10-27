@@ -9,7 +9,7 @@
 **Date:** [YYYY-MM-DD]
 **Lineage:** [Document Lineage](#document-lineage) (source BRDs and the consuming SDD)
 
-<!-- The generation state a chunked Pre-SDD keeps in its master; in COMBINED mode it is written here, in the cover, at setup (SKILL.md step 5), right after `cli.mjs new`, and updated after every answered batch, every save, and every stop. Resume reads it (SKILL.md step 1). Generation: the mode (full or quick), plus light when set; a resume keeps it, and only the set-run op changes it, by a person or a fixture owner. Source BRDs: the system's BRDs with their keys and versions, so a resume can match this Pre-SDD to its system. Gate: the engine's gate label, the G3 status, and whether the SDD may start, copied from the engine's gate result (derive prints it; compute writes it to model.json), never from memory. Next: the stage and group the run continues with (the set-run pointer in the project state names the same), and what the run waits for. -->
+<!-- The generation state a chunked Pre-SDD keeps in its master; in COMBINED mode it is written here, in the cover, at setup (SKILL.md step 5), right after `cli.mjs new`, and updated after every answered batch, every save, and every stop. Resume reads it (SKILL.md step 1). Generation: the mode (full or quick), plus light when set; a resume keeps it, and only the set-run op changes it, by a person or a fixture owner. Source BRDs: the system's BRDs with their keys and versions, so a resume can match this Pre-SDD to its system. Gate: the engine's gate label (Discovery in quick mode; otherwise a new Pre-SDD reads Draft until G0 is met, ahead of Blocked, even while G3 reads Blocked), the G3 status, and whether the SDD may start, copied from the engine's gate result (derive prints it; compute writes it to model.json), never from memory. Next: the stage and group the run continues with (the set-run pointer in the project state names the same), and what the run waits for. -->
 
 **Generation:** [full | quick][, light]
 **Source BRDs:** [KEY] v[X.X] ([status]) [one per BRD]
@@ -107,6 +107,7 @@
 | `DT-01` to `DT-15` | Decision rules | [09 § 9.2](#92-decision-tree) |
 | `ADR-<AREA>-NNN` | Pre-SDD ADRs | [09 § 9.4](#94-pre-sdd-adrs) |
 | `QD-NN` | Unknowns | [10 § 10.1](#101-validation-and-unknowns) |
+| `R-NN` | Risks | [10 § 10.2](#102-risks) |
 | `G3-01` to `G3-14`, `COND-NN`, `EXC-NN` | G3 checklist, conditions, exceptions | [11 § 11.1](#111-gate-result) |
 | `OI-NN` | Reviewer open items | [13](#13-open-items--clarifications) |
 
@@ -1012,7 +1013,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ## 5.2 Diagrams
 
-<!-- Paste the engine's diagrams (`studio/diagrams/<id>.mmd`) inline, unchanged, each in a mermaid code block, each followed by a 1-2 sentence summary so the chunk reads without a renderer. A light run keeps the infrastructure, network, and DR diagrams and leaves out the data diagram. Provider names in a diagram are illustration only. -->
+<!-- Paste the engine's diagrams (`studio/diagrams/<id>.mmd`) inline, unchanged, each in a mermaid code block, each followed by a 1-2 sentence summary so the chunk reads without a renderer. Place every diagram compute writes, and no other: the infrastructure, network, and DR diagrams always; the data, security, integration, and deployment diagrams only when compute writes them, each by its own condition below, or all four when the Studio's show-optional setting is on. A light run keeps the infrastructure, network, and DR diagrams and leaves out the four optional ones. Provider names in a diagram are illustration only. -->
 
 ### 5.2.1 Infrastructure
 
@@ -1044,6 +1045,36 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ```mermaid
 %% Paste studio/diagrams/data.mmd unchanged.
+```
+
+[1-2 sentence summary.]
+
+### 5.2.5 Security
+
+<!-- Only when compute writes studio/diagrams/security.mmd (the engine draws it when DAT-03 reads sensitive or DAT-04 reads yes); otherwise leave this subsection out. Left out in a light run. -->
+
+```mermaid
+%% Paste studio/diagrams/security.mmd unchanged.
+```
+
+[1-2 sentence summary.]
+
+### 5.2.6 Integration
+
+<!-- Only when compute writes studio/diagrams/integration.mmd (the engine draws it when INT-08 reads hybrid or partner, or HDR-07 reads brownfield); otherwise leave this subsection out. Left out in a light run. -->
+
+```mermaid
+%% Paste studio/diagrams/integration.mmd unchanged.
+```
+
+[1-2 sentence summary.]
+
+### 5.2.7 Deployment
+
+<!-- Only when compute writes studio/diagrams/deployment.mmd (the engine draws it when HDR-07 reads brownfield or HDR-08 reads hybrid); otherwise leave this subsection out. Left out in a light run. -->
+
+```mermaid
+%% Paste studio/diagrams/deployment.mmd unchanged.
 ```
 
 [1-2 sentence summary.]
@@ -1100,7 +1131,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ## 7.1 Options
 
-<!-- The engine renders the options from the project state (fragment `07-options.md`): each OPT-NN with its shape, the hard-constraint result (pass, fail, or cannot run yet, with the failing check; an option a person excluded with the exclude-option op fails the check `excluded`, naming the entry it breaks), the criterion scores with status and reason, the costs with who gave them, the TCO (CALC-21@OPT-NN), the weighted score (CALC-22@OPT-NN), the weights with who approved them, the flags (UNWEIGHTED when no weights are approved), and the chosen option. An option that breaks a hard entry or a conflict is never ranked. A missing cost gives TBD and an unknown. Paste the fragment unchanged between the markers. -->
+<!-- The engine renders the options from the project state (fragment `07-options.md`): each OPT-NN with its shape, the hard-constraint result (pass, fail, or cannot run yet, with the failing check; an option a person excluded with the exclude-option op fails the check `excluded`, naming the entry it breaks), the criterion scores with status and reason, the costs, and for each score and cost who last set or confirmed it and when (UTC), the TCO (CALC-21@OPT-NN), the weighted score (CALC-22@OPT-NN), the weights with who approved them, the flags (UNWEIGHTED when no weights are approved), and the chosen option. An option that breaks a hard entry or a conflict is never ranked. A missing cost gives TBD and an unknown. Paste the fragment unchanged between the markers. -->
 
 <!-- ENGINE-FRAGMENT: 07-options.md -->
 | Option | Shape | Hard constraints | TCO (CALC-21) | Weighted score (CALC-22) | Status |
@@ -1450,11 +1481,11 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ## 10.2 Risks
 
-<!-- The risks the register and the shape imply, beyond the engine's findings: each with likelihood, impact, mitigation, owner, and the IDs it rests on. A high risk still open at G3 must be closed or formally accepted by an empowered owner (G3-11, DT-15); never accept one in prose. -->
+<!-- The risks the register and the shape imply, beyond the engine's findings: each with its ID (`R-NN`, the next free number, never renumbered or reused), likelihood, impact, mitigation, owner, and the IDs it rests on. A high risk still open at G3 must be closed or formally accepted by an empowered owner (G3-11, DT-15); never accept one in prose. -->
 
-| Risk | Likelihood | Impact | Mitigation | Owner | Linked IDs |
-|------|------------|--------|------------|-------|------------|
-| [Risk] | [Low / Medium / High] | [Low / Medium / High] | [Mitigation] | [Owner] | [Entry, finding, or QD IDs] |
+| ID | Risk | Likelihood | Impact | Mitigation | Owner | Linked IDs |
+|----|------|------------|--------|------------|-------|------------|
+| R-01 | [Risk] | [Low / Medium / High] | [Low / Medium / High] | [Mitigation] | [Owner] | [Entry, finding, or QD IDs] |
 
 ## 10.3 Hard Entries Still Open
 
@@ -1527,13 +1558,13 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ## 12.1 Pre-SDD, Gate and Signers
 
-<!-- Copied from the cover and the gate fragment in § 11. The gate line reads exactly as the cover's. -->
+<!-- Copied from the cover and the gate fragment in § 11. The Gate row holds the engine's gate label only, as the cover's gate line opens with it; the G3 status and the authorization have their own rows, and the cover keeps the full gate line. -->
 
 | Item | Value |
 |------|-------|
 | Pre-SDD | [Project Name], version [X.X] (this file) |
 | Source BRDs | [KEY] v[X.X] ([status]) [one per BRD, as chunk 00 lists them] |
-| Gate | [the engine's gate label] |
+| Gate | [the engine's gate label only: Draft / G0 / G1 / G2 / Blocked / G3 Approved / G3 Approved with conditions] |
 | G3 status | [Not signed / Blocked / Review / Approved / Approved with conditions] |
 | Authorized to start the SDD | [Yes / No] |
 | Signers | [Role: name, decision, YYYY-MM-DD, one per applicable role; a stand-in marked as one; or "Not signed"] |
@@ -1547,18 +1578,23 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ## 12.2 Locked Items
 
-<!-- The engine renders the lock list (fragment `12-locked-items.md`): one row per entry of every row in the landing map, in register order, with the entry ID, the value with its unit (TBD when it has none), the status, and where it lands in the SDD; then the target-shape decisions: hosting, topology, the DR strategy per failure scope, and the chosen option when one is set; then the landing table: each SDD place with the rows that land there, in register order, from the engine's landing map. Paste it unchanged between the markers. -->
+<!-- The engine renders the lock list (fragment `12-locked-items.md`): one row per entry of every row in the landing map, in register order, with the entry ID, what it measures (the row's title and the entry's label or scope, in the register's words), the value with its unit (TBD when it has none) and, for a data workload (DAT-01), its store kind, the status, the owner (as the register prints it; the row's owner when the entry has none), and where it lands in the SDD; then the calculations: each `CALC-NN` of chunk 04 with what it measures and its value with its unit (TBD when it is open), in chunk 04's words, which §18 cites; then the target-shape decisions: hosting, topology, the DR strategy per failure scope, the data shape (store kind and consistency), and the chosen option when one is set; then the landing table: each SDD place with the rows that land there, in register order, from the engine's landing map. Paste it unchanged between the markers. -->
 
 <!-- ENGINE-FRAGMENT: 12-locked-items.md -->
-| ID | Value | Status | Lands in the SDD |
-|----|-------|--------|------------------|
-| [Entry ID] | [value and unit, or TBD] | [Status] | [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §8.6 / §8.7 / §11 / §18 / §18.5 / §19 / §20] |
+| ID | Measures | Value | Status | Owner | Lands in the SDD |
+|----|----------|-------|--------|-------|------------------|
+| [Entry ID] | [Row title; entry label or scope] | [value and unit, or TBD] | [Status] | [Owner] | [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §8.6 / §8.7 / §11 / §18 / §18.5 / §19 / §20] |
+
+| ID | Measures | Value |
+|----|----------|-------|
+| [CALC-NN] | [Calculation, as chunk 04 names it] | [value and unit, or TBD] |
 
 | Decision | Value |
 |----------|-------|
 | Hosting | [cloud / onprem / hybrid] |
 | Topology | [Topology] |
 | DR strategy, scope [scope] | [Strategy] |
+| Data | [kind, consistency] |
 | Chosen option | [OPT-NN, or none] |
 
 | Lands in the SDD | Rows |
@@ -1566,7 +1602,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 | [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §8.6 / §8.7 / §11 / §18 / §18.5 / §19 / §20] | [Row IDs, in register order] |
 <!-- /ENGINE-FRAGMENT -->
 
-An item that reads `TBD` or `Open` is locked as open: the SDD carries it as an open question, links it to its register row through its `PSDD/<ID>` link (where its owner and due date stand), and never fills it.
+An item that reads `TBD` or `Open` is locked as open: the SDD carries it as an open question that says what it measures and names its owner (the Measures and Owner columns), links it to its register row through its `PSDD/<ID>` link (where its due date stands), and never fills it.
 
 ## 12.3 Where Each Item Lands in the SDD
 
@@ -1578,13 +1614,13 @@ The lock is on numbers and shape, never on the SDD's own questions. Which rows l
 | Q3 (load and availability) | The evidence for Q3, cited as `PSDD/<ID>`. Q3 stays the SDD's choice. |
 | Q7 (multi-tenancy model) | Q7 is chosen within the isolation level of DAT-07 (tenancy model and isolation level): `single` allows Single tenant; `shared-logical` allows shared schema with `tenant_id`, schema per tenant, or database per tenant; `schema-isolated` allows schema per tenant or database per tenant; `database-isolated` and `deployment-isolated` allow database per tenant. |
 | Q8 (deployment target) | The hosting target (cloud, on-prem, or hybrid; a provider only when the business made it a hard constraint) is locked. The runtime option is the SDD's. |
-| §6 Notes | Each affected §6 row carries the constraint in its Notes. A product that breaks a constraint becomes an open item (§ 12.6). |
-| §8.3 (high-level architecture) | The diagram follows the hosting, data, integration, and network shape. |
-| §8.6 (infrastructure architecture) | The deployment topology follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations: the regions or sites, the zones, and the redundancy cite them as `PSDD/<ID>`. §8.6.4 (backup and disaster recovery) is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. |
+| §6 Notes | Each affected §6 row carries the constraint in its Notes; the data-store row carries the store kind of each data workload (DAT-01), and the product stays the SDD's. A product that breaks a constraint becomes an open item (§ 12.6). |
+| §8.3 (high-level architecture) | The diagram follows the hosting, data, integration, and network shape: the data workloads and their store kind (DAT-01), and the external dependencies with the partner quotas, latencies, SLAs, maintenance windows, and rate limits they impose (INT-03). |
+| §8.6 (infrastructure architecture) | The deployment topology follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations: the regions or sites, the zones, and the redundancy cite them as `PSDD/<ID>`. §8.6.4 (backup and disaster recovery) is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. The storage redundancy and replication meet the durability and correctness targets (REL-10). |
 | §8.7 (network architecture) | The zones, the ingress and egress paths, TLS termination, the network policies, and administrative access follow the network constraints: address ranges and private connectivity, allow-lists, firewall, DNS and proxy dependencies, client and edge locations, where residency lets data flow, the threat posture, encryption in transit, and privileged access, each cited as `PSDD/<ID>`. |
-| §11 (cross-cutting concerns) | The defaults follow the DR strategy, the data classification, residency and retention, the isolation level, and the security obligations. |
-| §18 (performance and capacity) | §18 cites the `PSDD/CALC-NN` values (chunk 04) and never recomputes them. |
-| §18.5 (NFR targets) | The settled targets; each BRD NFR row cites the entry that quantifies it. |
+| §11 (cross-cutting concerns) | The defaults follow the DR strategy, the data classification, residency and retention, the isolation level, the security obligations, the business prohibitions and obligations (BUS-07, BUS-08), and the durability and correctness targets (REL-10). |
+| §18 (performance and capacity) | §18 cites the `PSDD/CALC-NN` values from the calculations table of § 12.2, each linked to its chunk 04 anchor (§ 12.7), and never recomputes them. It sizes within the partner quotas and latencies (INT-03) and for the peak simultaneously active users (CAP-03), which no calculation reads, and its latency targets are measured where CAP-08 says, with what counts as a failure. |
+| §18.5 (NFR targets) | The settled targets; each BRD NFR row cites the entry that quantifies it. A latency target states its measurement point and what counts as a failure (CAP-08); a durability or correctness NFR takes its target from REL-10. |
 | §19 (environments) | The environments follow the DR strategy and the environment list. |
 | §20 (operations runbook) | The runbook follows the DR strategy, the recovery sequence, the failover authority, and the restore granularity. |
 
@@ -1638,6 +1674,7 @@ The SDD never edits a locked item, and never edits this Pre-SDD. When it finds a
 Cite every Pre-SDD ID as `PSDD/<ID>`, with a link to where it lives in this file (there is one Pre-SDD per SDD; the links below are written from the SDD folder):
 
 - a register row or entry links to its row heading: [PSDD/REL-03.2](../PRE-SDD-[ProjectName]-vX.Y.md#rel-03);
+- a header row or entry links to its row heading in § 1.1, where the header rows stand: [PSDD/HDR-07.1](../PRE-SDD-[ProjectName]-vX.Y.md#hdr-07);
 - a calculation links to [04 § 4.2](../PRE-SDD-[ProjectName]-vX.Y.md#42-calculations) (`PSDD/CALC-03`), and an option's rows to [07 § 7.1](../PRE-SDD-[ProjectName]-vX.Y.md#71-options) (`PSDD/CALC-21@OPT-02`);
 - a condition or an exception links to [11 § 11.1](../PRE-SDD-[ProjectName]-vX.Y.md#111-gate-result) (`PSDD/COND-01`, `PSDD/EXC-01`);
 - an unknown links to [10 § 10.1](../PRE-SDD-[ProjectName]-vX.Y.md#101-validation-and-unknowns) (`PSDD/QD-03`);
@@ -1666,9 +1703,9 @@ Entry IDs are the row ID, a dot, and the entry number (`REL-03.2`; `.1` is the p
 | **Type** | Missing source / Guessed value / Fragment mismatch / Product named / Open hard item / Conflict / Lock-list gap / ID error / Dash character / Ambiguity / Risk / Duplication (BRD content restated instead of cited). |
 | **Concern** | One paragraph: what is wrong and why it matters for the G3 sign-off or the SDD. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
-| **Recommended Answer** | The proposed resolution, ready to apply: the project-state change (the entry and its new value, status, or source) or the exact text for the chunk. A finding that needs no change reads `No change: <evidence>`. |
+| **Recommended Answer** | The proposed resolution, ready to apply: the project-state change (the entry and its new value, status, or source) or the exact text for the chunk. A finding that needs no change reads `No change: <evidence>`. Applicable: a value or label change names the op and who may run it (a Confirmed or person-answered value changes only by a person); a change no op can make is recommended as ops that can, for example "close QD-NN and add a new unknown with the corrected owner or due date". |
 | **Why** | REQUIRED. One or two lines: the evidence behind the recommendation and the tradeoff it accepts. Never empty, never "best option". |
-| **Status** | Open (awaiting decision) / Decided - pending application / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`. |
+| **Status** | Open (awaiting decision) / Decided - pending application / Decided - waiting for a person / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`. |
 
 Write the Status field as the literal legend value, for example `- **Status:** Accepted - applied`. Put the update link on a separate `- **Resolution:**` line.
 

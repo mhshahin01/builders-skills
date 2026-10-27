@@ -442,7 +442,7 @@ test('gateStatus_g2NoPassingOption_incompleteAndG3NotSigned', () => {
   assert.deepEqual(gate(all, LATER).g2.missing, ['The DR strategy is unresolved for REL-05.1 (no failure scope named); name each failure scope and give it an RTO and an RPO.', 'No option is recorded; G2 needs at least one option that passes every hard check.'], 'each failing condition is named');
 });
 
-test('gateStatus_g2Blocker_labelBlocked', () => {
+test('gateStatus_g2Blocker_labelBlockedOnceG0MetDraftBefore', () => {
   const state = resign(apply(approvedState(), [{ op: 'open', entry: 'SEC-04.1' }]));
   assert.deepEqual(gate(state, LATER), { ...APPROVED, g2: { result: 'blocker', missing: ['OPEN-SEC-04.1'] }, g3: { status: 'Blocked', missingRoles: [], problems: ['Validation blockers remain: OPEN-SEC-04.1.', 'G2 is not met: it ends in a blocker.'] }, label: 'Blocked', authorized: false });
   const unticked = resign(apply(state, [{ op: 'check', id: 'G3-11', status: 'Open' }]));
@@ -458,7 +458,20 @@ test('gateStatus_g2Blocker_labelBlocked', () => {
   const model = E.compute(blank, { now: NOW });
   const got = E.gateStatus(blank, model, { now: NOW });
   assert.deepEqual(got.g2, { result: 'blocker', missing: model.validation.blockers.map((b) => b.id) });
-  assert.deepEqual([got.g0.met, got.g1.met, got.label, got.authorized], [false, false, 'Blocked', false], 'Blocked comes before Draft');
+  assert.deepEqual([got.g0.met, got.g1.met, got.g3.status, got.label, got.authorized], [false, false, 'Blocked', 'Draft', false], 'Draft comes before Blocked while G0 is not met');
+});
+
+test('gateStatus_g0NotMet_labelDraftAheadOfBlocked', () => {
+  const blank = E.newState({ name: 'Refunds platform', slug: 'refunds-platform', now: NOW });
+  const fresh = gate(blank);
+  assert.deepEqual([fresh.g0.met, fresh.g2.result, fresh.g3.status, fresh.label, fresh.authorized], [false, 'blocker', 'Blocked', 'Draft', false], 'a new Pre-SDD reads Draft');
+  const reject = [{ op: 'sign', role: 'security_and_privacy_compliance', decision: 'Rejected' }];
+  const met = gate(apply(approvedState(), reject));
+  assert.deepEqual([met.g0.met, met.g3.status, met.label], [true, 'Blocked', 'Blocked'], 'once G0 is met, Blocked comes first');
+  const early = gate(apply(apply(approvedState(), [{ op: 'open', entry: 'HDR-04.1' }]), reject));
+  assert.deepEqual([early.g0.met, early.g3.status, early.label, early.authorized], [false, 'Blocked', 'Draft', false], 'before G0 is met, Draft comes first');
+  const quick = gate(apply(blank, [{ op: 'set-run', mode: 'quick' }]));
+  assert.deepEqual([quick.g0.met, quick.label], [false, 'Discovery'], 'quick mode keeps its own label');
 });
 
 test('gateStatus_criticalEntryEstimated_notSigned', () => {

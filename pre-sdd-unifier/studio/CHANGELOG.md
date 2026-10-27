@@ -68,6 +68,26 @@
 - `applyPatch` refuses every value `fieldError` refuses, for every actor, with the same text, enum rows included ("Choose one of ...").
 - The manual check (`tests/MANUAL-CHECK.md`) passed 13 of 13 in headless Chrome on 2026-10-27; Firefox and Edge are left to the owner.
 
+### Fixes from the fixture run (Task 7.0b)
+
+- New landings in the SDD: DAT-01 in §6 Notes and §8.3, INT-03 in §8.3 and §18, CAP-08 in §18 and §18.5, and REL-10 in §8.6, §11 and §18.5.
+- The gate label reads `Draft` and the blueprint's `gate_status` reads `draft` while G0 is not met, ahead of `Blocked`, so a new Pre-SDD reads Draft.
+- The fragments print every number through the engine's formatter, the same way the calculations do, so a derived value such as CAP-02.1 reads `0.2292`, not a long binary fraction.
+- The TCO and the CALC-21 unit name the currency from ECO-02, the first ISO 4217 code in its unit or value, and read `currency units` when there is none; the page's cost text uses the same currency.
+- The Inputs column of the calculations fragment lists the entries and factors each calculation reads (CALC-10 to CALC-12 read CAP-01 and the DAT-02 factors; CALC-06 and CALC-07 read the CAP-06 factors), instead of the old requirement citations.
+
+### Fixes from the fixture rerun (Task 7.0c)
+
+- New landings in the SDD: BUS-07 (prohibitions) and BUS-08 (obligations) in §11, so the lock list carries every hard entry.
+- The locked-items fragment prints the store kind with each data workload's value (a DAT-01 entry reads `<value> (storeKind: relational)`, without the value's trailing period, and `storeKind: TBD` when it is not held) and adds a `Data` row to its decision table: the kind and consistency, in the same words as the target shape.
+- The options fragment's "Scores and costs" table has an `At` column after `By`: the UTC time each cost and score was last set or confirmed, as the state holds it.
+
+### Fixes from the SDD fixture run (Task 7.0d)
+
+- The lock list has a `Measures` column after `ID`: the row's title and the entry's label or scope, in the register's words, so an entry such as REL-03.1 says it is an RTO and an open entry says what it asks.
+- The locked-items fragment adds a calculations table after the lock list: each `CALC-NN` of the calculations fragment with what it measures and its value with its unit (TBD when open), in the same words, so the SDD's §18 can cite them from chunk 12.
+- The lock list has an `Owner` column before `Lands in the SDD`: the entry's owner as the register prints it, or the row's owner when the entry has none.
+
 ### Known limitation
 
 - A zero RTO on `az` beside a remote failure scope over-reports `CONFLICT-zeroRTO-topology@az`; a topology override of `active`, or a relaxed `az` RTO, clears it (accepted by the owner at stop C2).

@@ -118,7 +118,7 @@ In stage 4 the person chooses the option with the `decide` op (`option`), and th
 
 - **More than one viable option (DT-12):** the comparison runs against the approved criteria and weights, and chunk 09's ADR candidates record the comparison and the reason for the choice.
 - **Only one feasible option (DT-13):** chunk 09 records the constraints that eliminated the others, each from its option's failures; validation is still required.
-- Record, with the choice, the technical assumptions, the pilots still needed, the cost sensitivities, and the condition that would reverse the decision (Standard § 9.4).
+- Record the reason for the choice, the technical assumptions, the pilots still needed, the cost sensitivities, and the condition that would reverse the decision (Standard § 9.4) in `decision-log.md` and in ADR-DR-001 in chunk 09 (its option comparison, its decision and rationale, and its conditions and review trigger). They never go into the `decide` op: it takes `reason` only with a topology or DR override, as that override's reason, and the engine refuses a `reason` with no override.
 
 The chosen option is part of the decisions, so it is in the signed content: a change after G3 sends G3 back to review. The locked-items fragment carries it to the handoff guide.
 

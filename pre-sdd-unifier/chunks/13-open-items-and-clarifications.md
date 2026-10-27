@@ -27,9 +27,9 @@ WORKFLOW: After this chunk is written, the skill walks the user through each Ope
 | **Type** | Missing source / Guessed value / Fragment mismatch / Product named / Open hard item / Conflict / Lock-list gap / ID error / Dash character / Ambiguity / Risk / Duplication (BRD content restated instead of cited). |
 | **Concern** | One paragraph: what is wrong and why it matters for the G3 sign-off or the SDD. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
-| **Recommended Answer** | The proposed resolution, ready to apply: the project-state change (the entry and its new value, status, or source) or the exact text for the chunk. A finding that needs no change reads `No change: <evidence>`. |
+| **Recommended Answer** | The proposed resolution, ready to apply: the project-state change (the entry and its new value, status, or source) or the exact text for the chunk. A finding that needs no change reads `No change: <evidence>`. Applicable: a value or label change names the op and who may run it (a Confirmed or person-answered value changes only by a person); a change no op can make is recommended as ops that can, for example "close QD-NN and add a new unknown with the corrected owner or due date". |
 | **Why** | REQUIRED. One or two lines: the evidence behind the recommendation and the tradeoff it accepts. Never empty, never "best option". |
-| **Status** | Open (awaiting decision) / Decided - pending application / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`. |
+| **Status** | Open (awaiting decision) / Decided - pending application / Decided - waiting for a person / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`. |
 
 Write the Status field as the literal legend value, for example `- **Status:** Accepted - applied`. Put the update link on a separate `- **Resolution:**` line.
 

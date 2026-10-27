@@ -43,11 +43,11 @@ PART OF: Pre-SDD - [Project Name]
 
 ## 10.2 Risks
 
-<!-- The risks the register and the shape imply, beyond the engine's findings: each with likelihood, impact, mitigation, owner, and the IDs it rests on. A high risk still open at G3 must be closed or formally accepted by an empowered owner (G3-11, DT-15); never accept one in prose. -->
+<!-- The risks the register and the shape imply, beyond the engine's findings: each with its ID (`R-NN`, the next free number, never renumbered or reused), likelihood, impact, mitigation, owner, and the IDs it rests on. A high risk still open at G3 must be closed or formally accepted by an empowered owner (G3-11, DT-15); never accept one in prose. -->
 
-| Risk | Likelihood | Impact | Mitigation | Owner | Linked IDs |
-|------|------------|--------|------------|-------|------------|
-| [Risk] | [Low / Medium / High] | [Low / Medium / High] | [Mitigation] | [Owner] | [Entry, finding, or QD IDs] |
+| ID | Risk | Likelihood | Impact | Mitigation | Owner | Linked IDs |
+|----|------|------------|--------|------------|-------|------------|
+| R-01 | [Risk] | [Low / Medium / High] | [Low / Medium / High] | [Mitigation] | [Owner] | [Entry, finding, or QD IDs] |
 
 ## 10.3 Hard Entries Still Open
 

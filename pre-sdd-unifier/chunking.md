@@ -26,7 +26,7 @@ The chunk templates are embedded in this skill folder under `chunks/`: they are 
 | 02 | `02-classification-and-path.md` | `chunks/02-classification-and-path.md` | Classification (path code, hybrid, overlay, recovery tier, closest worked example), path evidence and required outputs, hybrid boundary | quick and full |
 | 03a to 03h | `03a-register-business.md`, `03b-register-capacity.md`, `03c-register-reliability.md`, `03d-register-data.md`, `03e-register-security.md`, `03f-register-integration.md`, `03g-register-operations.md`, `03h-register-economics.md` | `chunks/03a-register-business.md` to `chunks/03h-register-economics.md` | The register, one chunk per group; 03a also holds "How to Read the Register" | quick (the stage 1 rows answered; every other value as `Estimated` with its source, or `Open`) and full |
 | 04 | `04-targets-and-calculations.md` | `chunks/04-targets-and-calculations.md` | Targets (SLOs, latency budgets, RTO and RPO, capacity) by entry ID; every `CALC-NN` with formula, inputs, result, and status; what the numbers mean | full |
-| 05 | `05-target-shape.md` | `chunks/05-target-shape.md` | Hosting, topology, DR strategy per failure scope, data shape, network shape, conflicts; the infrastructure, network, DR, and data diagrams | full |
+| 05 | `05-target-shape.md` | `chunks/05-target-shape.md` | Hosting, topology, DR strategy per failure scope, data shape, network shape, conflicts; the infrastructure, network, and DR diagrams, and the data, security, integration, and deployment diagrams when compute writes them | full |
 | 06 | `06-existing-estate.md` | `chunks/06-existing-estate.md` | Brownfield inventory, observed baseline, constraints, as-is and to-be | full, brownfield or mixed |
 | 07 | `07-options-and-economics.md` | `chunks/07-options-and-economics.md` | Options (shapes), the hard-constraint filter, a comparison with approved weights only, TCO | full |
 | 08 | `08-migration-overlay.md` | `chunks/08-migration-overlay.md` | The overlay rows per workload, 7R per workload, cutover and fallback, transfer math, hazards, waves | full, overlay only |
@@ -42,7 +42,7 @@ The chunk templates are embedded in this skill folder under `chunks/`: they are 
 - **Full mode:** 00 to 13 with 03a to 03h, except:
   - **06** only when the change type (HDR-07) is brownfield or mixed;
   - **08** only while the migration overlay applies (the engine's overlay switch, set with the `set-overlay` op).
-- A light run writes the same chunks as a full run. It leaves out only what § Light run in SKILL.md lists (the data diagram in 05, the weighted comparison in 07 unless the weights are approved, the closest-example pointer in 02, and review passes beyond one application pass).
+- A light run writes the same chunks as a full run. It leaves out only what § Light run in SKILL.md lists (the data, security, integration, and deployment diagrams in 05, the weighted comparison in 07 unless the weights are approved, the closest-example pointer in 02, and review passes beyond one application pass).
 - A quick Pre-SDD that continues into the full Pre-SDD keeps its chunks and adds the full-mode ones at the write-up.
 
 When the path changes later (an update turns the overlay on or off, or the change type changes), the chunk is added or removed in that update, its index rows and the neighbours' footers follow, and the Changes Log row names it.

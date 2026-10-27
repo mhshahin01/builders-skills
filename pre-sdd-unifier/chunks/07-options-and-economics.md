@@ -13,7 +13,7 @@ PART OF: Pre-SDD - [Project Name]
 
 ## 7.1 Options
 
-<!-- The engine renders the options from the project state (fragment `07-options.md`): each OPT-NN with its shape, the hard-constraint result (pass, fail, or cannot run yet, with the failing check; an option a person excluded with the exclude-option op fails the check `excluded`, naming the entry it breaks), the criterion scores with status and reason, the costs with who gave them, the TCO (CALC-21@OPT-NN), the weighted score (CALC-22@OPT-NN), the weights with who approved them, the flags (UNWEIGHTED when no weights are approved), and the chosen option. An option that breaks a hard entry or a conflict is never ranked. A missing cost gives TBD and an unknown. Paste the fragment unchanged between the markers. -->
+<!-- The engine renders the options from the project state (fragment `07-options.md`): each OPT-NN with its shape, the hard-constraint result (pass, fail, or cannot run yet, with the failing check; an option a person excluded with the exclude-option op fails the check `excluded`, naming the entry it breaks), the criterion scores with status and reason, the costs, and for each score and cost who last set or confirmed it and when (UTC), the TCO (CALC-21@OPT-NN), the weighted score (CALC-22@OPT-NN), the weights with who approved them, the flags (UNWEIGHTED when no weights are approved), and the chosen option. An option that breaks a hard entry or a conflict is never ranked. A missing cost gives TBD and an unknown. Paste the fragment unchanged between the markers. -->
 
 <!-- ENGINE-FRAGMENT: 07-options.md -->
 | Option | Shape | Hard constraints | TCO (CALC-21) | Weighted score (CALC-22) | Status |

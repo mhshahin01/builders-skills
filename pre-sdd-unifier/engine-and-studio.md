@@ -281,7 +281,7 @@ The chunks, the master, and `decision-log.md` sit one level up, in `./pre-sdd-[s
 | `09-rule-trace.md` | The rule trace |
 | `10-validation.md` | The blockers, conflicts, advisories, and unknowns |
 | `11-gate.md` | The gate result, the checklist, the sign-offs, the conditions, and the exceptions |
-| `12-locked-items.md` | Three tables: each locked entry with its value, its status, and where it lands in the SDD; the target-shape decisions (hosting, topology, the DR strategy per failure scope, and the chosen option once one is set); and the landing table, each SDD place with the rows that land there, from the engine's landing map |
+| `12-locked-items.md` | Four tables: each locked entry with what it measures (the row's title and the entry's label or scope, in the register's words), its value (a data workload's value with its store kind, for example `(storeKind: relational)` on DAT-01), its status, its owner (as the register prints it, or the row's owner when the entry has none), and where it lands in the SDD; the calculations, each `CALC-NN` of `04-calculations.md` with what it measures and its value (TBD when open), which §18 cites; the target-shape decisions (hosting, topology, the DR strategy per failure scope, the data shape (store kind and consistency), and the chosen option once one is set); and the landing table, each SDD place with the rows that land there, from the engine's landing map |
 
 The chunk templates (`chunks/*.md`, `TEMPLATE-COMBINED.md`) place a pair of markers wherever a fragment goes. The name in the marker is the fragment's file name:
 

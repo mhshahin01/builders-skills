@@ -9,7 +9,7 @@ PART OF: SDD - [Project Name]
 
 # 18. Performance & Capacity Planning
 
-<!-- With a loaded Pre-SDD (SKILL.md step 2a), §18 cites its calculations as PSDD/CALC-NN with a link and never recomputes them: the load, throughput, latency budgets, growth, payload sizes, storage, and bandwidth are the Pre-SDD's, and this section adds what the Pre-SDD leaves to it: the per-service breakdown, sizing per deployable, caching, and the §18.4 stress testing strategy. Each §18.5 row cites the Pre-SDD entry that settles its NFR's target (brd-to-sdd.md § Pre-SDD inputs (locked)). A disagreement with one is a chunk 18 open item owned by the E2E Architect, never an edit (SKILL.md principle 20). -->
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), §18 cites its calculations as PSDD/CALC-NN, with the values of the calculations table in the Pre-SDD's chunk 12 § 12.2 and a link to their chunk 04 anchor, and never recomputes them: the load, throughput, latency budgets, growth, payload sizes, storage, and bandwidth are the Pre-SDD's, and this section adds what the Pre-SDD leaves to it: the per-service breakdown, sizing per deployable, caching, and the §18.4 stress testing strategy. Each §18.5 row cites the Pre-SDD entry that settles its NFR's target (brd-to-sdd.md § Pre-SDD inputs (locked)). A disagreement with one is a chunk 18 open item owned by the E2E Architect, never an edit (SKILL.md principle 20). -->
 
 ## 18.1 Load Estimates
 

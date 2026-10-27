@@ -292,4 +292,4 @@ A rule in a project file (`AGENTS.md`, `CLAUDE.md`, `ui-ux-global-constitution.m
 
 If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. The architecture questionnaire settles §8.1 and the ADRs it covers, which meet the bar above; the decisions still open come out as `[NEEDS CLARIFICATION: ...]` markers, *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
 
-If the SDD is being **generated fresh** or **transformed from another SDD format**, the quality bar above applies in full.
+If the SDD is being **transformed from another SDD format**, or is an SDD generated without a BRD before every new SDD needed one (SKILL.md step 2), the quality bar above applies in full.

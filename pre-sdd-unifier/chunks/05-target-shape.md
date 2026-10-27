@@ -27,7 +27,7 @@ PART OF: Pre-SDD - [Project Name]
 
 ## 5.2 Diagrams
 
-<!-- Paste the engine's diagrams (`studio/diagrams/<id>.mmd`) inline, unchanged, each in a mermaid code block, each followed by a 1-2 sentence summary so the chunk reads without a renderer. A light run keeps the infrastructure, network, and DR diagrams and leaves out the data diagram. Provider names in a diagram are illustration only. -->
+<!-- Paste the engine's diagrams (`studio/diagrams/<id>.mmd`) inline, unchanged, each in a mermaid code block, each followed by a 1-2 sentence summary so the chunk reads without a renderer. Place every diagram compute writes, and no other: the infrastructure, network, and DR diagrams always; the data, security, integration, and deployment diagrams only when compute writes them, each by its own condition below, or all four when the Studio's show-optional setting is on. A light run keeps the infrastructure, network, and DR diagrams and leaves out the four optional ones. Provider names in a diagram are illustration only. -->
 
 ### 5.2.1 Infrastructure
 
@@ -59,6 +59,36 @@ PART OF: Pre-SDD - [Project Name]
 
 ```mermaid
 %% Paste studio/diagrams/data.mmd unchanged.
+```
+
+[1-2 sentence summary.]
+
+### 5.2.5 Security
+
+<!-- Only when compute writes studio/diagrams/security.mmd (the engine draws it when DAT-03 reads sensitive or DAT-04 reads yes); otherwise leave this subsection out. Left out in a light run. -->
+
+```mermaid
+%% Paste studio/diagrams/security.mmd unchanged.
+```
+
+[1-2 sentence summary.]
+
+### 5.2.6 Integration
+
+<!-- Only when compute writes studio/diagrams/integration.mmd (the engine draws it when INT-08 reads hybrid or partner, or HDR-07 reads brownfield); otherwise leave this subsection out. Left out in a light run. -->
+
+```mermaid
+%% Paste studio/diagrams/integration.mmd unchanged.
+```
+
+[1-2 sentence summary.]
+
+### 5.2.7 Deployment
+
+<!-- Only when compute writes studio/diagrams/deployment.mmd (the engine draws it when HDR-07 reads brownfield or HDR-08 reads hybrid); otherwise leave this subsection out. Left out in a light run. -->
+
+```mermaid
+%% Paste studio/diagrams/deployment.mmd unchanged.
 ```
 
 [1-2 sentence summary.]

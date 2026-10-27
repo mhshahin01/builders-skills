@@ -71,7 +71,8 @@ function valueText(row, v) {
 }
 function factorText(f) { if (f.value === null || f.value === undefined || f.value === '') return 'TBD'; return f.valueType === 'choice' ? choiceText(f.value) : f.valueType === 'number' ? `${fmt(f.value, 4)} ${unitWord(f.unit)}`.trim() : String(f.value); }
 function calcText(r) { return !known(r.result) ? 'TBD' : r.unit === 's' ? time(r.result) : `${fmt(r.result, 2)} ${r.unit}`; }
-function money(x) { return known(x) ? `${fmt(x, 2)} currency units` : 'TBD'; }
+function currencyWord() { const row = model && model.c.rows.find((r) => /^CALC-21@/.test(r.id)); return row ? row.unit : 'currency units'; }
+function money(x) { return known(x) ? `${fmt(x, 2)} ${currencyWord()}` : 'TBD'; }
 
 function engineRun(state, now) { return derive(applyDefaults(state, { now }).state, { now }).state; }
 function blankProject(now) { return engineRun(newState({ name: 'Untitled project', slug: 'untitled-project', input: 'web', now }), now); }
@@ -401,7 +402,7 @@ function costField(o, item, cost, dis) {
   const key = `opt|${item.id}|${cost}`, held = o[cost] || null;
   const meta = held ? (held.status === 'Confirmed' ? `confirmed by ${held.by || 'unknown'} on ${utcText(held.at)}` : `entered by ${held.by || 'unknown'} on ${utcText(held.at)}`) : 'TBD until a person enters it';
   const tick = held && held.status === 'Estimated' ? `<label class="check-inline"><input type="checkbox" data-action="confirm" data-option="${h(item.id)}" data-cost="${cost}" data-key="${h(key)}|confirm"${dis}> Confirm this cost<span class="sr-only"> (${h(COST_TEXT[cost])} of ${h(item.id)})</span></label>` : '';
-  return `<div class="field"><label for="${fid(key)}">${h(COST_TEXT[cost])} of ${h(item.id)}, in currency units</label><input id="${fid(key)}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" data-key="${h(key)}" data-field="cost" data-option="${h(item.id)}" data-cost="${cost}" aria-describedby="${mid(key)} ${fid(key)}-meta" value="${h(draft(key, held ? held.value : null))}" placeholder="TBD (unknown)"${invalid(key)}${dis}><div class="kv" id="${fid(key)}-meta"><span class="${held ? STATUS_CHIP[held.status] : 'chip amber'}">${h(held ? held.status : 'Open')}</span> ${h(meta)}.</div>${msgHtml(key)}${tick}</div>`;
+  return `<div class="field"><label for="${fid(key)}">${h(COST_TEXT[cost])} of ${h(item.id)}, in ${h(currencyWord())}</label><input id="${fid(key)}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" data-key="${h(key)}" data-field="cost" data-option="${h(item.id)}" data-cost="${cost}" aria-describedby="${mid(key)} ${fid(key)}-meta" value="${h(draft(key, held ? held.value : null))}" placeholder="TBD (unknown)"${invalid(key)}${dis}><div class="kv" id="${fid(key)}-meta"><span class="${held ? STATUS_CHIP[held.status] : 'chip amber'}">${h(held ? held.status : 'Open')}</span> ${h(meta)}.</div>${msgHtml(key)}${tick}</div>`;
 }
 function scoresHtml(o, item, dis) {
   const key = `opt|${item.id}|scores`, scores = o.scores || {}, waiting = CRITERIA.filter((c) => scores[c] && scores[c].status === 'Estimated').length;

@@ -22,7 +22,7 @@ For deciding **which** intent to use (transform vs derive vs generate), see `tra
 
 A SoW alone is **not** a strong source for an SDD. SDDs depend on architectural decisions; SoWs typically don't have those. This skill recommends running `brd-unifier` first (SoW → BRD), then `pre-sdd-unifier` (BRD → Pre-SDD, signed at G3), then `sdd-unifier` (BRD and Pre-SDD → SDD) per `brd-to-sdd.md` and SKILL.md step 2a.
 
-If the user insists on going directly from a SoW to an SDD, treat the SoW as raw context for GENERATE intent, not as a transformation target. Most SDD sections will be heavy with `[NEEDS CLARIFICATION: ...]` markers. Be explicit about this in the handoff: "This SDD was generated from a SoW directly, bypassing the BRD step. The marker count is high (N markers) because the SoW does not capture the technical decisions an SDD requires. Recommend either generating a BRD first (run brd-unifier) and re-deriving, or working through the markers with an architect."
+A SoW never goes directly to a new SDD, even when the user insists: it is raw context for GENERATE intent, not a transformation target. GENERATE writes nothing and hands the SoW to brd-unifier for the BRD (SKILL.md step 2); the Pre-SDD follows, and the SDD is then derived from both.
 
 ---
 
@@ -77,7 +77,7 @@ Drop vendor scaffolding; keep behavioural and architectural commitments.
 
 ## Gap inventory and thresholds
 
-Per `brd-unifier`'s pattern, surface the count in the handoff. These bands apply to TRANSFORM and GENERATE. A DERIVE-FROM-BRD count is read differently: `brd-to-sdd.md` § Workflow when deriving from BRD, step 11.
+Per `brd-unifier`'s pattern, surface the count in the handoff. These bands apply to TRANSFORM, and to an SDD generated without a BRD before every new SDD needed one (SKILL.md step 2). A DERIVE-FROM-BRD count is read differently: `brd-to-sdd.md` § Workflow when deriving from BRD, step 11.
 
 - **0 to 5 markers:** healthy. Source was rich.
 - **6 to 14 markers:** typical. Recommend review.

@@ -22,7 +22,7 @@ MAINTENANCE: Written at setup (SKILL.md step 5), right after `cli.mjs new`, with
 
 ## Generation Progress
 
-<!-- Resume reads this section (SKILL.md step 1). Generation: the mode (full or quick), plus light when set; a resume keeps it, and only the set-run op changes it, by a person or a fixture owner. Source BRDs: the system's BRDs with their keys and versions, so a resume can match this Pre-SDD to its system. Gate: the engine's gate label, the G3 status, and whether the SDD may start, copied from the engine's gate result (derive prints it; compute writes it to model.json), never from memory. Next: the stage and group the run continues with (the set-run pointer in the project state names the same), and what the run waits for. -->
+<!-- Resume reads this section (SKILL.md step 1). Generation: the mode (full or quick), plus light when set; a resume keeps it, and only the set-run op changes it, by a person or a fixture owner. Source BRDs: the system's BRDs with their keys and versions, so a resume can match this Pre-SDD to its system. Gate: the engine's gate label (Discovery in quick mode; otherwise a new Pre-SDD reads Draft until G0 is met, ahead of Blocked, even while G3 reads Blocked), the G3 status, and whether the SDD may start, copied from the engine's gate result (derive prints it; compute writes it to model.json), never from memory. Next: the stage and group the run continues with (the set-run pointer in the project state names the same), and what the run waits for. -->
 
 **Generation:** [full | quick][, light]
 **Source BRDs:** [KEY] v[X.X] ([status]) [one per BRD]

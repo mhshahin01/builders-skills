@@ -102,6 +102,7 @@ PART OF: Pre-SDD - [Project Name]
 | `DT-01` to `DT-15` | Decision rules | [09 § 9.2](./09-decisions.md#92-decision-tree) |
 | `ADR-<AREA>-NNN` | Pre-SDD ADRs | [09 § 9.4](./09-decisions.md#94-pre-sdd-adrs) |
 | `QD-NN` | Unknowns | [10 § 10.1](./10-validation-risks-unknowns.md#101-validation-and-unknowns) |
+| `R-NN` | Risks | [10 § 10.2](./10-validation-risks-unknowns.md#102-risks) |
 | `G3-01` to `G3-14`, `COND-NN`, `EXC-NN` | G3 checklist, conditions, exceptions | [11 § 11.1](./11-gate-and-sign-off.md#111-gate-result) |
 | `OI-NN` | Reviewer open items | [13](./13-open-items-and-clarifications.md) |
 

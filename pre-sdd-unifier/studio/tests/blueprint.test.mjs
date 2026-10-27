@@ -92,9 +92,9 @@ test('handoffBlueprint_newState_schemaValid', (t) => {
   const bp = blueprintOf(state);
   assert.deepEqual(Object.keys(bp), KEYS);
   assert.equal(bp.schema_version, '2.0.0');
-  assert.deepEqual(bp.project, { id: 'REFUNDS-PLATFORM', name: 'Refunds platform', slug: 'refunds-platform', path_code: 'Unclassified', change_type: 'undecided', target_hosting: 'undecided', source_to_target: 'Not applicable', project_status: 'Blocked' });
-  assert.deepEqual([bp.governance.pre_sdd_gate, bp.governance.gate_status, bp.governance.authorized_to_start_sdd, bp.governance.approved_at], ['G0', 'blocked', false, null]);
-  assert.equal(bp.sources.pre_sdd.approval_status, 'blocked');
+  assert.deepEqual(bp.project, { id: 'REFUNDS-PLATFORM', name: 'Refunds platform', slug: 'refunds-platform', path_code: 'Unclassified', change_type: 'undecided', target_hosting: 'undecided', source_to_target: 'Not applicable', project_status: 'Draft' });
+  assert.deepEqual([bp.governance.pre_sdd_gate, bp.governance.gate_status, bp.governance.authorized_to_start_sdd, bp.governance.approved_at], ['G0', 'draft', false, null]);
+  assert.equal(bp.sources.pre_sdd.approval_status, 'draft');
   assert.deepEqual([bp.validation.export_status, bp.validation.sdd_source_intake, bp.validation.checked_at], ['blocked', 'blocked', NOW]);
   assert.equal(bp.calculations.length, 20);
   const run = validatorRun(t, bp);

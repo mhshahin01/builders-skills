@@ -39,13 +39,13 @@ The engine gives G3 one status. The first that applies wins, in this order:
 
 The G3 result also lists `missingRoles` (the role keys still to sign, in register order) and `problems`: every reason the engine found, not only the one behind the status. Show the person all of them.
 
-**The label and authorization.** The engine's gate label is what chunk 00, chunk 11, chunk 12, and the master's gate line show:
+**The label and authorization.** The engine's gate label is what chunk 00, chunk 11, chunk 12, and the master's gate line show. The first that applies wins, in this order:
 
 - `Discovery` in quick mode, always (a quick Pre-SDD claims no gate);
+- `Draft` while G0 is not met, even when G3 is already `Blocked` (the default hard rows start `Open`), so a new Pre-SDD reads `Draft` until G0 is met; the blueprint's `gate_status` reads `draft` while G0 is not met (in quick mode too, where the label stays `Discovery`);
 - `Blocked` when G3 is `Blocked`;
 - `G3 Approved` or `G3 Approved with conditions`;
-- else the highest gate met: `G2`, `G1`, or `G0`;
-- `Draft` when G0 is not met.
+- else the highest gate met: `G2`, `G1`, or `G0`.
 
 The Pre-SDD is authorized for the SDD only when G3 reads `Approved` or `Approved with conditions`, and never in quick mode. The engine still computes G0 to G3 in quick mode, for display.
 
@@ -198,6 +198,8 @@ Each sign-off stores the content hash of the state its signer reviewed. G3 goes 
 Outside the hash: the run fields, the sign-off records themselves, the reopen mark, the history, and the Pre-SDD version number. So writing signatures into chunks 11, 12, and 00, updating gate and status lines, and bumping the version reopen nothing.
 
 After a change, every applicable role signs again on the new content, at the G3 stop (step 13); a role marked not applicable is marked again too. The update bumps the version once (`SKILL.md` § Later requests). Until G3 is signed again, the label no longer reads approved and the SDD treats the Pre-SDD as not signed.
+
+A change after G3 rewrites, from the new fragments after `compute`: the master's and chunk 00's gate lines (G3 `Review`, SDD authorized `No`), chunk 11, chunk 12 § 12.1, and every chunk region whose fragment the change touches (for a value: its register chunk, chunk 12 § 12.2, and chunks 04 and 10 when their fragments change). The SDD stops on the gate line and § 12.1, so both must read `Review` before the signers sign again. The full procedure is the update tail in `SKILL.md` § Later requests.
 
 ---
 

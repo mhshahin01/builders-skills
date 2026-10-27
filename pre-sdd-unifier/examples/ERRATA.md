@@ -132,3 +132,15 @@ In every row the expected model is under the cap, as G6 says, but the example's 
 | `PreSDD_GF_OP_Simple.md` | `Dependencies: Corporate IdP; internal HR course roster (daily import)` | `External HR/email dependency may be unavailable; fail only dependent noncritical functions and queue work.` |
 | `PreSDD_GF_CL_Simple.md` | `Dependencies: Email delivery service and analytics; queue and retry if provider fails` | `External email/analytics dependency may be unavailable; fail only dependent noncritical functions and queue work.` (its catalogue has no HR system either) |
 | `PreSDD_BF_CL_Simple.md` | `Dependencies: Directory/SSO, HR roster, SMTP notification and archived KB connector` | `External HR/email dependency may be unavailable; fail only dependent noncritical functions and queue work.` |
+
+## Template observations (editorial notes)
+
+These five observations are inconsistencies in the text of the examples, found while the computed corrections above were checked. They differ from ERR-01 to ERR-05 in that none has a computed correction or a verification rule: each is an editorial note on text that contradicts the example's own inputs, targets or classification, and no figure was recomputed for it. The examples stay unchanged.
+
+| ID | File | Section | What the text says | Why it is inconsistent |
+|---|---|---|---|---|
+| O1 | `PreSDD_GF_CL_Simple.md` | § 8 | "Purchase new on-prem hardware \| Pass" in the hard-constraint column | The example's own guardrail is "No data center assets" |
+| O2 | `PreSDD_BF_OP_Simple.md`, `PreSDD_BF_OP_Complex.md` | § 9 | Keep the sentence "... rather than arbitrarily assigning a cloud migration strategy to a net-new implementation" | Both examples are brownfield, so the greenfield wording does not fit them |
+| O3 | All eight examples (the four Simple and the four Complex) | REL-01 | The entry ends "(none for complex)" | In the four Simple examples the note points at a Complex case that is not the example itself; in the four Complex examples it is correct in meaning (no excluded windows) but reads as the same leftover template wording, so only the Simple ones are wrong |
+| O4 | The four Complex examples | § 5, ECO row | "Avoid unnecessary hot redundancy for relaxed RTO" | Their RTO is 8 s, which is not a relaxed RTO |
+| O5 | `PreSDD_BF_CL_Complex.md` | § 9.2 | Lists "AKS/Cosmos/PostgreSQL" | Its own § 1 source estate names no Cosmos |

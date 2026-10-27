@@ -201,15 +201,15 @@ const STUDIO_AGENT=`Pre-SDD Architecture Studio ${ENGINE_VERSION}`, CALC_OPTION=
 const GROUPS={BUS:{name:'Business',chunk:'a'},CAP:{name:'Capacity',chunk:'b'},REL:{name:'Reliability',chunk:'c'},DAT:{name:'Data',chunk:'d'},SEC:{name:'Security',chunk:'e'},INT:{name:'Integration',chunk:'f'},OPS:{name:'Operations',chunk:'g'},ECO:{name:'Economics',chunk:'h'}};
 const GROUP_ORDER=['BUS','SEC','DAT','INT','CAP','REL','OPS','ECO'];
 const FACTORS={callsPerTxn:{row:'CAP-02'},requestFactor:{row:'CAP-02'},utilization:{row:'CAP-04'},meanLatencyMs:{row:'CAP-07'},requestKB:{row:'CAP-06'},responseKB:{row:'CAP-06'},networkOverhead:{row:'CAP-06'},storedKB:{row:'DAT-02'},initialGB:{row:'DAT-02'},retentionDays:{row:'DAT-02'},indexFactor:{row:'DAT-02'},copies:{row:'DAT-02'},cidrPrefix:{row:'INT-08'},transactionNeed:{row:'DAT-05'},queryShape:{row:'CAP-10'},storeKind:{row:'DAT-01'},budgetPressure:{row:'ECO-01'},primaryLocation:{row:'DAT-04'},recoveryLocation:{row:'DAT-04'},migrationGB:{row:'OVL-07'},linkMbps:{row:'OVL-08'},cutoverHours:{row:'OVL-09'}};
-const LANDINGS={targets:['Project Type','Q3','Q7','Q8','§6 Notes','§8.3','§11','§18','§18.5','§19','§20'],rows:{
- 'HDR-07':['Project Type'],'HDR-08':['Q8','§8.3'],
+const LANDINGS={targets:['Project Type','Q3','Q7','Q8','§6 Notes','§8.3','§8.6','§8.7','§11','§18','§18.5','§19','§20'],rows:{
+ 'HDR-07':['Project Type'],'HDR-08':['Q8','§8.3','§8.6'],
  'CAP-01':['§18','Q3'],'CAP-02':['§18','Q3'],'CAP-03':['§18','Q3'],'CAP-04':['§18','Q3'],'CAP-05':['§18','Q3'],'CAP-06':['§18','Q3'],'CAP-07':['§18','Q3'],'CAP-09':['§18','Q3'],'CAP-10':['§18','Q3'],'DAT-02':['§18','Q3'],'DAT-08':['§18','Q3'],
- 'REL-01':['§18.5','Q3'],'REL-02':['§18.5','Q3'],
- 'REL-03':['§11','§18.5','§19','§20'],'REL-04':['§11','§18.5','§19','§20'],'REL-05':['§11','§18.5','§19','§20'],
- 'REL-06':['§20'],'REL-07':['§20'],'OPS-06':['§20'],'DAT-09':['§20'],
- 'DAT-03':['§11','§6 Notes'],'DAT-04':['§11','§6 Notes'],'DAT-06':['§11','§6 Notes'],'SEC-01':['§11','§6 Notes'],'SEC-02':['§11','§6 Notes'],'SEC-03':['§11','§6 Notes'],'SEC-04':['§11','§6 Notes'],'SEC-05':['§11','§6 Notes'],'SEC-06':['§11','§6 Notes'],'SEC-07':['§11','§6 Notes'],'SEC-08':['§11','§6 Notes'],
+ 'REL-01':['§8.6','§18.5','Q3'],'REL-02':['§18.5','Q3'],
+ 'REL-03':['§8.6','§11','§18.5','§19','§20'],'REL-04':['§8.6','§11','§18.5','§19','§20'],'REL-05':['§8.6','§11','§18.5','§19','§20'],
+ 'REL-06':['§20'],'REL-07':['§20'],'OPS-06':['§20'],'DAT-09':['§8.6','§20'],
+ 'DAT-03':['§11','§6 Notes'],'DAT-04':['§8.6','§8.7','§11','§6 Notes'],'DAT-06':['§11','§6 Notes'],'SEC-01':['§11','§6 Notes'],'SEC-02':['§11','§6 Notes'],'SEC-03':['§8.7','§11','§6 Notes'],'SEC-04':['§8.7','§11','§6 Notes'],'SEC-05':['§11','§6 Notes'],'SEC-06':['§11','§6 Notes'],'SEC-07':['§8.7','§11','§6 Notes'],'SEC-08':['§11','§6 Notes'],
  'DAT-05':['§6 Notes','§8.3'],'INT-02':['§6 Notes','§8.3'],'INT-04':['§6 Notes','§8.3'],'INT-05':['§6 Notes','§8.3'],
- 'DAT-07':['Q7','§11'],'INT-08':['§8.3','§11'],'OPS-04':['§19'],'ECO-01':['§6 Notes'],'ECO-03':['§6 Notes']}};
+ 'DAT-07':['Q7','§11'],'INT-06':['§8.7'],'INT-07':['§8.6','§8.7'],'INT-08':['§8.3','§8.7','§11'],'OPS-04':['§19'],'ECO-01':['§6 Notes'],'ECO-03':['§6 Notes']}};
 const ROW_RULES={
  repeats:{'BUS-02':'journey','CAP-01':'transaction type','CAP-07':'journey','REL-01':'journey','REL-03':'scope and journey','REL-04':'scope and dataset','REL-05':'failure scope','DAT-01':'data workload','DAT-05':'data workload','INT-01':'external system','INT-03':'external system'},
  hard:['BUS-07','BUS-08','SEC-01','SEC-04','DAT-03','DAT-04','DAT-06'],

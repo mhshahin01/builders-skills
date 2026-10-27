@@ -51,6 +51,8 @@ The engine's landing map (`LANDINGS` in `studio/src/engine.js`) says which rows 
 | Q8 | The hosting target is locked: cloud, on-prem, or hybrid, and a provider only when the business made it a hard constraint. The runtime option is the SDD's. |
 | §6 Notes | Each affected ecosystem row carries the constraint in its Notes. A product that breaks one becomes an open item. |
 | §8.3 | The high-level architecture follows the hosting, data, integration, and network shape. |
+| §8.6 | The infrastructure architecture follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations. §8.6.4 is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. |
+| §8.7 | The network architecture follows the network constraints: address ranges and private connectivity, allow-lists, firewall, DNS and proxy dependencies, client and edge locations, where residency lets data flow, the threat posture, encryption in transit, and privileged access. |
 | §11 | The cross-cutting defaults follow the DR strategy, the classification, residency, retention, the isolation level, and the security obligations. |
 | §18 | §18 cites the `PSDD/CALC-NN` values (the calculations) and never recomputes them. |
 | §18.5 | The settled targets for the BRD NFRs. |
@@ -87,7 +89,7 @@ DAT-07 holds one of five isolation levels. Each allows these SDD Q7 options:
 | Network | The connectivity shape, address constraints | Network design, firewall rules, routes |
 | Cost | Budget envelope, TCO horizon, option comparison with approved weights | Cost per component |
 
-The Standard's ADR set splits the same way. ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are Pre-SDD decisions (chunk 09 § 9.4), locked with the rest. ADR-PERF-001, ADR-INT-001, and ADR-IAM-001 are SDD ADRs: chunk 09 § 9.5 names the answers that drive them, and the SDD writes them, citing those answers as `PSDD/<ID>`.
+The Standard's ADR set splits the same way. ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are Pre-SDD decisions (chunk 09 § 9.4), locked with the rest; so is ADR-MIG-001 (workload 7R and transition) when the migration overlay applies, and it does not exist otherwise. ADR-PERF-001, ADR-INT-001, and ADR-IAM-001 are SDD ADRs: chunk 09 § 9.5 names the answers that drive them, and the SDD writes them, citing those answers as `PSDD/<ID>`.
 
 Chunk 12 never names a product, a version, or the architecture style, and never pre-decides an SDD question.
 

@@ -90,6 +90,8 @@ The table names categories, never products: a Repurchase or Replatform entry sta
 
 **Who decides.** The 7R is a decision with alternatives and evidence. The skill pre-fills OVL-04 only where a source states it, with its citation; otherwise the entry stays `Open`. In stage 3 the skill presents the Rs for each workload as options, each with its evidence and tradeoff, the recommended one first; a person answers, or an answer policy takes the recommended R. OVL-04's evidence field records the alternatives considered and why each was rejected.
 
+**The ADR.** When the overlay applies, the skill writes ADR-MIG-001 (workload 7R and transition) in chunk 09 § 9.4, fed by OVL-04 and the cutover items OVL-08, OVL-09, and OVL-10, in the same format as ADR-DR-001 and ADR-DATA-001. When the overlay does not apply, the ADR does not exist.
+
 ---
 
 ## Hazards to check

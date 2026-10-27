@@ -40,7 +40,7 @@ const factorRows = {
   primaryLocation: 'DAT-04', recoveryLocation: 'DAT-04', migrationGB: 'OVL-07', linkMbps: 'OVL-08', cutoverHours: 'OVL-09',
 };
 
-const landingTargets = ['Project Type', 'Q3', 'Q7', 'Q8', '§6 Notes', '§8.3', '§11', '§18', '§18.5', '§19', '§20'];
+const landingTargets = ['Project Type', 'Q3', 'Q7', 'Q8', '§6 Notes', '§8.3', '§8.6', '§8.7', '§11', '§18', '§18.5', '§19', '§20'];
 
 test('versions_matchGlobalConstraints', () => {
   assert.deepEqual([E.ENGINE_VERSION, E.SKILL_VERSION, E.STATE_SCHEMA_VERSION, E.BLUEPRINT_SCHEMA_VERSION], ['3.0.0', '1.0.0', '3.0.0', '2.0.0']);
@@ -234,15 +234,21 @@ test('LANDINGS_rows_matchPlan', () => {
   const land = (ids, targets) => ids.map((id) => [id, targets]);
   assert.deepEqual(E.LANDINGS.rows, Object.fromEntries([
     ...land(['HDR-07'], ['Project Type']),
-    ...land(['HDR-08'], ['Q8', '§8.3']),
+    ...land(['HDR-08'], ['Q8', '§8.3', '§8.6']),
     ...land([...numbered('CAP', 1, 7), 'CAP-09', 'CAP-10', 'DAT-02', 'DAT-08'], ['§18', 'Q3']),
-    ...land(['REL-01', 'REL-02'], ['§18.5', 'Q3']),
-    ...land(numbered('REL', 3, 5), ['§11', '§18.5', '§19', '§20']),
-    ...land(['REL-06', 'REL-07', 'OPS-06', 'DAT-09'], ['§20']),
-    ...land(['DAT-03', 'DAT-04', 'DAT-06', ...numbered('SEC', 1, 8)], ['§11', '§6 Notes']),
+    ...land(['REL-01'], ['§8.6', '§18.5', 'Q3']),
+    ...land(['REL-02'], ['§18.5', 'Q3']),
+    ...land(numbered('REL', 3, 5), ['§8.6', '§11', '§18.5', '§19', '§20']),
+    ...land(['REL-06', 'REL-07', 'OPS-06'], ['§20']),
+    ...land(['DAT-09'], ['§8.6', '§20']),
+    ...land(['DAT-03', 'DAT-06', 'SEC-01', 'SEC-02', 'SEC-05', 'SEC-06', 'SEC-08'], ['§11', '§6 Notes']),
+    ...land(['DAT-04'], ['§8.6', '§8.7', '§11', '§6 Notes']),
+    ...land(['SEC-03', 'SEC-04', 'SEC-07'], ['§8.7', '§11', '§6 Notes']),
     ...land(['DAT-05', 'INT-02', 'INT-04', 'INT-05'], ['§6 Notes', '§8.3']),
     ...land(['DAT-07'], ['Q7', '§11']),
-    ...land(['INT-08'], ['§8.3', '§11']),
+    ...land(['INT-06'], ['§8.7']),
+    ...land(['INT-07'], ['§8.6', '§8.7']),
+    ...land(['INT-08'], ['§8.3', '§8.7', '§11']),
     ...land(['OPS-04'], ['§19']),
     ...land(['ECO-01', 'ECO-03'], ['§6 Notes']),
   ]));

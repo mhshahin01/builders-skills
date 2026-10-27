@@ -41,7 +41,7 @@ AUDIENCE: sdd-unifier (the Software Architect). It reads this chunk first, then 
 <!-- ENGINE-FRAGMENT: 12-locked-items.md -->
 | ID | Value | Status | Lands in the SDD |
 |----|-------|--------|------------------|
-| [Entry ID] | [value and unit, or TBD] | [Status] | [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §11 / §18 / §18.5 / §19 / §20] |
+| [Entry ID] | [value and unit, or TBD] | [Status] | [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §8.6 / §8.7 / §11 / §18 / §18.5 / §19 / §20] |
 
 | Decision | Value |
 |----------|-------|
@@ -52,7 +52,7 @@ AUDIENCE: sdd-unifier (the Software Architect). It reads this chunk first, then 
 
 | Lands in the SDD | Rows |
 |------------------|------|
-| [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §11 / §18 / §18.5 / §19 / §20] | [Row IDs, in register order] |
+| [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §8.6 / §8.7 / §11 / §18 / §18.5 / §19 / §20] | [Row IDs, in register order] |
 <!-- /ENGINE-FRAGMENT -->
 
 An item that reads `TBD` or `Open` is locked as open: the SDD carries it as an open question, links it to its register row through its `PSDD/<ID>` link (where its owner and due date stand), and never fills it.
@@ -69,6 +69,8 @@ The lock is on numbers and shape, never on the SDD's own questions. Which rows l
 | Q8 (deployment target) | The hosting target (cloud, on-prem, or hybrid; a provider only when the business made it a hard constraint) is locked. The runtime option is the SDD's. |
 | §6 Notes | Each affected §6 row carries the constraint in its Notes. A product that breaks a constraint becomes an open item (§ 12.6). |
 | §8.3 (high-level architecture) | The diagram follows the hosting, data, integration, and network shape. |
+| §8.6 (infrastructure architecture) | The deployment topology follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations: the regions or sites, the zones, and the redundancy cite them as `PSDD/<ID>`. §8.6.4 (backup and disaster recovery) is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. |
+| §8.7 (network architecture) | The zones, the ingress and egress paths, TLS termination, the network policies, and administrative access follow the network constraints: address ranges and private connectivity, allow-lists, firewall, DNS and proxy dependencies, client and edge locations, where residency lets data flow, the threat posture, encryption in transit, and privileged access, each cited as `PSDD/<ID>`. |
 | §11 (cross-cutting concerns) | The defaults follow the DR strategy, the data classification, residency and retention, the isolation level, and the security obligations. |
 | §18 (performance and capacity) | §18 cites the `PSDD/CALC-NN` values (chunk 04) and never recomputes them. |
 | §18.5 (NFR targets) | The settled targets; each BRD NFR row cites the entry that quantifies it. |
@@ -87,7 +89,7 @@ The Pre-SDD settles nothing below; the SDD decides each, within the locked items
 - **The schema strategy** per service (Q7, within the isolation level), partitioning, and ERDs.
 - **The integration mechanism** (broker, outbox, synchronous calls) and the contracts.
 - **The identity product** and the authorization model; the network design, firewall rules, and routes; the cost per component.
-- **The SDD ADRs** ADR-PERF-001 (workload processing model), ADR-INT-001 (integration reliability), and ADR-IAM-001 (identity and tenancy), each citing the Pre-SDD answers that drive it ([09 § 9.5](./09-decisions.md#95-sdd-adrs-driven-by-this-pre-sdd)). The Pre-SDD ADRs ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are locked ([09 § 9.4](./09-decisions.md#94-pre-sdd-adrs)).
+- **The SDD ADRs** ADR-PERF-001 (workload processing model), ADR-INT-001 (integration reliability), and ADR-IAM-001 (identity and tenancy), each citing the Pre-SDD answers that drive it ([09 § 9.5](./09-decisions.md#95-sdd-adrs-driven-by-this-pre-sdd)). The Pre-SDD ADRs ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are locked, and so is ADR-MIG-001 (workload 7R and transition) when the migration overlay applies ([09 § 9.4](./09-decisions.md#94-pre-sdd-adrs)).
 
 ## 12.5 Conditions, Exceptions and Unknowns
 

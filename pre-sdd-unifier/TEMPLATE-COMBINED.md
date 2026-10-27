@@ -1290,9 +1290,9 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 | Requirements | Issue | Consequence for the shape | ADR | SDD sections | Validation evidence |
 |--------------|-------|---------------------------|-----|--------------|---------------------|
-| REL-01, REL-03, REL-05 | Fault domains; active against passive recovery | [Consequence, citing entry IDs] | ADR-DR-001 | §11, §18.5, §19, §20 | Failover exercise |
-| REL-04, DAT-05 | Synchronous against asynchronous replication | [Consequence] | ADR-DATA-001 | §11, §18.5 | RPO and integrity test |
-| ECO-01, ECO-06, BUS-07 | Hosting placement | [Consequence] | ADR-PLATFORM-001 (hosting part) | Q8, §8.3 | Compliance and TCO validation |
+| REL-01, REL-03, REL-05 | Fault domains; active against passive recovery | [Consequence, citing entry IDs] | ADR-DR-001 | §8.6, §11, §18.5, §19, §20 | Failover exercise |
+| REL-04, DAT-05 | Synchronous against asynchronous replication | [Consequence] | ADR-DATA-001 | §8.6, §11, §18.5 | RPO and integrity test |
+| ECO-01, ECO-06, BUS-07 | Hosting placement | [Consequence] | ADR-PLATFORM-001 (hosting part) | Q8, §8.3, §8.6 | Compliance and TCO validation |
 | CAP-01, CAP-04, CAP-07 | Workload processing model | [Driver for the SDD] | ADR-PERF-001 (SDD) | Q3, §18 | Peak and burst p99 test |
 | INT-02, INT-04, INT-05 | Integration reliability | [Driver for the SDD] | ADR-INT-001 (SDD) | §6 Notes, §8.3 | Fault and replay tests |
 | SEC-02, DAT-07 | Identity and tenancy | [Driver for the SDD] | ADR-IAM-001 (SDD) | Q7, §11 | Isolation and access tests |
@@ -1331,7 +1331,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ## 9.4 Pre-SDD ADRs
 
-<!-- The Standard's ADR set splits at the boundary (Pre-SDD settles numbers and shape; the SDD picks products and style). Three ADRs are Pre-SDD decisions: ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001. Each follows the Standard's § 10.2 template, in shape words. An ADR is Proposed until G3 is signed; the G3 sign-off in chunk 11 accepts it, so its Status line does not change at signing. Keep ADRs append-only: a later change supersedes, never silently rewrites. -->
+<!-- The Standard's ADR set splits at the boundary (Pre-SDD settles numbers and shape; the SDD picks products and style). Three ADRs are Pre-SDD decisions: ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001. A fourth, ADR-MIG-001, is a Pre-SDD decision only when the migration overlay applies. Each follows the Standard's § 10.2 template, in shape words. An ADR is Proposed until G3 is signed; the G3 sign-off in chunk 11 accepts it, so its Status line does not change at signing. Keep ADRs append-only: a later change supersedes, never silently rewrites. -->
 
 ### ADR-DR-001: Resilience topology
 
@@ -1347,7 +1347,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 - **Consequences and residual risks:** [Consequences; risks by ID in chunk 10]
 - **Assumptions and confidence:** [Assumptions]
 - **Conditions and review trigger:** [COND-NN, or the change that reopens it]
-- **SDD sections affected / verification:** §11, §18.5, §19, §20 / [Failover exercise]
+- **SDD sections affected / verification:** §8.6, §11, §18.5, §19, §20 / [Failover exercise]
 
 ### ADR-DATA-001: Data replication and consistency
 
@@ -1363,7 +1363,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 - **Consequences and residual risks:** [Write-latency and availability impact]
 - **Assumptions and confidence:** [Assumptions]
 - **Conditions and review trigger:** [COND-NN, or the change that reopens it]
-- **SDD sections affected / verification:** §11, §18.5 / [RPO and integrity test]
+- **SDD sections affected / verification:** §8.6, §11, §18.5 / [RPO and integrity test]
 
 ### ADR-PLATFORM-001: Hosting choice (hosting part)
 
@@ -1382,7 +1382,25 @@ The sizing factors that refine a row (for example the calls per transaction unde
 - **Consequences and residual risks:** [Consequences]
 - **Assumptions and confidence:** [Assumptions]
 - **Conditions and review trigger:** [COND-NN, or the change that reopens it]
-- **SDD sections affected / verification:** Q8, §8.3 / [Compliance and TCO validation]
+- **SDD sections affected / verification:** Q8, §8.3, §8.6 / [Compliance and TCO validation]
+
+### ADR-MIG-001: Workload 7R and transition
+
+<!-- Exists only when the migration overlay applies (chunk 08 is present); leave this whole ADR out, heading included, when it does not. It is a Pre-SDD decision because the 7R and the transition shape are numbers and shape, not products. Fed by OVL-04 (the 7R per workload) and the cutover items OVL-08, OVL-09, and OVL-10. -->
+
+- **Status:** Proposed (accepted by the G3 sign-off, chunk 11)
+- **Owner / reviewers / decision date:** [Migration owner] / [Reviewers] / [YYYY-MM-DD]
+- **Requirement links:** OVL-04, OVL-08, OVL-09, OVL-10, DT-11 [and the entries that apply]
+- **Business context:** [Why the workloads move, and what the downtime contract (OVL-09) allows]
+- **Hard constraints and agreed targets:** [Entry IDs and their status, including the approved cutover window]
+- **Options considered:** [The Rs compared per workload, for example "rehost" and "replatform"; OPT-NN]
+- **Evidence:** [CALC-17, rule IDs, rehearsals]
+- **Option comparison:** [The same aspects for each R compared, per workload, in shape words]
+- **Decision and rationale:** [The one primary R per workload (OVL-04), the dependency waves, the cutover mode, the fallback, and the no-return point, as chunk 08 states them]
+- **Consequences and residual risks:** [Consequences; risks by ID in chunk 10]
+- **Assumptions and confidence:** [Assumptions]
+- **Conditions and review trigger:** [COND-NN, or the change that reopens it]
+- **SDD sections affected / verification:** Migration plan, data, network / [Rehearsal and reconciliation]
 
 ## 9.5 SDD ADRs Driven by This Pre-SDD
 
@@ -1534,7 +1552,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 <!-- ENGINE-FRAGMENT: 12-locked-items.md -->
 | ID | Value | Status | Lands in the SDD |
 |----|-------|--------|------------------|
-| [Entry ID] | [value and unit, or TBD] | [Status] | [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §11 / §18 / §18.5 / §19 / §20] |
+| [Entry ID] | [value and unit, or TBD] | [Status] | [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §8.6 / §8.7 / §11 / §18 / §18.5 / §19 / §20] |
 
 | Decision | Value |
 |----------|-------|
@@ -1545,7 +1563,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 | Lands in the SDD | Rows |
 |------------------|------|
-| [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §11 / §18 / §18.5 / §19 / §20] | [Row IDs, in register order] |
+| [Project Type / Q3 / Q7 / Q8 / §6 Notes / §8.3 / §8.6 / §8.7 / §11 / §18 / §18.5 / §19 / §20] | [Row IDs, in register order] |
 <!-- /ENGINE-FRAGMENT -->
 
 An item that reads `TBD` or `Open` is locked as open: the SDD carries it as an open question, links it to its register row through its `PSDD/<ID>` link (where its owner and due date stand), and never fills it.
@@ -1562,6 +1580,8 @@ The lock is on numbers and shape, never on the SDD's own questions. Which rows l
 | Q8 (deployment target) | The hosting target (cloud, on-prem, or hybrid; a provider only when the business made it a hard constraint) is locked. The runtime option is the SDD's. |
 | §6 Notes | Each affected §6 row carries the constraint in its Notes. A product that breaks a constraint becomes an open item (§ 12.6). |
 | §8.3 (high-level architecture) | The diagram follows the hosting, data, integration, and network shape. |
+| §8.6 (infrastructure architecture) | The deployment topology follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations: the regions or sites, the zones, and the redundancy cite them as `PSDD/<ID>`. §8.6.4 (backup and disaster recovery) is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. |
+| §8.7 (network architecture) | The zones, the ingress and egress paths, TLS termination, the network policies, and administrative access follow the network constraints: address ranges and private connectivity, allow-lists, firewall, DNS and proxy dependencies, client and edge locations, where residency lets data flow, the threat posture, encryption in transit, and privileged access, each cited as `PSDD/<ID>`. |
 | §11 (cross-cutting concerns) | The defaults follow the DR strategy, the data classification, residency and retention, the isolation level, and the security obligations. |
 | §18 (performance and capacity) | §18 cites the `PSDD/CALC-NN` values (chunk 04) and never recomputes them. |
 | §18.5 (NFR targets) | The settled targets; each BRD NFR row cites the entry that quantifies it. |
@@ -1580,7 +1600,7 @@ The Pre-SDD settles nothing below; the SDD decides each, within the locked items
 - **The schema strategy** per service (Q7, within the isolation level), partitioning, and ERDs.
 - **The integration mechanism** (broker, outbox, synchronous calls) and the contracts.
 - **The identity product** and the authorization model; the network design, firewall rules, and routes; the cost per component.
-- **The SDD ADRs** ADR-PERF-001 (workload processing model), ADR-INT-001 (integration reliability), and ADR-IAM-001 (identity and tenancy), each citing the Pre-SDD answers that drive it ([09 § 9.5](#95-sdd-adrs-driven-by-this-pre-sdd)). The Pre-SDD ADRs ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are locked ([09 § 9.4](#94-pre-sdd-adrs)).
+- **The SDD ADRs** ADR-PERF-001 (workload processing model), ADR-INT-001 (integration reliability), and ADR-IAM-001 (identity and tenancy), each citing the Pre-SDD answers that drive it ([09 § 9.5](#95-sdd-adrs-driven-by-this-pre-sdd)). The Pre-SDD ADRs ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are locked, and so is ADR-MIG-001 (workload 7R and transition) when the migration overlay applies ([09 § 9.4](#94-pre-sdd-adrs)).
 
 ## 12.5 Conditions, Exceptions and Unknowns
 

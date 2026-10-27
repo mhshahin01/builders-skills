@@ -134,6 +134,10 @@ test('fragments_lockedItems_usesLandings', () => {
   assert.deepEqual(rowOf(text, 'HDR-07.1'), ['HDR-07.1', 'greenfield', 'Confirmed', 'Project Type']);
   assert.deepEqual(rowOf(text, 'DAT-07.1'), ['DAT-07.1', 'schema-isolated', 'Estimated', 'Q7, §11']);
   assert.deepEqual(rowOf(text, 'CAP-02.1'), ['CAP-02.1', 'TBD', 'Open', '§18, Q3']);
+  assert.deepEqual(rowOf(text, 'REL-03.1'), ['REL-03.1', '600 s', 'Confirmed', '§8.6, §11, §18.5, §19, §20']);
+  assert.deepEqual(rowOf(text, 'INT-06.1'), ['INT-06.1', 'TBD', 'Open', '§8.7']);
+  assert.deepEqual(rowOf(text, '§8.6'), ['§8.6', 'HDR-08, REL-01, REL-03, REL-04, REL-05, DAT-04, DAT-09, INT-07']);
+  assert.deepEqual(rowOf(text, '§8.7'), ['§8.7', 'DAT-04, SEC-03, SEC-04, SEC-07, INT-06, INT-07, INT-08']);
   const decisions = text.split('\n').filter((l) => /^\| (Hosting|Topology|DR strategy, scope \S+|Chosen option) \|/.test(l)).map(cells);
   assert.deepEqual(decisions, [['Hosting', 'cloud'], ['Topology', 'Multi-zone · single region (multiAZ)'], ['DR strategy, scope az', 'Local HA only · broader DR not scoped (localHA), replication asynchronous']]);
   const chosen = frag(apply(state, [{ op: 'decide', option: 'OPT-01' }]))['12-locked-items.md'];

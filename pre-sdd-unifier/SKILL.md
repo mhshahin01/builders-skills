@@ -258,7 +258,7 @@ Stage 4 ends with the write-up (step 11), the review (step 12), and the G3 sign-
 1. **Compute.** Run `node "<skill>/studio/cli.mjs" compute "<state>" --out "./pre-sdd-[slug]/studio"`. It writes `model.json`, `blueprint.json`, `blueprint.yaml`, the fragments `fragments/*.md`, the diagrams `diagrams/*.mmd`, and `diagrams/architecture.drawio`, removes the fragments and diagrams an earlier run left that no longer apply, and prints the files it wrote and the gate label.
 2. **Fragments.** Each fragment is Markdown the engine renders: the header, the classification, the register tables (one per group, `03a-register-business.md` to `03h-register-economics.md`), the calculations, the target shape, the options, the overlay, the rule trace, the validation, the gate, and the locked items. Paste each one unchanged between its `<!-- ENGINE-FRAGMENT: <name> -->` and `<!-- /ENGINE-FRAGMENT -->` markers, where the chunk templates place them. Never edit a fragment: a wrong value is fixed in the project state, then recomputed.
 3. **Diagrams.** Paste the engine's infrastructure, network, DR, and data diagrams inline in chunk 05 (a light run keeps the first three), each followed by a 1-2 sentence summary so the chunk reads without a renderer. Provider names in a diagram are illustration only.
-4. **Prose.** Write the text around the fragments from the templates: what the numbers mean for the shape, the path evidence, the requirement-to-consequence trace, the decision tree (`DT-NN`), the Pre-SDD ADRs (ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001), and the risks. ADR-PERF-001, ADR-INT-001, and ADR-IAM-001 are SDD ADRs: chunk 09 names them with the answers that drive them. Prose cites a value by its ID (`REL-03.2`, `CALC-03`) and never states a number the fragments do not hold. It uses shape words only: never a product, a version, or the architecture style.
+4. **Prose.** Write the text around the fragments from the templates: what the numbers mean for the shape, the path evidence, the requirement-to-consequence trace, the decision tree (`DT-NN`), the Pre-SDD ADRs (ADR-DR-001, ADR-DATA-001, the hosting part of ADR-PLATFORM-001, and ADR-MIG-001 when the migration overlay applies), and the risks. ADR-PERF-001, ADR-INT-001, and ADR-IAM-001 are SDD ADRs: chunk 09 names them with the answers that drive them. Prose cites a value by its ID (`REL-03.2`, `CALC-03`) and never states a number the fragments do not hold. It uses shape words only: never a product, a version, or the architecture style.
 5. **Chunk 00 and the master.** Chunk 00 holds the title, the Document Lineage (each source BRD with its key, version, status, and link; the consuming SDD, filled the first time a run finds an SDD whose own chunk 00 holds a Source Pre-SDD row naming this Pre-SDD: a link, which bumps nothing), the gate state (the engine's label), the engine version, the Changes Log, and the indexes. Update the master that step 5 wrote: the index, the progress table (stage, group, gate, write-up, review, handoff), the **Generation:** line (the mode, and `light` when set), and the gate line.
 6. **The handoff guide.** Chunk 12 follows `handoff-guide.md`. It states the Pre-SDD version, the gate state, the signers, and the engine version; every locked item with its value and where it lands in the SDD (the locked-items fragment); what is left to the SDD; the open-item rule; the time-bound exceptions and unknowns that did not block G3, each with owner and due date; and the citation format `PSDD/<ID>`. It is self-contained, because `sdd-unifier` reads only this skill's output (chunk 12, the master, chunk 11), never these rule files.
 7. **Which chunks exist** (`chunking.md`): 00 to 13 in full mode, with 03a to 03h; 06 only for a brownfield or mixed change type, and 08 only with the migration overlay. An omitted chunk is omitted, not stubbed.
@@ -393,6 +393,60 @@ Every content-changing update follows the same tail: the changed values through 
 - Never modifies the templates (`TEMPLATE-COMBINED.md`, `chunks/*.md`), the reference copies, or the examples during a run.
 
 ---
+
+## Status board
+
+The chain skills hand work to each other through one shared file, the status board, and `tutorialize-unifier` reads it for context. Every skill that carries this section follows the same rules below, word for word.
+
+- **File:** `unifier-status.md` in the project root, the folder that holds the hop folders (`./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`). The first chain skill that runs creates it from the template below. Nobody deletes it.
+- **Template:**
+
+```markdown
+# Unifier status board
+
+Run mode: solo
+
+## Employees
+
+| Employee | Team | Skill | Folder | State | Version | Updated (UTC) | Next step | Waiting on |
+|---|---|---|---|---|---|---|---|---|
+| Business development | Product Management & Business Development | pre-brd-unifier | - | Not started | - | - | - | - |
+| Product manager | Product Management & Business Development | brd-unifier | - | Not started | - | - | - | - |
+| Business owner | Product Management & Business Development | business-reviewer-unifier | - | Not started | - | - | - | - |
+| E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
+| Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
+| Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+
+## Handoff requests
+
+| ID | From | To | Request | Why | Raised (UTC) | State | Closed (UTC) | Link |
+|---|---|---|---|---|---|---|---|---|
+```
+
+- **Times and text:** every time on the board is UTC. `Updated (UTC)`, `Raised (UTC)`, and `Closed (UTC)` use `YYYY-MM-DD HH:MM`. A cell with no value holds `-`. The board uses no em dash and no en dash.
+- **Run mode:** the header line reads `Run mode: solo` or `Run mode: team`.
+  - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
+  - Only the user changes it.
+  - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. "Later" sets the request State to `Later`.
+- **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
+  - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
+  - A skill writes only its own row, the one whose Skill cell names it.
+  - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+- **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
+  - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer. The receiving skill updates only State and Closed (UTC): `Accepted` when it takes the request (still pending: taken, not finished), then `Done` and Closed (UTC) at the stop where it finishes it.
+  - A new request takes the next number after the highest ID on the board. IDs are never renumbered.
+- **When a skill uses the board:**
+  - At the start of every run it reads the board: its own row, its pending requests (`Open`, `Later`, or `Accepted`), and the upstream states.
+  - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
+  - At its handoff points it raises requests.
+- **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
+- **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
+- **Writers outside the project root:**
+  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `tutorialize-unifier` only reads the board and has no row.
 
 ## Reference files
 

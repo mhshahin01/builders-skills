@@ -1,5 +1,5 @@
 import glob, os, re, sys
-from _e2e_gate import content_hash, evaluate_inventory, reconciled_date, reconciled_entry, reconciled_hash, unclosed_items
+from _e2e_gate import BODY_CHUNK, SERVICE_CHUNK, content_hash, evaluate_inventory, reconciled_date, reconciled_entry, reconciled_hash, unclosed_items
 
 SDD = sys.argv[1]
 
@@ -107,7 +107,7 @@ for fn, head in (("10-events-hub.md", "## 14.8"), ("11-api-contracts.md", "## 15
 e3 = {}
 for fn in sorted(glob.glob(os.path.join(SDD, "*.md"))):
     b = os.path.basename(fn)
-    if re.match(r"^(09|10|11|12|13[a-z])-", b):
+    if re.match(r"^(?:09|10|11|12|" + SERVICE_CHUNK + r")-", b):
         n = read(b).count(MARKER)
         if n:
             e3[b] = n
@@ -118,7 +118,7 @@ master = read(next(f for f in os.listdir(SDD) if f.endswith("-sdd-master.md")))
 body = {}
 for fn in sorted(glob.glob(os.path.join(SDD, "*.md"))):
     name = os.path.basename(fn)
-    if re.match(r"^(0[0-9]|1[0-7])(?:[a-z])?-", name):
+    if re.match("^" + BODY_CHUNK + "-", name):
         text = read(name)
         if name.startswith("00-"):
             text = text.replace(sect(text, "## Changes Log"), "")

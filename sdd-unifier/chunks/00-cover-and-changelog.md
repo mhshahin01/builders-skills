@@ -56,7 +56,7 @@ PART OF: SDD - [Project Name]
 
 ## Table of Contents
 
-<!-- Auto-generated or manually maintained. Include Figures and Tables indices if the document is large. -->
+<!-- Auto-generated or manually maintained: in CHUNKS mode one entry per chunk, in file-name order (05a follows 05; chunk 20, the deck brief, has no entry: SKILL.md step 8c item 7); in COMBINED mode one entry per numbered section (§8.6 and §8.7 follow §8.5). Include Figures and Tables indices if the document is large. -->
 
 **Figures**
 

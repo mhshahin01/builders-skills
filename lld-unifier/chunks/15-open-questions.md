@@ -14,6 +14,8 @@ PART OF: LLD - [Project Name]
 > 2. Walk the tables in order: Drift and Policy Findings first (action items), then TODO (low-confidence), then Confirm (medium-confidence).
 > 3. Edit the source chunk to resolve each row.
 > 4. Ask lld-unifier to regenerate the changed chunks (SKILL.md step 9); this index is regenerated with them.
+>
+> A row that copies a flag or its text from another chunk or a service file rebases every link in it to this file's location, so a link written for `04-implementation/<svc>.md` still resolves from here.
 
 ---
 
@@ -82,7 +84,7 @@ PART OF: LLD - [Project Name]
 
 ## 18.6 Policy Findings (every direction that reads code)
 
-<!-- Code that breaks a CLAUDE.md rule or a pattern-rules.md anti-pattern (from-code, hybrid, partial). Not drift: it claims no SDD disagreement. Every row cites the rule, takes the severity from pattern-rules.md, and carries the author's recommended fix and the reason. -->
+<!-- Code that breaks a CLAUDE.md rule, a pattern-rules.md anti-pattern, or a row of chunk 03a § 6.5 (from-code, hybrid, partial). Not drift: it claims no SDD disagreement. The one exception is a use that breaks a § 6.5.1 row sourced from SDD §6: hybrid reports it as `⚠ drift` (hybrid-drift.md). Every row cites the rule, takes the severity from pattern-rules.md, and carries the author's recommended fix and the reason. -->
 
 | Location | Marker | Rule (source) | Finding | Severity | Recommended fix | Why | Status |
 |----------|--------|---------------|---------|----------|-----------------|-----|--------|

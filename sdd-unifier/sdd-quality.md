@@ -46,6 +46,32 @@ The most-skimmed section in any SDD, and the one most often filled with platitud
 
 ---
 
+## §8.6 Infrastructure Architecture and §8.7 Network Architecture
+
+An SRE, a security reviewer, or a deck reads these two sections to see where the system runs and how traffic reaches it and leaves it. They are worth reading only when every fact traces to a source and nothing is invented.
+
+**Test:** pick any row of §8.6 or §8.7. Does it link the home of each fact it uses (a §6 row, an ADR, §11.2, §11.3, §11.6, a §12 row, §19, a BRD NFR or Technical Input as its keyed link, an eco-system file section) instead of restating a technology, a version, or a default? Is every fact that no source states a `[NEEDS CLARIFICATION: ...]`, and every design choice that no source states labelled `recommended`, with its evidence stated in the row? Then pick any §12 row: does §8.7.3 show its egress path, or say why it has none (the system only calls the platform, or it is inside the platform's network)? Pick any BRD availability, disaster recovery, or data residency NFR: does §8.6 realise it, with its RPO and RTO derived from the NFR or flagged?
+
+**Good rows** (one deployable on a managed container service whose hosting location no source names, and an imported eco-system file that states CardPay's network access):
+
+| Concern | Design | Source |
+|---|---|---|
+| Regions or sites | **[NEEDS CLARIFICATION: Which cloud region or on-premises site hosts the deployable and its database? Owner: product owner.]** | No BRD Technical Input names the hosting, and [§6 Compute / Infra](./02-ecosystem-overview.md#6-ecosystem-overview) leaves it open |
+
+| §12 row | System | Egress path | Provider requirement | Source |
+|---|---|---|---|---|
+| [INT-01](./08-integrations.md#12-integrations) | CardPay Ltd | NAT through one fixed egress address | An IP allow-list of the platform's egress address | [refunds-platform-eco-system.md § CardPay Ltd](../refunds-platform-eco-system.md#cardpay-ltd) |
+
+**Bad:**
+
+- An IP range, a CIDR, or a hostname that no source states, for example a made-up `10.0.0.0/16` for the application zone.
+- A product name that no source chose, for example a named CDN or WAF vendor in the ingress path.
+- A row that restates the §6 technology and version, the §11.6 TLS version, or a §12 timeout instead of linking it.
+- An RPO or RTO figure that no BRD NFR implies.
+- A §12 system with no §8.7.3 row, or a diagram node that no row names.
+
+---
+
 ## §10 Architectural Decisions (ADRs)
 
 The single biggest source of "looks structured but is empty" in SDDs.
@@ -214,6 +240,51 @@ Traceability is only useful if a reader can follow it both ways without searchin
 - Ownership only in prose ("refund-service handles UC-04 and UC-05"), with no 09 column or §7.3 row.
 - A link built from a guessed title (`#uc-04-approve-reject-refund` when the heading is `UC-04: Approve / Reject Refund`, whose anchor is `#uc-04-approve--reject-refund`). It looks right and lands nowhere.
 - A new `UC-12` the SDD made up for key rotation. The SDD cites BRD use cases; it never adds one.
+
+---
+
+## §6 Ecosystem Overview
+
+A reader must see at a glance which stack rows are settled and where each one came from.
+
+**Test:** pick any §6 row. Does it carry a Status and a Source (SKILL.md step 3c items 1 and 6; a table written before those columns keeps the label in its Notes and is read as it is, SKILL.md step 10), and do its Notes hold the evidence the Source names: the BRD Technical Input as a keyed link, the eco-system file section, or the ADR? In a finished first build, is every `Proposed` row the one exception step 3c item 6 allows, with its marker (a table written before those columns is read as it is)? Then pick any system in §12: does the Integration landscape have its row, and does that row link §12 instead of repeating its protocol, auth, or timeouts?
+
+**Good rows:**
+
+| Layer | Technology / Service | Version / Tier | Status | Source | Notes |
+|---|---|---|---|---|---|
+| Primary RDBMS | PostgreSQL | 17+ | Confirmed | BRD-mandated (REFUNDS) | [REFUNDS 12 TI-02](../brd-refunds-portal/12-appendix-and-wishlist.md#technical-inputs-for-the-sdd): "Use PostgreSQL for all data."; the version is the stack default |
+
+| System | Owner (role) | Role in the eco-system | Interface style | Spec source | §12 row |
+|---|---|---|---|---|---|
+| CardPay Ltd | The provider's integration team | Payment provider | Synchronous API and callback | [refunds-platform-eco-system.md § CardPay Ltd](../refunds-platform-eco-system.md#cardpay-ltd) | [INT-01](./08-integrations.md#12-integrations) |
+
+**Bad:**
+
+- A Source that reads `default` without saying whose default it is (`project default` or `skill default`), or a source that appears only in prose.
+- A `Proposed` row in a finished first build with no marker and no reason.
+- An Integration landscape row that repeats an auth scheme or a timeout that §12 states.
+- A value taken from an eco-system file the user did not choose to import, or a provider field the file does not state.
+
+---
+
+## Project-file rules (the whole SDD)
+
+A rule in a project file (`AGENTS.md`, `CLAUDE.md`, `ui-ux-global-constitution.md`) binds every chunk, not only §6. SKILL.md principle 19 states the rule; this is the bar.
+
+**Test:** pick any rule or convention in a project file. Find each chunk it touches. Does the chunk follow it, or does an open item carry the difference? Then pick any open item that names a project file: does it give the file and its section, the source and where it says the opposite, two options, a Recommended Answer, and a Why, while the SDD text still reads as the source states it?
+
+**Good:**
+
+- A design choice that follows a project rule names the file, and its section by name when it has one: "no cross-schema reads (AGENTS.md § Data ownership)".
+- A project rule that a BRD Technical Input contradicts is one open item: "Where: §6, Database row. Concern: AGENTS.md § Data stores allows MySQL only; [REFUNDS 12 TI-02](...) mandates PostgreSQL for all data. Options: A keep the BRD mandate; B follow the file, with an ADR for overriding the BRD mandate (SKILL.md step 3c item 5). Recommended Answer: A. Why: ..."
+
+**Bad:**
+
+- A §6 row that follows either side of a conflict between a project file and a BRD Technical Input, with no open item: a silent pick of one side.
+- A rule applied in one chunk and broken in another, for example a topic naming convention used in chunk 10 and ignored in a `13x` Event Model.
+- A color or font copied as a raw value where the constitution defines a token: cite the token by name.
+- A question to the user for a file the project does not have, or for a rule a project file already states.
 
 ---
 

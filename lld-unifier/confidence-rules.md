@@ -103,9 +103,9 @@ Example:
 | Pattern application driven by CLAUDE.md guideline (Strategy, Factory, Mediator) | Medium | SDD prose explicitly names the pattern → upgrade to High |
 | Concrete class names per CLAUDE.md naming conventions | Medium | (none: names are conventions, not facts) |
 | Method-level pseudocode | Medium | SDD `13x` Business Logic is detailed enough to dictate the algorithm → upgrade to High |
-| Concrete API request/response shapes | Medium | SDD pins shape (rare) → upgrade to High |
+| Concrete API request/response shapes | Medium | SDD pins shape (a `Defined` §15 contract does) → upgrade to High |
 | Concrete event payload shapes | Medium | SDD pins shape (rare) → upgrade to High |
-| Concrete table column types | Medium | SDD's per-service DB Modeling pins them (rare) → upgrade to High |
+| Concrete table column types | Medium | SDD's per-service Tables Design states the column's Data type → upgrade to High |
 | SLO targets | High if SDD §18 pins per-endpoint targets; Medium if SDD only has service-level targets | |
 | Hot-path index choices | Medium | (rare for SDD to pin indexes) |
 | PII column inventory | Medium | SDD §17.X Data Encryption lists them (PII columns) → upgrade to High |

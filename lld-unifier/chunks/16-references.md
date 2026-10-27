@@ -33,7 +33,7 @@ PART OF: LLD - [Project Name]
 
 | Service | Path / URL | Notes |
 |---------|------------|-------|
-| `[service-a]` | [path/openapi.yaml] | Source of truth for §9 API Contracts |
+| `[service-a]` | [path/openapi.yaml] | Must match the § 9.2 blocks; a difference is `Contract drift` |
 
 ## 19.4 Event Schemas
 

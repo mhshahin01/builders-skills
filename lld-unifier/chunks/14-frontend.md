@@ -10,14 +10,13 @@ NOTE: This chunk is OMITTED when the LLD scope has no UI surface. Do not stub it
 # 17. Frontend
 
 > **Conventions per CLAUDE.md:**
+> - Libraries: each UI, styling, i18n, state, and test library, with its Status, is a row of `03a-libraries-and-conventions.md` § 6.5.1 (or of § 6.3, for a layer § 6.3 holds). The sections below use those rows.
 > - Angular 17+, standalone components only (no NgModules).
 > - `inject()` over constructor DI.
 > - Signals for component state; NgRx SignalStore for shared/complex state; RxJS for streams only.
 > - OnPush change detection by default.
-> - Tailwind + PrimeNG (PrimeNG first, custom only when PrimeNG cannot do it).
 > - Strict TypeScript, no `any`.
 > - Routing via standalone APIs (`provideRouter`, `loadComponent`), no `RouterModule`.
-> - A library above that SDD §6 does not name is a new dependency: mark it `proposed; needs approval when the project's rules reserve new dependencies`.
 
 ## 17.1 Module / Component Tree
 
@@ -86,7 +85,7 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 
 ## 17.6 i18n
 
-- **Library:** `@angular/localize` (or `ngx-translate`).
+- **Library:** the i18n library, with its Status, is a row of `03a-libraries-and-conventions.md` § 6.5.1 (or of § 6.3, for a layer § 6.3 holds).
 - **String policy:** no string concatenation. All strings via i18n keys.
 - **RTL support:** logical CSS properties only (`margin-inline-start`, not `margin-left`); full Arabic support.
 - **Locale formatting:** dates, numbers, currency formatted via tenant locale (not browser locale, per CLAUDE.md).

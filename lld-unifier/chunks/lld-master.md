@@ -5,8 +5,8 @@ VERSION: [X.X]
 PART OF: LLD - [Project Name]
 PURPOSE: Navigation graph for AI implementers and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
 FILENAME: Written per project as ./lld-[project-slug]/[project-slug]-lld-master.md. The SDD's Child LLDs row links to this file, and sdd-unifier finds an unregistered LLD through the Related SDD line below.
-VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and 00-metadata.md carry the current LLD version; every other chunk carries the version in which its content last changed.
-MAINTENANCE: When adding or removing services (especially 04-implementation/<service>.md files), update the tables below, the dependency graph, and the reading-order table.
+VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and 00-metadata.md carry the current LLD version; every other chunk carries the version in which its content last changed. Chunk 19 (the deck brief) carries the LLD version it is based on; its write and its Stale mark bump nothing.
+MAINTENANCE: When adding or removing services (especially 04-implementation/<service>.md files), update the tables below, the dependency graph, and the reading-order table. In a parts build (parts-mode.md), write this master in part 1 and update it at the end of every part: a chunk or service file not written yet is plain text followed by `Pending (part N)` until its part writes it, and then becomes a link.
 -->
 
 # LLD Master Index - [Project Name]
@@ -26,6 +26,27 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 > **Production bug?** Start at the [Use-Case Traceability Index](./16-references.md#199-use-case-traceability-index): from a use case, route, screen, or failing test case to the workflow, the SDD §7.3 row, the BRD use case, its UAT/BAT cases, and its e2e spec.
 >
 > **Specs:** [17-specs.md](./17-specs.md) - owned by this LLD (Mission, Tech Stack, Roadmap, Project Type), synthesised from the SDD after the body; the direct input for speckit `/constitution`. (Legacy chains carried a Specs at `../sdd-[sdd-slug]/15-specs.md` or `../brd-[brd-slug]/12-specs.md` - consumed as input if present.)
+>
+> **Decision history:** [decision-log.md](./decision-log.md) holds the stack approval record, the clarification answers, the delegations, and how each decision was reached. The chunks below state only the settled design. (Link it once the log exists; it is created on first use and never merged.)
+
+**Deck brief (chunk 19):** [Locked | Up to date | Provisional (OI-NN, ...) | Stale] - [Locked or Stale: a short reason (not written, each item of chunk 18 that is not closed, or the change that made it stale); nothing follows Up to date or Provisional (...)]
+<!-- Deck brief: the state of 19-for-ppt.md (SKILL.md step 7c; deck-brief-rules.md § States). A script reads the state as the text before the first " - " or " | "; it is the same state as the status line of chunk 19, written in the same run. Locked means the file does not exist: write "Locked - not written; <reason>" until it does, the reason being the open items of chunk 18, or "not requested" when it is cleared. A reference in a Provisional state has no " - " inside it. The line is not a content change of the LLD, and a merge does not copy it. -->
+
+---
+
+## Generation Progress
+
+<!-- parts: keep this table and update it at the end of every part (parts-mode.md § The progress record). whole: keep only the Generation line, set to whole, and leave out the Source and Upstream lines and the Part table. A master with no Generation Progress section is a finished LLD (written before parts, or re-chunked). The section is a record, not a content change of the LLD. -->
+
+**Generation:** parts
+**Source:** [path of every source file (the SDD master or folder, the code path, an imported eco-system file: SKILL.md step 3a, item 5), or "conversation"]
+**Upstream:** [the SDD version and each source BRD version with the state of its chunks 14 and 16, as the run last read them (SKILL.md step 3c); chunk 16 § 19.1 takes over this record when it is written]
+
+| Part | Chunks | Status | Completed |
+|------|--------|--------|-----------|
+| 1 | 00, 01, 02, 03, 03a | [Pending / In progress (last step) / Complete] | [YYYY-MM-DD] |
+| 2 | 04 (every service file), 05, 06, 07, 08 | [Pending / In progress (last step) / Complete] | - |
+| 3 | 09-14, 16, 17, 15, 18 | [Pending / In progress (last step) / Complete] | - |
 
 ---
 
@@ -47,6 +68,7 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | 4. Glossary | [01-purpose-and-scope.md](./01-purpose-and-scope.md) |
 | 5. Context (Bounded Context, Upstream/Downstream) | [02-context.md](./02-context.md) |
 | 6. Architecture Overview (Component Topology, Deployment) | [03-architecture.md](./03-architecture.md) |
+| 6.5 Libraries & Coding Conventions (libraries by concern, coding conventions, per-service deltas) | [03a-libraries-and-conventions.md](./03a-libraries-and-conventions.md) |
 
 ## Implementation (load-bearing)
 
@@ -100,6 +122,14 @@ MAINTENANCE: When adding or removing services (especially 04-implementation/<ser
 | 20. Specs (Mission, Tech Stack, Roadmap, Project Type - speckit `/constitution` input) | [17-specs.md](./17-specs.md) |
 | 21. Open Items & Clarifications (reviewer output) | [18-open-items-and-clarifications.md](./18-open-items-and-clarifications.md) |
 
+## Implementation Deck Brief (gated, on request)
+
+| Section | Chunk |
+|---------|-------|
+| Implementation deck brief (clean code, code architecture, API statistics, API contracts, database design and practices, and integrations with failover slides for a deck-generating agent; not an LLD section) | 19-for-ppt.md - [plain text until it exists; written only on request, once chunk 18 is cleared] |
+
+> Chunk 19 is derived from chunks 00-18 and the decision log, and adds no requirement or design. It is written only on request, when every item of chunk 18 is closed (no override). It is never part of the merged or combined LLD, no document reads it as a source, and it is never written in a light run. Its state is the **Deck brief (chunk 19)** line above, the same as the status line of the chunk. Link it once written.
+
 ---
 
 ## Confidence & Drift Marker Legend
@@ -127,7 +157,8 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 +-- 01-purpose-and-scope.md .................... purpose, scope, assumptions, glossary
 +-- 02-context.md .............................. bounded context, upstream/downstream
 +-- 03-architecture.md ......................... component overview, deployment
-+-- 04-implementation/ ......................... per-service deep-dive (load-bearing)
++-- 03a-libraries-and-conventions.md ........... libraries by concern, coding conventions, deltas (depends on 03 and SDD §6)
++-- 04-implementation/ ......................... per-service deep-dive (load-bearing; depends on 03, 03a, 09)
 |   +-- [service-1-slug].md .................... classes, patterns, use-case workflows (traced)
 |   +-- [service-2-slug].md
 |   +-- ...
@@ -145,6 +176,7 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 +-- 16-references.md ........................... BRD/SDD links, ADRs, runbooks, use-case traceability index
 +-- 17-specs.md ................................ constitution-grade summary (synthesised after the body)
 +-- 18-open-items-and-clarifications.md ........ reviewer findings (post-generation)
++-- 19-for-ppt.md .............................. implementation deck brief (derived; only on request, once chunk 18 is cleared; not merged)
 ```
 
 ### Reading Order by Task
@@ -152,7 +184,8 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 | Agent / Reader Task | Start With | Then |
 |---------------------|-----------|------|
 | Triage a production bug (page, route, error report, log line, or failing UAT case) | 16 § 19.9 (the row of its `use_case`, route, screen, or test case) | the row's workflow block (04), BRD use case, SDD §7.3, UAT/BAT cases, e2e spec |
-| Implement a service | 04-implementation/[svc].md | 05, 06, 07, 09 |
+| Implement a service | 04-implementation/[svc].md | 03a, 05, 06, 07, 09 |
+| Choose a library or check a coding convention | 03a (§ 6.5.1, § 6.5.2) | 03 (§ 6.3), the 04-implementation/[svc].md lines that cite the row |
 | Understand a workflow | 04-implementation/[svc].md (workflows section) | 07, 08 |
 | Add a new API endpoint | 06 | 04-implementation/[svc].md, 09 |
 | Add a new event | 07 | 04-implementation/[svc].md (event-publishing service) |
@@ -163,6 +196,7 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 | Write tests | 13 (§ 16.8 for e2e) | 04-implementation/[svc].md, 06, 07, the BRD's UAT/BAT cases |
 | Feed speckit `/constitution` | 17-specs.md | (only this) |
 | Triage reviewer findings | 18 | the chunk(s) referenced by each open item |
+| Present the implementation design (a deck) | 19 (written on request once chunk 18 is cleared; absent until then) | the chunks its Sources cite |
 
 ### Cross-Document Navigation (BRD ↔ SDD ↔ LLD)
 
@@ -173,11 +207,13 @@ All flags are indexed in [15-open-questions.md](./15-open-questions.md).
 | brd/16 - UAT/BAT Test Cases | lld/13 § 16.8 + the 04 traceability lines | The BRD owns the test cases; the LLD tags e2e specs with them |
 | sdd/00 - Document Lineage | lld/00 + lld/16 § 19.1 | SDD lists the source BRDs and their keys; the LLD registers itself in its Child LLDs table |
 | sdd/03 - §7.3 Use Case Traceability | lld/04-implementation/[svc].md (traceability lines) + lld/16 § 19.9 | SDD traces each use case to its owner and entry points; LLD carries the trace to workflows, routes, tests, and spans |
+| sdd/02 - Ecosystem Overview | lld/03 § 6.3 Runtime Stack + lld/03a § 6.5.1 Libraries | SDD §6 names the platform stack and may name libraries; the LLD derives its runtime stack from it (§ 6.3) and records the libraries by concern that § 6.3 does not hold (§ 6.5.1), each with its status (`Approved`, or `Proposed - needs approval`) |
 | sdd/04 - Architecture Style | lld/03 - Architecture | SDD names the style; LLD operationalises with concrete component topology |
 | sdd/05 - Workflows & Sequences | lld/04-implementation/[svc].md (workflows) | SDD describes the cross-service flow; LLD refines per service with idempotency, outbox, saga steps |
+| sdd/05a - Infrastructure & Network | lld/03 § 6.2 Deployment Topology | Each § 6.2 row links the §8.6 or §8.7 part it implements and adds the implementation detail |
 | sdd/07 - Cross-Cutting Concerns | lld/09 - Cross-Cutting | SDD sets defaults; LLD applies them concretely with Resilience4j config, error codes |
 | sdd/10 - Centralized Event Hub | lld/07 - Event Contracts | Topic and event names match SDD §14 verbatim; payload contracts are referenced (§14.9), and the LLD adds the producer and consumer implementation; §14.10 in-process domain events go to lld/07 § 10.6 |
-| sdd/11 - Service Integration API Contracts | lld/06 - API Contracts | SDD's `API-NN` contracts are referenced; for HTTP contracts the LLD adds clients, DTO records, and resilience config (§ 9.1), for `Internal (in-process)` ones the port and its adapter (§ 9.6) |
+| sdd/11 - Service Integration API Contracts | lld/06 - API Contracts | SDD's `API-NN` contracts are the source of the § 9.2 blocks, which restate their values; for HTTP contracts the LLD adds clients, DTO records, and resilience config (§ 9.1, § 9.2), for `Internal (in-process)` ones the port and its adapter (§ 9.6) |
 | sdd/12 - Centralized User Roles | lld/11 - Security + lld/09 - Cross-Cutting | Role names and permission tokens match SDD §16 verbatim; the catalogue is referenced, and the LLD adds the enforcement (authZ decisions and checks) |
 | sdd/13a - Service Detailed Spec | lld/04-implementation/[svc].md | SDD defines the contract; LLD defines the implementation (classes, patterns, pseudocode) |
 | sdd/14 - Performance & Capacity | lld/12 - Performance | SDD lists targets; LLD describes the caching/index strategy that meets them |

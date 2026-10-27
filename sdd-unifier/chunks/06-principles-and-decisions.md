@@ -41,4 +41,4 @@ For deeper, individual ADRs, link to a separate ADR repository / folder.
 | ADR-02 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
 | ADR-03 | [Status] | [Decision] | [Why] | [How] | [Consequences] | [Alternatives] |
 
-<!-- MASTER: [project-slug]-sdd-master.md | PREV: 05-workflows-and-sequences.md | NEXT: 07-cross-cutting-concerns.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 05a-infrastructure-and-network.md | NEXT: 07-cross-cutting-concerns.md -->

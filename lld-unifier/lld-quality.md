@@ -1,8 +1,53 @@
 # LLD Quality Bar
 
-The LLD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones: Per-Service Implementation, Use-Case Workflows, Design Pattern Application, Cross-Cutting Concerns, and Operations Runbook.
+The LLD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones: the Runtime Stack, Libraries & Coding Conventions, Per-Service Implementation, Use-Case Workflows, Design Pattern Application, API Contracts, Cross-Cutting Concerns, and Operations Runbook.
 
 The principle is the same as `sdd-quality.md` in `sdd-unifier`: substantive content, not template-shaped filler.
+
+---
+
+## `03-architecture.md` § 6.3 Runtime Stack
+
+The stack every service builds on. The stack approval settles it before generation (SKILL.md step 3a), and each row names where it comes from.
+
+**Good:**
+
+- Every row names its source with a label from the one list of the §6.3 Convention (`03-architecture.md` § 6.3 Runtime Stack); a label that names a record links it.
+- An `Active` override, or one `Raised in SDD vX.X (Proposed)`, carries the Convention's override label, links its decision-log entry, and `17-specs.md` § 2 states the same value with `(override of SDD §6; see the decision log)`.
+- A row SDD §6 still holds as a proposal keeps `(Proposed in SDD §6)`; a missing version pin is one `> TODO:` that names SDD §6 as its home.
+
+**Bad:**
+
+- A value that differs from SDD §6 with the SDD row as its Source: silent drift.
+- An override with no decision-log entry, or one marked `⚠ drift`.
+- A default with no flag and no approval, written as if decided.
+- A `Proposed` SDD §6 row, or a legacy row whose Notes mark it Proposed, written as adopted.
+
+**Test:** from each row, one click reaches the record that settles it (the SDD §6 row, the project instruction file, or the decision log), and every value that differs from SDD §6 is an override with its entry.
+
+---
+
+## `03a-libraries-and-conventions.md` § 6.5 Libraries & Coding Conventions
+
+The register of the libraries and rules every service builds with. It settles each library question once, so a service file cites a row and never settles it again.
+
+**Good:**
+
+- Every §6.5.1 row names its concern, the library, what it replaces (or `-`), a one-line reason, its scope, its source with a label from the one list of the §6.3 Convention, and a Status that follows the Status rule of the §6.5.1 Convention (`03a-libraries-and-conventions.md`).
+- A row the Status rule keeps at `Proposed - needs approval` is named in the handoff with the path that confirms it (SKILL.md step 3a, item 1).
+- Every §6.5.2 rule has a source, a Do and a Don't that a reviewer can check in code, and `review` as `Enforced by` unless an `Approved` §6.5.1 row backs the tool.
+- Every §6.5.3 row names the service, the row it departs from, and a reason that a source states.
+- A service file cites a row with a link (the §6.5.1 row, or the §6.3 row for a layer §6.3 holds) and does not restate it.
+
+**Bad:**
+
+- A default written as `Approved` with no source and no approval.
+- A rule restated in a service file in other words, so two places can disagree.
+- A tool named in `Enforced by` that no `Approved` row backs.
+- A service that departs from a row with no §6.5.3 row, or a §6.5.3 row with no reason.
+- A row rewritten to match the code in a code-read direction, so the finding for the departure disappears.
+
+**Test:** take any library a service file uses. One click from its citation reaches the §6.5.1 row, or the §6.3 row for a layer §6.3 holds, and the row's Source and Status show what settled it. Every row still `Proposed - needs approval` is named in the handoff with the path that confirms it.
 
 ---
 
@@ -26,7 +71,7 @@ The most-skimmed section in any per-service file.
 
 - Lists controllers with their endpoints (table-form).
 - Lists service interfaces with implementations.
-- Lists method signatures for the load-bearing 3–7 methods (not every getter/setter).
+- Lists method signatures for the load-bearing 3 to 7 methods (not every getter/setter).
 - Names the domain types (records / entities) with a one-line purpose.
 
 **Bad:**
@@ -158,6 +203,29 @@ Traceability is only useful if a reader can follow it both ways without searchin
 
 ---
 
+## `06-api-contracts.md` § 9.2 Request / Response Shapes
+
+The implementer's contract for every endpoint and port: one block per § 9.1 row and per § 9.6 row. The field list is in `chunks/06-api-contracts.md` § 9.2 and is not repeated here; the derivation rules and checks are in `sdd-to-lld.md` § API contract blocks.
+
+**Good:**
+
+- Every row has one block, and the block has every field of the list.
+- A value the SDD sets equals the SDD character for character, and the API ID link is one click from its source. A value no source gives is a proposal under its flag.
+- Each error's `type` and `errorCode` equal the owner's 04 § 7.7 row.
+- A `TBD - external` field says so, with one `> TODO:` that cites the SDD contract.
+
+**Bad:**
+
+- A § 9.1 row with no block, a block that misses a field of the list, or a status of the row that no entry covers.
+- "Standard request and response per the REST conventions": a body with no fields, types, or required flags.
+- An error row with an `errorCode` and no `type`, or a `type` that differs from the 04 § 7.7 row.
+- A permission token that differs from SDD §16.11, or an `errorCode` that differs from SDD §15.1 or the contract's domain code.
+- A proposed field with no flag, or a `TBD` that cites no SDD contract.
+
+**Test:** take any § 9.1 row. From its block alone, an implementer can write the controller signature, the request and response records with their validation, the error mapping, and the contract test, and every value the SDD set is one click from its contract.
+
+---
+
 ## `09-cross-cutting.md` § 12.6 Error Model (RFC 9457)
 
 Every row should have a concrete value, not a wave-of-the-hand.
@@ -223,7 +291,7 @@ Caches are the easiest place to add accidental bugs (stale data, cross-tenant le
 - Eviction (LRU / time / none).
 - TTL.
 - Invalidation triggers (which events invalidate which keys).
-- Tenant scoping (key includes `tenant_id`, non-negotiable per CLAUDE.md).
+- Tenant scoping (a shared cache keys by tenant, whatever the tenancy model, as the project file states).
 
 Bad: "Use Redis cache where appropriate."
 

@@ -396,6 +396,7 @@ After the body, the Open Items chunk, the acceptance loop, and the to-do, surfac
 - `transform-detection.md`: rules for deciding generate vs transform.
 - `sow-transformation.md`: how to map SoW or existing-BRD content into this template.
 - `mermaid-diagrams.md`: inline Mermaid conventions for every diagram the template implies (including the gated use-case diagram and flowchart notation), plus the Miro-on-demand flow.
+- `mermaid-syntax.md`: the Mermaid syntax cheatsheet for the five dialects; a shared file (line 1 names its copies). Its unquoted examples never override `mermaid-diagrams.md` § Label and syntax safety.
 - `use-case-quality.md`: what makes a substantive use case vs a thin one, the flowchart quality bar, and the matrix consistency rules.
 - `writing-style.md`: the plain-language style for everything the skill writes: the rules, the word list, before/after examples, and the mandatory plain-language pass. Read before writing any chunk.
 - `delivery-chunks.md`: the rulebook for chunks 14-17: the delivery gate (G1-G5) that locks 15-17, the to-do steps and their evidence rule, the consistency check, task derivation, dependency ordering, and the two task milestones (`Ready for test`, `Accepted`), the UAT/BAT format, per-case readiness, and coverage rules, the presentation and video rules, the gated diagram step, refresh and re-lock rules, special cases (COMBINED mode, legacy BRDs), and the verification list. Read at steps 8a, 8b, and 8c, and on any refresh.

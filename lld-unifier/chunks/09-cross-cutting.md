@@ -36,7 +36,7 @@ PART OF: LLD - [Project Name]
 
 ## 12.3 Resilience (downstream calls)
 
-> **Library:** Resilience4j (CLAUDE.md default). **Scope:** HTTP and broker calls; in-process port calls (06 § 9.6) take no timeout, retry, circuit breaker, or bulkhead.
+> **Library:** the resilience library, with its Status, is the row of § 6.3 or of `03a-libraries-and-conventions.md` § 6.5.1; this section gives its configuration only. **Scope:** HTTP and broker calls; in-process port calls (06 § 9.6) take no timeout, retry, circuit breaker, or bulkhead.
 
 | Pattern | Default config | Override mechanism |
 |---------|----------------|-------------------|
@@ -45,7 +45,7 @@ PART OF: LLD - [Project Name]
 | Circuit breaker | 50% failure rate over 20-call sliding window, 30s open state | Per-instance `CircuitBreakerConfig` bean |
 | Bulkhead | Per downstream provider, 10 concurrent calls | Per-provider `BulkheadConfig` |
 
-**Instances:** one row per Resilience4j instance; `Default` where a cell equals the defaults above.
+**Instances:** one row per instance of that library; `Default` where a cell equals the defaults above.
 
 | Instance | Caller (service, API ID) | Timeout | Retry | Circuit breaker | Bulkhead | Source |
 |----------|--------------------------|---------|-------|-----------------|----------|--------|
@@ -102,7 +102,7 @@ PART OF: LLD - [Project Name]
 
 ## 12.8 Tracing
 
-- **Library:** OpenTelemetry SDK + automatic instrumentation for Spring Boot.
+- **Library:** the tracing library, with its Status, is the row of § 6.3 or of `03a-libraries-and-conventions.md` § 6.5.1; this section gives its use only.
 - **Backend:** [Tempo / Jaeger / other].
 - **Sampling:** 100% in dev/sit, 10% probabilistic in prod (override with `traceparent` header for forced trace).
 - **Context propagation:** W3C Trace Context (`traceparent`, `tracestate` headers).

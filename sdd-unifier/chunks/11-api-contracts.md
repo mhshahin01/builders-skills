@@ -7,7 +7,7 @@ DEPENDS_ON: 02 (ecosystem: IAM, gateway), 05 (sequences), 07 (§11.6 security de
 PART OF: SDD - [Project Name]
 PURPOSE: The API contract registry for every synchronous domain or provider integration (standard operational infrastructure is not one: SKILL.md step 6a): service-to-service calls, module-to-module port calls in a modular monolith or hybrid core, outbound calls from a service to an external system, and inbound calls from an external system into a service (callbacks, webhooks). Each HTTP contract states the URI, headers, body, responses, error codes, security, and auth, and each in-process port contract its port interface, operation, DTOs, raised errors, permission token, and behaviour (idempotency and transaction), so both sides implement the same contract with zero drift.
 CONTRACT_RULE: This chunk is canonical for integration API contracts. Each per-service chunk (13x) lists an HTTP endpoint in its "List of APIs", or an in-process port call in its Integrations table, with the API ID and a link here; it never restates the headers, body, or error codes. Event contracts stay in chunk 10; roles and permission tokens stay in chunk 12 and are referenced here verbatim.
-EXTERNAL_RULE: A contract whose other side is an external system is `TBD - external` until the user supplies the provider's API documentation. Provider-owned fields (URI, headers, body, responses, error codes, auth scheme) are written as `TBD` with the marker `**[TBD - EXTERNAL: ...]**`, never invented. Our-side policy (timeout, retries, circuit breaker, fallback, where credentials are stored) comes from §12 and is filled.
+EXTERNAL_RULE: A contract whose other side is an external system is `TBD - external` until the user supplies the provider's API documentation. Provider-owned fields (URI, headers, body, responses, error codes, auth scheme) are written as `TBD` with the marker `**[TBD - EXTERNAL: ...]**`, never invented. Our-side policy (timeout, retries, circuit breaker, fallback, where credentials are stored) comes from §12 and is filled. An imported eco-system file is provider documentation for the fields it states: SKILL.md step 3c item 8 says how a contract is filled from it, what it cites as its Source document, and when it becomes `Defined`.
 -->
 
 # 15. Service Integration API Contracts
@@ -173,6 +173,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Rate limit | [Limit per caller] |
 | Pagination | [Not applicable / cursor-based] |
 | Fallback when unavailable | [Behaviour] |
+| Source document | [Not applicable for an internal contract. A Defined external contract: link the provider's API documentation, or the eco-system file section the fields were filled from] |
 
 ---
 
@@ -196,7 +197,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Credentials storage | [From §6 secrets row, e.g., secret per tenant in the secrets manager] |
 | Timeout, retries, circuit breaker | [From §12 INT-NN] |
 | Fallback when unavailable | [From §12 INT-NN] |
-| Source document | TBD (link the provider's API documentation once supplied) |
+| Source document | TBD (link the provider's API documentation, or the eco-system file section the fields were filled from, once supplied) |
 
 ---
 
@@ -267,7 +268,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 ## 15.6 External Contracts Awaiting the User
 
-<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. -->
+<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. A contract that an eco-system file filled in part lists only the fields still TBD. -->
 
 | API ID | Provider | Fields still TBD | Document needed from the user |
 |--------|----------|------------------|-------------------------------|

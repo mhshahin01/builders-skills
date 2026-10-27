@@ -4,8 +4,8 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: SDD - [Project Name]
 PURPOSE: Navigation graph for AI agents and human readers. Each node links to a self-describing chunk. Load this file first, then follow links to the chunks you need.
-VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and chunk 00 carry the current SDD version; every other chunk carries the version in which its content last changed, and chunk 19 the version it was written at (a later write that changes none of its content keeps it).
-MAINTENANCE: When adding or removing chunks (especially 13x service chunks), update the tables below, the dependency graph, and the reading-order table.
+VERSIONING: One update, one version (SKILL.md § Output conventions, Versions). This master and chunk 00 carry the current SDD version; every other chunk carries the version in which its content last changed, and chunk 19 the version it was written at (a later write that changes none of its content keeps it). Chunk 20 (the deck brief) carries the SDD version it is based on; its write and its Stale mark bump nothing.
+MAINTENANCE: When adding or removing chunks (especially 13x service chunks), update the tables below, the dependency graph, and the reading-order table, and repoint the PREV and NEXT footers of the chunks on each side (adding 05a to an SDD written before it: the NEXT of chunk 05, or of `05-2-sequences.md` in a split chunk 05, and the PREV of chunk 06).
 -->
 
 # SDD Master Index - [Project Name]
@@ -22,11 +22,11 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 ## Generation Progress
 
-<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: set **Generation:** to whole and leave out the Part table; the Intent, Source, Reconciled, Review passes, E2E gate, and E2E basis lines and the E3 marker inventory stay. -->
+<!-- parts: keep this table and update it at the end of every part (see parts-mode.md § The progress record). whole: set **Generation:** to whole and leave out the Part table; the Intent, Source, Reconciled, Review passes, E2E gate, E2E basis, and Deck brief lines and the E3 marker inventory stay. -->
 
 **Generation:** parts
 **Intent:** [generate | transform | derive-from-BRD]
-**Source:** [path of every source file, or "conversation"]
+**Source:** [path of every source file, an imported eco-system file included (SKILL.md step 3c item 8), or "conversation"]
 
 | Part | Chunks | Status | Completed |
 |------|--------|--------|-----------|
@@ -38,12 +38,14 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 **Review passes:** [N of 3 for the current request, N of 2 in a light run (baseline + N-1 application), or 0; only the baseline review and each scoped application pass increment it, a re-dispatch never does (SKILL.md step 7, Review limit)]
 **E2E gate (chunk 19):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
 **E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
+**Deck brief (chunk 20):** [Locked | Up to date | Provisional (OI-NN) | Stale] - [Locked or Stale: a short reason (not written, each unmet condition of the e2e gate, or the change that made it stale); nothing follows Up to date or Provisional (OI-NN)]
+<!-- Deck brief: the state of 20-for-ppt.md (SKILL.md step 8c; deck-brief-rules.md § States). A script reads the state as the text before the first " - "; it is the same state as the status line of chunk 20, written in the same run. Locked means the file does not exist: write "Locked - not written" until it does. The line is outside the E3 body and the E4 hash, and a merge does not copy it into the cover. -->
 
 ### E3 marker inventory
 
 <!-- Row format (CHUNKS): link the source filename and anchor, then a colon and the marker's question text, copied verbatim. One classification per distinct question/file; moving a marker requires updating its source pointer. Blocks E3 reads exactly `Yes` or `No: <reason>`: Yes names its dependent claim; No always gives the nonblocking reason. Claims/reasons require human source review. -->
 
-<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell copies the marker's question text (the text after `NEEDS CLARIFICATION: `) verbatim, never paraphrased or shortened, minus a trailing `Owner: ...` sentence, which goes in the Owner column; it adds no qualifier outside the row format (nothing between the link and the colon, and nothing after the question). Step 8b checks every row against its marker before the gate line is written (SKILL.md step 8b, E3). Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
+<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell copies the marker's question text (the text after `NEEDS CLARIFICATION: `) verbatim, never paraphrased or shortened, minus a trailing `Owner: ...` sentence, which goes in the Owner column; it adds no qualifier outside the row format (nothing between the link and the colon, and nothing after the question). Step 8b checks every row against its marker before the gate line is written (SKILL.md step 8b, E3). Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. The Dependent claim and Next action cells follow the use-case linking and keying rule: each use case is a link and each NFR carries its BRD key (`brd-to-sdd.md` § Use-case traceability, Checks, item 6). No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
 
 | Marker source / question | Owner | Dependent E2E claim / reference path | Blocks E3 / reason | Next action |
 |---|---|---|---|---|
@@ -76,6 +78,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 |---------|-------|-------|
 | 6. Ecosystem Overview (full tech stack table, incl. Architecture Doctrine: EDA + DDD + Hexagonal defaults) | [02-ecosystem-overview.md](./02-ecosystem-overview.md) | Implementation Constitution & Planned specs |
 | Ecosystem-level rules | [02-ecosystem-overview.md](./02-ecosystem-overview.md) | Implementation Constitution & Planned specs |
+| Integration landscape (each external system: owner, role, interface style, spec source; linked to §12) | [02-ecosystem-overview.md](./02-ecosystem-overview.md) | Integration planning |
 
 ## Actors & Use Cases
 
@@ -94,6 +97,8 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 | 8.3 High-Level Architecture Diagram | [04-architecture-style-and-diagrams.md](./04-architecture-style-and-diagrams.md) |
 | 8.4 Workflow Diagrams | [05-workflows-and-sequences.md](./05-workflows-and-sequences.md) |
 | 8.5 Sequence Diagrams | [05-workflows-and-sequences.md](./05-workflows-and-sequences.md) |
+| 8.6 Infrastructure Architecture (deployment topology, data stores, backup and disaster recovery, scaling) | [05a-infrastructure-and-network.md](./05a-infrastructure-and-network.md) |
+| 8.7 Network Architecture (zones, ingress, egress, TLS and mTLS, ports and protocols) | [05a-infrastructure-and-network.md](./05a-infrastructure-and-network.md) |
 
 ## Governance & Decisions
 
@@ -169,7 +174,7 @@ Each `13x` service chunk contains these sub-sections in order:
 | 18.2 Throughput Targets | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
 | 18.3 Peak Scenarios | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
 | 18.4 Stress Testing Strategy | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
-| 18.5 NFR Targets (each BRD NFR: technical target, where realised) | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
+| 18.5 NFR Targets (each BRD NFR: technical target, where realised; a recovery NFR's RPO and RTO: §8.6.4) | [14-performance-and-capacity.md](./14-performance-and-capacity.md) |
 | 19. Environments (Dev/SIT/UAT/Prod) | [15-environments.md](./15-environments.md) |
 | 20.1 Common Operations (runbook procedures) | [16-operations-runbook.md](./16-operations-runbook.md) |
 | 20.2 Diagnostics Cheatsheet | [16-operations-runbook.md](./16-operations-runbook.md) |
@@ -198,6 +203,14 @@ Each `13x` service chunk contains these sub-sections in order:
 
 > Chunk 19 is written last only when E1-E4 are met: no open/deferred OI or divergence; no unresolved value required by an E2E claim after following source references, regardless of marker location; final relevant sources reconciled with ordered evidence. Use the E3 inventory above and the external black-box exception. It consolidates chunks 02-13x, citing context/layers and adding fan-out/saga views. Link it once written; keep an already-current body after verifying its sources/gate.
 
+## Architecture Deck Brief (gated, on request)
+
+| Section | Chunk |
+|---------|-------|
+| Architecture deck brief (system design, infrastructure, network, and integration slides for a deck-generating agent; not an SDD section) | 20-for-ppt.md - [plain text until it exists; written only on request, once the e2e gate reads Open - Up to date] |
+
+> Chunk 20 is derived from chunks 00-19 and the E3 marker inventory above, and adds no requirement or design. It is written only on request, when the e2e gate reads `Open - Up to date` and chunk 19 exists (no override). It is never part of the merged or combined SDD, not an input to lld-unifier, outside the E3 body and the E4 hash, and never written in a light run. Its state is the **Deck brief (chunk 20)** line in Generation Progress, the same as the status line of the chunk. Link it once written.
+
 ---
 
 ## Chunk Dependency Graph
@@ -211,6 +224,7 @@ Each `13x` service chunk contains these sub-sections in order:
 +-- 03-users-and-use-cases.md ........... actors + use case diagram + use-case traceability (BRD -> SDD)
 +-- 04-architecture-style-and-diagrams.md architecture style + context + HLA
 +-- 05-workflows-and-sequences.md ....... end-to-end flows + sequence diagrams
++-- 05a-infrastructure-and-network.md ... infrastructure topology + network (where it runs, ingress, egress)
 +-- 06-principles-and-decisions.md ...... governance: principles + ADRs
 +-- 07-cross-cutting-concerns.md ........ platform defaults (DB, tenancy, deploy, observability, config)
 +-- 08-integrations.md .................. external system connections
@@ -226,6 +240,7 @@ Each `13x` service chunk contains these sub-sections in order:
 +-- 17-appendix-and-wishlist.md ......... references + future platform enhancements
 +-- 18-open-items-and-clarifications.md . reviewer findings with recommended answers (post-generation)
 +-- 19-e2e-system-design.md ............. end-to-end system map (gated: only after 18 is cleared; consolidates 02-13x)
++-- 20-for-ppt.md ....................... architecture deck brief (derived; only on request, once the e2e gate is open; not merged; not read by lld-unifier)
 ```
 
 ### Reading Order by Task
@@ -234,22 +249,24 @@ Each `13x` service chunk contains these sub-sections in order:
 |------------|-----------|------|
 | Understand the system | 19 (e2e, once written) | 01, 04, 02 |
 | Design a new service | 07, 02 | 10 (event contracts), 11 (API contracts), 13a (copy as template), 09 |
-| Review architecture | 04, 06 | 05, 07, 19 |
-| Add an integration | 08 | 11 (API contract), 13a (service integrations sub-section) |
+| Review architecture | 04, 06 | 05, 05a, 07, 19 |
+| Plan the infrastructure or the network (deployment, disaster recovery, ingress, egress) | 05a | 02 (ecosystem), 07 (deployment and security defaults), 08 (integrations), 15 (environments) |
+| Add an integration | 08 | 11 (API contract), 05a §8.7 (egress path), 13a (service integrations sub-section) |
 | Define DB schema | 07 (defaults) | 13a (DB Modeling sub-section) |
 | Add / change an event | 10 (registry first) | the producing + consuming 13x chunks, then 18 |
 | Define roles / permissions | 12 | 03, 11, the affected 13x chunks |
 | Plan capacity / NFRs | 14 | 15, 01 (risks) |
-| Write runbook procedures | 16 | 02 (ecosystem), 07 (observability) |
+| Write runbook procedures | 16 | 02 (ecosystem), 05a (topology, backup and disaster recovery), 07 (observability) |
 | Audit completeness | 00 (ToC) | all chunks sequentially |
 | Check cross-cutting standards | 07 | 06 (principles), 02 (ecosystem) |
 | Check contract consistency | 10 §14.8, 11 §15.5, 12 §16.12 | every 13x Event Model and List of APIs |
 | Complete an external API contract | 11 §15.6 | the provider documentation, then 11 §15.3 |
 | Map BRD use cases to services | 03 §7.3 (use-case traceability) | 09, then the owner's 13x chunk; each UC ID links to the use case in the BRD |
 | Feed speckit `/constitution` | ../lld-[lld-slug]/17-specs.md (LLD-owned, one per child LLD) | 02, 09 |
-| Steer `lld-unifier` (tech choices, contracts) | 02, 10, 11 | 09, 12; 00 § Document Lineage (Child LLDs) |
+| Steer `lld-unifier` (tech choices, contracts) | 02, 10, 11 | 09, 12, 05a (deployment topology); 00 § Document Lineage (Child LLDs) |
 | Find the LLD for a use case | 03 §7.3 (owner service) | 00 § Document Lineage, the Child LLDs row whose scope names that service |
 | Triage reviewer findings | 18 | the chunk(s) referenced by each open item |
+| Present the architecture (deck brief) | 20 (exists only once requested and the e2e gate is open) | 04, 05a, 08, 10, 11, 19 |
 
 ### Cross-Document Navigation (BRD <-> SDD)
 
@@ -262,6 +279,6 @@ Each `13x` service chunk contains these sub-sections in order:
 | [[KEY] 05 - User Journeys Overview](../brd-[brd-slug]/05-user-journeys-overview.md) | [sdd/03 §7.3 - Use Case Traceability](./03-users-and-use-cases.md), [sdd/09 - Services Summary](./09-services-summary.md) | Every BRD use case gets one §7.3 row and one owner service in 09 |
 | [[KEY] 06a - Use Cases: [Persona]](../brd-[brd-slug]/06a-use-cases-[persona-slug].md) | [sdd/03 §7.3 - Use Case Traceability](./03-users-and-use-cases.md), the owners' 13x chunks | UC main/exception flows become service business logic and error handling; each UC ID in the SDD links to its heading here |
 | [[KEY] 07 - Users & Use Cases Matrix](../brd-[brd-slug]/07-users-use-cases-matrix.md) | [sdd/12 - Centralized User Roles](./12-centralized-user-roles.md), [sdd/03 - Users & Use Cases](./03-users-and-use-cases.md) | Matrix drives the platform role catalogue and per-service authorization rules |
-| [[KEY] 08 - Integrations](../brd-[brd-slug]/08-integrations.md) | [sdd/08 - Integrations](./08-integrations.md), [sdd/11 - API Contracts](./11-api-contracts.md) | BRD names partners and purpose; SDD details protocol/auth/retries and the API contract (external ones `TBD - external` until the provider documentation is supplied) |
-| [[KEY] 10 - NFRs](../brd-[brd-slug]/10-nfrs.md) | [sdd/14 - Performance](./14-performance-and-capacity.md), [sdd/04 - Architecture](./04-architecture-style-and-diagrams.md) | Business expectations are quantified into technical targets and architecture drivers |
-| [[KEY] 12 - Appendix (Technical Inputs for the SDD)](../brd-[brd-slug]/12-appendix-and-wishlist.md) | [sdd/02 - Ecosystem](./02-ecosystem-overview.md) | Source technical mandates (parked verbatim in the BRD) seed the SDD ecosystem selection and override CLAUDE.md defaults |
+| [[KEY] 08 - Integrations](../brd-[brd-slug]/08-integrations.md) | [sdd/08 - Integrations](./08-integrations.md), [sdd/11 - API Contracts](./11-api-contracts.md), [sdd/05a §8.7 - Network](./05a-infrastructure-and-network.md#87-network-architecture) | BRD names partners and purpose; SDD details protocol/auth/retries and the API contract (external ones `TBD - external` until the provider documentation is supplied), and the egress path to each partner |
+| [[KEY] 10 - NFRs](../brd-[brd-slug]/10-nfrs.md) | [sdd/14 - Performance](./14-performance-and-capacity.md), [sdd/04 - Architecture](./04-architecture-style-and-diagrams.md), [sdd/05a §8.6 - Infrastructure](./05a-infrastructure-and-network.md#86-infrastructure-architecture) | Business expectations are quantified into technical targets and architecture drivers; availability, recovery, and data residency shape the infrastructure |
+| [[KEY] 12 - Appendix (Technical Inputs for the SDD)](../brd-[brd-slug]/12-appendix-and-wishlist.md) | [sdd/02 - Ecosystem](./02-ecosystem-overview.md), [sdd/05a §8.6 - Infrastructure](./05a-infrastructure-and-network.md#86-infrastructure-architecture) | Source technical mandates (parked verbatim in the BRD) seed the SDD ecosystem selection and override CLAUDE.md defaults; a hosting mandate places the infrastructure |

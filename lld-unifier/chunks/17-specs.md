@@ -5,7 +5,7 @@ PROJECT: [Project Name]
 VERSION: [X.X]
 DEPENDS_ON: the source SDD (§1 Executive Summary, §6 Ecosystem Overview, §13 Services Decomposition) and this LLD's 00-metadata.md / 03-architecture.md
 PART OF: LLD - [Project Name]
-PURPOSE: Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD (Mission from SDD §1, Tech Stack from SDD §6 with version pins, Roadmap from SDD §13 + BRD UC ownership) plus the Project Type recorded at SDD intake. Source of truth for speckit `/constitution`. Tone: short, precise, clear, simple. No narrative. No marketing.
+PURPOSE: Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD (Mission from SDD §1, Tech Stack from SDD §6 with version pins as the stack approval settled it, Roadmap from SDD §13 + BRD UC ownership) plus the Project Type recorded at SDD intake. Source of truth for speckit `/constitution`. Tone: short, precise, clear, simple. No narrative. No marketing.
 SPECKIT_NOTE: Sub-sections 1 (Mission), 2 (Tech Stack), and 3 (Roadmap) are intended as direct inputs for speckit's `/constitution`. Sub-section 4 (Project Type) documents the direction decision that shaped this LLD.
 LEGACY_NOTE: Older chains carried the Specs at the SDD (`../sdd-[sdd-slug]/15-specs.md` / `# 19. Specs`) or the BRD (`../brd-[brd-slug]/12-specs.md`). If a legacy Specs exists, it was consumed as input; this chunk is the canonical copy going forward.
 -->
@@ -33,10 +33,12 @@ Used directly by speckit /constitution.
 ## 2. Tech Stack
 
 <!--
-Consolidated from the SDD's §6 Ecosystem Overview - verbatim, with version pins - and cross-checked against this LLD's §6.3 Runtime Stack (they must agree; a mismatch is drift to flag, not to hide).
+Consolidated from the stack SKILL.md step 3a settled: the SDD's §6 Ecosystem Overview, verbatim with version pins, and this LLD's approved overrides. Cross-checked against this LLD's §6.3 Runtime Stack (they must agree; a mismatch is drift to flag, not to hide; an approved override is no mismatch).
+An overridden bullet ends with `(override of SDD §6; see the decision log)` while the override is Active or Raised in SDD vX.X (Proposed) (SKILL.md step 3a).
+A tier whose SDD §6 row is a proposal (Status `Proposed`, or a legacy row whose Notes mark it Proposed) keeps the label `(Proposed in SDD §6)`.
 One bullet per tier, language + framework + key version.
 If a tier is not applicable to this product, write "Not applicable." - do not delete the row.
-A version pin missing from the resolved stack is never asked for: write the tier without it and point to the §6.3 `> TODO:` that routes it to SDD §6 (SKILL.md step 6b).
+A version pin missing from the settled stack is never asked for: write the tier without it and point to the §6.3 `> TODO:` that routes it to SDD §6 (SKILL.md step 6b).
 From-code direction (no SDD): read from the actual dependency manifests (high confidence).
 Used by speckit /constitution AND by pattern-rules.md for stack-appropriate pattern selection.
 -->
@@ -71,7 +73,7 @@ Used by speckit /constitution to set ordering expectations and by execution agen
 ## 4. Project Type
 
 <!--
-Pick exactly one. Recorded at SDD intake (SDD §1) or asked at LLD intake if absent. The choice gated the LLD direction decision (greenfield -> from-sdd; brownfield -> from-code / hybrid) - see transform-detection.md.
+Pick exactly one. Recorded at SDD intake (SDD §1), or already recorded here on an existing LLD; asked at LLD intake only if neither has it (SKILL.md step 3a). The choice gated the LLD direction decision (greenfield -> from-sdd; brownfield -> from-code / hybrid) - see transform-detection.md.
 -->
 
 - [ ] **Greenfield** - new product, no pre-existing codebase to honour.

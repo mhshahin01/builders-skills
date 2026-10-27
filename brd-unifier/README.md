@@ -87,6 +87,7 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 | `transform-detection.md` | Rules for deciding generate vs transform |
 | `sow-transformation.md` | Mapping SoW or existing-BRD content into the template |
 | `mermaid-diagrams.md` | Inline Mermaid conventions for every diagram, plus the Miro-on-demand flow |
+| `mermaid-syntax.md` | Mermaid syntax cheatsheet for the five dialects; a shared file (line 1 names its copies) |
 | `use-case-quality.md` | The bar for a substantive use case, flowchart quality, matrix consistency rules |
 | `writing-style.md` | The plain-language style: rules, word list, and the mandatory plain-language pass |
 | `decision-log.md` | The companion decision register: what belongs there, its structure, the companion-file rules |

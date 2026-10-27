@@ -65,7 +65,7 @@ For each clarification marker added, ask one independently answerable question. 
      design values; where the link matters, the BRD's `decision-log.md`
      records it.
    - The lineage rows, the owner's own open items (`OI-NN`, `TD-NN`), the
-     gated chunks (BRD 15-17, SDD 19), and the BRD's use-case diagrams and
+     gated chunks (BRD 15-17, SDD 19, SDD 20, LLD 19), and the BRD's use-case diagrams and
      flowcharts (to-do step 5) belong to the owning skill. Their owners
      update them after the hand-off (§ Hand-off); the review only sets a
      gated chunk's Stale mark (rule 7). The decision record names the
@@ -163,6 +163,11 @@ For each clarification marker added, ask one independently answerable question. 
        (brd-unifier's `delivery-chunks.md` § The delivery gate, Re-lock).
      - SDD 19: the E2E gate line in the master, or in the cover of a
        combined SDD; chunk 19 itself is not touched.
+     - SDD 20 (deck brief): the chunk's status line and the master's Deck
+       brief (chunk 20) line, marked Stale; the slides are never rewritten,
+       and the chunk's version is not bumped. It is never named in a
+       `Chunks:` list. LLD 19 follows the same rule through the LLD's own
+       refresh, since the review never edits an LLD.
 
 ## Verify (after all points are closed)
 
@@ -284,7 +289,7 @@ did not change; write `None` when no document changed.
    cases, or screens changed. It is one update with one version. A
    plain run finds the same changes through that check.
 
-Gated chunks (BRD 15-17, SDD 19) refresh through their owners once their
+Gated chunks (BRD 15-17, SDD 19, SDD 20, LLD 19) refresh through their owners once their
 gates are open again. They are a note in the close-out, not a hand-off row.
 
 Each row starts as `To run`. A hand-off row is `Done` when the user said it

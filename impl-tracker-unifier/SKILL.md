@@ -16,7 +16,7 @@ description: >-
 
 # Implementation Tracker
 
-The sixth stage of the documentation chain:
+The seventh stage of the documentation chain:
 
     SoW → BRD → Pre-SDD → SDD → LLD → **impl-tracker** → code
 

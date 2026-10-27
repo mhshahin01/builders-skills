@@ -1,6 +1,6 @@
 # impl-tracker-unifier
 
-Stage 6 of the suite: tracks implementation against the BRD, SDD and LLD. Entry point: [SKILL.md](SKILL.md). Below are the design decisions behind it.
+Stage 7 of the suite: tracks implementation against the BRD, SDD and LLD. Entry point: [SKILL.md](SKILL.md). Below are the design decisions behind it.
 
 ## Where it sits in the chain
 
@@ -16,7 +16,7 @@ flowchart LR
     trk -.-> lld
 ```
 
-**Summary:** the tracker is the sixth stage. It reads the BRD, SDD and LLD, never edits them, and owns
+**Summary:** the tracker is the seventh stage. It reads the BRD, SDD and LLD, never edits them, and owns
 only `./tracking/`. Gaps it finds in the docs go back to the owning skill as gap rows, the same way the
 review panel hands points to the authoring skills.
 

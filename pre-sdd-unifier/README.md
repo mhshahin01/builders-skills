@@ -148,7 +148,7 @@ node --test "<skill>/studio/tests/*.test.mjs"
 - **Quote the glob.** A bare directory argument fails on Node.js 24.14.0.
 - **Python.** The schema and validator tests run Python through `tests/pyschema.mjs`: `py -3 -I` on Windows, `python3 -I` elsewhere, with the `jsonschema` package. When Python is not found, those checks skip with a message saying so.
 - **Every test passes `now`** as a UTC ISO string. Test names follow `methodName_scenario_expectedResult`.
-- On 2026-10-27 the suite ran 465 tests, all passing, on Node.js 24.22.1. The skill's documents say "tested with Node.js 24.14.0".
+- On 2026-10-27 the suite ran 474 tests, all passing, on Node.js 24.22.1. The skill's documents say "tested with Node.js 24.14.0".
 - The suite has no browser test. The page was checked by hand on 2026-10-27 in headless Chrome with a scratch profile (13 checks, all passing, from the embedded load to the save, `validate --pick`, `unwrap`, and `diff`), recorded in `tests/MANUAL-CHECK.md`. Firefox and Edge are left to the owner.
 
 | Test file | Covers |

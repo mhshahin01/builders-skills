@@ -1,6 +1,6 @@
 # LLD Unifier
 
-The detailed-design stage of the suite: authors, transforms, or unifies a Low-Level Design (LLD) for the services of an SDD (by default all of them, one `04-implementation/` file per service, or per module in a modular monolith) into the user's standard template (stage 4, Detailed design). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
+The detailed-design stage of the suite: authors, transforms, or unifies a Low-Level Design (LLD) for the services of an SDD (by default all of them, one `04-implementation/` file per service, or per module in a modular monolith) into the user's standard template (stage 5, Detailed design). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
 
 ---
 

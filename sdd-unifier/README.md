@@ -1,6 +1,6 @@
 # SDD Unifier
 
-The solution design skill: it generates, transforms, or derives a Solution Design Document (SDD) into the house template, owning the entire technical HOW (stage 3 of the lifecycle). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
+The solution design skill: it generates, transforms, or derives a Solution Design Document (SDD) into the house template, owning the entire technical HOW (stage 4 of the lifecycle). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
 
 ---
 

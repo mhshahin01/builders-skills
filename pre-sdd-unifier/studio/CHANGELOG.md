@@ -2,7 +2,75 @@
 
 ## 3.0.0 (in progress)
 
-- Imported the Studio v2.2 sources, blueprint schema, handoff validator, and the two v2.2 example exports as the starting point and as golden test data. Details are in the next section.
+- Imported the Studio v2.2 sources, blueprint schema, handoff validator, and the two v2.2 example exports as the starting point and as golden test data. Details are in the section "Imported from Studio v2.2" below.
+- Palette tokens: every colour in `src/style.css` now lives in a `:root` token (116 new, 126 in all after Task 3.5 removed one unused token) and rules use `var(--token)`. Text colours are `--fg-*`, backgrounds `--fill-*` and borders `--border-*`, plus `--mast-start`, `--mast-mid`, `--mast-end`, `--focus`, `--focus-on-dark` and `--shadow-toast`. Values are unchanged except in the contrast, focus ring and hover fixes below, and no selector, layout or size changed apart from one added focus rule for masthead buttons. `--teal` (`#0c8286`) and `--dark` (`#0c2138`) are as before.
+- Palette tests: `tests/style.test.mjs` fails on a colour literal outside `:root`, on a text pair under 4.5:1, on a missing key colour and on an undefined `var()`. Text with no background of its own is measured against every page and panel surface (12 today, `--bg` and white included), text on the masthead against every stop of its gradient, and the palette text tokens against white and `--bg`. Text in a `:hover`, `:active` or `:focus` state is measured against that state's background and the surfaces beneath it at 4.5:1, and focus ring colours against the 12 panels and the masthead stops at 3:1.
+- Contrast fix: darkened `--amber` from `#a66a1e` to `#a5691e` (lowest ratio 4.47:1 on `#ffffff`, now 4.53:1 on `#ffffff`).
+- Contrast fix: darkened `--muted` from `#64758b` to `#607085` (lowest ratio 4.19:1 on `#e6f5f1`, now 4.50:1 on `#e6f5f1`; on `--bg` it was 4.34:1 and is now 4.66:1).
+- Contrast fix: darkened `--fg-placeholder` from `#9aaabc` to `#656f7b` (lowest ratio 2.11:1 on `#e6f5f1`, now 4.55:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-note` from `#697d8f` to `#5e7081` (lowest ratio 3.79:1 on `#e6f5f1`, now 4.55:1 on `#e6f5f1`; on white it was 4.26:1 and is now 5.11:1).
+- Contrast fix: darkened `--fg-metric-label` from `#5c7187` to `#5c7086` (lowest ratio 4.49:1 on `#e6f5f1`, now 4.54:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-metric-sub` from `#7a8b99` to `#63707c` (lowest ratio 3.13:1 on `#e6f5f1`, now 4.52:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-pattern-micro` from `#167f81` to `#157a7c` (lowest ratio 4.26:1 on `#e6f5f1`, now 4.55:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-rule-id` from `#718495` to `#60707f` (lowest ratio 3.44:1 on `#e6f5f1`, now 4.54:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-ladder-note` from `#678096` to `#5b7185` (lowest ratio 3.66:1 on `#e6f5f1`, now 4.51:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-dr-th` from `#60768b` to `#5c7085` (lowest ratio 4.19:1 on `#e6f5f1`, now 4.55:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-tab` from `#5c748a` to `#5a7187` (lowest ratio 4.33:1 on `#e6f5f1`, now 4.51:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-service-cat` from `#0d8086` to `#0c7a80` (lowest ratio 4.20:1 on `#e6f5f1`, now 4.55:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-service-trade` from `#697b90` to `#607084` (lowest ratio 3.87:1 on `#e6f5f1`, now 4.51:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-readiness-mini` from `#6e8091` to `#61707f` (lowest ratio 3.62:1 on `#e6f5f1`, now 4.52:1 on `#e6f5f1`).
+- Contrast fix: darkened `--fg-footer` from `#8b9aab` to `#656f7c` (lowest ratio 2.56:1 on `#e6f5f1`, now 4.54:1 on `#e6f5f1`).
+- Focus ring: `--focus` from `#66bfca` to the key colour `#0c8286` (was 1.89:1 on the darkest panel `#e6f5f1` and 2.13:1 on white, now 4.11:1 and 4.61:1; 3:1 is the WCAG 1.4.11 minimum). New `--focus-on-dark` `#7fcad3` and one new rule, `.mast button:focus-visible{outline-color:var(--focus-on-dark)}`, give masthead buttons a ring that clears 3:1 on every masthead stop.
+- Masthead end colour: `--mast-end` from `#0b7378` to `#0a6a6f` so that white text on the ghost buttons clears 4.5:1 at the lightest stop in both states (ghost default 4.61:1 to 5.12:1).
+- Ghost hover: `--fill-ghost-hover` from `rgba(255,255,255,.2)` to `rgba(255,255,255,.15)` (white text over the lightest masthead stop was 3.79:1, now 4.60:1).
+- Masthead tints kept: `--fg-mast-eyebrow` stays `#a6eee0` and `--fg-mast-text` stays `#c9e1eb`, because they pass 4.5:1 on every stop of the darker gradient (4.82:1 and 4.68:1 at the end stop). The earlier lightening of both is withdrawn.
+- Focus ring on panels: `[role=tabpanel]:focus-visible` and `[tabindex="0"]:focus-visible` join the `--focus` ring rule, so the stage 2 register panel shows the same 3px ring as every other control.
+- Removed with the v2.2 controls: `.mini-actions` from the button group rule, the `.text-button` rules and their token `--fg-text-button` (126 tokens now).
+
+### Versions and formats
+
+- Engine and Studio 3.0.0, skill 1.0.0: `ENGINE_VERSION` and `SKILL_VERSION` in `src/engine.js`, stamped into the blueprint's `sources.engine` and `sources.skill`.
+- Project state schema 3.0.0 (new, `schema/project-state.schema.json`, generated from the engine): the 70-item register with entries is a breaking change to the project file.
+- Blueprint schema 2.0.0 (`schema/architecture-blueprint.schema.json`, generated from the engine): per-role sign-offs, G3-driven governance, and no unknown fields in any object.
+- Save file (new): kind `pre-sdd-save`, the project state and the blueprint computed at the same UTC time, named `pre-sdd-<slug>-state-<UTC stamp>.json`.
+
+### Fixed in the move (design section 6.5)
+
+- The authority text and the preview manifest flags say the Pre-SDD is locked for the SDD once G3 is signed, and that the SDD raises an open item instead of changing a locked item.
+- `gate_status` and `authorized_to_start_sdd` follow G3, instead of always reading provisional and false.
+- A BRD is named by a checked key with its path and version (`--brd KEY=path@version`), so the blueprint's BRD sources always pass the schema; a v2.2 file's BRD reference comes in as an unknown for a person to close.
+- The tenant model is register item DAT-07, with five isolation levels; it lands in SDD Q7 and section 11, and a v2.2 tenant model maps to it on import.
+- The hard-coded hash of `sdd-unifier/SKILL.md` is gone: the blueprint carries the engine and skill versions instead.
+- `Confirmed` needs who and when: the state gate reads a `Confirmed` value without them as `Estimated`, and every Studio v2.2 value comes in as `Estimated`.
+- The rule numbers SEC-11 and DB-READ-11 no longer collide (see the rule renames below).
+- Saved file names carry the project slug and a UTC stamp: the save file, and the preview ZIP `pre-sdd-<slug>-preview-<UTC stamp>.zip`.
+- The provider view opens on the logical view on every load, and AWS, Azure, GCP and On-premises are labelled illustration only, in the page and in the preview.
+
+### Rule renames
+
+- Rule `CAP-04` (workload-based capacity planning) is renamed `LOAD-04`, so `PSDD/CAP-04` always means the register item.
+- Rule `DB-READ-11` is renamed `DB-READ-17`; `SEC-11` keeps its number.
+- `RULE_RENAMES` in the engine maps both old IDs, and the test `ruleIds_neverEqualItemIds` keeps rule IDs and item IDs apart.
+
+### Studio 3.0 page
+
+- Stage 1 shows the 13 discovery rows; stage 2 shows one group at a time, the rows that need an answer first.
+- Stage 3 (assess): the metrics, the calculations, the DR strategy per failure scope, the target shape and its conflicts, the diagrams, the options with costs, scores, weights and TCO, and the migration overlay when it applies.
+- Stage 4 (confirm and decide): one confirm per group for every `Estimated` value, the overrides and the chosen option, the validation, and the gate with a read-only sign-off register and G3 checklist.
+- Every answer needs the person's name and is recorded under it through `applyPatch`; a field is checked on blur, and the message says how to fix it.
+- Embedded state: the page opens filled from the project state `cli.mjs embed` writes, through the state gate, at the stage and group the state names; a state it cannot read opens a blank project with the engine's messages.
+- Import reads a save file, a 3.0 project state, a preview ZIP (its `project-state.json`), or a Studio v2.2 project file or ZIP; a blueprint is refused with what to load instead, and a failed import changes nothing.
+- A Studio v2.2 import, and the example picker, run the engine's `importForPage`, the same sequence as `cli.mjs new --import`, so the page and the CLI give the same register.
+- Save writes the save file; the skill picks it up with `validate --pick` and `unwrap`, and `diff` finds no difference between the page's blueprint and the CLI's.
+- The preview ZIP holds 13 files, a manifest with `preview_only: true` and `pre_sdd_of_record: false`, and its buttons and toast say "Preview, not the Pre-SDD of record".
+- The v2.2 layer is removed from the engine: `validate`, `blueprint`, `markdownReport`, `runBrief`, `modelV22`, `projectStateV22` and `exportFiles`, with the v2.2 ZIP, Markdown, run brief and project JSON controls.
+- New engine exports for the page: `importForPage`, `registerView`, `stageBlock`, `fieldError`, `optionStatus` and `signoffRecords`, so the page copies no engine rule.
+- `applyPatch` refuses every value `fieldError` refuses, for every actor, with the same text, enum rows included ("Choose one of ...").
+- The manual check (`tests/MANUAL-CHECK.md`) passed 13 of 13 in headless Chrome on 2026-10-27; Firefox and Edge are left to the owner.
+
+### Known limitation
+
+- A zero RTO on `az` beside a remote failure scope over-reports `CONFLICT-zeroRTO-topology@az`; a topology override of `active`, or a relaxed `az` RTO, clears it (accepted by the owner at stop C2).
 
 ### Builder decisions (Phase 2)
 
@@ -41,7 +109,7 @@ SHA-256 of each original. Each copy of a source file has the same hash. The firs
 |---|---|---|---|
 | `source/app.js` | `src/app.js` | 116754 | `5a8baeddf20d51ff8c6a27add82a68478d231338b7475495ba87aa0846cf8729` |
 | `source/shell.html` | `src/shell.html` | 20561 | `1d8951f497475ac017f0ae7ce117685665f8a78bc69ff69124bde2d6b0eb5506` |
-| `source/style.css` | `src/style.css` | 13949 | `58296c9141f54a4edbbe8072a5db66eb2a18e0406f94cf32d3678282b68f359d` |
+| `source/style.css` | `src/style.css` (rewritten by Task 3.1, no longer equal to the original) | 13949 | `58296c9141f54a4edbbe8072a5db66eb2a18e0406f94cf32d3678282b68f359d` |
 | `architecture-blueprint.schema.json` | `schema/architecture-blueprint.schema.json` | 21722 | `6bc2386443fd162dc6aff18d82e087d783dd755b1a887742b970a37d19871953` |
 | `validate_handoff.py` | `validate_handoff.py` | 6944 | `2a99d635cdb1301bcb1839b079248c6bbba0afcc2fc3d595e624350e1347524a` |
 | `Example_Regional_Zero_RTO_RPO_Handoff.zip` | extracted to `tests/golden/regional-zero/` | 164976 | `c287bd3a209638180cf875ac51306feb009a7fddd430dd41a8ad3f94efe75c5f` |

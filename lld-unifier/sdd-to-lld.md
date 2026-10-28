@@ -216,7 +216,7 @@ The update ends with the delta review (SKILL.md step 7, On an update), the accep
 
 ## SDD lineage (Child LLDs)
 
-Every LLD that reads an SDD registers in it (SKILL.md step 6c): from-sdd, hybrid, partial, and from-code when an SDD path is given, whether or not the SDD has a source BRD. When the SDD has § Document Lineage with a Child LLDs table (chunk 00 `## Document Lineage` > `### Child LLDs (children)`, or the same section in the cover of a combined SDD), this LLD adds its own row there on the first run, or updates that row on a later run, matched by Link. It never touches other rows. It writes nothing else into the SDD: this is the only write outside the LLD folder. An SDD without that table (written before it existed) gets no row. For such an SDD, the handoff suggests upgrading it through sdd-unifier.
+Every LLD that reads an SDD registers in it (SKILL.md step 6c): from-sdd, hybrid, partial, and from-code when an SDD path is given, whether or not the SDD has a source BRD. When the SDD has § Document Lineage with a Child LLDs table (chunk 00 `## Document Lineage` > `### Child LLDs (children)`, or the same section in the cover of a combined SDD), this LLD adds its own row there on the first run, or updates that row on a later run, matched by Link. It never touches other rows. It writes nothing else into the SDD: this is the only write into another skill's document. An SDD without that table (written before it existed) gets no row. For such an SDD, the handoff suggests upgrading it through sdd-unifier.
 
 | Column | Value |
 |---|---|

@@ -20,7 +20,7 @@ flowchart LR
 only `./tracking/`. A doc problem nobody has decided yet goes back to the owning skill as a gap row, the same way the
 review panel hands points to the authoring skills. A change that is decided runs the owning skills in chain order in the same change, before its code reaches In review: up the chain when it starts at the code or the LLD, down the chain when it starts at the BRD, and both ways when it starts at the SDD (up to the BRD when a business rule changes, down to each child LLD), and always ending with the tracker's own `sync` (and `plan` for new scope). See `SKILL.md` § Documents chain.
 The tracker also writes its own row on the shared status board, `unifier-status.md` in the docs root, through
-the `Board` path that `init` records in `tracking/config.md`. It also raises a handoff request on the board for each doc gap it routes to an owning skill (`SKILL.md` § The tracker's board row).
+the `Board` path that `init` records in `tracking/config.md`. It also raises a handoff request on the board for each doc gap it routes to an owning skill (`SKILL.md` § The tracker's board row). The owner's result comes back on that request: a version closes the gap, `No change` turns it into `code-drift`, and Declined sends it to the named owner.
 
 ## Why a custom skill instead of Spec Kit / Task Master / Backlog.md
 

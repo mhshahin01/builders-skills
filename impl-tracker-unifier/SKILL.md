@@ -338,7 +338,7 @@ Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, an
 Follow `gap-rules.md`: classify type and severity, link to task/UC/doc anchor, route the owner
 (code fix → new task; doc fix → the owning skill, run in the same change once the fix is decided: § Documents
 chain), write to `gaps.md`; for each doc gap routed to an owner, raise a handoff request on the board
-(§ The tracker's board row). Closing needs evidence. Closing a gap of
+(§ The tracker's board row gives its form and how the owner's result decides the gap). Closing needs evidence. Closing a gap of
 type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code → capture its lesson.
 
 ### standup
@@ -447,7 +447,7 @@ The tracker runs in the code repo, and the status board lives in the docs root.
 
 - **Path:** `<docs root>/unifier-status.md`, taken from the `Board` row `init` records in `tracking/config.md`. The docs root may differ from the folder holding the hop folders; the tracker then uses the recorded path as written.
 - **Its row:** the tracker writes only the row whose Skill cell is `impl-tracker-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
-- **Requests:** for each doc gap it routes to an owner (brd-unifier, sdd-unifier, lld-unifier), it raises a handoff request on the board and links the gap row. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
+- **Requests:** for each doc gap it routes to an owner (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), it raises one handoff request on the board, `Doc gap <KEY>/GAP-NNN: <question>`, with the gap row as Link, and reuses its pending request on the same gap. The owner's result decides the gap: Done with a version closes it with that version, and the baseline move is a chain hop (§ Documents chain); Done with `No change` re-classifies it as `code-drift` with a fix task; Declined routes it to the named owner with a new request. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
 - **Missing file:** when the recorded path is reachable but `unifier-status.md` does not exist there, the tracker creates the board from the template in the Status board section below, as that section says the first skill to run does, then writes its row.
 - **Unreachable path:** when the recorded path cannot be reached or written, the tracker skips the board update and says so in a note in its reply; the run goes on.
 

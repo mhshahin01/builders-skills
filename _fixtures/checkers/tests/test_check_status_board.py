@@ -120,6 +120,16 @@ class CheckStatusBoard(unittest.TestCase):
             self.assertIn('| ' + state + ' |', text)
         self.assertEqual(self.check(text), [])
 
+    def test_check_tracker_doc_gap_request_done_pass(self):
+        row = ('| HR-001 | Developer / software engineer | Tech Lead | Doc gap KEY/GAP-001: which retry limit applies '
+               '| The LLD is silent | 2026-10-28 09:00 | Done | 2026-10-28 11:30 | tracking/gaps.md#KEY/GAP-001 |')
+        self.assertEqual(self.check(board(requests=[row])), [])
+
+    def test_check_tracker_doc_gap_request_declined_pass(self):
+        row = ('| HR-001 | Developer / software engineer | Tech Lead | Doc gap KEY/GAP-001: which retry limit applies '
+               '| The LLD is silent | 2026-10-28 09:00 | Declined | 2026-10-28 10:15 | tracking/gaps.md#KEY/GAP-001 |')
+        self.assertEqual(self.check(board(requests=[row])), [])
+
     def test_check_board_team_mode_pass(self):
         self.assertEqual(self.check(board(mode='Run mode: team')), [])
 

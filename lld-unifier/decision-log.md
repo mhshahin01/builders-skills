@@ -28,7 +28,7 @@ This file is the reference for the log: its structure and its rules. The log the
 | An open question (15 § 18.4), a flag, or a question the run asked outside chunk 18 (the Project Type, the Roadmap grouping, a one-time offer the user declines) is answered | Clarification register, one entry per decision |
 | An answer policy or another standing instruction answers for the first time | Delegation history |
 | The user gives a design instruction with no question behind it | Delegation history, Direct design instructions |
-| A decided change from the tracker is applied (`Decided change <KEY>/CHG-NNN`, or the tracker's in-session hop: SKILL.md step 9) | Delegation history, Direct design instructions, with the CHG ID as its Source and the CHG decider quote as the decision |
+| A decided change from the tracker is applied (`Decided change <KEY>/CHG-NNN`, or the tracker's doc worker in `solo` run mode: SKILL.md step 9) | Delegation history, Direct design instructions, with the CHG ID as its Source and the CHG decider quote as the decision |
 
 Which items get no register entry, and so keep only their chunk 18 entry, is stated in SKILL.md step 7a, item 7.
 

@@ -42,6 +42,46 @@ Prefer `paths:` over `always`, so a suite runs only when its own code changed; `
 deletes each suite's `Reports` matches before its run). Split independent projects (two Angular apps) into
 their own rows so they run side by side.
 
+## Always-run tests
+
+Run by `preflight.py --quick` (and first in the full pre-flight) with the task's own test classes, the test
+classes that name a table the task's migrations write (P16), and the covering tests of its changed classes:
+cross-cutting rules a task can break without touching their files (module/architecture rules, schema version
+gates, full table or index lists). List here only what those three cannot find.
+
+| Test class | Why |
+|---|---|
+| <e.g. ModuleArchitectureTest> | <module and adapter boundaries> |
+
+## Mutation suites
+
+| Suite | Command | Report | Path prefix | Ext | Exclude |
+|---|---|---|---|---|---|
+| backend | <e.g. cd api && mvn -B -q test-compile org.pitest:pitest-maven:mutationCoverage -DtargetClasses={classes} -DoutputFormats=XML -DtimestampedReports=false -Dthreads=4> | <e.g. api/target/pit-reports/mutations.xml> | api/src/main/ | .java | <optional globs, e.g. `*Constants.java`> |
+| frontend | <e.g. cd web && npx stryker run --mutate {files} --reporters json> | <e.g. web/reports/mutation/mutation.json> | web/ | .ts | <optional globs, e.g. `*-constants.ts`> |
+
+Pre-flight P10 runs these after the test suites pass, **only on the task's changed production files**
+(`{classes}` = Java class names, `{files}` = paths relative to the prefix), so a run takes minutes, not an
+audit round. A mutant that survives fails P10 unless the card's `## Equivalent mutants` lists its
+`File.ext:line` with a reason. Quote the line's code in a second backtick group (P10 prints it): the
+entry then also matches after the line moves, so an edit above it never forces a rerun. `--mutate` runs
+the same suites locally on the task's own tests first (minutes, L-060). The full P10 targets the covering
+tests (the task's tests, tests naming a changed class or its interfaces, tests in its package); survivors
+are re-checked against the suite default for their classes only (Spring beans and constructors run only
+while a context starts), so a run takes minutes. This replaces the hand sweep (L-046): the builder fixes survivors before the
+audit; the auditor reads the report. PIT needs the `pitest-maven` plugin with `pitest-junit5-plugin` in
+the pom; Stryker needs `@stryker-mutator/core` and its runner. No table → P10 is INFO (not checked).
+
+What P10 skips (L-054); everything else still needs a killing test or a reasoned card line:
+- **Files with no logic** are never mutated: `*-options.ts`, `*.routes.ts`, `guides.ts`, `index.ts`, tool
+  configs, plus the suite's `Exclude` globs (comma-separated, matched on the file name or the path).
+- **Starting values (auto):** a surviving BooleanLiteral, ArrayDeclaration or ObjectLiteral mutant on a field or
+  constant declaration line (`readonly x = signal(false)`, `o = { … }`, `private y: T | null = null`), and a
+  StringLiteral there only inside `signal(…)`, `model(…)` or `input(…)`. The P10 row lists them as
+  `auto (initial values, L-054): file:line mutator` so the auditor still sees them; they never fail P10.
+- **Still checked:** number literals (limits), constant strings (UI messages), `computed(…)` and arrow-function
+  fields, and every condition, call, return and statement in components, services and pages.
+
 ## Verify worktree
 
 | Item | Value |
@@ -66,6 +106,16 @@ Copy `tracking/<KEY>/preflight/<T-NNN>-<sha>.md` back into the main tracking fol
 |---|---|
 | Push after Done | ask, or `auto (user: "<quote>", <date>)`: push once after each wave's last Done task, only when `--push-check` passes |
 
+## Doc updates (doc-impact-rules.md § 4)
+
+| Item | Value |
+|---|---|
+| LLD | auto |
+| SDD | auto |
+| BRD | ask, or `auto (user: "<quote>", <date>)` |
+| SoW | ask |
+| Docs repo | ../acme-platform (the worker commits there with `Docs: KEY/DU-NNN`; never pushes) |
+
 ## Slices (slice mode only)
 
 | Key | Order | Current |
@@ -87,7 +137,7 @@ value means ask.
 | AUTOAPPLY | features/job-manager/brd-acme-autoapply/acme-autoapply-brd-master.md | tech/sdd-acme-platform/03-users-and-use-cases.md#73-… | tech/lld-acme-autoapply/acme-autoapply-lld-master.md | tech/lld-acme-autoapply/04-implementation/autoapply.md | v1.3 / vX / v1.4 | layer |
 ~~~
 
-## `tracking/index.md` (generated, one line per task)
+## `tracking/index.md` (generated - one line per task)
 
 ~~~markdown
 | ID | Title | Phase | Slice | Layer | Status | depends_on | UC | Agent | Updated |
@@ -101,7 +151,7 @@ Slice is `-` for keys in layer mode. In slice mode, a second table follows: `| S
 ## Task card `tracking/AUTOAPPLY/tasks/T-014-routing-service-route.md`
 
 ~~~markdown
-# AUTOAPPLY/T-014: RoutingServiceImpl.route (Review mode)
+# AUTOAPPLY/T-014 - RoutingServiceImpl.route (Review mode)
 
 | Field | Value |
 |---|---|
@@ -131,14 +181,14 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 ## Why this way
 - Chain of Responsibility because the LLD fixes filter order and each filter can stop routing (LLD 7.4).
 - Hybrid/Auto branches are **not** built here: they ship in P5/P6 behind the per-mode release switch
-  (LLD 17-specs Roadmap); building them now would be built twice.
+  (LLD 17-specs Roadmap) - building them now would be built twice.
 
 ## Owns
 - class `RoutingServiceImpl`, interface `RoutingService`
 - file `autoapply/src/main/java/.../routing/RoutingServiceImpl.java`
 
 ## Touches (files outside Owns this task may change, with the reason)
-- `autoapply-api/pom.xml`: adds the AWS SDK dependency this task needs
+- `autoapply-api/pom.xml` - adds the AWS SDK dependency this task needs
 
 ## Definition of done
 - [ ] Owned items exist; ArchUnit rules pass
@@ -146,11 +196,30 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 - [ ] Commit(s) carry `Task: AUTOAPPLY/T-014`
 
 ## Tests
-- `route_hybridScoreEqualsThreshold_approves`: AUTOAPPLY/UC-23 AC (LLD 16.2)
-- `route_reviewQueueFull_doesNotKeepMatch`: AUTOAPPLY/UC-23 A1
+- `route_hybridScoreEqualsThreshold_approves` - AUTOAPPLY/UC-23 AC (LLD 16.2)
+- `route_reviewQueueFull_doesNotKeepMatch` - AUTOAPPLY/UC-23 A1
 
 ## Lessons that apply (filled by start)
-- L-004: Always add a migration with any entity field change. Check: diff has `db/migration/V*.sql`
+- [L-004](../../lessons.md#l-004) - links only; the rule and Check live in lessons.md (never copied, so never stale)
+
+## Template bindings (P11: each behaviour binding this task adds to an .html template)
+- `[disabled]="busy()"` → `disablesSaveWhileSaving`
+- `(click)="pickOpen.set(true)"` → `opensPickerOnPick`
+
+## Removals (risk high: every Design check guard, tagged with its invariant; run `preflight.py --removals`)
+- `api/src/main/java/.../RoutingServiceImpl.java` `requireOwner(account, offer);` → `RoutingServiceTest#refusesAnotherAccountsOffer` (I1)
+- `api/src/main/java/.../OfferJob.java` `ON CONFLICT (day) DO NOTHING` → `OfferJobIT#twoRunsAtOnceTheSecondSendsNothing` (I4)
+- I6: no guard line: kept by absence (the job writes no other table; diff review)
+
+Every `I<n>` of the Design check has a tagged guard or a `no guard line: <reason>` bullet (P14). The named
+test is the one that exercises the invariant: for a race or at-most-once rule, the interleaving test, never a
+neighbour test that happens to fail.
+
+## Equivalent mutants (only if P10 reports survivors that no test can kill)
+- `RoutingServiceImpl.java:42` `if (score >= threshold) {` ConditionalsBoundary - `>=` and `>` give the same result: the value is never equal here
+
+## Doc updates (DUs this task raised; P15)
+- [AUTOAPPLY/DU-004](../../doc-updates.md#autoapplydu-004) - LLD 7.3 tie-break rule (fill-silence, LLD, Verified)
 
 ## Evidence (filled by done/verify)
 | Date | Agent | Commits | Tests | Audit | Note |
@@ -196,7 +265,7 @@ flowchart LR
 ## Slice card `tracking/PLATFORM/slices/S-01-create-account-and-sign-in.md`
 
 ~~~markdown
-# PLATFORM/S-01: Create account and sign in, end to end
+# PLATFORM/S-01 - Create account and sign in, end to end
 
 | Field | Value |
 |---|---|
@@ -225,7 +294,7 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ## `tracking/journal/report-2026-10-21.md` (report)
 
 ~~~markdown
-# Delivery report: 2026-10-21
+# Delivery report - 2026-10-21
 
 **Delivered:** Create account and sign in (2026-10-21): a new visitor creates an account, verifies and signs in.
 **In progress:** Admin portal: first Super Admin and admin sign-in (3 of 5 tasks done).
@@ -238,8 +307,19 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ~~~markdown
 | ID | Type | Severity | Found (date, agent, during) | Where (doc anchor / code) | Description | Owner | Fix task | Status |
 |---|---|---|---|---|---|---|---|---|
-| AUTOAPPLY/GAP-003 | doc-gap | major | 2026-10-19, codex, T-014 | LLD 7.3 route | Tie on score not defined | lld-unifier | - | Open |
+| AUTOAPPLY/GAP-003 | doc-gap | major | 2026-10-19, codex, T-014 | LLD 7.3 route | Tie on score not defined | lld-unifier (DU-004) | - | Open |
 ~~~
+
+## `tracking/doc-updates.md`
+
+~~~markdown
+| ID | Status | Level | Kind | Task | Gap | Anchors | What (from → to) | Decided by | Docs | Docs commit | Verified | Parent | Updated |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| AUTOAPPLY/DU-004 | Verified | LLD | fill-silence | AUTOAPPLY/T-014 | AUTOAPPLY/GAP-003 | [LLD 7.3 route](<rel>#routingserviceimplroute) | tie on score: undefined → older match first (code `RoutingServiceImpl.java:57`) | LLD silent; code fills it (§ 2) | LLD v1.4 → v1.5 | 9f3e2a1 | PASS 2026-10-20 (5/5 checks) | - | 2026-10-20 |
+| AUTOAPPLY/DU-005 | Waiting-decision | BRD | doc-conflict | AUTOAPPLY/T-022 | AUTOAPPLY/GAP-008 | [BRD UC-23 AC-2](<rel>#uc-23-route-a-new-match) | review queue limit: 50 (BRD) vs 100 (LLD 7.3) | - (BRD mode `ask`) | BRD, LLD | - | - | - | 2026-10-20 |
+~~~
+`Status`: Queued, Running (worker started <time>; in `team` run mode, the board request and its State), Applied, Verified, Waiting-decision, Rejected (<reason>),
+Failed. `Verified`: the verifier's verdict and date. A failed verification appends its findings to `What`.
 
 ## `tracking/ownership.md` (generated)
 
@@ -257,33 +337,38 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 # Standup 2026-10-19
 
 ## Done since 2026-10-18
-- AUTOAPPLY/T-009 CapCalculator · codex · 3 commits · unblocked T-014, T-015
+- AUTOAPPLY/T-009 CapCalculator - codex - 3 commits - unblocked T-014, T-015
 
 ## In progress
-- AUTOAPPLY/T-011 · claude-opus-5-5 · since 2026-10-18
+- AUTOAPPLY/T-011 - claude-opus-5-5 - since 2026-10-18
 
 ## Next
-1. AUTOAPPLY/T-014: critical path, unblocks 2
+1. AUTOAPPLY/T-014 - critical path, unblocks 2
 2. AUTOAPPLY/T-015
 
 ## Blockers
 - T-020 waits on T-011 (in progress)
 
 ## Gaps
-- New: AUTOAPPLY/GAP-003 (doc-gap, major) → lld-unifier
-- Closed: none
+- New: AUTOAPPLY/GAP-003 (doc-gap, major) → DU-004
+- Closed: -
+
+## Doc updates
+- Verified: AUTOAPPLY/DU-004 (LLD v1.5)
+- Open: 1 Queued, 0 Running, 1 Waiting-decision
 
 ## Untracked commits
-- a1b2c3d "fix mail parser": no Task trailer → which task?
+- a1b2c3d "fix mail parser" - no Task trailer → which task?
 
 ## Needs your decision
 - GAP-003: tie-breaking rule on equal scores
+- DU-005 (BRD): review queue limit 50 or 100 → `docs approve AUTOAPPLY/DU-005` or `docs reject …`
 ~~~
 
 ## `tracking/inventory.md` (generated)
 
 ~~~markdown
-# Code inventory: 2026-10-19 (stack: Spring Boot + Next.js)
+# Code inventory - 2026-10-19 (stack: Spring Boot + Next.js)
 
 | Kind | Name | File:line | First / last commit | Key guess | Claimed by |
 |---|---|---|---|---|---|
@@ -305,15 +390,16 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ~~~markdown
 | ID | Date | What changed (from → to) | Decided by | Why | Affected | Supersedes | Follow-up | Status |
 |---|---|---|---|---|---|---|---|---|
-| CHG-002 | 2026-10-19 | Score threshold per user → per mode | user: "make it per mode" | Hybrid needs its own bar | T-014 (Done-stale), table autoapply.profile | Plan decision #3, L-002 | T-041 rework; LLD v1.5 (lld-unifier); SDD and BRD: no change, neither states the threshold | Active |
+| CHG-002 | 2026-10-19 | Score threshold per user → per mode | user: "make it per mode" | Hybrid needs its own bar | T-014 (Done-stale), table autoapply.profile | Plan decision #3, L-002 | T-041 rework; GAP-007 → DU-006 (direction, BRD) | Active |
 ~~~
 
 ## Audit report `tracking/AUTOAPPLY/audits/T-014-audit-1.md`
 
 ~~~markdown
-# AUTOAPPLY/T-014 audit 1: FAIL
+# AUTOAPPLY/T-014 audit 1 - FAIL
 
 Auditor: <agent/model> · risk <low|high> · 2026-10-19 · commits <shas> · export <head>
+Time: started <HH:MM> · finished <HH:MM> · <n> min (budget 25; delta 10)
 Pre-flight: [T-014-<sha>.md](../preflight/T-014-<sha>.md) · auditor verdict <as written> · recomputed <verdict>
 Tests: <full run in export | reused pre-flight <file> (tree = head) + ran <classes>> · Scope: <full | delta of audit-<n>> · Export: <fresh | reused, clean, HEAD = <sha>>
 
@@ -329,7 +415,7 @@ Tests: <full run in export | reused pre-flight <file> (tree = head) + ran <class
 | Lessons | yes | FAIL | L-004 violated |
 
 ## Trace (UC-23 step 2)
-UI: n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → MatchEntity.java:58 → **migration missing** → log **missing**
+UI - n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → MatchEntity.java:58 → **migration missing** → log **missing**
 
 ## Findings
 | # | Layer | Severity | Expected | Actual | Fix | Gap |
@@ -358,7 +444,8 @@ UI: n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → MatchEnt
   passes.
 - The user corrects you or changes direction → `impl-tracker-unifier lesson` / `change` before continuing.
 - Finished → `impl-tracker-unifier done <id>`. Found a bug, missing rule, or doc conflict →
-  `impl-tracker-unifier gap`. Never edit BRD/SDD/LLD to make code fit.
+  `impl-tracker-unifier gap`; the tracker queues the doc update and a background doc worker applies it.
+  Never edit BRD/SDD/LLD yourself, and never to make code fit.
 ~~~
 
 ## `tracking/checks.json` (every Active lesson needs an entry; pre-flight runs them)

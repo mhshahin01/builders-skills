@@ -8,22 +8,33 @@ Stage 7 of the suite: tracks implementation against the BRD, SDD and LLD. It act
 flowchart LR
     brd["brd-unifier<br/>WHAT / WHY"] --> psdd["pre-sdd-unifier<br/>numbers and shape"] --> sdd["sdd-unifier<br/>HOW, system"]
     sdd --> lld["lld-unifier<br/>HOW, per service<br/>17-specs Roadmap"]
-    lld --> trk["7. impl-tracker-unifier<br/>init · discover · plan · next · wave · start · done<br/>audit · verify · gap · lesson · change<br/>standup · status · sync · slice · report"]
+    lld --> trk["7. impl-tracker-unifier<br/>init · discover · plan · next · wave · start · done<br/>audit · verify · gap · lesson · change<br/>standup · status · sync · slice · report · docs"]
     trk --> code(["code + commits"])
     code -. "drift, bugs, missing deps" .-> trk
-    trk -. "doc gaps and decided changes (never edits docs)" .-> brd
+    trk -. "doc updates (DU queue): doc worker or board requests" .-> brd
     trk -.-> sdd
     trk -.-> lld
 ```
 
-**Summary:** the tracker is the seventh stage: in the chain it comes after SoW, BRD, Pre-SDD, SDD and LLD. It reads the BRD, SDD and LLD, never edits them, and owns
-only `./tracking/`. A doc problem nobody has decided yet goes back to the owning skill as a gap row, the same way the
-review panel hands points to the authoring skills. A change that is decided runs the owning skills in chain order in the same change, before its code reaches In review: up the chain when it starts at the code or the LLD, down the chain when it starts at the BRD, and both ways when it starts at the SDD (up to the BRD when a business rule changes, down to each child LLD), and always ending with the tracker's own `sync` (and `plan` for new scope). In `solo` run mode the tracker runs each hop in the same session; in `team` run mode, or when the owning skill cannot run now, it raises a `Decided change` request for the hop instead. See `SKILL.md` § Documents chain.
-The tracker also writes its own row on the shared status board, `unifier-status.md` in the docs root, through
-the `Board` path that `init` records in `tracking/config.md`. It raises two forms of handoff request there (`SKILL.md` § The tracker's board row):
+**Summary:** the tracker is the seventh stage: in the chain it comes after SoW, BRD, Pre-SDD, SDD and LLD. It reads the BRD, SDD and LLD, never edits them itself, and owns
+only `./tracking/`. Every doc point it finds becomes a gap row and a doc update (DU, `KEY/DU-NNN` in
+`tracking/doc-updates.md`): triaged to the docs it affects (LLD only, or SDD, BRD, SoW too), applied top-down,
+checked by a fresh verifier, then synced, so the docs stay consistent with the code (`doc-impact-rules.md`).
+The DU queue is the tracker's only route for a doc change, in one of two run modes (the board's Run mode line):
 
-- `Doc gap <KEY>/GAP-NNN: <question>`, for each doc gap it routes to an owning skill. The owner's result comes back on that request: a version closes the gap, `No change` turns it into `code-drift`, and Declined sends it to the named owner.
-- `Decided change <KEY>/CHG-NNN: <summary>`, for a hop of a decided change it does not run in the session, raised to the first hop of the chain order not yet run. The CHG decider quote is the owner's acceptance, so nothing is asked again unless a record disagrees. The owner's version, or `No change: <reason>`, fills the CHG Follow-up, and once every hop has one, the baseline move runs.
+- `solo` (one session can edit the docs): a background doc worker applies each DU through the owning skill's own
+  row (`Decided change` for a DU decided by a CHG, `Doc gap` for a DU that needs an owner's decision), so that
+  skill's delta review, `Review:` stamp and documents-chain hops run inside the worker.
+- `team` (another employee owns the doc folder): the worker does not edit. The tracker raises the board request
+  on the shared status board, `unifier-status.md` in the docs root (the `Board` path in `tracking/config.md`):
+  `Decided change <KEY>/CHG-NNN (DU-NNN): <summary>` or `Doc gap <KEY>/GAP-NNN (DU-NNN): <question>`. The DU
+  state follows the request: `Running` while it is open, `Applied` when it is Done (with a version, or with
+  `No change`, for the verifier to confirm), `Rejected` only when it is Declined with no other owner named.
+
+Either way the tracker starts only the first hop. The owning skill carries the change up or down the chain, every
+next-hop request keeps the CHG and DU IDs, and the tracker reads each request carrying them to fill the CHG
+Follow-up and the DU state. See `SKILL.md` § Documents chain and § The tracker's board row. The tracker also
+writes its own row on that board.
 
 ## Why a custom skill instead of Spec Kit / Task Master / Backlog.md
 
@@ -70,7 +81,8 @@ worth it when several products share one tracker (not now).
 ## Token budget (why it stays cheap)
 
 - Sub-agents only where they buy independence: the auditor in `done`/`audit` (one per task, fresh
-  context), the design-check reviewer in `start` (risk `high` only), and `plan deep` (opt-in). A pre-flight script runs the mechanical checks first, so the
+  context), the design-check reviewer in `start` (risk `high` only), the doc worker and its fresh verifier
+  (background, one at a time, `doc-impact-rules.md`), and `plan deep` (opt-in). A pre-flight script runs the mechanical checks first, so the
   auditor's tokens go to judgement, not to greps.
 - Each command names the exact files it may read (`SKILL.md` § Read budget per command). `next`, `start`, `status`
   read the small index files only, never the BRD.
@@ -86,8 +98,9 @@ worth it when several products share one tracker (not now).
 | `gap-rules.md` | Gap types, severity, owner routing, closing |
 | `sync-and-drift.md` | Doc-version baseline, stale detection, code-ownership checks |
 | `discovery-rules.md` | Inventory of existing code, matching it to LLD units, Adopted status |
+| `doc-impact-rules.md` | Doc updates: triggers, code-or-doc decision, impact level, queue, doc worker, team run mode, verifier, sync, gates |
 | `slice-rules.md` | Slice mode: end-to-end slices, order (its one home is `tracking/config.md` § Slices), delivery gate, manager report |
 | `lessons-rules.md` | Lessons, recall, promotion, the change log |
 | `audit-rules.md` | The fresh auditor, layer matrix, verdicts, clean export, Stop hook |
 | `scripts/` | `preflight.py` (mechanical checks before any audit) and `history.py` (builds `tracking/history.md` from recorded facts) |
-| `hooks/` | `stop-audit-guard.js`, an optional Claude Code Stop hook that blocks ending a turn while a task is In review without a passing audit |
+| `hooks/` | `stop-audit-guard.js`, an optional Claude Code Stop hook that blocks ending a turn while a task is In review without a passing audit; `post-commit-lint.sh`, an optional git post-commit hook that lints the commit's task |

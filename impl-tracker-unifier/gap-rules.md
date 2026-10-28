@@ -2,8 +2,9 @@
 
 | Type | Meaning | Owner | Fix path |
 |---|---|---|---|
-| doc-gap | Docs don't say / contradict each other | brd-, pre-sdd-, sdd-, or lld-unifier (whichever owns the anchor) | Question routed; task waits if blocker |
-| plan-gap | In-scope UC/AC/spec has no LLD unit or no task | lld-unifier or tracker | add task or LLD unit |
+| doc-gap | Docs don't say / contradict each other | brd-, pre-sdd-, sdd-, or lld-unifier (whichever owns the anchor; pre-sdd for capacity, availability and DR, hosting and tenancy isolation) | DU queued (doc-impact-rules.md); task waits if blocker |
+| plan-gap | In-scope UC/AC/spec has no LLD unit or no task | lld-unifier (DU) or tracker (task) | DU for the LLD unit, or add task |
+| doc-update | Code is right, doc is out of date or silent (doc-impact-rules.md § 2 decided) | owning doc skill (DU) | DU applied by the doc worker |
 | code-drift | Code behaves differently from the doc | tracker | fix task |
 | bug | Code defect against its own task's DoD | tracker | fix task (depends_on the original) |
 | untested-ac | AC with no proving test | tracker | test task |
@@ -17,5 +18,8 @@
 
 **Severity:** `blocker` (stops a task) · `major` (wrong behaviour possible) · `minor`.
 **Close** only with evidence (closing bug / code-drift / layer-miss / obs-gap / double-build /
-untracked-code also writes its lesson, per lessons-rules.md § 1): the commit, the doc version that fixed it, or the user's decision quoted. A doc gap closes from its owner's result: the version that records the answer, or `No change` (the gap becomes `code-drift`).
+untracked-code also writes its lesson - lessons-rules.md § 1): the commit, the doc version that fixed it, or the user's decision quoted.
+**Doc-owned gaps** (`doc-gap`, `doc-update`, `doc-changed`, and `plan-gap` routed to lld-unifier) are written
+together with their DU row (doc-impact-rules.md § 5) and close only when that DU is `Verified` (evidence: docs
+commit + new version) or `Rejected` with a reason. A doc gap whose owner answers `No change` becomes `code-drift` with a fix task (doc-impact-rules.md § 6a).
 

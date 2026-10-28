@@ -1,17 +1,14 @@
 ---
 name: impl-tracker-unifier
 description: >-
-  Track implementation against the BRD, SDD and LLD. Use to plan implementation, split a feature into
-  tasks, pick what to build next, start or finish a task, log a bug or gap, audit consistency, record a
-  lesson or direction change, write a standup or manager report, show progress, or check doc/code
-  drift. Splits each LLD into keyed tasks citing BRD use cases and ACs, with the why. Blocks tasks with
-  unmet dependencies, maps existing code to the LLD, prevents double builds via an ownership index,
-  keeps gaps and a journal. No task is Done until pre-flight passes and a fresh read-only auditor
-  checks API, DB migrations, frontend, logs/audit trail, security and tests against the LLD. Mistakes,
-  reopens, corrections and direction changes become checkable lessons replayed before the next
-  matching task. Slice mode builds feature by feature, end to end. Commands: init, plan, next, wave,
-  start, done, audit, discover, verify, gap, lesson, change, standup, status, sync, slice, report.
-  Writes ./tracking/ only.
+  Track implementation against the BRD, SDD and LLD. Use to plan implementation, split a feature into tasks,
+  pick what to build next, start or finish a task, log a bug or gap, audit consistency, record a lesson or
+  direction change, write a standup, show progress, or check doc/code drift. Splits each LLD into keyed tasks
+  citing BRD use cases and ACs, blocks tasks with unmet dependencies, maps existing code to the LLD and
+  prevents double builds. A pre-flight script and a fresh read-only auditor check each task before Done.
+  Lessons and direction changes are replayed before matching tasks. Doc points are queued as doc updates and
+  applied by a background doc worker. Commands: init, plan, next, wave, start, done, audit, discover, verify,
+  gap, lesson, change, standup, status, sync, slice, report, docs. Writes ./tracking/ only.
 ---
 
 # Implementation Tracker
@@ -25,9 +22,10 @@ code is written, and reports the gap between what the documents require and what
 
 You act as the Developer / software engineer (Software Development & Delivery) in the unifier company.
 
-It **never edits** BRD, SDD or LLD files by hand. A decided change to design runs the owning skills in chain
-order in the same change (§ Documents chain); a doc problem nobody has decided yet becomes a gap row for its
-owner (brd-unifier, sdd-unifier, lld-unifier).
+It **never edits** BRD, SDD or LLD files itself. Every doc point becomes a gap row **and** a doc update
+(`KEY/DU-NNN`), triaged to the docs it affects and applied in the background by a separate doc worker that
+uses the owning skill (brd-unifier, pre-sdd-unifier, sdd-unifier, lld-unifier): doc-impact-rules.md. In `team`
+run mode the DU goes to the doc folder's owner as a board request instead (§ Documents chain).
 
 Support files (paths relative to this skill folder):
 
@@ -40,6 +38,7 @@ Support files (paths relative to this skill folder):
 | `sync-and-drift.md` | Doc-version baseline, stale detection, code-ownership checks |
 | `discovery-rules.md` | Inventory of existing code, matching it to LLD units, Adopted status, re-inventory on sync |
 | `slice-rules.md` | Slice mode: end-to-end slices, user-chosen order, current slice, delivery gate, manager report |
+| `doc-impact-rules.md` | Doc updates: triggers, code-or-doc decision, impact level (LLD/SDD/BRD/SoW), queue, background doc worker, verifier, auto sync, gates |
 | `lessons-rules.md` | Lesson capture, valid-lesson format, dedup/recurrence, promotion, recall; change log |
 | `audit-rules.md` | The auditor subagent, layer matrix, tool evidence, verdicts, auditor prompt, clean export, parallel audits |
 | `scripts/preflight.py` | Pre-flight: the mechanical checks run before any audit (tree, trailers, status, Owns, tests, stack, lesson checks) |
@@ -76,12 +75,13 @@ Support files (paths relative to this skill folder):
 | `verify` | `KEY/T-NNN` or `KEY/UC-NN` | Check BRD ACs and e2e spec tags against code/tests; set Verified or open gaps. |
 | `gap` | free text or `KEY/GAP-NNN close` | Log, update or close a gap. |
 | `lesson` | free text, `list [scope]`, or `L-NNN retire <reason>` | Record, list or retire a lesson (lessons-rules.md). |
-| `change` | free text | Record a direction/use-case/decision change; mark affected tasks Stale (not those the documents chain re-plans: § Documents chain); create rework tasks. |
+| `change` | free text | Record a direction/use-case/decision change; mark affected tasks Stale; create rework tasks. |
 | `standup` | `[date]` | Write today's journal: done since last, next, blockers, new gaps. |
 | `status` | `[KEY]` | Progress by feature/phase/UC; open gaps; blocked chain. |
-| `sync` | `[KEY]` | Compare doc versions with the baseline and owned files with the code; mark Stale; open gaps (as a hop of the documents chain it moves the baseline and re-plans instead: § Documents chain). |
+| `sync` | `[KEY]` | Compare doc versions with the baseline and owned files with the code; mark Stale; open gaps. |
 | `slice` | `deliver KEY/S-NN`, `list [KEY]`, `order KEY` | Slice mode: run the delivery gate, list slices, or change the order (slice-rules.md). |
 | `report` | `[KEY]` | Manager-ready summary: delivered slices, current slice, next, blockers (slice-rules.md § 6). |
+| `docs` | `[KEY]`, `run`, `approve KEY/DU-NNN`, `reject KEY/DU-NNN <reason>` | Doc updates (doc-impact-rules.md): show the queue, dispatch the worker now, or decide a `Waiting-decision` DU. |
 
 No command → ask once: "What do you want: next / standup / status / plan / start / gap?" with `next`
 as the default.
@@ -91,7 +91,7 @@ Flags: `deep` (plan only: one sub-agent per UC block), `dry` (show changes, writ
 
 Natural language maps to commands: "what's next" → `next`; "do several at once / be faster" → `wave`; "I'm starting X" → `start`; "finished X" →
 `done`; "found a bug" → `gap`; "check it's all consistent" → `audit`; "you did this wrong / remember this" →
-`lesson`; "we changed the use case / let's do it another way" → `change`; "why is it like this" → `changes.md`; "what did we do yesterday" → `standup`; "where are we" → `status`; "feature by feature / end to end / slices" → `plan KEY slice`; "I finished X e2e / deliver it" → `slice deliver`; "what do I tell my manager" → `report`.
+`lesson`; "we changed the use case / let's do it another way" → `change`; "why is it like this" → `changes.md`; "what did we do yesterday" → `standup`; "where are we" → `status`; "feature by feature / end to end / slices" → `plan KEY slice`; "I finished X e2e / deliver it" → `slice deliver`; "what do I tell my manager" → `report`; "update the docs / are the docs in sync" → `docs`.
 
 ---
 
@@ -106,14 +106,16 @@ Natural language maps to commands: "what's next" → `next`; "do several at once
    `13-testing.md` § E2E Spec Traceability, `17-specs.md` § Roadmap. Record paths in `config.md`.
 3. Write `tracking/config.md` (incl. § Audit checks: detect migration tool, API spec, test, lint commands
    from the repo and propose them), empty `index.md`, `gaps.md`, `ownership.md`, `lessons.md`,
-   `changes.md`, `journal/`.
-3a. **Record the board path.** Write the `Board` row of `config.md`'s table with `<docs root>/unifier-status.md` (the docs
-   root from step 1; § The tracker's board row).
+   `changes.md`, `doc-updates.md`, `journal/`; config § Doc updates with the defaults (LLD/SDD `auto`,
+   BRD/SoW `ask`) and the docs repo path (doc-impact-rules.md § 4), and the `Board` row: `<docs root>/unifier-status.md` (§ The tracker's board row).
 3b. **Inventory existing code** (discovery-rules.md § 1) → `tracking/inventory.md`. Print counts by kind
    and key guess ("found 14 endpoints, 6 screens, 9 migrations"). Nothing is marked done here.
 4. Install the Stop audit hook (audit-rules.md § 7) in the code repo's `.claude/settings.json`: ask once, then
    merge it into existing `hooks.Stop` (create the file if missing; never drop other settings or hooks;
    skip if the same command is already there).
+4b. Offer the post-commit lint hook (`hooks/post-commit-lint.sh` → the repo's `.git/hooks/post-commit`; ask
+   once, never overwrite an existing hook): after every commit it lints the commit's `Task:` and prints only
+   FAIL rows, so paperwork is fixed at commit time, never found by a pre-flight. It never blocks a commit.
 5. Add the agent rules block (templates.md § Agent rules block) to `AGENTS.md` / `CLAUDE.md` of the
    code repo, if the user agrees.
 
@@ -129,7 +131,7 @@ Follow `task-splitting.md`. In short:
 4. Derive dependencies (layer order + LLD-stated order + cross-feature `INT-` links).
 5. Apply lessons (lessons-rules.md § 5): Promoted-DoD lessons → DoD items; skip anything superseded in
    `changes.md`.
-5b. For each task write the **Why** (task-splitting.md § Why rules): cite the LLD pattern/ADR/BR.
+5b. For each task write the **Why** (task-splitting.md § Why rules) - cite the LLD pattern/ADR/BR.
 5c. **Match existing code** (discovery-rules.md § 2): each unit → Match (`Adopted`), Partial
    (`In progress` + missing list + gaps), Missing (`Planned`); unclaimed inventory items → `untracked-code`.
 6. Run the ownership check: nothing owned twice (across all features).
@@ -137,7 +139,7 @@ Follow `task-splitting.md`. In short:
    every endpoint in scope, and every unit of each kind in task-splitting.md's unit map has ≥ 1 task. Missing → `GAP` type `plan-gap` (the LLD has no unit for it)
    or task added.
 8. Show the plan summary (phases, counts, DAG Mermaid, gaps, **existing-code match table** with
-   confidence (discovery-rules.md § 3), and the **risk table**: each task's Risk with its reason,
+   confidence - discovery-rules.md § 3, and the **risk table**: each task's Risk with its reason,
    task-splitting.md § Risk) and **ask for approval** before writing
    task cards. On approval write `KEY/plan.md`, task cards, update `index.md`, `ownership.md`.
 
@@ -168,14 +170,15 @@ Builds several tasks in one pass without loosening any gate.
 2. Pick tasks in `next` order such that: no two share an owned item (ownership.md); none depends on
    another in the set; at most one is risk `high` unless the user asks for more; total size ≤ 3 M
    (S = ½, M = 1, L = 2), so the wave fits one session. Default at most 4 tasks; **at most 2 when the
-   current slice is mostly `high` risk** (e.g. auth, money, personal data), since short waves get audit
+   current slice is mostly `high` risk** (e.g. auth, money, personal data) - short waves get audit
    feedback sooner. "Mostly" = more than half of the slice's open (not Done/Dropped) tasks are risk `high`.
 3. Show the set (id, title, risk with reason, owned files, why grouped) and ask once for approval.
 4. On approval, for each task **in turn**: run `start` (all gates; this records the task's **own** start
    commit, so no two wave tasks share one), implement it, commit it (one or more commits, **each with
    exactly one `Task:` trailer**, never two tasks in one commit), then go to the next task. A task that
    needs to change a file outside its Owns declares it under `## Touches` with the reason, or stops and
-   becomes a gap.
+   becomes a gap. Never sit idle on a long run: while one task's pre-flight or audit runs (minutes), read
+   and design-check the next task; commit only one task's files per commit.
 5. Finish with `done KEY/T-a,KEY/T-b,…`.
 6. **Bookkeeping once per wave:** during the wave write only what a gate needs (card status, History row,
    audit/pre-flight links). Journal entry, minor-finding gaps, lesson dedup/promotion, `checks.json`
@@ -186,7 +189,9 @@ Builds several tasks in one pass without loosening any gate.
 
 1. Read the task card + `index.md` + `ownership.md`.
 2. **Readiness gate** (status-rules.md § Gate): every `depends_on` Done/Verified; task not Stale;
-   no open `blocker` gap linked to it. If it fails: refuse, print the blocking chain down to the first
+   no open `blocker` gap linked to it; for risk `high`, no open `plan-gap`/`doc-gap` or LLD open item
+   (OI) on an anchor the task cites - settle the doc first, so the design does not move mid-task (PLATFORM/T-055
+   waited on LLD v1.3 then v1.4 mid-build); no open DU on a cited anchor per doc-impact-rules.md § 9. If it fails: refuse, print the blocking chain down to the first
    ready task, and offer to start that one. Override only per status-rules.md § Override.
 3. **Double-build gate**: grep the code repo for each owned symbol/table/route/file. Exists already →
    stop and ask: is it the same thing (then link it, maybe the task is already done) or a clash (gap
@@ -200,16 +205,32 @@ Builds several tasks in one pass without loosening any gate.
    - **State or timing table**: every state, event and clock the task touches, including the other side's
      rule (server throttle, job predicate, retry), and what the code does in each cell.
    - **Neighbour scan**: grep the jobs, filters, listeners and handlers that select, change or delete each
-     state, table or route the task creates or changes; list each with its predicate (L-034).
+     state, table or route the task creates or changes; list each with its predicate (L-034). Search
+     `src/main` **and** `src/test`: a new bean, table or route also has test-side users (L-061). Once the
+     migration is written, `--lint` prints **P16**: every test class that names a table the migration seeds or
+     alters (a test pinning a row count, PLATFORM/T-029); copy that list into the scan. For a route the task
+     adds, the scan also names every filter, interceptor and profile condition on its path, the content type the
+     caller really sends, who binds `CallerContext` when no session does, and, for a caller that retries (provider
+     callback, job), which status makes it retry and which makes it give up (SHAREDKERNEL/T-010: SNS treats 409 as final).
    - **Contract check**: everything the code needs from an API or event is in the LLD contract. If not,
-     stop: open a `plan-gap` and ask the user (a contract change is direction-level) before coding.
+     stop: open a `plan-gap` with its DU (kind `contract`, doc-impact-rules.md § 1) before coding; the DU is
+     dispatched at once and the task waits for it (§ 9) while the tracker offers the next ready task. A
+     contract between services is level `SDD` or above.
    - **Test plan from the rules**: which fakes or models stand in for the other side and how each answers
-     by the real rule (L-035).
+     by the real rule (L-035). For every claim, lease or fencing token: a test where the stale holder
+     finishes while the new holder is still mid-flight, and the token conjunct on its own line so
+     `## Removals` can delete it (L-062). Number the invariants `I1…In`: each gets a guard line in
+     `## Removals` tagged `(In)` against the test that exercises it (for a race or at-most-once rule, the
+     interleaving test), or `- In: no guard line: <reason>`. P14 fails an untagged invariant (also in `--lint`),
+     so a test that passes with its mechanism removed is found by `--removals`, not by the audit (T-008, T-009,
+     PLATFORM/T-029 audit 1).
    Then one fresh reviewer (Agent tool, `general-purpose`, faster model, about 5 minutes, read-only) checks
    the design check against the cited docs and returns missing invariants, cells or neighbours. Fix and
    record "design check: reviewed" in History. It never replaces the audit.
 3d. **Lint at start (seconds):** run `preflight.py … --task KEY/T-NNN --lint` now, so Owns paths, Risk
-   floor and card/index mismatches are fixed before any code, not found at `done`.
+   floor and card/index mismatches are fixed before any code, not found at `done`. Re-lint after every
+   commit (the post-commit hook does it when installed): a pre-flight must never be the first to find
+   paperwork. Also run `preflight.py --tracking <t> --doctor` (seconds) when the task has tests.
 3e. **Fresh stack (tasks with e2e or integration tests):** any local service (API, worker, dev server)
    started before the current head commit is restarted now, as part of bringing the environment up
    (audit-rules.md § 3a); never mid-task, never by asking the user.
@@ -217,27 +238,42 @@ Builds several tasks in one pass without loosening any gate.
    Stamp the start clock: `python <skill>/scripts/preflight.py --tracking <tracking> --history-start KEY/T-NNN`
    (writes `history-clock.json`, used by `history.md` for the task's span; run once, a second run keeps the first).
 5. Print the **task brief** for the implementer: Goal, Why, Doc refs (links), Owns, **Layers to touch**
-   (API / DB / UI / logs / security, derived from the LLD, each with its doc anchor), **Lessons that
+   (API / DB / UI / logs / security - derived from the LLD, each with its doc anchor), **Lessons that
    apply** (lessons-rules.md § 5, with their Checks), the **Design check** (high risk), Definition of done,
-   Tests to write; nothing else.
+   Tests to write - nothing else.
 
 ### done
 
 Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per task.
 
 1. Collect evidence: commits with `Task: KEY/T-NNN` (git log), changed files, unit tests added.
-   A Partial task with no start commit first runs `start` steps 1-4 (gates, start commit), never a
+   A Partial task with no start commit first runs `start` steps 1-4 (gates, start commit) - never a
    hand-picked start sha.
-1b. **Bring the test environment up** (audit-rules.md § 3a): if tests need Docker and the engine is down,
-   start it yourself (Docker Desktop / `systemctl start docker` / `colima start`), wait until `docker info`
-   answers (≤ 3 min); start the local compose stack if the project has one. Never ask the user first;
-   never install or reconfigure Docker. Still down after the wait → stop, report the cause, task stays
-   `In progress`. (The tests themselves run once, in pre-flight.)
+1b. **Bring the test environment up:** `preflight.py --tracking <t> --doctor` (seconds). It starts Docker
+   when down (never installs or reconfigures it), recreates a missing verify worktree, checks Node against
+   every `engines.node`, and checks the shared test database's connection headroom (classes × pool under
+   80% of `max_connections`). Start the local compose stack if the project has one. Any doctor FAIL → fix it
+   before pre-flight; never ask the user first. The full pre-flight also runs the doctor first, and **fails
+   fast**: when a doctor, paperwork or lint row fails, it skips the suites (seconds, no report written)
+   instead of spending minutes on tests whose result cannot count.
 1c. **Lint first (seconds).** `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --lint`
    runs every check except tests and the stack, accepts uncommitted work, and prints ready-to-paste
    `## Touches` lines for files outside Owns. Fix everything it reports before the full pre-flight: Touches
    paths, Risk floor, trailers, card/index status, lesson coverage (`checks.json`). It writes no report, ends with
-   `LINT: PASS|FAIL`, and never stands in for the pre-flight.
+   `LINT: PASS|FAIL`, and never stands in for the pre-flight. Lint fails on an uncommitted doc or binary
+   (`.md`, `.pdf`, images, Office files): commit it now, never after `--removals`.
+1d. **Quick tests (about two minutes).** `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --quick`
+   runs the tests a task can break, in one run per build module: its own test classes, config.md
+   `## Always-run tests` (architecture rules, schema gates), the test classes that name a table its migrations
+   seed or alter (P16), and the covering tests of its changed classes (those naming them or in their package).
+   P12 also names any test that still pins a schema's previous highest migration. Green here before `--mutate`,
+   `--removals` or the full run. Every full-suite failure so far (T-006 pinned version, T-007 second bean, T-009
+   ArchUnit, T-029 pinned row count) sat in this set.
+   **Fast path, in this order, each once (target: one full pre-flight, one audit):** lint → `--quick` →
+   `--mutate` (fix or list every survivor) → commit everything (code, docs, binaries: tree clean) → `--removals`
+   on the final code → full pre-flight → audit. The removals report stays valid until production code, a build
+   file or a test it names changes; a fix to another test (a neighbour's pinned count) or to docs keeps it.
+   The full run reuses the `--mutate` result while the code equals what `--mutate` ran on, so mutation runs once.
 2. Check: every owned item exists in code; DoD checklist ticked. Missing → stay `In progress` and list
    what's missing, or the user splits it (new task, `depends_on` this one).
 2a. **Self-replay lessons.** Every lesson created or hit during this task, and every lesson in the brief,
@@ -249,17 +285,48 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    and a tested failure path; every retry/idempotency rule in the LLD is kept on retry; UI copy matches the
    Figma frame / BRD text word for word; every item on the task-splitting.md § Risk `high` list in the
    diff has its LLD check (authZ, ownership, session/token end, clock source); errors logged once, no
-   PII. Record "self-check: OK" or the fixes in the History row. The self-check is never audit evidence;
+   PII; every outcome value the code computes is asserted by a test, including one seen only in a log line
+   (11 of 15 first survivors in SHAREDKERNEL/T-010), so `--mutate` runs once. Record "self-check: OK" or the fixes in the History row. The self-check is never audit evidence;
    it is not passed to the auditor and never replaces pre-flight or the audit.
+   **Removals are done, not claimed:** list each Design check guard under `## Removals` as
+   `` `file` `guard code` → `Test#method` `` (a line that can go alone: a call, a `throw`, a `return`; add
+   ` @N` for the Nth identical line), then run
+   `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --removals`: it runs the named
+   tests on the unchanged code (positive control), deletes each guard line, expects its tests to fail,
+   restores the file byte for byte and writes `<T-NNN>-removals.md`. In a Maven module that can be copied
+   alone it runs the control and the guards side by side in private copies of the module (`--jobs`, default 4;
+   the working tree is never edited); anything else runs in place, one at a time. A "never" rule needs a
+   recorder test with a positive control (L-059). Pre-flight P14 fails a card with a Design check whose
+   invariants are not all tagged (3c), or with no passing removals report for every listed guard, or when
+   production code or a named test changed since that report.
+2a++. **Local mutation (minutes, before the first full pre-flight; L-060):**
+   `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --mutate` runs mutation on the
+   task's changed classes (uncommitted work included) against the task's own test classes only (PIT
+   `-DtargetTests`), and prints each survivor with its code ready to paste under `## Equivalent mutants`.
+   It is stricter than the full run (only the task's tests may kill a mutant). Fix or list every survivor,
+   then run the full pre-flight once. Its raw result is kept with the code tree it ran on (uncommitted work
+   included); the full run reuses it while the code is the same and it passes against the cards (P10 row
+   `reused from --mutate`), so a fix found here never costs a second mutation run. Record "local mutation:
+   N classes, 0 survivors / listed" in the self-check row.
 2b. **Pre-flight (mandatory before any audit that can set a task Done):**
    `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-a [--task KEY/T-b …]`.
    It checks: clean tree; commits (start commit, exactly one `Task:` trailer each); card/index status;
-   every owned item; every required test suite (counted by `<testcase>`; any skip, failure, error, zero
+   every owned item; **P14** removals report current and passing; **P15** every DU the task raised is listed
+   on its card, none Failed, a `contract` DU Verified, every doc-owned gap has a DU (also in `--lint`); **P12** an added migration is above every version present at start (L-014); **P13** no
+   second bean of a single-instance type (AWS clients, `HttpClient`, `JsonMapper`…; L-061) - both also in
+   `--lint`; **P10 mutation** on the task's changed production files (templates.md § Mutation
+   suites: every surviving mutant gets a test or a reasoned `## Equivalent mutants` line - fix these here,
+   never leave them for the audit); **P11 template bindings** (each behaviour binding the task adds to an
+   `.html` template is mapped under `## Template bindings` to a spec test that exists; also in `--lint`);
+   every required test suite (counted by `<testcase>`; any skip, failure, error, zero
    tests, or fewer tests than last time fails); the local stack; every lesson's check (each Active lesson
    must be covered); task isolation (files changed only within Owns or `## Touches`); and the risk floor
    (a `low` task touching high-risk code fails). FAIL → fix and re-run; no audit until it passes.
    Required suites run in parallel (backend beside frontend, each Angular project its own suite); every
-   suite row ends with its time in seconds, so the slow suite is visible.
+   suite row ends with its time in seconds, so the slow suite is visible. Beside them, each in a private copy of
+   the Maven module (the backend suite starts with `clean`): the `--quick` set as **P5 related tests**, whose
+   failure stops the suites at once (a failing run ends in about two minutes, not after the whole suite), and a
+   Maven mutation suite the `--mutate` result does not cover. **P16** (INFO) lists the migration neighbours.
    It writes `tracking/KEY/preflight/T-NNN-<sha>.md`; **link** that file from the History row (don't paste
    the table). Adopted tasks run the same command (Adopted mode is automatic: no commit checks).
    **Where it runs:** in the permanent verify worktree named in `config.md` § Verify worktree when one is
@@ -267,8 +334,9 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    `node_modules`, `npm ci` only when `package-lock.json` changed), so a live IDE or dev server in the main
    checkout is never disturbed and installs are not repeated (L-028). Copy the report back into the main
    tracking folder before committing it.
-3. Set `In review`. **Run the audit** (audit-rules.md), mandatory: an agent cannot skip it, only the user
-   in chat (then record `audit skipped by user: "<quote>"` in History and open a major gap).
+3. Set `In review`. **Run the audit** (audit-rules.md) - mandatory; an agent cannot skip it, only the user
+   in chat (then record `audit skipped by user: "<quote>"` in History and open a major gap). Launch the auditor
+   with `run_in_background: false`: the turn waits for the verdict and goes straight on to Done.
    - The audit runs on a **clean export** of the task's last commit (audit-rules.md § 1a), never on the
      working tree, and sees **only this task's commits** (§ 1, input 3).
    - **Depth follows the task's Risk** (audit-rules.md § 1): `high` → strongest model, full prompt;
@@ -296,7 +364,9 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    `Tracking: <reason>` or its task's `Task:` trailer; one with neither prints a WARN to fix next time).
    With `auto` per wave: push once after the wave's last task is Done. Otherwise ask once per batch.
 5. Anything found while doing it that is out of scope → offer `gap`. Any error hit twice in this task, or a
-   user correction during it → capture a lesson now.
+   user correction during it → capture a lesson now. Every doc point found during the task or its audit
+   (an LLD silence filled, a contract field, a doc conflict) → gap + DU now (doc-impact-rules.md § 1); it is
+   dispatched in the background and never waits for Done.
 
 ### slice
 
@@ -311,10 +381,11 @@ slice-rules.md § 6. Reads `index.md`, slice cards, `gaps.md` only.
 
 ### verify
 
-1. For each BRD AC/BR the task (or UC) cites: find the test that proves it: unit test comment tag,
+1. For each BRD AC/BR the task (or UC) cites: find the test that proves it - unit test comment tag,
    e2e tag `@KEY/UC-NN`, `@KEY/TC-…` as `13-testing.md` defines.
-2. All proven and passing → `Verified`. Unproven AC → gap `untested-ac`. Behaviour differs from the
-   AC → gap `code-drift` or `doc-gap` (gap-rules.md decides which).
+2. All proven and passing and no open DU on a cited anchor → `Verified`. Unproven AC → gap `untested-ac`.
+   Behaviour differs from the AC → doc-impact-rules.md § 2 decides: `code-drift` (fix task) or `doc-update`
+   (gap + DU).
 
 ### audit
 
@@ -331,19 +402,24 @@ and promotion. The `checks.json` entry is written in the same step as the lesson
 ### change
 
 Follow `lessons-rules.md` § 6. Needs a user quote or doc version as the decider; otherwise ask.
-Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, and runs the documents chain
-(§ Documents chain) for every design point the change decides; only an undecided doc problem becomes a gap.
-In `solo` run mode (the board's Run mode line) the tracker runs each hop in the same session. In `team` run mode,
-or when the owning skill cannot run now, it raises a `Decided change` request to the first hop not yet run instead, and later hops travel through that
-skill's documents chain (§ The tracker's board row); the hop stays pending until the request ends, and its result fills the CHG Follow-up.
+Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, and queues a DU (kind `direction`,
+decided by the CHG's quote) for every doc the change affects. The DUs carry the change through the documents
+chain (§ Documents chain): the doc worker applies them in `solo` run mode, and `Decided change` requests carry
+them in `team` run mode. Their results fill the CHG Follow-up.
 
 ### gap
 
 Follow `gap-rules.md`: classify type and severity, link to task/UC/doc anchor, route the owner
-(code fix → new task; doc fix → the owning skill, run in the same change once the fix is decided: § Documents
-chain), write to `gaps.md`; for each doc gap routed to an owner, raise a handoff request on the board
-(§ The tracker's board row gives its form and how the owner's result decides the gap). Closing needs evidence. Closing a gap of
+(code fix → new task; doc fix → a DU in the same step, doc-impact-rules.md), write to `gaps.md`. Closing needs evidence. Closing a gap of
 type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code → capture its lesson.
+
+### docs
+
+Follow `doc-impact-rules.md`. Every command first checks `doc-updates.md`: `Queued` rows and no live worker →
+dispatch (§ 6; in `team` run mode, raise the board request: § 6a); a worker or verifier that reported → process it (§§ 7-8). `docs [KEY]` prints the queue by
+state and the doc-drift count (§ 11). `docs run` dispatches now. `docs approve KEY/DU-NNN` applies a
+`Waiting-decision` DU (the user's word is its decider, quoted); `docs reject KEY/DU-NNN <reason>` sets it
+`Rejected` and turns its gap into `code-drift` when the code must change instead.
 
 ### standup
 
@@ -351,22 +427,24 @@ type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code →
 2. Write `journal/YYYY-MM-DD.md`: Done since last (by agent), In progress, Next (from `next`),
    Blockers (blocked chains + blocker gaps), New/closed gaps, Commits without a `Task:` trailer
    (untracked work → ask which task or open one), Audits (verdicts since last), New lessons and recurrences,
-   Changes (CHG rows since last).
+   Changes (CHG rows since last), Doc updates (verified since last, open by state; `Waiting-decision` under
+   Needs your decision).
 3. Print it short. Offer the top decision if one waits on the user.
 
 ### status
 
-`index.md` + `gaps.md` only → table per feature: phase, tasks by status, % Done/Verified by UC,
-% existing-but-unaudited (Adopted) shown separately, never counted as done,
+`index.md` + `gaps.md` + `doc-updates.md` only → table per feature: phase, tasks by status, % Done/Verified by UC,
+doc drift (doc-impact-rules.md § 11),
+% existing-but-unaudited (Adopted) shown separately - never counted as done,
 blocked chains, open gaps by severity. Mermaid progress optional.
 
 ### sync
 
 Follow `sync-and-drift.md`: doc version bump → find changed anchors → mark citing tasks `Stale`
-(Done / Verified ones become `Done-stale`) and open `doc-changed` gaps; owned files missing or moved → `code-drift`;
+(Done / Verified ones become `Done-stale`) and open `doc-changed` gaps, except anchors a DU changed for the task that
+raised it (doc-impact-rules.md § 8); owned files missing or moved → `code-drift`;
 code with no owning task (new top-level classes, migrations, routes) → `untracked-code`. Then re-run the
-inventory and diff it (discovery-rules.md § 5). Run as a hop of the documents chain, it moves the baseline
-and re-plans instead of marking `Stale` (§ Documents chain).
+inventory and diff it (discovery-rules.md § 5).
 
 ### discover
 
@@ -380,17 +458,20 @@ asks before writing.
 1. **Write immediately.** Every change goes to disk in the same step; then regenerate `index.md`. In a
    wave: every status change updates its `index.md` row at once (the Stop hook reads it); the full
    regeneration runs once, after the wave's last verdict.
-1a. **Paired writes.** Some files change together, in the same edit step, never "later": a status change
+1a. **Paired writes.** Some files change together, in the same edit step, never "later": a gap owned by a doc
+   skill writes its `gaps.md` row **and** its `doc-updates.md` row; a status change
    writes the card's Status + History row **and** its `index.md` row (pre-flight P3 compares them); a new or
    sharpened lesson writes its `lessons.md` row **and** its `checks.json` entry (command, builtin or
    judgement; P7 coverage). Run `--lint` after such a write while a task is open.
 2. **Never renumber, never delete.** IDs are permanent. Removed scope → `Dropped` + reason.
 3. **Keyed IDs everywhere,** linked to the heading anchor, exactly as lld-unifier writes them:
    `[AUTOAPPLY/UC-23](<rel path>#uc-23-…) AC-3: <short label>`.
-4. **Never edit BRD/SDD/LLD by hand.** A decided design change runs the owning skills in chain order before
-   its code reaches In review (§ Documents chain); an undecided doc problem is a gap routed to its owner.
+4. **Never edit BRD/SDD/LLD** in the tracker or the builder. Doc points become gap + DU; only the background
+   doc worker edits docs (`solo` run mode), only for a queued DU and through the owning skill, and a fresh
+   verifier checks it (doc-impact-rules.md). In `team` run mode the DU goes to the doc folder's owner as a board
+   request (§ Documents chain).
 5. **Never invent design.** If the LLD doesn't say how, the task says "LLD silent" and a `plan-gap`
-   is opened; the implementer may propose, and the proposal goes to lld-unifier.
+   is opened; the implementer may propose, and the proposal is queued as a DU (§ Documents chain).
 6. **Ask only direction-level questions.** Local choices (task split, wording, ordering ties) are
    decided and noted in the plan's decision list.
 7. **Learn once.** Every trigger in lessons-rules.md § 1 writes a lesson in the same step; every direction
@@ -405,7 +486,16 @@ asks before writing.
     is reused; a re-audit checks only the delta. Anything re-run must have a reason: sha/tree differs from
     the task head, report missing, any non-zero failures/errors/skipped, count below the last passing run,
     or the fix touched the layer. Auditors reuse a valid pre-flight and run only the task's test classes
-    (twice for risk `high`, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
+    (twice only when the task owns concurrency or timing logic, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
+    The pre-flight caches its suite rows and raw mutation survivors (`tracking/preflight-cache.json`): a
+    re-run whose code is unchanged (only tracking/ files changed, e.g. a card, an equivalent-mutant line or a
+    Touches line) reuses both and re-judges in seconds. `--mutate` stores its result there too, and the first
+    full run reuses it for unchanged code; the removals report survives test-only fixes elsewhere. Never re-run a full pre-flight to fix paperwork: fix
+    it, `--lint`, then re-run (it reuses). Budget: one full pre-flight per task; a second needs a code fix.
+8e. **Fewer, tighter rounds.** Audit claims freeze at audit 1; only the 7 big points (audit-rules.md § 4)
+    can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
+    strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
+    round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
 8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
     gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →
     the audit. A task that fails its first audit records which earlier gate should have caught it.
@@ -417,8 +507,9 @@ asks before writing.
 ## Documents chain (bottom-up and top-down)
 
 A decision that fills, narrows or changes a design point (the user's answer, a tracker choice, a gap or open
-item settled) goes through the documents chain in the same change, before the code that follows it reaches
-`In review`:
+item settled) goes through the documents chain in the same change. The tracker carries it only as doc updates:
+each doc point is a gap and a `KEY/DU-NNN` row (doc-impact-rules.md §§ 1-5), and the DU's impact level names the
+documents it reaches. The gates of doc-impact-rules.md § 9 decide which task waits for it.
 
 | Change starts at | Hops, in this order | A hop runs when |
 |---|---|---|
@@ -426,25 +517,29 @@ item settled) goes through the documents chain in the same change, before the co
 | The SDD | sdd-unifier, then brd-unifier when a business rule changes, and lld-unifier for every child LLD the change reaches, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the same |
 | The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then pre-sdd-unifier, then sdd-unifier, then lld-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
 
-- Each hop is run through its owning skill; the tracker never writes the document itself. In `team` run mode, or
-  when that skill cannot run now, the change travels as `Decided change` requests (§ The tracker's board row). In both
-  transports the CHG decider quote is the hop's acceptance: the owning skill asks again only when a record
-  disagrees with it.
+- **One route, two run modes** (the board's Run mode line). Each hop runs through its owning skill; the tracker
+  never writes a document itself.
+  - `solo` (one session can edit the docs): the doc worker (doc-impact-rules.md § 6) applies each DU through the
+    owning skill's own row: its `Decided change` row for a DU decided by a CHG, its `Doc gap` row for a DU that
+    needs an owner's decision. That skill's delta review, `Review:` stamp and documents-chain hops run inside the
+    worker. Then the verifier and `sync` run (doc-impact-rules.md §§ 7-8).
+  - `team` (another employee owns the doc folder; one owner per folder): the worker does not edit. The tracker
+    raises the board request instead (§ The tracker's board row), and the DU state follows the request
+    (doc-impact-rules.md § 6a).
+- **Hops.** The tracker dispatches or raises only the first hop. The owning skill carries the change on through
+  its own documents chain, and every next-hop request, in either mode, keeps the CHG and the DU ID. The tracker
+  reads every board request carrying that CHG or DU ID, whoever raised it, to fill the CHG Follow-up and the DU
+  state.
+- The CHG decider quote is each hop's acceptance: the owning skill asks again only when a record disagrees with it.
 - The CHG row's Follow-up names every document the change reached with the version that records it, and every
   document that needed no change with the reason (`SDD: no change, contract unchanged`).
-- A gap is closed by the version that records its fix. Only a question still waiting for its owner (a business
+- A doc-owned gap closes through its DU (gap-rules.md). Only a question still waiting for its owner (a business
   decision, a provider fact) stays an open gap.
-- After an upstream hop, move `config.md` baselines to the new versions and re-plan the tasks that cite the
-  changed anchors in the same step (card and index): they keep their status (`Planned`, `In progress`); `Stale`
-  and `Done-stale` are for a doc change that `sync` finds on its own, not for one made through the chain.
-  Exception: a Done or Verified task whose owned item the change alters becomes `Done-stale`, with its
-  rework task. A `sync` run as a hop of the chain does exactly this, instead of marking `Stale`, opening
-  `doc-changed` gaps and asking about the baseline: the decision that started the chain is the acceptance.
+- The tracker hop is doc-impact-rules.md § 8: `sync` runs on its own once the DU is `Verified`, moves the baseline
+  without asking, and does not mark the task that raised the DU `Stale`; `plan` runs for new scope. It reports the
+  doc versions its baseline now holds.
 - Scope the user leaves for later stays a gap (`Deferred` with the user's quote) that cites the document's TODO
   or open question recording it.
-- A tracker hop (`sync`, `plan`) reports the doc versions its baseline now holds.
-- A task that already holds the change (it came from this tracker's own `change`) is not re-planned: the hop only
-  moves the `config.md` baselines to the new versions.
 - An answer policy set for a tracker run answers only the tracker's own questions. Each hop keeps its skill's own
   stops and asks, unless the policy names that document.
 
@@ -454,8 +549,11 @@ The tracker runs in the code repo, and the status board lives in the docs root.
 
 - **Path:** `<docs root>/unifier-status.md`, taken from the `Board` row `init` records in `tracking/config.md`. The docs root may differ from the folder holding the hop folders; the tracker then uses the recorded path as written.
 - **Its row:** the tracker writes only the row whose Skill cell is `impl-tracker-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
-- **Requests:** for each doc gap it routes to an owner (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), it raises one handoff request on the board, `Doc gap <KEY>/GAP-NNN: <question>`, with the gap row as Link, and reuses its pending request on the same gap. The owner's result decides the gap: Done with a version closes it with that version, and the baseline move is a chain hop (§ Documents chain); Done with `No change` re-classifies it as `code-drift` with a fix task; Declined routes it to the named owner with a new request. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
-- **Decided changes:** for each hop of a `change` that it does not run in the session (`team` run mode, or the owning skill cannot run now: § change), it raises one handoff request to that skill, `Decided change <KEY>/CHG-NNN: <summary>`, with the CHG row in `tracking/changes.md` as Link, and reuses its pending request on the same CHG and skill. It raises it only for the first hop of the chain order (§ Documents chain) that is not yet run. That skill's documents chain raises each later hop, up or down the chain, with the same request form and Link. The tracker reads every board request whose Request carries that CHG ID, whoever raised it, to fill the CHG Follow-up for its document: Done with a version writes the document and that version; Done with `No change: <reason>` writes the document and the reason; Declined routes it to the named owner with a new request. When every hop the chain reached has a version or a reason, the Follow-up is complete and the baseline move runs as the tracker hop (§ Documents chain).
+- **Requests:** in `team` run mode (§ Documents chain), for each DU it raises one handoff request on the board to the owning skill (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), for the first hop only, and reuses its pending request on the same DU and skill:
+  - `Decided change <KEY>/CHG-NNN (DU-NNN): <summary>`, for a DU decided by a CHG, with the CHG row in `tracking/changes.md` as Link;
+  - `Doc gap <KEY>/GAP-NNN (DU-NNN): <question>`, for a DU waiting on an owner's decision, with the gap row as Link.
+
+  That skill's documents chain raises each later hop, up or down the chain, with the same form, IDs and Link. The tracker reads every board request whose Request carries that CHG or DU ID, whoever raised it, and sets the DU state from it (doc-impact-rules.md § 6a): Done with a version fills the CHG Follow-up with the document and that version; Done with `No change: <evidence>` fills it with that evidence, sets the DU to `Applied` with no docs commit for the verifier to confirm, and for a `Doc gap` also re-classifies the gap as `code-drift` with a fix task; Declined sets the DU `Rejected` with the reason, or, when it names another owner, returns the same DU to `Queued` for that owner, whose new request carries the same DU ID (doc-impact-rules.md § 6a). A request in `Later` keeps its DU at `Waiting-decision`. When every hop the chain reached has a version or a reason, the Follow-up is complete. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
 - **Missing file:** when the recorded path is reachable but `unifier-status.md` does not exist there, the tracker creates the board from the template in the Status board section below, as that section says the first skill to run does, then writes its row.
 - **Unreachable path:** when the recorded path cannot be reached or written, the tracker skips the board update and says so in a note in its reply; the run goes on.
 
@@ -530,13 +628,14 @@ Run mode: solo
 | standup | + last journal, `git log --since` |
 | gap | + the cited task card and the one cited doc section, `config.md` and the doc master headers (documents chain) |
 | verify | + cited BRD AC sections, test files with matching tags |
+| docs | `doc-updates.md`, `config.md` § Doc updates, the DU anchors' sections and the higher anchors they link (worker and verifier: the same, plus the docs diff and the cited code lines) |
 | plan, sync, discover | `inventory.md`, code scan per discovery-rules.md § 1, LLD scope files, SDD §7.3 rows for the scope, BRD sections by anchor, doc master headers |
 | every command | + `unifier-status.md` through the `Board` path in `config.md` (its own row and its requests) |
 
 ## Quality checks before finishing any write
 
 - [ ] Every task has: keyed ID, phase, layer, Doc refs (≥ 1 LLD anchor, ≥ 1 BRD UC/AC or a stated
-      reason why none, e.g. infra), Why, Owns, depends_on, DoD, Tests.
+      reason why none - e.g. infra), Why, Owns, depends_on, DoD, Tests.
 - [ ] Dependency graph has no cycles; every depends_on ID exists.
 - [ ] No item owned by two non-Dropped tasks.
 - [ ] Every link resolves (file + anchor).
@@ -548,10 +647,12 @@ Run mode: solo
 - [ ] Every lesson has a mechanical Check; no duplicate lesson (same root cause + scope).
 - [ ] Every direction change this run has a CHG row with a decider.
 - [ ] Every task has a Risk (`low`/`high` with reason); unclear = `high`.
+- [ ] Every gap owned by a doc skill has a DU; every DU has a level, a kind, a linked gap, and a decider when
+      its level's mode is `ask`; never two doc workers at once; no DU `Verified` without a verifier PASS.
 - [ ] Slice mode: every non-Dropped task has exactly one slice; no task depends on a later slice; the order
       in `config.md` § Slices carries the user's quote; no slice `Delivered` without a passing deliver gate.
 - [ ] Every lesson with a mechanical Check has a `checks.json` entry (or a reason it can't).
 - [ ] No task went to `In review` without a linked pre-flight report (PASS) for its head commit.
 - [ ] After every audit (finished or stopped) the code tree was clean before the next commit.
-- [ ] Every design point decided this run went through the documents chain: each CHG Follow-up names the doc
-      versions that record it, or why a document needed no change.
+- [ ] Every design point decided this run went through the documents chain as DUs: each CHG Follow-up names the
+      doc versions that record it, or why a document needed no change.

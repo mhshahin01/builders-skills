@@ -12,7 +12,7 @@ Templates: `templates.md` § lessons.md and § changes.md.
 
 ---
 
-## 1. When a lesson is captured (automatic: never wait to be asked)
+## 1. When a lesson is captured (automatic - never wait to be asked)
 
 | Trigger | Detected by | Lesson kind |
 |---|---|---|
@@ -20,7 +20,7 @@ Templates: `templates.md` § lessons.md and § changes.md.
 | `verify` fails an AC | `verify` | misread / untested AC |
 | Task reopened (Done/Verified → In progress) | status change | why "done" was wrong |
 | `bug`, `code-drift`, `layer-miss`, `obs-gap`, `double-build`, `untracked-code` gap **closed** | `gap close` | root cause of the gap |
-| User corrects the agent in chat ("no, that's wrong", "you forgot the DB", "I told you…") | any command | the correction itself; quote it |
+| User corrects the agent in chat ("no, that's wrong", "you forgot the DB", "I told you…") | any command | the correction itself - quote it |
 | Same error message / failing test seen twice in one task | `done`, `start` | the fix that worked |
 | `forced-start` gap closed | `gap close` | was skipping the dependency right? |
 
@@ -77,15 +77,20 @@ Never delete a lesson. Retire it with a reason and the superseding CHG/L ID.
 | Command | Uses lessons how |
 |---|---|
 | `plan` | For each new task: matching Promoted-DoD lessons → DoD items `L-NNN: <rule>`; matching Active lessons → one line in **Why this way** if they change the design. |
-| `start` | Task brief gets a **Lessons that apply** section: filter Active/Promoted by layer ∩ task layers, key, and tags ∩ owned-item kinds. Max 7, Promoted first, then by Hits. Each with its Check. |
+| `start` | Task brief gets a **Lessons that apply** section: filter Active/Promoted by layer ∩ task layers, key, and tags ∩ owned-item kinds. **Max 4**, Promoted first, then by Hits. Lessons a pre-flight check already enforces mechanically (a `command` or `builtin` entry in `checks.json`, or P10) are left out: the script catches them. The card links each lesson (`[L-NNN](../../lessons.md#l-nnn)`), never copies its text. |
 | `done` | Implementer must tick each listed lesson's Check; the audit re-runs them independently. |
 | audit | Every applicable lesson's Check is run; violation of Promoted-rule = blocker, others = major. |
 | `standup` | New lessons and recurrences since last entry. |
 
-Read budget: `start`/`done`/audit read `lessons.md` filtered by scope: grep the Scope column, don't load
+**Merge before adding.** Before a new lesson row, look for an Active lesson with the same root cause and
+layer: sharpen its Rule and Check instead of adding a row (L-NNN keeps its ID, hits +1). When Active +
+Promoted lessons pass 25, the next `standup` proposes merges and retirements (lessons a mechanical check
+fully covers become `Retired: covered by <check id>`).
+
+Read budget: `start`/`done`/audit read `lessons.md` filtered by scope - grep the Scope column, don't load
 all of it when it is large.
 
-## 6. Change log (`changes.md`): direction changes
+## 6. Change log (`changes.md`) - direction changes
 
 Opened whenever, **after a task has started**, any of these changes: a use case, an AC, a decision the
 user made in chat, an approach the tracker or agent chose (pattern, library, schema shape), or scope.
@@ -97,11 +102,11 @@ user made in chat, an approach the tracker or agent chose (pattern, library, sch
 | Why | One line. |
 | Affected | Tasks (status now), owned items, code files, lessons, earlier CHG rows. |
 | Supersedes | Earlier CHG / planning decision / lesson IDs. |
-| Follow-up | Rework tasks created (`depends_on` the affected ones); the documents chain run in the same change (SKILL.md § Documents chain), each document named with the version that records it, or `no change` with the reason; a `doc-gap` only for what is still undecided. |
+| Follow-up | Rework tasks created (`depends_on` the affected ones), gaps routed (doc changes → `doc-changed` gap + a DU of kind `direction` whose decider is this row, doc-impact-rules.md); each document the DUs reached, with the version that records it, or `no change` with the reason (SKILL.md § Documents chain). |
 
 Effects:
 
-1. Affected not-started tasks → `Stale`; affected Done/Verified → `Done-stale`; rework task created. Exception: a task re-planned through the documents chain in the same change keeps its status (SKILL.md § Documents chain, which names the one Done / Verified case that still becomes `Done-stale`).
+1. Affected not-started tasks → `Stale`; affected Done/Verified → `Done-stale`; rework task created.
 2. Superseded planning decisions and lessons → marked `Superseded by CHG-NNN` (not deleted).
 3. **Anti-resurrection:** `start` and the double-build gate grep `changes.md` for every owned item; an item
    listed as removed/replaced in an active CHG → stop and show the CHG. Audit flags code that brings a

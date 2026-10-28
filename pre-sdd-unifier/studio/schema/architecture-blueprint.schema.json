@@ -1,0 +1,1554 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pre-SDD to SDD handoff blueprint",
+  "description": "The handoff model pre-sdd-unifier and the Pre-SDD Architecture Studio 3.0 write for sdd-unifier: the register entries as requirements, the calculations, the proposed shape and diagrams, the options, the decisions, the conflicts, the G3 governance and the validation. Schema 2.0.0; every timestamp is UTC. The BRD owns the product use cases and roles.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project",
+    "sources",
+    "requirements",
+    "calculations",
+    "architecture",
+    "dr_scenarios",
+    "options",
+    "decisions",
+    "diagrams",
+    "conflicts",
+    "governance",
+    "validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0.0"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "slug",
+        "path_code",
+        "change_type",
+        "target_hosting",
+        "source_to_target",
+        "project_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]+(-[A-Z0-9]+)*$"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "path_code": {
+          "type": "string",
+          "pattern": "^((GF|BF)-(OP|CL)( \\+ (GF|BF)-(OP|CL))?|Unclassified)$"
+        },
+        "change_type": {
+          "enum": [
+            "GF",
+            "BF",
+            "mixed",
+            "undecided"
+          ]
+        },
+        "target_hosting": {
+          "enum": [
+            "CL",
+            "OP",
+            "hybrid",
+            "undecided"
+          ]
+        },
+        "source_to_target": {
+          "$ref": "#/$defs/text"
+        },
+        "project_status": {
+          "enum": [
+            "Discovery",
+            "Draft",
+            "G0",
+            "G1",
+            "G2",
+            "Blocked",
+            "G3 Approved",
+            "G3 Approved with conditions"
+          ]
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pre_sdd",
+        "brds",
+        "engine",
+        "skill"
+      ],
+      "properties": {
+        "pre_sdd": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "version",
+            "approval_status"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*-pre-sdd-master\\.md$"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+$"
+            },
+            "approval_status": {
+              "enum": [
+                "draft",
+                "discovery",
+                "under_review",
+                "approved",
+                "approved_with_conditions",
+                "blocked"
+              ]
+            }
+          }
+        },
+        "brds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "path",
+              "version",
+              "status"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[A-Z0-9]+(-[A-Z0-9]+)*$"
+              },
+              "path": {
+                "$ref": "#/$defs/text"
+              },
+              "version": {
+                "$ref": "#/$defs/text"
+              },
+              "status": {
+                "$ref": "#/$defs/textOrNull"
+              }
+            }
+          }
+        },
+        "engine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "const": "pre-sdd-engine"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            }
+          }
+        },
+        "skill": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "const": "pre-sdd-unifier"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            }
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirement"
+      }
+    },
+    "calculations": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": {
+        "$ref": "#/$defs/calculation",
+        "properties": {
+          "id": {
+            "pattern": "^CALC-\\d{2}$"
+          }
+        }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "patterns",
+        "components",
+        "connections"
+      ],
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pattern"
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "connections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/edge"
+          }
+        }
+      }
+    },
+    "dr_scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dr"
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "horizon_months",
+        "weighted",
+        "flags",
+        "chosen_option",
+        "list"
+      ],
+      "properties": {
+        "horizon_months": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "weighted": {
+          "type": "boolean"
+        },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "UNWEIGHTED",
+              "ESTIMATED-SCORES"
+            ]
+          }
+        },
+        "chosen_option": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^OPT-\\d{2,}$"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "diagrams": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagram"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/conflict"
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pre_sdd_gate",
+        "gate_status",
+        "signoffs",
+        "conditions",
+        "exceptions",
+        "approved_at",
+        "authorized_to_start_sdd"
+      ],
+      "properties": {
+        "pre_sdd_gate": {
+          "enum": [
+            "G0",
+            "G1",
+            "G2",
+            "G3"
+          ]
+        },
+        "gate_status": {
+          "enum": [
+            "draft",
+            "provisional",
+            "approved",
+            "conditionally_approved",
+            "blocked"
+          ]
+        },
+        "signoffs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/signoff"
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/exception"
+          }
+        },
+        "approved_at": {
+          "$ref": "#/$defs/stampOrNull"
+        },
+        "authorized_to_start_sdd": {
+          "type": "boolean"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "export_status",
+        "sdd_source_intake",
+        "blockers",
+        "conflicts",
+        "advisories",
+        "checked_at"
+      ],
+      "properties": {
+        "export_status": {
+          "enum": [
+            "provisional",
+            "approved_technical_handoff",
+            "blocked"
+          ]
+        },
+        "sdd_source_intake": {
+          "enum": [
+            "awaiting_brds",
+            "ready_for_reconciliation",
+            "blocked"
+          ]
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "advisories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "checked_at": {
+          "$ref": "#/$defs/stamp"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "textOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "string": {
+      "type": "string"
+    },
+    "stamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$"
+    },
+    "stampOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$"
+    },
+    "dateOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "rowIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(HDR|BUS|CAP|REL|DAT|SEC|INT|OPS|ECO|OVL)-\\d{2}$"
+      }
+    },
+    "entryId": {
+      "type": "string",
+      "pattern": "^(HDR|BUS|CAP|REL|DAT|SEC|INT|OPS|ECO|OVL)-\\d{2}\\.[1-9]\\d*$"
+    },
+    "entryIdOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^(HDR|BUS|CAP|REL|DAT|SEC|INT|OPS|ECO|OVL)-\\d{2}\\.[1-9]\\d*$"
+    },
+    "numberOrNull": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "lifecycle": {
+      "enum": [
+        "proposed",
+        "validated",
+        "approved",
+        "blocked"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "none",
+            "brd",
+            "derived",
+            "answer",
+            "default",
+            "policy",
+            "fixture",
+            "import"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "proposal": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "reason",
+            "by",
+            "at"
+          ],
+          "properties": {
+            "value": {
+              "type": [
+                "number",
+                "string"
+              ],
+              "minLength": 1
+            },
+            "reason": {
+              "$ref": "#/$defs/text"
+            },
+            "by": {
+              "$ref": "#/$defs/text"
+            },
+            "at": {
+              "$ref": "#/$defs/stamp"
+            }
+          }
+        }
+      ]
+    },
+    "factor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "status",
+        "source",
+        "confirmed_by",
+        "confirmed_at"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "open",
+            "estimated",
+            "confirmed",
+            "not_applicable"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "confirmed_by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "confirmed_at": {
+          "$ref": "#/$defs/stampOrNull"
+        }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "group",
+        "n",
+        "primary",
+        "label",
+        "scope",
+        "workload",
+        "value",
+        "unit",
+        "window",
+        "measured_at",
+        "priority",
+        "kind",
+        "verification",
+        "status",
+        "na_reason",
+        "source",
+        "owner",
+        "owner_name",
+        "due",
+        "evidence",
+        "confirmed_by",
+        "confirmed_at",
+        "proposal",
+        "factors"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/entryId"
+        },
+        "item": {
+          "type": "string",
+          "pattern": "^(HDR|BUS|CAP|REL|DAT|SEC|INT|OPS|ECO|OVL)-\\d{2}$"
+        },
+        "group": {
+          "enum": [
+            "HDR",
+            "BUS",
+            "CAP",
+            "REL",
+            "DAT",
+            "SEC",
+            "INT",
+            "OPS",
+            "ECO",
+            "OVL"
+          ]
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "primary": {
+          "type": "boolean"
+        },
+        "label": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "scope": {
+          "enum": [
+            "host",
+            "az",
+            "site",
+            "region",
+            "provider",
+            "cyber",
+            null
+          ]
+        },
+        "workload": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^WL-\\d{2,}$"
+        },
+        "value": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "unit": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "window": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "measured_at": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "priority": {
+          "enum": [
+            "Must",
+            "Should",
+            "Could",
+            null
+          ]
+        },
+        "kind": {
+          "enum": [
+            "hard",
+            "target",
+            "forecast",
+            "assumption"
+          ]
+        },
+        "verification": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "estimated",
+            "confirmed",
+            "not_applicable"
+          ]
+        },
+        "na_reason": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "owner": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^(B|E|D|Sec|Ops|Fin|Legal)(\\+(B|E|D|Sec|Ops|Fin|Legal))*$"
+        },
+        "owner_name": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "due": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "evidence": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "confirmed_by": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "confirmed_at": {
+          "$ref": "#/$defs/stampOrNull"
+        },
+        "proposal": {
+          "$ref": "#/$defs/proposal"
+        },
+        "factors": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "callsPerTxn": {
+              "$ref": "#/$defs/factor"
+            },
+            "requestFactor": {
+              "$ref": "#/$defs/factor"
+            },
+            "utilization": {
+              "$ref": "#/$defs/factor"
+            },
+            "meanLatencyMs": {
+              "$ref": "#/$defs/factor"
+            },
+            "requestKB": {
+              "$ref": "#/$defs/factor"
+            },
+            "responseKB": {
+              "$ref": "#/$defs/factor"
+            },
+            "networkOverhead": {
+              "$ref": "#/$defs/factor"
+            },
+            "storedKB": {
+              "$ref": "#/$defs/factor"
+            },
+            "initialGB": {
+              "$ref": "#/$defs/factor"
+            },
+            "retentionDays": {
+              "$ref": "#/$defs/factor"
+            },
+            "indexFactor": {
+              "$ref": "#/$defs/factor"
+            },
+            "copies": {
+              "$ref": "#/$defs/factor"
+            },
+            "cidrPrefix": {
+              "$ref": "#/$defs/factor"
+            },
+            "transactionNeed": {
+              "$ref": "#/$defs/factor"
+            },
+            "queryShape": {
+              "$ref": "#/$defs/factor"
+            },
+            "storeKind": {
+              "$ref": "#/$defs/factor"
+            },
+            "budgetPressure": {
+              "$ref": "#/$defs/factor"
+            },
+            "primaryLocation": {
+              "$ref": "#/$defs/factor"
+            },
+            "recoveryLocation": {
+              "$ref": "#/$defs/factor"
+            },
+            "migrationGB": {
+              "$ref": "#/$defs/factor"
+            },
+            "linkMbps": {
+              "$ref": "#/$defs/factor"
+            },
+            "cutoverHours": {
+              "$ref": "#/$defs/factor"
+            }
+          }
+        }
+      }
+    },
+    "calculation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "rule_id",
+        "rule_version",
+        "label",
+        "formula",
+        "substitution",
+        "row_ids",
+        "output",
+        "status",
+        "limitations"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^CALC-\\d{2}(@OPT-\\d{2,})?$"
+        },
+        "rule_id": {
+          "type": "string",
+          "pattern": "^CALC-\\d{2}$"
+        },
+        "rule_version": {
+          "const": "3.0.0"
+        },
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "formula": {
+          "$ref": "#/$defs/text"
+        },
+        "substitution": {
+          "$ref": "#/$defs/string"
+        },
+        "row_ids": {
+          "$ref": "#/$defs/rowIds"
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "$ref": "#/$defs/numberOrNull"
+            },
+            "unit": {
+              "$ref": "#/$defs/string"
+            }
+          }
+        },
+        "status": {
+          "enum": [
+            "estimated",
+            "open"
+          ]
+        },
+        "limitations": {
+          "$ref": "#/$defs/string"
+        }
+      }
+    },
+    "pattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "status",
+        "row_ids",
+        "rationale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^PAT-(TOPO|DR|DATA)-\\d{3}$"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "$ref": "#/$defs/lifecycle"
+        },
+        "row_ids": {
+          "$ref": "#/$defs/rowIds"
+        },
+        "rationale": {
+          "$ref": "#/$defs/string"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "placement",
+        "status",
+        "row_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^NODE-[A-Za-z0-9_-]+$"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "kind": {
+          "enum": [
+            "actor_boundary",
+            "external_dependency",
+            "edge",
+            "load_balancer",
+            "compute",
+            "database",
+            "cache",
+            "messaging",
+            "storage",
+            "network",
+            "identity",
+            "security",
+            "observability",
+            "site",
+            "zone",
+            "other"
+          ]
+        },
+        "placement": {
+          "$ref": "#/$defs/string"
+        },
+        "status": {
+          "$ref": "#/$defs/lifecycle"
+        },
+        "row_ids": {
+          "$ref": "#/$defs/rowIds"
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "from",
+        "to",
+        "relationship",
+        "direction",
+        "notes",
+        "status",
+        "row_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^EDGE-[A-Za-z0-9_-]+$"
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^NODE-[A-Za-z0-9_-]+$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^NODE-[A-Za-z0-9_-]+$"
+        },
+        "relationship": {
+          "enum": [
+            "request",
+            "response",
+            "event",
+            "replication",
+            "network",
+            "auth",
+            "failover",
+            "dependency",
+            "other"
+          ]
+        },
+        "direction": {
+          "enum": [
+            "unidirectional",
+            "bidirectional"
+          ]
+        },
+        "notes": {
+          "$ref": "#/$defs/string"
+        },
+        "status": {
+          "$ref": "#/$defs/lifecycle"
+        },
+        "row_ids": {
+          "$ref": "#/$defs/rowIds"
+        }
+      }
+    },
+    "dr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entry",
+        "scope",
+        "status",
+        "rto_seconds",
+        "rpo_seconds",
+        "rto_entry",
+        "rpo_entry",
+        "strategy",
+        "strategy_candidate",
+        "replication",
+        "component_ids",
+        "validation_tasks",
+        "notes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^DR-SCOPE-[A-Z]+$"
+        },
+        "entry": {
+          "$ref": "#/$defs/entryId"
+        },
+        "scope": {
+          "enum": [
+            "host",
+            "az",
+            "site",
+            "region",
+            "provider",
+            "cyber",
+            "unknown"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/lifecycle"
+        },
+        "rto_seconds": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "rpo_seconds": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "rto_entry": {
+          "$ref": "#/$defs/entryIdOrNull"
+        },
+        "rpo_entry": {
+          "$ref": "#/$defs/entryIdOrNull"
+        },
+        "strategy": {
+          "enum": [
+            "unresolved",
+            "cyberReview",
+            "localHA",
+            "backup",
+            "pilot",
+            "warm",
+            "active"
+          ]
+        },
+        "strategy_candidate": {
+          "$ref": "#/$defs/text"
+        },
+        "replication": {
+          "enum": [
+            "synchronous",
+            "asynchronous",
+            "TBD"
+          ]
+        },
+        "component_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^NODE-[A-Za-z0-9_-]+$"
+          }
+        },
+        "validation_tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "notes": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check",
+        "ref",
+        "message"
+      ],
+      "properties": {
+        "check": {
+          "enum": [
+            "hosting",
+            "network",
+            "topology-dr",
+            "excluded"
+          ]
+        },
+        "ref": {
+          "$ref": "#/$defs/text"
+        },
+        "message": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "hardPass",
+        "oneTime",
+        "monthly",
+        "tco",
+        "weighted",
+        "unknowns",
+        "failures",
+        "calculations"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^OPT-\\d{2,}$"
+        },
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "hardPass": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "oneTime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "monthly": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "tco": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "weighted": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/failure"
+          }
+        },
+        "calculations": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/calculation"
+          }
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "topic",
+        "candidate",
+        "status",
+        "level",
+        "rationale",
+        "rule_ids",
+        "row_ids",
+        "alternatives",
+        "owner",
+        "open_validation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ADR-(CAND-[A-Za-z0-9_-]+(@[a-z]+)?|[A-Z]+-\\d{3})$"
+        },
+        "topic": {
+          "$ref": "#/$defs/text"
+        },
+        "candidate": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "$ref": "#/$defs/lifecycle"
+        },
+        "level": {
+          "$ref": "#/$defs/text"
+        },
+        "rationale": {
+          "$ref": "#/$defs/text"
+        },
+        "rule_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "row_ids": {
+          "$ref": "#/$defs/rowIds"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "tradeoff"
+            ],
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/text"
+              },
+              "tradeoff": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        },
+        "owner": {
+          "$ref": "#/$defs/text"
+        },
+        "open_validation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "diagram": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "status",
+        "component_ids",
+        "summary",
+        "mermaid_file",
+        "drawio_file"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "type": {
+          "enum": [
+            "infrastructure",
+            "network",
+            "dr",
+            "deployment",
+            "data_flow",
+            "context",
+            "security",
+            "sequence"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/lifecycle"
+        },
+        "component_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^NODE-[A-Za-z0-9_-]+$"
+          }
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "mermaid_file": {
+          "type": "string",
+          "pattern": "^diagrams/[a-z]+\\.mmd$"
+        },
+        "drawio_file": {
+          "const": "diagrams/architecture.drawio"
+        }
+      }
+    },
+    "conflictFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "left_source": {
+          "type": "string",
+          "pattern": "^REL-05(\\.[1-9]\\d*)?$"
+        },
+        "right_source": {
+          "const": "Target shape"
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "owner": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "excepted"
+          ]
+        },
+        "resolution": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "conflict": {
+      "$ref": "#/$defs/conflictFields",
+      "required": [
+        "id",
+        "left_source",
+        "right_source",
+        "description",
+        "owner",
+        "status"
+      ],
+      "if": {
+        "$ref": "#/$defs/conflictFields",
+        "properties": {
+          "status": {
+            "const": "excepted"
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/conflictFields",
+        "required": [
+          "resolution"
+        ]
+      },
+      "else": {
+        "$ref": "#/$defs/conflictFields",
+        "not": {
+          "required": [
+            "resolution"
+          ]
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "message",
+        "owner",
+        "entry"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "message": {
+          "$ref": "#/$defs/text"
+        },
+        "owner": {
+          "$ref": "#/$defs/text"
+        },
+        "entry": {
+          "$ref": "#/$defs/entryIdOrNull"
+        }
+      }
+    },
+    "signoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "applicable",
+        "na_reason",
+        "name",
+        "decision",
+        "at",
+        "stand_in",
+        "counted"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "business_sponsor",
+            "product_owner_business_process_owner",
+            "lead_principal_architect",
+            "infrastructure_platform_owner",
+            "network_owner",
+            "security_and_privacy_compliance",
+            "data_owner",
+            "sre_operations",
+            "finance_procurement",
+            "migration_owner",
+            "architecture_review_authority"
+          ]
+        },
+        "applicable": {
+          "type": "boolean"
+        },
+        "na_reason": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "name": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "decision": {
+          "enum": [
+            "Approved",
+            "Approved with conditions",
+            "Rejected",
+            null
+          ]
+        },
+        "at": {
+          "$ref": "#/$defs/stampOrNull"
+        },
+        "stand_in": {
+          "type": "boolean"
+        },
+        "counted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "owner",
+        "due"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^COND-\\d{2,}$"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "owner": {
+          "$ref": "#/$defs/textOrNull"
+        },
+        "due": {
+          "$ref": "#/$defs/dateOrNull"
+        }
+      }
+    },
+    "exception": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "entry",
+        "reason",
+        "granted_by",
+        "granted_at",
+        "expires",
+        "review",
+        "valid"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^EXC-\\d{2,}$"
+        },
+        "entry": {
+          "$ref": "#/$defs/entryId"
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        },
+        "granted_by": {
+          "$ref": "#/$defs/text"
+        },
+        "granted_at": {
+          "$ref": "#/$defs/stamp"
+        },
+        "expires": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "review": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "valid": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

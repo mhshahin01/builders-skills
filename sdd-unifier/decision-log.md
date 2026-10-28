@@ -5,9 +5,9 @@
 **Companion file rules.**
 
 - Lives in `./sdd-[project-slug]/`, next to `[project-slug]-sdd-master.md`. In COMBINED mode it is still written to `./sdd-[project-slug]/decision-log.md` (the folder is created for it), and the handoff names its path.
-- Created on first use: when the first decision is recorded (the architecture questionnaire, an ecosystem walkthrough answer, an eco-system file import, a user override, a resolved clarification, a declined one-time offer, a settled marker, an accepted open item, a direct design instruction, a business review point, or the record of an answer policy that answered a question). An "Accept all proposed" ecosystem answer with no other decision does not create it, unless an answer policy gave it: the policy's own record does (SKILL.md step 8, Answer policy). Do not write an empty register.
+- Created on first use: when the first decision is recorded (the architecture questionnaire, an ecosystem walkthrough answer, an eco-system file import, a user override, a resolved clarification, a declined one-time offer, a Pre-SDD loaded, offered, or declined, a settled marker, an accepted open item, a direct design instruction, a business review point, or the record of an answer policy that answered a question). An "Accept all proposed" ecosystem answer with no other decision does not create it, unless an answer policy gave it: the policy's own record does (SKILL.md step 8, Answer policy). Do not write an empty register.
 - Linked from `[project-slug]-sdd-master.md` once it exists.
-- **A declined one-time offer is recorded and not offered again.** The one-time offers of this skill are the architecture deck brief, the §6 upgrade, chunk 05a, and the Tables Design format (SKILL.md step 10). When the user declines one, the Clarification register gets one entry: the offer, `Declined`, who answered, and the date. It carries no `Rule home:`, because it settles no design point. Before it makes an offer, the skill reads the register, and it does not repeat an offer the register shows declined. A later request that asks for the thing itself (for example the deck brief) is taken as asked, and its record says it supersedes the decline.
+- **A declined one-time offer is recorded and not offered again.** The one-time offers of this skill are the architecture deck brief, the §6 upgrade, chunk 05a, the Tables Design format, the Pre-SDD for an SDD built before the Pre-SDD check, and a newer Pre-SDD version (one offer per version) (SKILL.md step 10; a Pre-SDD decline is also written in § Pre-SDD record). When the user declines one, the Clarification register gets one entry: the offer, `Declined`, who answered, and the date. It carries no `Rule home:`, because it settles no design point. Before it makes an offer, the skill reads the register, and it does not repeat an offer the register shows declined. A later request that asks for the thing itself (for example the deck brief) is taken as asked, and its record says it supersedes the decline.
 - Never merged into the combined or merged SDD. It is decision history, not design text.
 - Entries are append-only in spirit: a superseded decision keeps its record, and the later record says it supersedes the earlier one.
 - On any rewrite, the VERSION header carries the current parent document version. Decision/process tracking or header-only synchronization does not create a separate content bump.
@@ -30,7 +30,7 @@ TYPE: Decision Log
 PROJECT: [Project Name]
 VERSION: [X.X]
 PART OF: SDD - [Project Name]
-PURPOSE: Single home for the architecture questionnaire record, the ecosystem selection record, the clarification Q&A, and decision history; the content chunks hold only the settled design.
+PURPOSE: Single home for the architecture questionnaire record, the ecosystem selection record, the Pre-SDD record, the clarification Q&A, and decision history; the content chunks hold only the settled design.
 MAINTENANCE: New decisions are added here, not in the content chunks. The chunks carry only the resulting design and current-state caveats.
 -->
 
@@ -42,7 +42,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 ## Architecture questionnaire record
 
-**Outcome, [YYYY-MM-DD]:** [Accept all | Walked through]. [Who answered: the user, or `Policy: <policy> (set by <name>, <date>)`.] Style: [modular monolith | hybrid | microservices]; [followed the recommendation | chose otherwise].
+**Outcome, [YYYY-MM-DD]:** [Accept all | Walked through]. [Who answered: the user, or `Policy: <policy> (set by <name>, <date>)`.] Style: [modular monolith | hybrid | microservices]; [followed the recommendation | chose otherwise]. [With a loaded Pre-SDD: `Pre-SDD: PSDD v[X.X]`.]
 
 | Question | Offered (recommended first) | Chosen | Evidence | Rule home |
 |----------|-----------------------------|--------|----------|-----------|
@@ -61,6 +61,14 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 | [Import conflict, e.g. Primary RDBMS] | [Keep: PostgreSQL 17, BRD-mandated ([KEY]) / Take: MySQL 8, eco-system file § Part A] | [PostgreSQL 17] | [BRD-mandated ([KEY])] | [02 §6 row](./02-ecosystem-overview.md#anchor) |
 
 [Only rows that were walked through or overridden, and, for an import, one row per conflict asked and per remaining row, walked through or accepted (SKILL.md step 3c item 7). Rows accepted as proposed in the other paths are not listed one by one; the §6 Source column already carries their source.]
+
+## Pre-SDD record
+
+[One entry per Pre-SDD event, newest last (SKILL.md step 2a and step 10): a version loaded, an offer made, an offer declined, a request raised to the E2E Architect, an answer from it. The Source Pre-SDD row of chunk 00 carries the current state; this section keeps how it got there.]
+
+**[Loaded | Offered | Declined | Requested | Answered], [YYYY-MM-DD]:** [For a load: `PSDD v[X.X]`, the gate its master showed (`G3 Approved` or `G3 Approved with conditions`), the signers, and what the load changed (the locked items applied by SDD place, the conditions turned into §4 risks, the open items raised to the E2E Architect by OI ID); for a new version, the version it replaces. For an offer: the version offered and why (an SDD built before the Pre-SDD check, or a newer version). For a decline: who answered and the date; the offer is not repeated (§ Companion file rules). For a request: its HR-NNN, its kind (create, sign, or a disagreement with a locked item), and the blockers or the open item it names. For an answer: its HR-NNN, the open items it names, and the E2E Architect's decision (a new version, recorded as Loaded; or the item kept, with the reason).]
+
+**Rule home:** [[00 § Document Lineage](./00-cover-and-changelog.md#document-lineage), for a load; none for an offer, a decline, a request, or an answer]
 
 ## Clarification register
 
@@ -118,7 +126,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 ## Interaction with the chunks
 
 - Applying a decision updates the chunk text as plain design in present tense ("Wallet events are published through the transactional outbox") and removes the inline marker it settles; a partial answer narrows the marker to its open remainder instead. The chunk never keeps a "resolved on [date]" stamp, an option letter, or a progress note.
-- Compact traceability references to stable IDs (OI-NN, ADR-NN, AP-NN, and a use case as its keyed link `[KEY/UC-NN](...)`: `brd-to-sdd.md` § The link) inside design text and table cells are allowed in the chunks; storytelling is not.
+- Compact traceability references to stable IDs (OI-NN, ADR-NN, AP-NN, a use case as its keyed link `[KEY/UC-NN](...)`: `brd-to-sdd.md` § The link, and a Pre-SDD ID as its link `[PSDD/<ID>](...)`: `brd-to-sdd.md` § Pre-SDD inputs (locked)) inside design text and table cells are allowed in the chunks; storytelling is not.
 - The §6 Status and Source columns keep each row's state and source label (SKILL.md step 3c items 1 and 6; a table written before those columns keeps the label in its Notes). They are current-state provenance, not narrative, and stay in the chunk.
 - Chunk 18 keeps each item's current status line and its Resolution Log row. The narrative behind an accepted item moves here.
 - `[project-slug]-sdd-master.md` keeps the generation progress and links this register; it does not duplicate the Q&A records.

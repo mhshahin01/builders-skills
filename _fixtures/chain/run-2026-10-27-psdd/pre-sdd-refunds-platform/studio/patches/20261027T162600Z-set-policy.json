@@ -1,0 +1,6 @@
+{
+  "actor": { "type": "person", "name": "Product Owner (fixture owner)" },
+  "ops": [
+    { "op": "set-policy", "policy": { "label": "test-run policy", "stand_ins": ["Approver"] } }
+  ]
+}

@@ -9,7 +9,7 @@ The architecture style is not fixed in advance. When the SDD is derived from a B
 | Intent | Questionnaire |
 |---|---|
 | DERIVE-FROM-BRD | **Runs**, before any chunk is written, after the Project Type answer (step 3a). |
-| GENERATE (SoW, notes, topic seed) | Runs only when the user asks for it ("ask me about the architecture"). Otherwise the style comes from the source or is flagged `[NEEDS CLARIFICATION: ...]` in §8.1, and the ecosystem flow (step 3c) proposes it. |
+| GENERATE (SoW, notes, topic seed) | Does not run: the request writes no SDD content until its BRD and a G3-signed Pre-SDD exist, and the SDD is then derived (SKILL.md step 2), so the DERIVE-FROM-BRD row applies. |
 | TRANSFORM (an existing SDD) | Does not run. The source SDD's architecture is kept verbatim; a mismatch with the drivers becomes an open item for the reviewer, never a silent change. |
 | Brownfield (any intent) | Q2-Q6 start from the existing system's style, shown as `existing` and recommended unless a driver clearly argues for change. |
 
@@ -20,7 +20,7 @@ It runs once per SDD. On a resume it never reruns; a change later is a decision 
 ## The flow
 
 1. **Read the drivers from the BRD.** Scope and objectives (01, 04), use-case count and personas (05, 07), integrations (08), business NFRs (10), Appendix § Technical Inputs (12), and any roadmap or phasing (a phase-based BRD's later-phase scope items count as drivers too, and inform ADR-01's extraction or consolidation trigger: `brd-to-sdd.md` § Phase-based BRDs). Technical Inputs that mandate a style are `BRD-mandated`: shown locked, not asked (an override is allowed and becomes an ADR). Cite every driver with its BRD key, even with one BRD; with several source BRDs, read the drivers from every BRD. A driver that one source BRD gives and another is silent on is not missing: the BRD that gives it is its evidence. It is missing only when no source BRD gives it. Two BRDs that mandate different styles were already asked in the cross-BRD reconciliation (`brd-to-sdd.md` § Source BRDs and lineage); show the answer as decided, with its ADR. Drivers that point different ways across BRDs count as a conflict (step 3).
-2. **Pre-fill every question** with a recommended answer and its evidence (BRD chunk and ID). Use the recommendation rules below. When the BRD is silent on Q2, pre-fill it from Q1 as an assumption: One team for an MVP or a first production release, Two or three teams for a platform at scale, with `assumption - BRD silent` as the evidence. An assumed Q2 never counts as the driver that justifies a more distributed style.
+2. **Pre-fill every question** with a recommended answer and its evidence (BRD chunk and ID). Use the recommendation rules below. When the BRD is silent on Q2, pre-fill it from Q1 as an assumption: One team for an MVP or a first production release, Two or three teams for a platform at scale, with `assumption - BRD silent` as the evidence. An assumed Q2 never counts as the driver that justifies a more distributed style. Under a loaded Pre-SDD, Q3, Q7, and Q8 are pre-filled as § Under a loaded Pre-SDD says.
 3. **Show the proposed answers as one compact table** (question, recommended answer, evidence, one-line tradeoff), then ask ONE question:
 
    > **Architecture: accept the recommended answers?**
@@ -83,8 +83,26 @@ Rules that apply to every profile:
 
 ---
 
+## Under a loaded Pre-SDD
+
+When SKILL.md step 2a loaded a G3-signed Pre-SDD, its chunk 12 lock list arrives as evidence and constraints. The questions stay this SDD's own (SKILL.md principle 20):
+
+| Question | What the Pre-SDD gives | How it is shown |
+|---|---|---|
+| Project Type (SKILL.md step 3a) | The classification, `PSDD/HDR-07` | Pre-filled and cited. A brownfield Pre-SDD with no codebase to extend gives Greenfield, with the migration context in §1. |
+| Q3 Load and availability | Its numbers: the `PSDD/CALC-NN` values (the calculations table of its chunk 12 § 12.2, each linked to its chunk 04 anchor) and the rows its chunk 12 lands in Q3 | The Evidence column cites them as `PSDD/<ID>`. The answer stays this SDD's choice, recommended from them. |
+| Q7 Multi-tenancy model | The isolation level, `PSDD/DAT-07` | Only the options the level allows are offered, and the constraint is shown under the question: `single` allows Single tenant; `shared-logical` allows Shared schema with `tenant_id`, Schema per tenant, or Database per tenant; `schema-isolated` allows Schema per tenant or Database per tenant; `database-isolated` and `deployment-isolated` allow Database per tenant. The platform rule of § Recommendation rules picks within them. When the locked isolation entry (`PSDD/DAT-07.1`) reads `TBD` or `Open`, Q7 is recorded open, waiting for that entry's owner (the Owner column of chunk 12's lock list), the multi-tenancy ADR is `Proposed` with a `[NEEDS CLARIFICATION: ...]` marker citing the entry, and Accept all still applies to the other questions and does not by itself make the walkthrough recommended. |
+| Q8 Deployment target | The hosting target: cloud, on-prem, or hybrid, and a named provider only when the Pre-SDD records it as a hard constraint | The hosting target is shown locked, with source `Pre-SDD` (`PSDD/<ID>`), and is not asked. The runtime option (Kubernetes, a managed container service, or a simple container or VM setup) stays this SDD's choice, recommended within that target. |
+
+- **Q1, Q2, Q4, Q5, and Q6 are unchanged.** The Pre-SDD gives their drivers at most, never their answers.
+- **Q7 and Q8 keep feeding §8.6 and §8.7** (§ Effect on the SDD). With a loaded Pre-SDD, those sections also cite what its chunk 12 lands in §8.6 and §8.7 (`brd-to-sdd.md` § Pre-SDD inputs (locked), the §8.6 and §8.7 row).
+- **An answer outside a locked value is not applied.** It becomes an open item owned by the E2E Architect (SKILL.md principle 20), and the locked value stands.
+
+---
+
 ## Recording
 
 - **§6 / §8.1 / ADR-01** carry the settled design in present tense.
 - **`decision-log.md` § Architecture questionnaire record** carries the process: accept-all or walked through, date, who answered (the user, or an answer policy as `Policy: <policy> (set by <name>, <date>)`: SKILL.md step 8, Answer policy), and one row per question (options offered, recommended, chosen, evidence, rule home). An "Accept all" with every answer recommended still gets the full record (the Outcome line and one row per question), because the style is a structural decision.
+- **With a loaded Pre-SDD**, the record names it: the Outcome line gives `Pre-SDD: PSDD v[X.X]`, the Evidence of Q3 cites its numbers as `PSDD/<ID>`, Q8's hosting target reads locked with source `Pre-SDD (PSDD/<ID>)`, and Q7's row names the isolation constraint, `PSDD/DAT-07`.
 - **Handoff (step 9)** states the style chosen, whether it followed the recommendation, and the extraction trigger.

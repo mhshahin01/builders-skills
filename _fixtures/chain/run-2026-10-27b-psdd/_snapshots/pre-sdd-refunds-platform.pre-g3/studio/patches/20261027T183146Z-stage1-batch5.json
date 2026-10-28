@@ -1,0 +1,70 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "REL-05.2",
+      "value": "az"
+    },
+    {
+      "op": "confirm",
+      "entry": "REL-05.2"
+    },
+    {
+      "op": "set-factor",
+      "entry": "DAT-02.1",
+      "factor": "storedKB",
+      "value": 8
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-02.1",
+      "factor": "storedKB"
+    },
+    {
+      "op": "set-factor",
+      "entry": "DAT-02.1",
+      "factor": "initialGB",
+      "value": 1
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-02.1",
+      "factor": "initialGB"
+    },
+    {
+      "op": "set-factor",
+      "entry": "DAT-02.1",
+      "factor": "retentionDays",
+      "value": 3653
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-02.1",
+      "factor": "retentionDays"
+    },
+    {
+      "op": "set",
+      "entry": "ECO-01.1",
+      "value": "One-time budget 250,000 EUR; run cost up to 12,000 EUR a month"
+    },
+    {
+      "op": "confirm",
+      "entry": "ECO-01.1"
+    },
+    {
+      "op": "set-factor",
+      "entry": "ECO-01.1",
+      "factor": "budgetPressure",
+      "value": "balanced"
+    },
+    {
+      "op": "confirm",
+      "entry": "ECO-01.1",
+      "factor": "budgetPressure"
+    }
+  ]
+}

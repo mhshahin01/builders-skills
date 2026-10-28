@@ -1,0 +1,13 @@
+{
+  "actor": {
+    "type": "agent",
+    "name": "pre-sdd-unifier"
+  },
+  "ops": [
+    {
+      "op": "set-run",
+      "stage": 4,
+      "group": null
+    }
+  ]
+}

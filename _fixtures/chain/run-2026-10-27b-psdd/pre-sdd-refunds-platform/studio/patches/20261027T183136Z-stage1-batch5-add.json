@@ -1,0 +1,13 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "add",
+      "row": "REL-05",
+      "label": "Loss of one zone"
+    }
+  ]
+}

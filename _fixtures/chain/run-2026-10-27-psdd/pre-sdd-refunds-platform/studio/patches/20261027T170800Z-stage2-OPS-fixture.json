@@ -1,0 +1,32 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "OPS-02.1",
+      "owner_name": "Operations Lead",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "OPS-03.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "OPS-05.1",
+      "owner_name": "Operations Lead",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "OPS-06.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    }
+  ]
+}

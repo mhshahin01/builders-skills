@@ -64,7 +64,7 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 6. **Plain-language pass.** Mandatory reread of every chunk against `writing-style.md`: short sentences, common words, no number, rule, or exception dropped.
 7. **Adversarial review.** A cleared-context reviewer subagent hunts gaps, ambiguities, risks, matrix inconsistencies, and technical leaks, and writes chunk 13 with a Recommended Answer and Why per item.
 8. **Acceptance loop.** The user decides each Open Item (accept, choose another option, defer, or reject), or an answer policy the user set for the run accepts the recommended answers (SKILL.md step 8); accepted answers are applied to the body and recorded in `decision-log.md`. Every item still `Open`, including one left for later, is presented again by the next request's loop.
-9. **Write the to-do.** `14-todo.md`: the open-items register, consistency check (C1-C10), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block.
+9. **Write the to-do.** `14-todo.md`: the open-items register, consistency check (C1-C10), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block. At the hand-off it offers the next hop, Pre-SDD (E2E Architect), now or later, and raises `Hand-off: BRD <KEY> v<version> is ready` on the status board.
 10. **Gated follow-ons, on later invocations.** Step 8b adds use-case diagrams and flowcharts once to-do steps 1-3 are confirmed (in parallel with the step 4 mockups). Step 8c writes chunks 15, 16, 17 in order, only once the delivery gate (G1-G5) verifies open against the files. Cross-mode conversion (merge, re-chunk, regenerate one chunk, refresh the to-do) is handled on explicit request.
 
 ### Outputs

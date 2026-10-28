@@ -1,0 +1,20 @@
+{
+  "actor": { "type": "agent", "name": "pre-sdd-unifier" },
+  "ops": [
+    { "op": "add", "row": "BUS-02", "label": "Track a refund request (REFUNDS/UC-02)" },
+    { "op": "add", "row": "BUS-02", "label": "Cancel a refund request (REFUNDS/UC-03)" },
+    { "op": "add", "row": "BUS-02", "label": "Approve or reject a refund, and the payout (REFUNDS/UC-04)" },
+    { "op": "add", "row": "BUS-02", "label": "View the points balance (LOYALTY/UC-01)" },
+    { "op": "add", "row": "BUS-02", "label": "View the points history (LOYALTY/UC-02)" },
+    { "op": "add", "row": "BUS-02", "label": "Earn points on a branch purchase (LOYALTY 03, no use case)" },
+    { "op": "add", "row": "CAP-01", "label": "Points movement (earned on a branch purchase, or taken back after a refund)" },
+    { "op": "add", "row": "CAP-07", "label": "Open the points balance and the points history (LOYALTY/UC-01, UC-02)" },
+    { "op": "add", "row": "REL-01", "label": "Points balance and points history screens (LOYALTY/UC-01, UC-02)" },
+    { "op": "add", "row": "DAT-01", "label": "Points ledger" },
+    { "op": "add", "row": "DAT-05", "label": "Points ledger" },
+    { "op": "add", "row": "INT-01", "label": "Point-of-Sale Records (Retail IT team)" },
+    { "op": "add", "row": "INT-01", "label": "Notification Partner (MsgHub)" },
+    { "op": "add", "row": "INT-03", "label": "Point-of-Sale Records (Retail IT team)" },
+    { "op": "add", "row": "INT-03", "label": "Notification Partner (MsgHub)" }
+  ]
+}

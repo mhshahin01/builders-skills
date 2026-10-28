@@ -1,0 +1,6 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "confirm", "entry": "DAT-02.1" }
+  ]
+}

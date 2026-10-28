@@ -1,0 +1,32 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "add-unknown",
+      "entry": "CAP-04.1",
+      "question": "Do branch purchases, and so the points movements of CAP-01.1, rise in the seasonal sales by the same factor as refund requests (CAP-04.1, REFUNDS/NFR-03), or by another factor?",
+      "impact": "Confirms or replaces the peak factor that CALC-02 to CALC-09 apply to the points movements.",
+      "owner": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20"
+    },
+    {
+      "op": "add-unknown",
+      "entry": "REL-02.1",
+      "question": "Does a declared region disaster count toward the REFUNDS/NFR-02 limit of 2 hours of disruption a month and toward the REL-01.1 availability target?",
+      "impact": "Decides whether REL-03.1 conflicts with REFUNDS/NFR-02 and REL-01.1 (R-01), or whether a region loss is an exclusion of REL-02.1.",
+      "owner": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20"
+    },
+    {
+      "op": "add-unknown",
+      "entry": "CAP-07.2",
+      "question": "Within how many milliseconds must the member points balance and history screens respond (LOYALTY 10 states no performance measure)?",
+      "impact": "Confirms or replaces the policy-accepted 2000 ms latency target for the member points journey.",
+      "owner": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20"
+    }
+  ]
+}

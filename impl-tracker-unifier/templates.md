@@ -11,6 +11,7 @@ Exact templates for every file the skill writes in `./tracking/`. Replace `<rel>
 |---|---|
 | Code root | . |
 | Docs root | ../chagaf-platform |
+| Board | ../chagaf-platform/unifier-status.md |
 | Current phase | AUTOAPPLY: P1 |
 | Commit trailer | Task: <KEY/T-NNN>; tracking-only commits of no single task: Tracking: <reason> |
 
@@ -167,7 +168,7 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 # AUTOAPPLY implementation plan
 
 **Baseline:** BRD v1.3 · SDD vX · LLD v1.4 · planned 2026-10-19 by <agent>
-**Scope:** P1–P2
+**Scope:** P1-P2
 
 ## Phases
 | Phase | Tasks | UCs | Status |

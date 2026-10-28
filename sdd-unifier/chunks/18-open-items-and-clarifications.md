@@ -7,7 +7,7 @@ DEPENDS_ON: all preceding SDD chunks (00 through 17)
 GATES: chunk 19 (End-to-End System Design). Chunk 19 is written only after every item here is resolved: Accepted - applied, Adjusted - applied, or Rejected. Open, Deferred, and Decided - pending application items keep the gate shut (SKILL.md step 8b). A status outside the Status legend below counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it.
 PART OF: SDD - [Project Name]
 PURPOSE: Output of the post-generation cleared-context reviewer pass. Captures architecture-level gaps, missing scenarios, integration corner cases, ADR ambiguities, and cross-chunk contract mismatches flagged by an independent reviewer. Every item carries a concrete Recommended Answer, ready to be applied to the SDD body once the architect accepts it.
-GENERATED_BY: sdd-unifier post-generation reviewer (cleared-context subagent run after the main SDD body is complete). After that review, the author appends only the open items the skill's rules tell it to raise: the derivation's and each project-file conflict (SKILL.md step 7), text an applied decision makes wrong that needs a choice (step 8 item 3), a source-chunk problem found by the chunk 19 faithfulness check that a chunk 19 claim depends on or that lies in text the request changed (step 8b), an open remainder of a business review decision that is a design choice left to the SDD owner (step 10), a last-pass discovery decided for later application (step 8), and a gap found while writing the deck brief (step 8c).
+GENERATED_BY: sdd-unifier post-generation reviewer (cleared-context subagent run after the main SDD body is complete). After that review, the author appends only the open items the skill's rules tell it to raise: the derivation's and each project-file conflict (SKILL.md step 7), text an applied decision makes wrong that needs a choice (step 8 item 3), a source-chunk problem found by the chunk 19 faithfulness check that a chunk 19 claim depends on or that lies in text the request changed (step 8b), an open remainder of a business review decision that is a design choice left to the SDD owner (step 10), a last-pass discovery decided for later application (step 8), a gap found while writing the deck brief (step 8c), and a disagreement with a locked item of the loaded Pre-SDD, owned by the E2E Architect (principle 20).
 SCOPE: The reviewer reads ALL preceding chunks. Contract-consistency findings are first-class: topic names, event names, payload fields, and consumer lists that diverge between the Centralized Event Hub (chunk 10), the per-service chunks (13x), the Centralized User Roles catalogue (chunk 12), and the Service Integration API Contracts (chunk 11) are valid OI items. The End-to-End System Design (chunk 19) does not exist yet when the first review runs; it is written after this chunk is cleared.
 WORKFLOW: After this chunk is written, the skill walks the user through each open item and asks them to accept, adjust, defer, or reject the Recommended Answer (an answer policy the user set for the run accepts the recommendations it may: SKILL.md step 8, Answer policy). Accepted answers are applied to the referenced chunk(s), the item gets its Resolution Log row, and the change joins the update's Changes Log row (SKILL.md § Output conventions, Versions).
 -->
@@ -27,6 +27,7 @@ WORKFLOW: After this chunk is written, the skill walks the user through each ope
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Section number (e.g., §6, §17.1), service name, or "global" if cross-cutting. |
 | **Type** | Architecture gap / Missing scenario / Corner case / Ambiguity / Risk / Inconsistency / NFR shortfall / ADR needed / Contract mismatch (topic, event, payload, consumer list, or role/permission divergence across chunks) / Duplication (BRD content or another chunk's content restated instead of referenced). |
+| **Owner** | Only on an item that disagrees with a locked item of the loaded Pre-SDD (SKILL.md principle 20): `E2E Architect (pre-sdd-unifier)`. The item cites the locked item as `PSDD/<ID>` and names its handoff request (`HR-NNN`). It is shown in the acceptance loop but not decided there; it stays `Open`, and keeps the gate shut like any other open item, until the E2E Architect answers ("Pre-SDD has a new version", SKILL.md step 10). Other items have no Owner line. |
 | **Concern** | One paragraph. What was missed and why it matters for downstream LLD or implementation. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
@@ -63,6 +64,23 @@ Write the Status field as the literal legend value, for example `- **Status:** A
   - **B.** [...] - [...].
 - **Recommended Answer:** [...]
 - **Why:** [...]
+- **Status:** Open
+
+---
+
+### OI-03: [Short title of a disagreement with a locked Pre-SDD item]
+
+<!-- The Pre-SDD case (SKILL.md principle 20): the SDD never edits the locked item or the Pre-SDD. -->
+
+- **Where:** [§N where the locked item lands, e.g. §18 or the §6 row]
+- **Type:** [Inconsistency | NFR shortfall | Risk]
+- **Owner:** E2E Architect (pre-sdd-unifier)
+- **Concern:** [Which locked item, cited as [PSDD/<ID>](link), and why it is wrong or conflicts with a source, a project file, or a design need. Handoff request: HR-NNN.]
+- **Options:**
+  - **A.** [Change the locked item in a new Pre-SDD version] - [one-line tradeoff].
+  - **B.** [Keep the locked item; the SDD design adapts] - [one-line tradeoff].
+- **Recommended Answer:** [The change the E2E Architect is asked to decide, ready to read in the Pre-SDD's terms; the SDD applies the new version's value when it arrives.]
+- **Why:** [The evidence behind the request.]
 - **Status:** Open
 
 ---

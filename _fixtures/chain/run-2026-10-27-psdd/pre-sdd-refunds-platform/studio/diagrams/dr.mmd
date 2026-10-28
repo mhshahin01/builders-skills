@@ -1,0 +1,27 @@
+flowchart LR
+  %% Recovery Architecture & Sequence - PROPOSED / NOT AN APPROVED DESIGN
+  %% canonical component NODE-D-OBS
+  D_OBS["Detect / declare incident - Health signals & decision"]
+  %% canonical component NODE-D-TRAFFIC
+  D_TRAFFIC["Traffic switching - DNS / LB / global route"]
+  %% canonical component NODE-D-APP
+  D_APP["Primary application - Workload & state"]
+  %% canonical component NODE-D-DB
+  D_DB["Primary committed data - Durability contract"]
+  %% canonical component NODE-D-BACKUP
+  D_BACKUP["Protected recovery points - Restore drills & isolation"]
+  %% canonical component NODE-D-RECAPP
+  D_RECAPP["Scale pilot-light app - Strategy: Pilot Light"]
+  %% canonical component NODE-D-RECDB
+  D_RECDB["Recovery copy / restore - Lag & promotion require proof"]
+  %% canonical component NODE-D-VERIFY
+  D_VERIFY["Business service verification - IAM · correctness · customer access"]
+  D_OBS -->|authorize| D_TRAFFIC
+  D_APP -->|writes| D_DB
+  D_DB -->|protect| D_BACKUP
+  D_DB -->|replicate / restore| D_RECDB
+  D_TRAFFIC -->|reroute| D_RECAPP
+  D_RECDB -->|data ready| D_RECAPP
+  D_RECAPP -->|check| D_VERIFY
+  classDef proposed fill:#e8f3f6,stroke:#368b94,color:#15354b;
+  class D_OBS,D_TRAFFIC,D_APP,D_DB,D_BACKUP,D_RECAPP,D_RECDB,D_VERIFY proposed;

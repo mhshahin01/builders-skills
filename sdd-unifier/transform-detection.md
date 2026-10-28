@@ -10,7 +10,7 @@ The user almost never says "I want intent X" explicitly. The skill must infer in
 
 ```
 Is there a source document attached, pasted, or referenced by path?
-├── No  → GENERATE (from conversation / topic seed)
+├── No  → GENERATE (from conversation / topic seed; needs a BRD and a Pre-SDD first: SKILL.md step 2)
 └── Yes → Inspect the source:
          ├── Source is one or more BRDs (chunked folders OR combined files)?
          │   → DERIVE-FROM-BRD (see brd-to-sdd.md); several BRDs = one SDD with several parents
@@ -19,7 +19,7 @@ Is there a source document attached, pasted, or referenced by path?
          │   ├── Yes (chunked form, target is combined)    → TRANSFORM (merge)
          │   └── Yes, both forms match target              → TRANSFORM (refresh / regenerate)
          ├── Source is a SoW / Statement of Work?
-         │   → GENERATE (treat SoW as input context, not as a document to transform: SDDs are not produced from SoWs directly; if there's no BRD yet, suggest running brd-unifier first)
+         │   → GENERATE (treat SoW as input context, not as a document to transform: SDDs are not produced from SoWs directly; with no BRD yet, the run stops and hands the SoW to brd-unifier first: SKILL.md step 2)
          ├── Source is a different SDD format (Word doc, IEEE 1016, vendor template, prior in-house format)?
          │   → TRANSFORM (cross-template migration)
          ├── Source is architecture notes / RFC drafts / design memos?
@@ -72,11 +72,11 @@ Signs:
 - Section headings include `Scope of Work`, `Vendor Responsibilities`, `Deliverables`, `Commercial Terms`.
 - Tone uses "The Vendor shall...", contractual passive constructions.
 
-**Important:** SoW → SDD is **not** a direct path in this skill. SDDs are technical design artefacts that depend on architectural decisions; SoWs don't have those. If the user gives you only a SoW and asks for an SDD:
+**Important:** SoW → SDD is **not** a direct path in this skill. The recommended path is SoW → BRD → Pre-SDD → SDD. SDDs are technical design artefacts that depend on architectural decisions; SoWs don't have those. If the user gives you only a SoW and asks for an SDD:
 
-1. Tell them clearly: "An SDD usually derives from a BRD, not directly from a SoW. The BRD captures the requirements (and is the source of truth for what the system does); the SDD captures the technical design (how to build it). Want me to first generate a BRD using brd-unifier, then derive the SDD from it? Or proceed with a fresh-generate SDD using the SoW as raw context but expect heavy `[NEEDS CLARIFICATION: ...]` markers?"
-2. If they choose option A (BRD first), the work is bigger than this skill: defer to brd-unifier for the BRD step.
-3. If they choose option B (proceed anyway), treat the SoW as raw context for GENERATE intent, not as a transformation target.
+1. Tell them clearly: "A new SDD derives from a BRD and a G3-signed Pre-SDD, not directly from a SoW. The BRD captures the requirements (and is the source of truth for what the system does); the Pre-SDD settles the numbers and the shape; the SDD captures the technical design (how to build it). The SoW goes to brd-unifier for the BRD first, then pre-sdd-unifier writes the Pre-SDD, and the SDD is derived from them."
+2. The work is bigger than this skill: the GENERATE stop of SKILL.md step 2 applies (no SDD content is written, and a handoff request asks the Product manager to build the BRD from the SoW), then the Pre-SDD step follows (SKILL.md step 2a).
+3. There is no path that writes a new SDD from the SoW alone, even when the user asks to proceed anyway.
 
 ### Different SDD format
 
@@ -96,7 +96,7 @@ Signs:
 - May follow an RFC template (Context / Decision / Consequences), short.
 - Author-voice rather than team-voice.
 
-Treat as raw context for GENERATE. Lift specific decisions into §10 Architectural Decisions; lift specific tech choices into §6 Ecosystem Overview. The rest of the SDD is generated fresh.
+Treat as raw context for GENERATE, which hands it to brd-unifier for the BRD first (SKILL.md step 2). Its specific decisions and tech choices reach the SDD through that BRD's Technical Inputs for the SDD, which seed §10 Architectural Decisions and §6 Ecosystem Overview when the SDD is derived.
 
 ### Meeting notes / Slack thread / email chain
 
@@ -167,6 +167,6 @@ Read both halves. The BRD half feeds DERIVE-FROM-BRD logic; the SDD half feeds T
 
 Ask exactly one question:
 
-> Is this material **a BRD I should derive an SDD from** (I'll auto-fill BRD-derivable sections and flag SDD-only ones for your decisions), **an existing SDD I should reformat** (I'll re-shape it into your template), or **raw context for a fresh SDD** (I'll author from scratch using it as background)?
+> Is this material **a BRD I should derive an SDD from** (I'll auto-fill BRD-derivable sections and flag SDD-only ones for your decisions), **an existing SDD I should reformat** (I'll re-shape it into your template), or **raw context for a new system** (it goes to brd-unifier for a BRD first, then a G3-signed Pre-SDD follows, and the SDD is derived from them)?
 
 Do not guess silently when the answer materially changes the output.

@@ -12,7 +12,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 > **How to use:** This file is the entry point for the Solution Design Document. Each section below maps to a chunk file containing the full template content. Links are relative to this directory. An AI agent should load this file first, identify which chunk(s) are relevant to the task, and navigate to only those chunks.
 
-> **Lineage:** this SDD's source BRDs (parents, each with its key) and child LLDs are listed in [00 § Document Lineage](./00-cover-and-changelog.md#document-lineage). Every BRD reference in the chunks carries its BRD key (`REFUNDS/UC-04`).
+> **Lineage:** this SDD's source BRDs (parents, each with its key), its source Pre-SDD (key `PSDD`, or the reason there is none), and its child LLDs are listed in [00 § Document Lineage](./00-cover-and-changelog.md#document-lineage). Every BRD reference in the chunks carries its BRD key (`REFUNDS/UC-04`), and every Pre-SDD reference is `PSDD/<ID>`.
 
 > **Specs note:** The constitution-grade `Specs` chunk (Mission, Tech Stack, Roadmap, Project Type) is owned by `lld-unifier` and lives with each child LLD (`../lld-[lld-slug]/17-specs.md`), synthesised from this SDD's body. The SDD carries no Specs chunk.
 
@@ -26,7 +26,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 
 **Generation:** parts
 **Intent:** [generate | transform | derive-from-BRD]
-**Source:** [path of every source file, an imported eco-system file included (SKILL.md step 3c item 8), or "conversation"]
+**Source:** [path of every source file, the loaded Pre-SDD's master or combined file (SKILL.md step 2a) and an imported eco-system file (SKILL.md step 3c item 8) included, or "conversation"]
 
 | Part | Chunks | Status | Completed |
 |------|--------|--------|-----------|
@@ -58,7 +58,7 @@ MAINTENANCE: When adding or removing chunks (especially 13x service chunks), upd
 | Section | Chunk |
 |---------|-------|
 | Title block, Version, Author, Reviewers, Approvers, Status | [00-cover-and-changelog.md](./00-cover-and-changelog.md) |
-| Document Lineage (source BRDs with keys, child LLDs) | [00-cover-and-changelog.md](./00-cover-and-changelog.md) |
+| Document Lineage (source BRDs with keys, source Pre-SDD, child LLDs) | [00-cover-and-changelog.md](./00-cover-and-changelog.md) |
 | Changes Log | [00-cover-and-changelog.md](./00-cover-and-changelog.md) |
 | Table of Contents, Figures & Tables indices | [00-cover-and-changelog.md](./00-cover-and-changelog.md) |
 
@@ -218,7 +218,7 @@ Each `13x` service chunk contains these sub-sections in order:
 ```
 [project-slug]-sdd-master.md (you are here)
 |
-+-- 00-cover-and-changelog.md ........... metadata, lineage (source BRDs, child LLDs), version history
++-- 00-cover-and-changelog.md ........... metadata, lineage (source BRDs, source Pre-SDD, child LLDs), version history
 +-- 01-executive-summary-scope-risks.md . why + what + boundaries + risks + glossary
 +-- 02-ecosystem-overview.md ............ tech stack + architecture doctrine (single source of truth)
 +-- 03-users-and-use-cases.md ........... actors + use case diagram + use-case traceability (BRD -> SDD)

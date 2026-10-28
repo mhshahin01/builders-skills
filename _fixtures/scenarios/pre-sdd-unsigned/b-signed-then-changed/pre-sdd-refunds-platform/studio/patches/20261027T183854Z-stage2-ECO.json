@@ -1,0 +1,43 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "ECO-02.1",
+      "value": "Currency EUR; operating expense preferred"
+    },
+    {
+      "op": "confirm",
+      "entry": "ECO-02.1"
+    },
+    {
+      "op": "set",
+      "entry": "ECO-03.1",
+      "value": "36 months"
+    },
+    {
+      "op": "confirm",
+      "entry": "ECO-03.1"
+    },
+    {
+      "op": "na",
+      "entry": "ECO-05.1",
+      "reason": "The business states no energy or environmental footprint goal for this system."
+    },
+    {
+      "op": "set",
+      "entry": "ECO-04.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "ECO-06.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    }
+  ]
+}

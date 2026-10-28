@@ -1,0 +1,9 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "confirm", "option": "OPT-01", "cost": "one_time" },
+    { "op": "confirm", "option": "OPT-01", "cost": "monthly" },
+    { "op": "confirm", "option": "OPT-02", "cost": "one_time" },
+    { "op": "confirm", "option": "OPT-02", "cost": "monthly" }
+  ]
+}

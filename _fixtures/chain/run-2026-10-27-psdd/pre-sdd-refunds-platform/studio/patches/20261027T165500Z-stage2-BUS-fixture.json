@@ -1,0 +1,9 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "set", "entry": "BUS-08.1", "value": "No customer-facing contract or penalty applies; payouts follow the refund terms agreed with the payment provider (CardPay Ltd)." },
+    { "op": "confirm", "entry": "BUS-08.1" },
+    { "op": "set", "entry": "BUS-04.1", "owner_name": "Refunds and Loyalty Product Owner", "due": "2026-11-30" },
+    { "op": "add-unknown", "entry": "BUS-06.1", "question": "In which countries do the branches operate, and which languages, date and number formats and accessibility standard apply (REFUNDS/NFR-07, REFUNDS 11, LOYALTY 11)?", "impact": "Can change the residency (DAT-04), the tax records (BUS-08) and the localization the SDD designs for.", "owner": "Refunds and Loyalty Product Owner", "due": "2026-11-20" }
+  ]
+}

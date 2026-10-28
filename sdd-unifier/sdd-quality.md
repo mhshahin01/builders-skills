@@ -50,7 +50,7 @@ The most-skimmed section in any SDD, and the one most often filled with platitud
 
 An SRE, a security reviewer, or a deck reads these two sections to see where the system runs and how traffic reaches it and leaves it. They are worth reading only when every fact traces to a source and nothing is invented.
 
-**Test:** pick any row of §8.6 or §8.7. Does it link the home of each fact it uses (a §6 row, an ADR, §11.2, §11.3, §11.6, a §12 row, §19, a BRD NFR or Technical Input as its keyed link, an eco-system file section) instead of restating a technology, a version, or a default? Is every fact that no source states a `[NEEDS CLARIFICATION: ...]`, and every design choice that no source states labelled `recommended`, with its evidence stated in the row? Then pick any §12 row: does §8.7.3 show its egress path, or say why it has none (the system only calls the platform, or it is inside the platform's network)? Pick any BRD availability, disaster recovery, or data residency NFR: does §8.6 realise it, with its RPO and RTO derived from the NFR or flagged?
+**Test:** pick any row of §8.6 or §8.7. Does it link the home of each fact it uses (a §6 row, an ADR, §11.2, §11.3, §11.6, a §12 row, §19, a BRD NFR or Technical Input as its keyed link, an eco-system file section, a locked Pre-SDD entry as its PSDD/<ID> link) instead of restating a technology, a version, or a default? Is every fact that no source states a `[NEEDS CLARIFICATION: ...]`, and every design choice that no source states labelled `recommended`, with its evidence stated in the row? Then pick any §12 row: does §8.7.3 show its egress path, or say why it has none (the system only calls the platform, or it is inside the platform's network)? Pick any BRD availability, disaster recovery, or data residency NFR: does §8.6 realise it, with its RPO and RTO derived from the NFR, cited from a loaded Pre-SDD, or flagged?
 
 **Good rows** (one deployable on a managed container service whose hosting location no source names, and an imported eco-system file that states CardPay's network access):
 
@@ -67,7 +67,7 @@ An SRE, a security reviewer, or a deck reads these two sections to see where the
 - An IP range, a CIDR, or a hostname that no source states, for example a made-up `10.0.0.0/16` for the application zone.
 - A product name that no source chose, for example a named CDN or WAF vendor in the ingress path.
 - A row that restates the §6 technology and version, the §11.6 TLS version, or a §12 timeout instead of linking it.
-- An RPO or RTO figure that no BRD NFR implies.
+- An RPO or RTO figure that no BRD NFR implies and no loaded Pre-SDD locks.
 - A §12 system with no §8.7.3 row, or a diagram node that no row names.
 
 ---
@@ -247,7 +247,7 @@ Traceability is only useful if a reader can follow it both ways without searchin
 
 A reader must see at a glance which stack rows are settled and where each one came from.
 
-**Test:** pick any §6 row. Does it carry a Status and a Source (SKILL.md step 3c items 1 and 6; a table written before those columns keeps the label in its Notes and is read as it is, SKILL.md step 10), and do its Notes hold the evidence the Source names: the BRD Technical Input as a keyed link, the eco-system file section, or the ADR? In a finished first build, is every `Proposed` row the one exception step 3c item 6 allows, with its marker (a table written before those columns is read as it is)? Then pick any system in §12: does the Integration landscape have its row, and does that row link §12 instead of repeating its protocol, auth, or timeouts?
+**Test:** pick any §6 row. Does it carry a Status and a Source (SKILL.md step 3c items 1 and 6; a table written before those columns keeps the label in its Notes and is read as it is, SKILL.md step 10), and do its Notes hold the evidence the Source names: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR? In a finished first build, is every `Proposed` row the one exception step 3c item 6 allows, with its marker (a table written before those columns is read as it is)? Then pick any system in §12: does the Integration landscape have its row, and does that row link §12 instead of repeating its protocol, auth, or timeouts?
 
 **Good rows:**
 
@@ -292,4 +292,4 @@ A rule in a project file (`AGENTS.md`, `CLAUDE.md`, `ui-ux-global-constitution.m
 
 If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. The architecture questionnaire settles §8.1 and the ADRs it covers, which meet the bar above; the decisions still open come out as `[NEEDS CLARIFICATION: ...]` markers, *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
 
-If the SDD is being **generated fresh** or **transformed from another SDD format**, the quality bar above applies in full.
+If the SDD is being **transformed from another SDD format**, or is an SDD generated without a BRD before every new SDD needed one (SKILL.md step 2), the quality bar above applies in full.

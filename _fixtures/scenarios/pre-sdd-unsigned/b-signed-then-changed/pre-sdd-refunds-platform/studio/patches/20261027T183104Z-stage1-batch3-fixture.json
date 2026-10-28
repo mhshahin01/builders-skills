@@ -1,0 +1,19 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "REL-03.1",
+      "label": "Whole platform, region loss",
+      "scope": "region",
+      "value": 14400
+    },
+    {
+      "op": "confirm",
+      "entry": "REL-03.1"
+    }
+  ]
+}

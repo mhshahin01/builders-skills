@@ -1,0 +1,11 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "accept-proposal",
+      "entry": "CAP-07.1"
+    }
+  ]
+}

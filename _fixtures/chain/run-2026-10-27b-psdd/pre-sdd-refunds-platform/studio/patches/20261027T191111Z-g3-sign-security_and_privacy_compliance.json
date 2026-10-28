@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "security_and_privacy_compliance",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

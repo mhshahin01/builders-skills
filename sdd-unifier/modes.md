@@ -156,7 +156,7 @@ Mode (CHUNKS / COMBINED) describes the **output format**. Intent (GENERATE / TRA
 
 |  | GENERATE | TRANSFORM | DERIVE-FROM-BRD |
 |---|---|---|---|
-| **CHUNKS** | Author fresh SDD as 20+ chunked files. | Re-shape source SDD into 20+ chunked files. | Generate skeleton SDD from BRD as 20+ chunked files; SDD-only sections are stubs with `[NEEDS CLARIFICATION: ...]`. |
-| **COMBINED** | Author fresh SDD as a single file. | Re-shape source SDD into a single file. | Generate skeleton SDD from BRD as a single file; same flagging behaviour. |
+| **CHUNKS** | No SDD written yet: a BRD first, then a G3-signed Pre-SDD, then the SDD is derived as 20+ chunked files (SKILL.md step 2). | Re-shape source SDD into 20+ chunked files. | Generate skeleton SDD from BRD as 20+ chunked files; SDD-only sections are stubs with `[NEEDS CLARIFICATION: ...]`. |
+| **COMBINED** | No SDD written yet: a BRD first, then a G3-signed Pre-SDD, then the SDD is derived as a single file (SKILL.md step 2). | Re-shape source SDD into a single file. | Generate skeleton SDD from BRD as a single file; same flagging behaviour. |
 
 See `transform-detection.md` for how to decide intent.

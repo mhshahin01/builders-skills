@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "network_owner",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

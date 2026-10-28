@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "architecture_review_authority",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

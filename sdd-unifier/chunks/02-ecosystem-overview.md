@@ -14,7 +14,7 @@ Summary of the platform-wide technology stack and shared infrastructure that all
 This section is the single source of truth for the implementation constitution and planned technology choices.
 SELECTION FLOW: this table is never filled silently. SKILL.md step 3c shows the proposed ecosystem, each row Locked with its source or Proposed with its basis, and asks one question: accept all proposed, answer one by one, or import the project's eco-system file (`[project-slug]-eco-system.md` in the project root). The precedence, the import rules, and the label lists are in SKILL.md step 3c.
 STATUS: `Confirmed` or `Proposed` (SKILL.md step 3c item 6). A finished first build has no `Proposed` row, except the one case step 3c item 6 names. A row a later update adds stays `Proposed`, with a [NEEDS CLARIFICATION: ...] marker, until the user confirms it.
-SOURCE: one label per row, from the lists in SKILL.md step 3c items 1 and 6. The evidence behind it goes in Notes: the BRD Technical Input as a keyed link, the eco-system file section, or the ADR.
+SOURCE: one label per row, from the lists in SKILL.md step 3c items 1 and 6. The evidence behind it goes in Notes: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR. A row a locked Pre-SDD item constrains carries the constraint in its Notes (brd-to-sdd.md § Pre-SDD inputs (locked)).
 A table written before the Status and Source columns keeps its source labels in Notes and is read as it is (SKILL.md step 10).
 -->
 

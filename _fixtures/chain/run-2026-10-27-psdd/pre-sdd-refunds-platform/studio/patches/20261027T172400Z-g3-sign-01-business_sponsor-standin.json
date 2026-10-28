@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "business_sponsor",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

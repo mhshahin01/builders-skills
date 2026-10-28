@@ -9,7 +9,7 @@ PART OF: SDD - [Project Name]
 
 # 20. Operations Runbook
 
-<!-- Living document. Each procedure should be runnable by an on-call engineer who did not write the service. -->
+<!-- Living document. Each procedure should be runnable by an on-call engineer who did not write the service. With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §20 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
 
 ## 20.1 Common Operations
 

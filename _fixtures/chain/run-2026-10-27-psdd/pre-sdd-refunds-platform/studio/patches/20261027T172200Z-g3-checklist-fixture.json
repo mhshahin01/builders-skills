@@ -1,0 +1,80 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "check",
+      "id": "G3-01",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-02",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-03",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-04",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-05",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-06",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-07",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-08",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-09",
+      "status": "N/A",
+      "reason": "Greenfield (HDR-07): there is no existing estate."
+    },
+    {
+      "op": "check",
+      "id": "G3-10",
+      "status": "N/A",
+      "reason": "No migration overlay (HDR-10 none)."
+    },
+    {
+      "op": "check",
+      "id": "G3-11",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-12",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-13",
+      "status": "Done"
+    },
+    {
+      "op": "check",
+      "id": "G3-14",
+      "status": "Done"
+    }
+  ]
+}

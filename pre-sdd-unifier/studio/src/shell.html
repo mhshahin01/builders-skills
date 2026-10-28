@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pre-SDD Architecture Studio 3.0</title><meta name="description" content="Offline Pre-SDD register: discovery, the 70-item register, calculations, explainable rules, diagrams and the SDD handoff."><style>/* STYLES */</style></head>
+<body>
+<a class="skip-link" href="#stagePanels">Skip to the stages</a>
+<header class="mast"><div class="mast-inner">
+ <div><div class="eyebrow">ARCHITECTURE INTELLIGENCE · STUDIO 3.0 <span class="beta">LOCAL · OFFLINE</span></div><h1>Pre-SDD Architecture Studio</h1><p>Discover, fill the register, assess, then confirm and decide. Every answer records who gave it and when, in UTC.</p></div>
+ <div class="mast-actions"><button type="button" class="button ghost" id="importBtn" aria-describedby="importHelp">Import project file</button><span id="importHelp" class="sr-only">Opens a save file, a Pre-SDD 3.0 project state, a preview ZIP, or a Studio 2.2 project file or ZIP.</span><input hidden id="importFile" type="file" accept=".json,.zip,application/json,application/zip"><button type="button" class="button primary" id="saveBtn">Save project</button><button type="button" class="button ghost" id="previewBtn" aria-describedby="previewNoteTop">Download preview ZIP <span class="button-sub" id="previewNoteTop" aria-hidden="true">Preview, not the Pre-SDD of record</span></button></div>
+</div></header>
+<div class="subnav"><div class="subnav-inner">
+ <div class="person-box"><label for="personName">Your name (required to answer or confirm)</label><input id="personName" autocomplete="name" placeholder="For example Dana Reyes" aria-describedby="personMsg"><div id="personMsg" class="field-msg" aria-live="polite"></div></div>
+ <div class="project-box"><span class="label" id="solutionLabel">Solution</span><output id="solutionName" aria-labelledby="solutionLabel">Untitled project</output></div>
+ <div class="scenario-box"><label for="scenario">Load an example (Studio 2.2, illustrative)</label><select id="scenario"><option value="" disabled hidden>No example: an imported or embedded project</option><option value="blank" selected>Blank project</option><option value="cloudSaaS">GF-CL · General SaaS</option><option value="regionalPayments">GF-CL · Regional payment resilience</option><option value="onprem">GF-OP · On-premises business portal</option><option value="migration">BF-CL · On-premises to cloud</option><option value="cloud2cloud">BF-CL · Cloud to cloud</option></select></div>
+ <div id="topStatus" class="subnav-status" aria-live="polite">Loading the register</div>
+</div></div>
+<nav class="stepper-wrap" aria-label="Stages"><ol class="stepper" id="stepper"><li><button type="button" data-stage="1" aria-current="step"><span class="step-n">Stage 1</span> Discovery</button></li><li><button type="button" data-stage="2"><span class="step-n">Stage 2</span> Register</button></li><li><button type="button" data-stage="3"><span class="step-n">Stage 3</span> Assess</button></li><li><button type="button" data-stage="4"><span class="step-n">Stage 4</span> Confirm and decide</button></li></ol><div class="step-notes"><p id="stepNote" class="warn-message" aria-live="polite" hidden></p><p id="runNote" class="small-note" aria-live="polite">Recorded position: stage 1.</p></div></nav>
+<div id="pageAlert" class="error-message page-alert" role="alert" hidden></div>
+<div id="replacePrompt" class="warn-message page-alert" role="group" aria-labelledby="replaceText" hidden><p id="replaceText" tabindex="-1"></p><div class="entry-actions"><button type="button" class="button" id="replaceYes">Replace my answers</button><button type="button" class="button primary" id="replaceNo">Keep my answers</button></div></div>
+<main class="studio" id="stagePanels" tabindex="-1">
+ <section id="stage1" class="section stage" aria-labelledby="stage1Title">
+  <div class="section-top"><div><div class="eyebrow dark">STAGE 1 · DISCOVERY (QUICK)</div><h2 id="stage1Title" tabindex="-1">Discovery: the minimum numbers</h2><p class="subtext">Classification, fault scope and the Quick Discovery minimum numbers. Leave an unknown blank: it stays Open and shows TBD, never zero. A value you type is Estimated until a person confirms it.</p></div><span class="chip" id="stage1Count">Loading</span></div>
+  <div id="nameNeeded1" class="warn-message">Enter your name in Your name above to answer or confirm. Every change records who made it.</div>
+  <div id="stage1Rows" class="register"><p class="small-note">Loading the register.</p></div>
+ </section>
+ <section id="stage2" class="section stage" aria-labelledby="stage2Title" hidden>
+  <div class="section-top"><div><div class="eyebrow dark">STAGE 2 · REGISTER (FULL)</div><h2 id="stage2Title" tabindex="-1">Register: one group at a time</h2><p class="subtext">Groups follow the decision hierarchy. Inside a group, the items that need an answer come first. Derived values recompute after each answer. Every Open item needs an owner name and a due date before G1.</p></div><span class="chip" id="stage2Count">Loading</span></div>
+  <div id="nameNeeded2" class="warn-message">Enter your name in Your name above to answer or confirm. Every change records who made it.</div>
+  <div class="tabs" role="tablist" id="groupTabs" aria-label="Register groups"></div>
+  <div id="groupBar" class="group-bar"></div>
+  <div id="stage2Rows" class="register" role="tabpanel" tabindex="0"><p class="small-note">Loading the register.</p></div>
+ </section>
+ <section id="stage3" class="stage" aria-labelledby="stage3Title" hidden>
+  <section class="section"><div class="section-top"><div><div class="eyebrow dark">STAGE 3 · ASSESS (FULL)</div><h2 id="stage3Title" tabindex="-1">Assess: calculations, target shape and options</h2><p class="subtext">The engine computes everything here from the register. An unknown input shows TBD, never zero. Option costs, the TCO horizon and the weights come from a person. The architect's scores stay Estimated until a person confirms them.</p></div><span class="chip" id="stage3Count">Loading</span></div>
+  <div id="nameNeeded3" class="warn-message">Enter your name in Your name above to enter costs, approve weights or confirm scores. Every change records who made it.</div></section>
+  <div id="stage3Body" class="assess"><p class="small-note">Loading the assessment.</p></div>
+ </section>
+ <section id="stage4" class="stage" aria-labelledby="stage4Title" hidden>
+  <section class="section"><div class="section-top"><div><div class="eyebrow dark">STAGE 4 · CONFIRM AND DECIDE (FULL)</div><h2 id="stage4Title" tabindex="-1">Confirm and decide</h2><p class="subtext">Confirm the Estimated values that still stand, one group at a time. Then record the decisions, read the validation and check the gates. G3 is signed in chat, after the write-up and the review.</p></div><span class="chip" id="stage4Count">Loading</span></div>
+  <div id="nameNeeded4" class="warn-message">Enter your name in Your name above to confirm or decide. Every change records who made it.</div></section>
+  <div id="stage4Body" class="assess"><p class="small-note">Loading the decisions.</p></div>
+  <section class="section handoff-banner" aria-labelledby="saveTitle"><div><h3 id="saveTitle">Save the project, or download a preview</h3><p>Save writes one file, pre-sdd-&lt;slug&gt;-state-&lt;UTC stamp&gt;.json, with the project state and its blueprint. Import opens it again here, and the skill reads it to go on in chat.</p><p>The preview ZIP holds the preview Markdown, the blueprint, the diagrams, the validation report, the decision record and the project state. It is a preview, not the Pre-SDD of record: the skill writes the Pre-SDD of record.</p></div><div class="export-actions"><button type="button" class="button primary" id="saveBottom">Save project</button><button type="button" class="button" id="previewBottom" aria-describedby="previewNoteBottom">Download preview ZIP <span class="button-sub" id="previewNoteBottom" aria-hidden="true">Preview, not the Pre-SDD of record</span></button></div></section>
+ </section>
+</main>
+<footer>PRE-SDD ARCHITECTURE STUDIO 3.0 · CLIENT-SIDE AND OFFLINE · TECHNICAL DISCOVERY ONLY · NO LLD OUTPUTS</footer>
+<div role="status" aria-live="polite" id="toast" class="toast"></div>
+<script>/* ENGINE */</script><script type="application/json" id="embedded-state">/* PROJECT_STATE */</script><script>/* UI */</script></body></html>

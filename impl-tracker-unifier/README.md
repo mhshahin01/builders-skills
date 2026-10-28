@@ -1,14 +1,14 @@
 # impl-tracker-unifier
 
-Stage 6 of the suite: tracks implementation against the BRD, SDD and LLD. Entry point: [SKILL.md](SKILL.md). Below are the design decisions behind it.
+Stage 7 of the suite: tracks implementation against the BRD, SDD and LLD. Entry point: [SKILL.md](SKILL.md). Below are the design decisions behind it.
 
 ## Where it sits in the chain
 
 ```mermaid
 flowchart LR
-    brd["brd-unifier<br/>WHAT / WHY"] --> sdd["sdd-unifier<br/>HOW, system"]
+    brd["brd-unifier<br/>WHAT / WHY"] --> psdd["pre-sdd-unifier<br/>numbers and shape"] --> sdd["sdd-unifier<br/>HOW, system"]
     sdd --> lld["lld-unifier<br/>HOW, per service<br/>17-specs Roadmap"]
-    lld --> trk["6. impl-tracker-unifier<br/>plan · next · start · done · audit<br/>gap · lesson · change · discover · standup · sync"]
+    lld --> trk["7. impl-tracker-unifier<br/>plan · next · start · done · audit<br/>gap · lesson · change · discover · standup · sync"]
     trk --> code(["code + commits"])
     code -. "drift, bugs, missing deps" .-> trk
     trk -. "doc gaps handed back (never edits docs)" .-> brd
@@ -16,7 +16,7 @@ flowchart LR
     trk -.-> lld
 ```
 
-**Summary:** the tracker is the sixth stage. It reads the BRD, SDD and LLD, never edits them, and owns
+**Summary:** the tracker is the seventh stage. It reads the BRD, SDD and LLD, never edits them, and owns
 only `./tracking/`. Gaps it finds in the docs go back to the owning skill as gap rows, the same way the
 review panel hands points to the authoring skills.
 

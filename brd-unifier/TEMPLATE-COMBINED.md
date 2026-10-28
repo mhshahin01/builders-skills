@@ -360,7 +360,7 @@ All detailed use cases follow this structure:
 | NFR-04 | Security & Privacy | [e.g., Customer data is visible only to authorised users; regulatory data stays in-country] | [e.g., Access outside the Users & Use Cases Matrix is impossible] |
 | NFR-05 | Usability | [e.g., A new operator completes core tasks without training] | [e.g., Task X completed unaided by a first-time user] |
 
-> The technical realisation of each NFR is defined in the SDD, not here.
+> The Pre-SDD (pre-sdd-unifier) settles the technical targets for each NFR, such as uptime percentages, latency budgets, and capacity, and the SDD designs the architecture that meets them; neither is stated here.
 
 ---
 
@@ -394,7 +394,7 @@ All detailed use cases follow this structure:
 
 ## Technical Inputs for the SDD
 
-<!-- Optional. If the source material states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The sdd-unifier reads this section as input. Remove if the source had none. -->
+<!-- Optional. If the source material states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The Pre-SDD reads this section for shape and for any number it states, and the SDD for products. Remove if the source had none. -->
 
 | Source Statement (verbatim) | Source Location | Relevant To |
 |-----------------------------|-----------------|-------------|

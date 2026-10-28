@@ -14,7 +14,7 @@ The fixture runs of the pre-sdd-unifier build (plan Phase 7, Tasks 7.1 to 7.4), 
 
 ### Task 7.1: check_presdd.py
 
-Brief: `task-7.1-brief.md`. The new checker [check_presdd.py](../checkers/check_presdd.py) and its 64 tests (`test_check_presdd.py`). It checks a chunked Pre-SDD against the state `compute` renders (fragment regions, gate line, signers, landing rows) and, with `--sdd`, an SDD that loaded it (Source Pre-SDD row, key, version, gate label, link, every cited `PSDD/<ID>`, the section 18 CALC values). Review round 1 fixed bare owner names in override rows, override headings in chunk 08, a dead branch, a two-digit slug read as a chunk, six sub-checks without a failing test and a fixed date. Counts after the fix: 64 tests, full checker suite 351.
+Brief: `task-7.1-brief.md`. The new checker [check_presdd.py](../checkers/check_presdd.py) and its 64 tests (`test_check_presdd.py`). It checks a chunked Pre-SDD against the state `compute` renders (fragment regions, gate line, signers, landing rows) and, with `--sdd`, an SDD that loaded it (Source Pre-SDD row, key, version, gate label, link, every cited `PSDD/<ID>`, the section 18 CALC values). Review round 1 fixed bare owner names in override rows, override headings in chunk 08, a dead branch, a two-digit slug read as a chunk, six sub-checks without a failing test and a fixed date. Counts after the fix: 64 tests, full checker suite 351 (after the final review: 74 tests, suite 362).
 
 ### Task 7.2: first Pre-SDD run, kept as evidence
 
@@ -112,21 +112,84 @@ Brief: `task-7.0d-brief.md`, report `task-7.0d-report.md`. Engine 474 of 474 tes
 
 ## Parked for the final review
 
-Read from `progress.md`, rulings that say "final review":
-- `drLadderEntries` has an unused export (Task 3.4).
-- The blueprint's `row_ids` through v2.2 requirement IDs (Task 6.2 to 6.3 part A).
-- An upper-case word that is a real currency code (ALL, TOP, CUP, MOP) is read as the currency, and the code list is not checked against the official table; ANG, CUC, SLL and ZWL are kept, XXX, XTS and HRK are left out (Task 7.0b).
-- INT-03's natural home is section 12 Integrations, which is not a landing target (Task 7.0b minor 4).
-- A `set-overlay` answer equal to the current value leaves no history record, so a person's unchanged overlay answer lives only in `decision-log.md` (Task 7.2 rerun, item 5).
-- Task 7.0c minors: the agent-actor wording at SKILL.md:279 and review-and-open-items.md:56 and :68, a repeated clause at SKILL.md:279, the At column printing ISO UTC with milliseconds.
-- Task 7.0a minors: step 2a items 4 and 5 say "Raise" without pointing to the reuse rule; a `Later` request's move back to `Open` in team mode is not stated; check_status_board does not validate the Waiting on cell.
-- Task 7.4 step 1 minors: the mode prompt is still asked before the stop (its record is held back); brd-to-sdd.md:32 (a BRD not Approved) has no stated place relative to step 2a; the `<KEY list>` names no separator.
-- Earlier sign-offs after Review live only in the state history and `decision-log.md` (Task 7.4 step 2, gap 4).
-- The header rows' owner reads "TBD" (Task 7.0d concern 2), and the HDR example wording (review minor 2).
+The final review (2026-10-27 and 2026-10-28) read the whole branch in two scopes, `presdd` (the pre-sdd-unifier skill) and `chain` (how the other skills take the Pre-SDD), and one fix round followed. This list is the only committed copy of the parked items and of both reviews' verdicts: the plan folder is git-ignored. Each item names where it came from and reads "fixed in the final review", "known gap" with its reason, or "resolved before the final review".
+
+### Findings of the final review
+
+- presdd I1, the CLI could not load the engine inside a project whose `package.json` says `"type": "module"`: fixed in the final review (`studio/src/package.json` keeps the engine CommonJS; test `cli_version_insideEsmProject_loadsEngine`).
+- presdd I2, on Node.js older than 22.18 (or 24.0 and 24.1) every CLI command exited 0 and did nothing (`import.meta.main`): fixed in the final review (`cli.mjs`, `build.mjs`, and the two schema generators in `tools/` compare `import.meta.url` with the real path of `process.argv[1]`). This also settles Task 2.10 M5 below.
+- presdd I3, the web path cannot collect the migration overlay: fixed in the final review as a doc rule (`stages-and-input.md` § The web path and `SKILL.md`: the overlay items are taken in chat and applied with the CLI). A Studio overlay tab is a known gap: listed in the pre-sdd-unifier README's Known gaps.
+- presdd M1, a Read of SKILL.md by path stops before its end: known gap: the skill loader loads the whole file; the pre-sdd-unifier README's Known gaps says to read it in two parts by path.
+- chain I1, an E2E Architect "keep" answer closed the item and left the SDD text that breaks the lock: fixed in the final review (sdd-unifier `SKILL.md` step 10 and `brd-to-sdd.md`: the text is brought in line with the lock in the same update).
+- chain I2, an SDD that keeps an older locked version read the newer Pre-SDD's chunk 12 as the loaded one: fixed in the final review (step 7 brief and `brd-to-sdd.md`).
+- chain M1, `check_presdd.py` checked less than the fixtures README said: fixed in the final review (chunk 00's gate line against the engine's gate label, and every `[PSDD/<ID>](...)` link in the SDD resolves to a file and a heading anchor; 10 tests; README row reworded).
+- chain M2, the fixtures README drifted from its checkers: fixed in the final review (a `check_chain_skills.py` row, the Pre-SDD in the chain list, today's counts).
+- chain M3, brd-unifier still said the SDD owns the technical targets: fixed in the final review (`SKILL.md` principle 2, `chunking.md` row 10).
+- chain M4, two sign-off rules listed Done evidence without the Pre-SDD: fixed in the final review (sdd-unifier `SKILL.md` Approvals, brd-unifier `delivery-chunks.md`).
+- chain M5, a combined Pre-SDD's folder has no master: fixed in the final review (sdd-unifier step 2a item 1 reads the combined file).
+- chain M6, step 2a could not match a Pre-SDD still in its stages: fixed in the final review (match by the master's **Source BRDs:** line; item 4 names that case).
+- chain M7, "Add BRD" never checked that the loaded Pre-SDD covers the new BRD: fixed in the final review (`brd-to-sdd.md`: open markers for its targets and the step 2a item 5 request).
+- chain M8, this list was incomplete: fixed in the final review (this section).
+
+### Items parked during the build
+
+- Task 1.2, the URL lookahead in `sources.test.mjs:10` is a deny-list: known gap: the only allowed URL is the SVG namespace, and every other `http://` or `https://` is still refused.
+- Task 1.2, `srcFiles()` is not recursive: known gap: `studio/src/` has no subfolder, and the test asserts the sources it scanned.
+- Task 1.2, `ui.js` composed the graph, blueprint and report inline: resolved before the final review: `exportMd` is gone and the save uses `saveWrapper`.
+- Task 1.2, no node test exercises `ui.js`: known gap: `studio/tests/MANUAL-CHECK.md` and the headless `p3_smoke.mjs` harness cover it; the harness lives in the session tools folder, not in the repo.
+- Task 2.7 M3, the schema's timestamp regex accepts impossible stamps: known gap: the engine checks stamps where they count (`validStamp`).
+- Task 2.9a M2, `remove` and `remove-workload` leave exceptions, unknowns and exclusions pointing at removed entries: known gap: only unanswered entries can be removed, and an exception lifts by entry ID.
+- Task 2.9a M3, the stand-in N/A message order: known gap: wording only, the refusal is right.
+- Task 2.9a M4, a fixture's N/A can replace a person's sign-off: known gap: the fixture actor is test-only.
+- Task 2.9a M5, `remove-brd` does not trim the key: known gap: the refusal names the listed keys.
+- Task 2.9a M6, `set-version` stores leading zeros: known gap: the skill bumps by its own X.Y rule and never writes one.
+- Task 2.9, `validate_handoff.py:68-74` checks conditions only for an approved hand-off: known gap: owner and due are now checked for every conditionally approved hand-off; the rest matters only for an approved one.
+- Task 2.9, `engine.js` calls `classify(v)` instead of `model.a.path`: known gap: both come from the same input, so the values are equal.
+- Task 2.9, `blueprint.test.mjs:250` calls the validator without the skip guard: known gap: the audit returns first when Python is missing.
+- Task 2.9, `readSave` refuses a UTF-8 BOM: known gap: unreachable, the CLI strips the BOM and the Studio's `FileReader` drops it.
+- Task 2.9, `tests/states.mjs` is a third copy of the fixture builders: known gap: test duplication only.
+- Task 2.10 M1, regex dialect edges between JavaScript and Python: known gap: a test checks the shipped schemas against `jsonschema`, and no shipped pattern uses the edge characters.
+- Task 2.10 M3, refuse look-alike engine source texts: known gap: optional hardening; the exact texts are refused.
+- Task 2.10 M4, `cli_version_printsBoth` runs without a temp folder: known gap: `--version` writes nothing.
+- Task 2.10 M5, `import.meta.main` needs Node.js 22.18 or 24.2: fixed in the final review (presdd I2).
+- Task 2.10 M6, `project-state.json` is rewritten in place: known gap: one small write, `studio/patches/` keeps every patch, and a rename on Windows fails while an editor holds the file.
+- Task 3.4, `drLadderEntries` is an unused export: known gap: dead code with no behaviour; drop it with the next engine change.
+- Task 4.7, the exit-3 wording for `--brd` in `engine-and-studio.md` omitted cases: fixed in the final review.
+- Checkers Minor 1, `check_chain_skills.py` matched `--exclude` globs case-insensitively on Windows: fixed in the final review (`fnmatch.fnmatchcase`, test `test_check_excluded_copy_case_differs_problem`).
+- Checkers Minor 2, invalid UTF-8 is decoded silently: known gap: no file in the eight skill folders holds invalid UTF-8, and `heading_anchors` fails loudly on such bytes.
+- Checkers Minor 3, the README link scan does not strip inline code: known gap: no `README.md#` link exists in the skill folders.
+- Checkers Minor 4, `table_rows` drops the separator row unchecked: known gap: every board is written from the template, which has it.
+- Checkers Minor 5, four description tests asserted only `description`: fixed in the final review (they assert `not read`).
+- Checkers Minor 6, test run time: resolved before the final review: the two suites run in about 10 s each.
+- Checkers Minor 7, `--exclude` has no help text: known gap: the fixtures README carries the full command.
+- Checkers Minor 8, the fence-aware section boundary and a second heading: known gap: each SKILL.md holds one section, compared whole.
+- Checkers Minor 9, tests added after GREEN: known gap: process, not a defect; the mutation evidence covers them.
+- Task 6.5 Minor 1, the business review's hand-off list did not name the Pre-SDD's own re-check: fixed in the final review (`apply-and-verify.md`).
+- Task 6.5 Minor 2, the business reviewer README did not say a Pre-SDD is reviewed and never edited: fixed in the final review.
+- Task 6.5 Minor 3, one long rewrapped line: known gap: style only.
+- Task 6.5 Minor 4, "names it" in the Pre-SDD Done evidence: fixed in the final review ("names the review").
+- Task 6.7, REL-10 unmapped and INT-07's client and edge locations: resolved before the final review: the engine lands REL-10 in §8.6, §11 and §18.5, and `handoff-guide.md` names the locations.
+- Task 6.8 nit, "GENERATE writes nothing" beside the one file the stop writes: fixed in the final review ("writes no SDD content" in sdd-unifier `SKILL.md`, `source-transformation.md`, `architecture-questionnaire.md`, `transform-detection.md` and the root README).
+- Task 7.0a Minor 1, step 2a items 4 and 5 say "Raise" without the reuse rule: resolved before the final review: step 2a states one request per blocker right after items 4 and 5.
+- Task 7.0a Minor 2, a `Later` request's move back to `Open` in team mode: known gap: a `Later` request is pending to its receiver either way.
+- Task 7.0a Minor 3, `check_status_board.py` does not validate the Waiting on cell: known gap: stated in the fixtures README.
+- Task 7.0b, the blueprint's `row_ids` through v2.2 requirement IDs: known gap: `validate_handoff.py` checks every `row_ids` value against the requirements, and the fixture blueprint passes.
+- Task 7.0b, an upper-case word that is a real currency code (ALL, TOP, CUP, MOP) is read as the currency, and the code list is not checked against the official table: known gap: ECO-02 is a person's answer, and the code shows in the TCO label at the G2 stop; the list errs only toward accepting retired codes (not verified against the official table).
+- Task 7.0b Minor 4, INT-03's natural home is §12 Integrations: known gap: INT-03 lands in §8.3 and §18, a §12 row may cite it, and a new landing place changes the engine's map and chunk 12.
+- Task 7.2 rerun item 5, a `set-overlay` answer equal to the current value leaves no history record: known gap: `decision-log.md` records the answer, and changing the no-op rule of `applyPatch` reaches every op.
+- Task 7.0c Minors 1 to 3 (the agent-actor wording at pre-sdd `SKILL.md:279` and `review-and-open-items.md:56` and `:68`, a repeated clause, the At column with milliseconds): known gap: wording only, the rule reads the same each time.
+- Task 7.4 step 1, the mode prompt is asked before the stop: known gap: harmless; its answer is recorded once the SDD folder exists.
+- Task 7.4 step 1, `brd-to-sdd.md:32` (a BRD not Approved) had no place relative to step 2a: fixed in the final review (the question is asked once step 2a has passed).
+- Task 7.4 step 1, `<KEY list>` named no separator: fixed in the final review (keys separated by `, `).
+- Task 7.4 step 2 gap 4, earlier sign-offs after `Review` live only in the state history and `decision-log.md`: known gap: the history keeps every sign-off record, and the SDD reads only the current signers.
+- Task 7.0d concern 2, header rows show Owner `TBD` in the lock list: known gap: header rows have no owner code in the Standard, so `TBD` is accurate.
+- Task 7.0d Minor 2, the HDR example wording: known gap: wording only; the example link resolves.
+- Task 10.1 readme-hivantic H2, two version requests after a BRD change (brd-unifier `SKILL.md` against the root README): known gap: held for the owner, a wording call.
+- Task 10.1 readme S10, the business-reviewer-unifier description names three skills instead of "each authoring skill": known gap: held for the owner; the text sits in the SKILL.md front matter, which the final review kept byte for byte.
 
 ## Verification
 
-Task 10.2, the plan's design section 10 verification list, run on 2026-10-27 between 23:44 and 23:56 UTC on the worktree at head 02bbeaf with its uncommitted edits (39 changed files at the start). Node v24.22.1, Python 3 with PyYAML 6.0.3. `studio` is `pre-sdd-unifier/studio`, `TOOLS` is the session scratchpad tools folder named in the Task 3.5 record. Nothing was committed and no test was written. If a file changes under another agent, a count below can move by one rerun.
+Task 10.2, the plan's design section 10 verification list, run on 2026-10-27 between 23:44 and 23:56 UTC on the worktree at head 02bbeaf with its uncommitted edits (39 changed files at the start). Node v24.22.1, Python 3 with PyYAML 6.0.3. `studio` is `pre-sdd-unifier/studio`, `TOOLS` is the session scratchpad tools folder named in the Task 3.5 record. Nothing was committed and no test was written. If a file changes under another agent, a count below can move by one rerun. The counts were rerun on 2026-10-28 between 00:59 and 01:10 UTC, after the final review's fixes, and the tables below show those final numbers: 475 node tests (one CLI test added), 362 checker suite tests (one chain-skill and ten Pre-SDD tests added), and 538 `check_refs.py` references.
 
 ### One row per design section 10 line
 
@@ -148,14 +211,14 @@ Task 10.2, the plan's design section 10 verification list, run on 2026-10-27 bet
 
 ### node --test, by file
 
-Run from `studio`: 474 tests, 474 pass, 0 fail, 0 cancelled, 0 skipped, 0 todo (23:44 to 23:48 UTC). The per-file runs sum to the same 474.
+Run from `studio`: 475 tests, 475 pass, 0 fail, 0 cancelled, 0 skipped, 0 todo (recount 2026-10-28; the Task 10.2 run at 23:44 to 23:48 UTC read 474, before `cli_version_insideEsmProject_loadsEngine`). The per-file runs sum to the same 475.
 
 | File | Tests | File | Tests |
 |---|---|---|---|
 | blueprint | 25 | options | 27 |
 | build | 5 | scopes | 23 |
 | catalogue | 23 | sources | 3 |
-| cli | 27 | state | 78 |
+| cli | 28 | state | 78 |
 | decisions | 38 | state-gate | 27 |
 | defaults | 37 | status-rules | 2 |
 | engine-v22 | 6 | style | 6 |
@@ -168,8 +231,8 @@ Run from `studio`: 474 tests, 474 pass, 0 fail, 0 cancelled, 0 skipped, 0 todo (
 
 | Check | Result |
 |---|---|
-| Checker suites (`_fixtures/checkers/tests`, `py -3 -B -m unittest tests.<file>` from `_fixtures/checkers`) | 351 tests, all OK: chain_skills 53, presdd 64, shared 22, status_board 37, todo 20, checker_review_regressions 13, chk_regressions 30, e2e_gate_inventory 36, repeated_reconciled 7, rx_checker_regressions 21, sdd_lld_enhancements 48. The total equals the 351 recorded at Task 7.1. `regression_tests.py` and `e2e_dynamic_tests.py` were not run. |
-| `check_refs.py lld-unifier sdd-unifier` | problems: 0 |
+| Checker suites (`_fixtures/checkers/tests`, `py -3 -B -m unittest tests.<file>` from `_fixtures/checkers`) | 362 tests, all OK: chain_skills 54, presdd 74, shared 22, status_board 37, todo 20, checker_review_regressions 13, chk_regressions 30, e2e_gate_inventory 36, repeated_reconciled 7, rx_checker_regressions 21, sdd_lld_enhancements 48. The Task 10.2 run read 351 (chain_skills 53, presdd 64), the total recorded at Task 7.1; the final review added 11 tests. `regression_tests.py` and `e2e_dynamic_tests.py` were not run. |
+| `check_refs.py lld-unifier sdd-unifier` | references checked: 538, problems: 0, Child LLDs columns MATCH |
 | `check_shared.py .` | copies checked: 7, markdown files scanned: 231, problems: 0 |
 | `check_chain_skills.py . --exclude 'pre-sdd-unifier/reference/*' 'pre-sdd-unifier/examples/*' 'pre-sdd-unifier/studio/tests/golden/*'` | 0 problems (identical status board section, role lines, README anchors, description limits, dash scan) |
 | `validate_handoff.py` on the 3 on-disk blueprints | expected FAIL x 3 (v2.2 files, 3.0 schema), see the schema row above |

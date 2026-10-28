@@ -75,7 +75,7 @@ Signs:
 **Important:** SoW → SDD is **not** a direct path in this skill. The recommended path is SoW → BRD → Pre-SDD → SDD. SDDs are technical design artefacts that depend on architectural decisions; SoWs don't have those. If the user gives you only a SoW and asks for an SDD:
 
 1. Tell them clearly: "A new SDD derives from a BRD and a G3-signed Pre-SDD, not directly from a SoW. The BRD captures the requirements (and is the source of truth for what the system does); the Pre-SDD settles the numbers and the shape; the SDD captures the technical design (how to build it). The SoW goes to brd-unifier for the BRD first, then pre-sdd-unifier writes the Pre-SDD, and the SDD is derived from them."
-2. The work is bigger than this skill: the GENERATE stop of SKILL.md step 2 applies (nothing is written, and a handoff request asks the Product manager to build the BRD from the SoW), then the Pre-SDD step follows (SKILL.md step 2a).
+2. The work is bigger than this skill: the GENERATE stop of SKILL.md step 2 applies (no SDD content is written, and a handoff request asks the Product manager to build the BRD from the SoW), then the Pre-SDD step follows (SKILL.md step 2a).
 3. There is no path that writes a new SDD from the SoW alone, even when the user asks to proceed anyway.
 
 ### Different SDD format

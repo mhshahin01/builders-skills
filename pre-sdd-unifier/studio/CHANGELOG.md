@@ -88,6 +88,11 @@
 - The locked-items fragment adds a calculations table after the lock list: each `CALC-NN` of the calculations fragment with what it measures and its value with its unit (TBD when open), in the same words, so the SDD's §18 can cite them from chunk 12.
 - The lock list has an `Owner` column before `Lands in the SDD`: the entry's owner as the register prints it, or the row's owner when the entry has none.
 
+### Fixes from the final review
+
+- I1: `src/package.json`, `{ "type": "commonjs" }`, keeps `engine.js` CommonJS when a folder above the skill declares `"type": "module"`, where the CLI loaded an empty engine (`--version` printed `engine undefined, skill undefined`, and `new` failed with `E.newState is not a function`); it names no dependency, and `cli_version_insideEsmProject_loadsEngine` guards it.
+- I2: `cli.mjs`, `build.mjs`, and the two schema generators in `tools/` run their command when `import.meta.url` equals the file URL of the real path of `process.argv[1]`, instead of `import.meta.main`, which Node.js has only from 22.18 on the 22 line and from 24.2 on the 24 line; elsewhere it is undefined, which made every command exit 0 without output; importing any of them still runs nothing.
+
 ### Known limitation
 
 - A zero RTO on `az` beside a remote failure scope over-reports `CONFLICT-zeroRTO-topology@az`; a topology override of `active`, or a relaxed `az` RTO, clears it (accepted by the owner at stop C2).

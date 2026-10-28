@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, utimesSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -446,6 +446,16 @@ test('cli_version_printsBoth', () => {
   const run = cli(['--version']);
   assert.equal(run.code, 0);
   assert.equal(run.out, 'engine 3.0.0, skill 1.0.0\n');
+});
+
+test('cli_version_insideEsmProject_loadsEngine', (t) => {
+  const root = join(temp(t), 'esm project');
+  const copy = join(root, '.claude', 'skills', 'pre-sdd-unifier', 'studio');
+  writeJson(join(root, 'package.json'), { type: 'module' });
+  for (const name of ['cli.mjs', 'build.mjs', 'src', 'schema']) cpSync(join(studioDir, name), join(copy, name), { recursive: true });
+  const run = spawnSync(process.execPath, [join(copy, 'cli.mjs'), '--version'], { cwd: root, encoding: 'utf8', windowsHide: true });
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(run.stdout, 'engine 3.0.0, skill 1.0.0\n');
 });
 
 function schemaKeywords(node, out = new Set()) {

@@ -38,7 +38,7 @@ The person answers in the Studio, an offline HTML file with the project state em
    ```
 
 2. **Open.** Print the path, and offer to open it in the default browser (SKILL.md § Running outside Claude Code). Say which stage and group to work on, and that the Studio records every tick under the name the person enters in it.
-3. **Hold the state.** While the Studio is open, the skill writes nothing to `project-state.json` but the progress pointer after a kept save (step 8): the person's next kept save replaces the file. A question the person asks in chat meanwhile is answered in chat, and its answer is given in the Studio.
+3. **Hold the state.** While the Studio is open, the skill writes nothing to `project-state.json` but, after a kept save, the progress pointer (step 8) and the items the Studio does not collect (below): the person's next kept save replaces the file. A question the person asks in chat meanwhile is answered in chat, and its answer is given in the Studio.
 4. **Save.** The person answers, ticks to confirm, and saves. The browser saves `pre-sdd-[slug]-state-<YYYYMMDDTHHMMSSZ>.json`, normally to Downloads; a browser may add ` (1)` to a repeated name. The save file holds the project state and the blueprint the Studio computed. The person may save at any time, as often as they like.
 5. **Find the save.** When the person says they have saved, find the newest matching file saved after the embed:
 
@@ -64,6 +64,13 @@ The person answers in the Studio, an offline HTML file with the project state em
 8. **Update the pointer** (§ Saving and the progress pointer), then go on, or embed again for the next stage or group.
 
 A file that fails validation, or that `unwrap` refuses (exit code 2, nothing written), is not kept: show the person the engine's messages, which say what to fix, and ask them to save again from the Studio. A file whose state the engine refuses: [register-and-entries.md](register-and-entries.md) § Reading a project state.
+
+**What the Studio does not collect.** The Studio has no overlay tab, and no control for the migration overlay switch (`set-overlay`), the workloads (`add-workload`, `rename-workload`, `remove-workload`), the OVL entries (their values, owner names, and due dates), the unknowns (`add-unknown`, `close-unknown`), or removing an option (`remove-option`). On the web path, take these in chat by the prompt path's rules (§ The prompt path, § Owner names and due dates) and apply them with `cli.mjs derive --apply`, without a path switch. Write them before an embed, or after a kept save (step 6) and then embed again before the person goes on, so the next save carries them; a save from a Studio embedded before them would drop them:
+
+- **At the start of stage 2,** before the first embed of the stage: the overlay switch and the workloads.
+- **After the person's kept save of stage 2:** the owner names and due dates of every OVL entry of every workload, because G1 counts them.
+- **In stage 3:** the OVL values.
+- **Whenever one comes up:** an unknown to add or close, or an option to remove.
 
 ---
 
@@ -129,7 +136,7 @@ The same three are updated at every stop: the G1 and G2 review stops, the G3 sig
 The input path can change at any stage boundary, when the user says "switch to web" or "switch to prompt".
 
 - **Who:** only a person or a fixture owner sets the input path. The skill records the switch with the `set-run` op (`input`), under the name of the person who asked; the engine refuses the skill and an answer policy.
-- **Mid-stage:** a switch asked in the middle of a stage takes effect when the stage ends. Say so, and go on.
+- **Mid-stage:** a switch asked in the middle of a stage takes effect when the stage ends. Say so, and go on. This does not apply to the items the Studio does not collect (§ The web path), which are always taken in chat.
 - **Web to prompt:** first pick up the person's last save (web path steps 5 to 7), so the state of record holds every answer, then record the switch and go on in chat.
 - **Prompt to web:** record the switch, then embed the current state and open the Studio (web path steps 1 and 2).
 

@@ -242,6 +242,7 @@ once with the stale-remnant categories spelled out.
 The review changes content. The skills that own the documents re-check what
 depends on it:
 - the BRD's consistency check and delivery gate;
+- the Pre-SDD's own update, with its delta review and G3 again;
 - the SDD's contract registries, §7.3, lineage, and e2e gate, and a
   delta review of the changed chunks;
 - each LLD's refresh, which ends with a delta review.
@@ -304,7 +305,7 @@ Each row starts as `To run`. A hand-off row is `Done` when the user said it
 ran, or when the owner's own record shows it, whatever the tracker cell
 reads (owners never write the tracker):
 - BRD: a consistency check run in chunk 14 whose Trigger names the review.
-- Pre-SDD: a Changes Log row after the review that names it.
+- Pre-SDD: a Changes Log row after the review that names the review.
 - SDD: a Reconciled entry after the review, with its step 6a order
   evidence (a date alone does not prove the order).
 - LLD: 16 §19.1 naming the SDD version the review produced.

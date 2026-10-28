@@ -176,7 +176,7 @@ def authored(root, patterns):
                     continue
                 path = os.path.join(dirpath, name)
                 rel = os.path.relpath(path, root).replace(os.sep, "/")
-                if not any(fnmatch.fnmatch(rel, pattern) for pattern in patterns):
+                if not any(fnmatch.fnmatchcase(rel, pattern) for pattern in patterns):
                     found.append((rel, path))
     return found
 

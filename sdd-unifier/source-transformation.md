@@ -22,7 +22,7 @@ For deciding **which** intent to use (transform vs derive vs generate), see `tra
 
 A SoW alone is **not** a strong source for an SDD. SDDs depend on architectural decisions; SoWs typically don't have those. This skill recommends running `brd-unifier` first (SoW → BRD), then `pre-sdd-unifier` (BRD → Pre-SDD, signed at G3), then `sdd-unifier` (BRD and Pre-SDD → SDD) per `brd-to-sdd.md` and SKILL.md step 2a.
 
-A SoW never goes directly to a new SDD, even when the user insists: it is raw context for GENERATE intent, not a transformation target. GENERATE writes nothing and hands the SoW to brd-unifier for the BRD (SKILL.md step 2); the Pre-SDD follows, and the SDD is then derived from both.
+A SoW never goes directly to a new SDD, even when the user insists: it is raw context for GENERATE intent, not a transformation target. GENERATE writes no SDD content and hands the SoW to brd-unifier for the BRD (SKILL.md step 2); the Pre-SDD follows, and the SDD is then derived from both.
 
 ---
 

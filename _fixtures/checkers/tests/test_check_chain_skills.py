@@ -273,19 +273,19 @@ class CheckChainSkills(unittest.TestCase):
 
     def test_check_description_plain_with_colon_space_problem(self):
         self.write('tutorialize-unifier/SKILL.md', skill_md('tutorialize-unifier', description='description: Use it: now\n'))
-        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'description')
+        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'not read')
 
     def test_check_description_plain_starting_with_list_marker_problem(self):
         self.write('tutorialize-unifier/SKILL.md', skill_md('tutorialize-unifier', description='description: - a list entry\n'))
-        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'description')
+        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'not read')
 
     def test_check_description_plain_continued_on_next_line_problem(self):
         self.write('tutorialize-unifier/SKILL.md', skill_md('tutorialize-unifier', description='description: First part\n  and the rest\n'))
-        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'description')
+        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'not read')
 
     def test_check_description_quoted_continued_on_next_line_problem(self):
         self.write('tutorialize-unifier/SKILL.md', skill_md('tutorialize-unifier', description='description: "First part\n  and the rest"\n'))
-        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'description')
+        self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'not read')
 
     def test_check_description_missing_problem(self):
         self.write('impl-tracker-unifier/SKILL.md', skill_md('impl-tracker-unifier', description=''))
@@ -370,6 +370,11 @@ class CheckChainSkills(unittest.TestCase):
         self.write('pre-sdd-unifier/reference/policy-appendix.md', 'a ' + EM_DASH + ' b\n')
         found = self.check('--exclude', 'pre-sdd-unifier/reference/Pre-SDD_*.md')
         self.only(found, 'pre-sdd-unifier/reference/policy-appendix.md', 'U+2014')
+
+    def test_check_excluded_copy_case_differs_problem(self):
+        self.write('pre-sdd-unifier/reference/x.md', 'a ' + EN_DASH + ' b\n')
+        found = self.check('--exclude', 'pre-sdd-unifier/Reference/*')
+        self.only(found, 'pre-sdd-unifier/reference/x.md', 'U+2013')
 
     def test_check_readme_anchor_missing_problem(self):
         self.write('README.md', '# Title\n\n## The chain\n')

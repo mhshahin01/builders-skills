@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 
 const studioDir = dirname(fileURLToPath(import.meta.url));
@@ -25,7 +25,16 @@ export function buildStudio({ srcDir, state = null }) {
   return readSource(srcDir, 'shell.html').replace(markers, (marker) => parts[marker]);
 }
 
-if (import.meta.main) {
+function invokedDirectly() {
+  if (!process.argv[1]) return false;
+  try {
+    return import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+  } catch {
+    return false;
+  }
+}
+
+if (invokedDirectly()) {
   const { values } = parseArgs({ options: { state: { type: 'string' }, out: { type: 'string' } } });
   const state = values.state === undefined ? null : JSON.parse(readFileSync(values.state, 'utf8'));
   const out = resolve(values.out ?? join(studioDir, 'pre-sdd-studio.html'));

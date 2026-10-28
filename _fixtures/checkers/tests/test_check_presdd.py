@@ -139,7 +139,7 @@ def chunk_body(cid, title, frags, base):
     fragments = base['fragments']
     model = base['model']
     if cid == '00':
-        return (f'# Pre-SDD - {NAME}\n\n**Version:** 1.0\n\n## Document Lineage\n\n'
+        return (f'# Pre-SDD - {NAME}\n\n**Version:** 1.0\n**Gate:** {model["gate"]["label"]}\n\n## Document Lineage\n\n'
                 'Source BRDs: REFUNDS v1.5 (Approved).\n\n## Changes Log\n\n| Version | Summary |\n|---|---|\n'
                 '| 1.0 | Initial Pre-SDD. Chunks: none (initial build) |\n\n## Indexes\n\nContents.')
     if cid.startswith('03'):
@@ -265,8 +265,8 @@ TITLE: Infrastructure
 ## 8.6 Infrastructure Architecture
 
 The zones follow [PSDD/REL-03.1](../pre-sdd-refunds-platform/03c-register-reliability.md#rel-03) and \
-[PSDD/REL-05](../pre-sdd-refunds-platform/03c-register-reliability.md#rel-05), per [PSDD/DT-07](x) and \
-[PSDD/ADR-DR-001](y). Template guidance mentions PSDD/CALC-NN and PSDD/<ID>.
+[PSDD/REL-05](../pre-sdd-refunds-platform/03c-register-reliability.md#rel-05), per [PSDD/DT-07](../pre-sdd-refunds-platform/09-decisions.md#92-decision-tree) and \
+[PSDD/ADR-DR-001](../pre-sdd-refunds-platform/09-decisions.md#94-pre-sdd-adrs). Template guidance mentions PSDD/CALC-NN and PSDD/<ID>.
 '''
 
 
@@ -457,6 +457,26 @@ class CheckPreSdd(unittest.TestCase):
         self.build()
         self.edit(MASTER, '**Gate:** G3 Approved - ', '**Gate:** G2 - ')
         self.only(self.check(), MASTER, 'Gate line', 'G3 Approved')
+
+    def test_check_cover_gate_line_problem(self):
+        self.build()
+        self.edit('00-cover-and-changelog.md', '**Gate:** G3 Approved\n', '**Gate:** G1\n')
+        self.only(self.check(), '00-cover-and-changelog.md', 'Gate line', 'G1', 'G3 Approved')
+
+    def test_check_cover_gate_line_missing_problem(self):
+        self.build()
+        self.edit('00-cover-and-changelog.md', '**Gate:** G3 Approved\n', '')
+        self.only(self.check(), '00-cover-and-changelog.md', '0 Gate lines', 'G3 Approved')
+
+    def test_check_cover_gate_line_with_comment_pass(self):
+        self.build()
+        self.edit('00-cover-and-changelog.md', '**Gate:** G3 Approved\n', '**Gate:** G3 Approved <!-- From chunk 11. -->\n')
+        self.assertEqual(self.check(), [])
+
+    def test_check_cover_gate_line_draft_problem(self):
+        self.build('draft')
+        self.edit('00-cover-and-changelog.md', '**Gate:** Draft\n', '**Gate:** G3 Approved\n')
+        self.only(self.check(), '00-cover-and-changelog.md', 'Gate line', 'expected "**Gate:** Draft"')
 
     def test_check_master_links_omitted_chunk_problem(self):
         self.build()
@@ -709,8 +729,8 @@ class CheckPreSdd(unittest.TestCase):
 
     def test_check_sdd_unknown_entry_problem(self):
         self.build()
-        self.build_sdd(extra='\nAlso [PSDD/REL-03.9](z).\n')
-        self.only(self.check_sdd(), '14-performance-and-capacity.md', 'PSDD/REL-03.9')
+        self.build_sdd(extra='\nAlso [PSDD/REL-03.9](../pre-sdd-refunds-platform/03c-register-reliability.md#rel-03).\n')
+        self.only(self.check_sdd(), '14-performance-and-capacity.md', 'PSDD/REL-03.9', 'not in the Pre-SDD')
 
     def test_check_sdd_unknown_row_problem(self):
         self.build()
@@ -730,6 +750,36 @@ class CheckPreSdd(unittest.TestCase):
     def test_check_sdd_calc_value_formatted_pass(self):
         self.build()
         self.build_sdd(avg='10.0')
+        self.assertEqual(self.check_sdd(), [])
+
+    def test_check_sdd_cite_link_anchor_missing_problem(self):
+        self.build()
+        self.build_sdd(extra='\nZones: [PSDD/REL-03.1](../pre-sdd-refunds-platform/03e-register-security.md#rel-99).\n')
+        self.only(self.check_sdd(), '14-performance-and-capacity.md', 'PSDD/REL-03.1', '03e-register-security.md', '#rel-99')
+
+    def test_check_sdd_cite_link_file_missing_problem(self):
+        self.build()
+        self.build_sdd(extra='\nZones: [PSDD/REL-03.1](../pre-sdd-refunds-platform/03z-register-gone.md#rel-03).\n')
+        self.only(self.check_sdd(), '14-performance-and-capacity.md', 'PSDD/REL-03.1', '03z-register-gone.md', 'not a file')
+
+    def test_check_sdd_cite_link_other_folder_problem(self):
+        self.build()
+        self.build_sdd(extra='\nZones: [PSDD/REL-03.1](../pre-sdd-other/03c-register-reliability.md#rel-03).\n')
+        self.only(self.check_sdd(), '14-performance-and-capacity.md', 'PSDD/REL-03.1', 'not a file')
+
+    def test_check_sdd_cite_link_in_code_label_problem(self):
+        self.build()
+        self.build_sdd(extra='\nZones: [`PSDD/REL-03.1`](../pre-sdd-refunds-platform/03c-register-reliability.md#rel-30).\n')
+        self.only(self.check_sdd(), '14-performance-and-capacity.md', 'PSDD/REL-03.1', '#rel-30')
+
+    def test_check_sdd_cite_link_in_fence_ignored(self):
+        self.build()
+        self.build_sdd(extra='\n```text\n[PSDD/REL-03.1](../pre-sdd-refunds-platform/03c-register-reliability.md#rel-99)\n```\n')
+        self.assertEqual(self.check_sdd(), [])
+
+    def test_check_sdd_cite_link_without_anchor_pass(self):
+        self.build()
+        self.build_sdd(extra='\nZones: [PSDD/REL-03.1](../pre-sdd-refunds-platform/03c-register-reliability.md).\n')
         self.assertEqual(self.check_sdd(), [])
 
 

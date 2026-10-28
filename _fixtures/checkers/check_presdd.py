@@ -7,6 +7,8 @@ import sys
 import tempfile
 from collections import Counter
 
+from check_lld_trace import LINK, heading_anchors
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CLI = os.path.normpath(os.path.join(HERE, "..", "..", "pre-sdd-unifier", "studio", "cli.mjs"))
 
@@ -87,6 +89,8 @@ LINK_TARGET = re.compile(r"\]\([^)]*\)")
 SECTION_SIGN = re.compile(r"§\s?\d+(?:\.\d+)*")
 SDD_COVER = "00-cover-and-changelog.md"
 SOURCE_PSDD_HEAD = ["Key", "Pre-SDD", "Version", "Gate", "Link"]
+SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+COVER = "00-cover-and-changelog.md"
 
 
 def read_text(path):
@@ -491,6 +495,15 @@ def check_signoff(name, text, facts, report):
             report.add(name, f'Sign-off register: no row for "{role}", an applicable role')
 
 
+def check_cover_gate(text, model, report):
+    gates = [re.sub(r"<!--.*?-->", "", l).split("**Gate:**", 1)[1].strip() for l in text.split("\n") if l.startswith("**Gate:**")]
+    label = model["gate"]["label"]
+    if len(gates) != 1:
+        report.add(COVER, f'{len(gates)} Gate lines, expected one "**Gate:** {label}"')
+    elif gates[0] != label:
+        report.add(COVER, f'Gate line reads "**Gate:** {gates[0]}", expected "**Gate:** {label}" (the engine\'s gate label, as the master shows it)')
+
+
 def check_twelve(name, text, model, report):
     lines = text.split("\n")
     headings = [re.sub(r"^##\s+", "", l).strip() for l in lines if re.match(r"^##\s+\S", l) and not l.startswith("###")]
@@ -591,6 +604,7 @@ def check_sdd(sdd, psdd, master, state, model, computed, rows, entries, chunk_te
                 report.add(where, f'Source Pre-SDD: Link "{link}" does not resolve to the Pre-SDD master {master}')
     corpus = "\n".join(chunk_texts.values())
     values = calc_values(computed) if computed else None
+    anchors = {}
     for dirpath, _, names in os.walk(sdd):
         for fname in sorted(names):
             if not fname.endswith(".md"):
@@ -603,8 +617,35 @@ def check_sdd(sdd, psdd, master, state, model, computed, rows, entries, chunk_te
                     cited = m.group(1)
                     if not cited_exists(cited, rows, entries, corpus):
                         report.add(f"SDD {rel}", f"line {n}: PSDD/{cited} is not in the Pre-SDD")
+            check_cite_links(rel, path, text, anchors, report)
             if values is not None:
                 check_section_18(rel, text, values, report)
+
+
+def check_cite_links(rel, path, text, anchors, report):
+    fence = False
+    for n, line in enumerate(text.split("\n"), 1):
+        if line.strip().startswith("```"):
+            fence = not fence
+            continue
+        if fence:
+            continue
+        for m in LINK.finditer(line):
+            cite = CITE.fullmatch(m.group(1).strip("`"))
+            target = m.group(2)
+            if not cite or SCHEME.match(target):
+                continue
+            file_part, _, anchor = target.partition("#")
+            full = os.path.normpath(os.path.join(os.path.dirname(path), file_part)) if file_part else path
+            if not os.path.isfile(full):
+                report.add(f"SDD {rel}", f"line {n}: the link of PSDD/{cite.group(1)} points to {target}, which is not a file")
+                continue
+            if not anchor:
+                continue
+            if full not in anchors:
+                anchors[full] = heading_anchors(full)
+            if anchor not in anchors[full]:
+                report.add(f"SDD {rel}", f"line {n}: the link of PSDD/{cite.group(1)} points to {target}, and {os.path.basename(full)} has no heading for #{anchor}")
 
 
 def cited_exists(cited, rows, entries, corpus):
@@ -693,6 +734,8 @@ def run(psdd, args, report):
     rows, entries = check_register(present, texts, claimed, report)
     if "11-gate-and-sign-off.md" in texts:
         check_signoff("11-gate-and-sign-off.md", texts["11-gate-and-sign-off.md"], facts, report)
+    if COVER in texts and model is not None:
+        check_cover_gate(texts[COVER], model, report)
     if "12-sdd-handoff-guide.md" in texts:
         check_twelve("12-sdd-handoff-guide.md", texts["12-sdd-handoff-guide.md"], model, report)
     if args.sdd:

@@ -167,7 +167,7 @@ It prints `engine 3.0.0, skill 1.0.0`. Run it once per run; chunk 00 and the han
 | 0 | Success | Go on |
 | 1 | Differences found (`diff` only) | Report each difference to the user |
 | 2 | Invalid input, or failed validation, including a `--brd` key, a `--mode`, or an `--input` value the engine refuses; the message says what to fix | Fix the input (the patch, the state, the file) and run the command again; tell the user when only a person can fix it |
-| 3 | Usage error: an unknown command or flag, a missing argument, a `--now` or `--since` value that is not a UTC time with `Z`, a `--brd` value without `=`, `@`, or a version, or both or neither of `validate`'s file and `--pick` | Correct the command |
+| 3 | Usage error: an unknown command or flag, a missing argument, a `--now` or `--since` value that is not a UTC time with `Z`, a `--brd` value with no key before `=`, no `@`, no path before the last `@`, or no version after it, or a version holding a space, a slash, or a backslash, or both or neither of `validate`'s file and `--pick` | Correct the command |
 
 ---
 

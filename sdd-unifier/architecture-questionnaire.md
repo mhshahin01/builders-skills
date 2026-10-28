@@ -9,7 +9,7 @@ The architecture style is not fixed in advance. When the SDD is derived from a B
 | Intent | Questionnaire |
 |---|---|
 | DERIVE-FROM-BRD | **Runs**, before any chunk is written, after the Project Type answer (step 3a). |
-| GENERATE (SoW, notes, topic seed) | Does not run: the request writes nothing until its BRD and a G3-signed Pre-SDD exist, and the SDD is then derived (SKILL.md step 2), so the DERIVE-FROM-BRD row applies. |
+| GENERATE (SoW, notes, topic seed) | Does not run: the request writes no SDD content until its BRD and a G3-signed Pre-SDD exist, and the SDD is then derived (SKILL.md step 2), so the DERIVE-FROM-BRD row applies. |
 | TRANSFORM (an existing SDD) | Does not run. The source SDD's architecture is kept verbatim; a mismatch with the drivers becomes an open item for the reviewer, never a silent change. |
 | Brownfield (any intent) | Q2-Q6 start from the existing system's style, shown as `existing` and recommended unless a driver clearly argues for change. |
 

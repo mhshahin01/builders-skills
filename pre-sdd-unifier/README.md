@@ -26,6 +26,11 @@ This README is for a maintainer of the skill: how it is built, where its version
 
 **Known limitation** (accepted by the owner at stop C2): a zero RTO on `az` beside a remote failure scope over-reports `CONFLICT-zeroRTO-topology@az`, because the topology order ranks regional above multi-AZ active. A topology override of `active`, or a relaxed `az` RTO, clears it.
 
+## Known gaps
+
+- **No overlay tab in the Studio.** The Studio has no control for the migration overlay switch, the workloads, the OVL entries, the unknowns, or removing an option. On the web path the skill takes these in chat and applies them with `cli.mjs derive --apply` ([stages-and-input.md § The web path](stages-and-input.md#the-web-path)). An overlay tab in stage 2 is a later Studio change.
+- **SKILL.md is longer than one Read returns.** A Read of SKILL.md by path stops before its end, which leaves out § Status board and § Reference files. Load it through the skill loader, or read it in two parts.
+
 ## Layout
 
 ```text
@@ -43,6 +48,7 @@ pre-sdd-unifier/
     src/ui.js              the page code: stages 1 to 4, Import, Save, the preview ZIP
     src/shell.html         the page skeleton with the four build markers
     src/style.css          the page styles
+    src/package.json       { "type": "commonjs" }: keeps engine.js CommonJS under a project that declares "type": "module"
     build.mjs              builds pre-sdd-studio.html, with or without a project state inside
     cli.mjs                the skill's way into the engine
     pre-sdd-studio.html    the built, blank Studio (committed; a test keeps it equal to a fresh build)
@@ -148,7 +154,7 @@ node --test "<skill>/studio/tests/*.test.mjs"
 - **Quote the glob.** A bare directory argument fails on Node.js 24.14.0.
 - **Python.** The schema and validator tests run Python through `tests/pyschema.mjs`: `py -3 -I` on Windows, `python3 -I` elsewhere, with the `jsonschema` package. When Python is not found, those checks skip with a message saying so.
 - **Every test passes `now`** as a UTC ISO string. Test names follow `methodName_scenario_expectedResult`.
-- On 2026-10-27 the suite ran 474 tests, all passing, on Node.js 24.22.1. The skill's documents say "tested with Node.js 24.14.0".
+- On 2026-10-28 the suite ran 475 tests, all passing, on Node.js 24.22.1. The skill's documents say "tested with Node.js 24.14.0".
 - The suite has no browser test. The page was checked by hand on 2026-10-27 in headless Chrome with a scratch profile (13 checks, all passing, from the embedded load to the save, `validate --pick`, `unwrap`, and `diff`), recorded in `tests/MANUAL-CHECK.md`. Firefox and Edge are left to the owner.
 
 | Test file | Covers |
@@ -173,7 +179,7 @@ node --test "<skill>/studio/tests/*.test.mjs"
 | `gate.test.mjs` | `gateStatus`: G0 to G3, sign-offs, conditions, exceptions |
 | `blueprint.test.mjs` | `handoffBlueprint`, `readSave`, `previewFiles`, the writers, the blueprint schema and validator |
 | `fragments.test.mjs` | `fragments`: names, row headings, escaping, `TBD` |
-| `cli.test.mjs` | Every CLI command, `pickSavedState`, the schema checker |
+| `cli.test.mjs` | Every CLI command, `pickSavedState`, the schema checker, the engine loading inside a project that declares `"type": "module"` |
 
 `tests/golden/` holds the two v2.2 example exports (`regional-zero`, `local-zero`); the third golden case, `demo`, reads `examples/studio-v2.2-export/`.
 
@@ -200,7 +206,7 @@ Know these before you change code:
 - **Every write goes through `applyPatch`.** A patch is a batch of ops from one actor, all or nothing: any error leaves the state unchanged and lists every error. `applyDefaults` and `derive` write through it too, as the actor `pre-sdd-engine`.
 - **The state gate.** `normalizeState` runs on every load. It rejects a file it cannot read safely and lists every problem in plain words, and it reads a `Confirmed` value without who and when as `Estimated`. `applyPatch` does not gate its own input, so every load path normalizes first.
 - **The engine is the strict side on who may act** (ruling R0). Where the engine and the rule files differ on who may act, the design decides; where the design is silent, the stricter side wins and the engine moves to it, because the engine is the one place a rule holds for the Studio, the CLI, and a hand-written patch alike. A rule the engine cannot check (for example, only an empowered owner ticks G3-11) stays a skill rule.
-- **No npm packages and no `package.json`.** Node.js built-ins and `node:test` only. Python is used only by `validate_handoff.py` and the schema tests.
+- **The skill installs nothing.** No npm packages and no dependencies: Node.js built-ins and `node:test` only. The one-line `studio/src/package.json`, `{ "type": "commonjs" }`, keeps the engine CommonJS inside a project whose `package.json` says `"type": "module"`; it names no dependency, and `cli_version_insideEsmProject_loadsEngine` guards it. Python is used only by `validate_handoff.py` and the schema tests.
 - **Offline.** The Studio makes no network call and uses no browser storage; `sources_noNetworkOrStorageApis_absent` guards it.
 - **UTC** for every timestamp: ISO 8601 with `Z`, and file-name stamps `YYYYMMDDTHHMMSSZ`.
 - **No em or en dashes** in any file this skill writes. In `src/`, a runtime string that needs one uses an escape (`\u2014` in JavaScript, `&#8212;` in HTML). The Q1 exemptions are below.

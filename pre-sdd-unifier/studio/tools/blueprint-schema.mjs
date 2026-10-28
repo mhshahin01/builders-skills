@@ -1,7 +1,7 @@
-import { writeFileSync } from 'node:fs';
+import { realpathSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const studioDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const E = createRequire(import.meta.url)('../src/engine.js');
@@ -186,7 +186,16 @@ export function blueprintSchemaText() {
   return `${JSON.stringify(blueprintSchema(), null, 2)}\n`;
 }
 
-if (import.meta.main) {
+function invokedDirectly() {
+  if (!process.argv[1]) return false;
+  try {
+    return import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+  } catch {
+    return false;
+  }
+}
+
+if (invokedDirectly()) {
   const out = join(studioDir, 'schema', 'architecture-blueprint.schema.json');
   writeFileSync(out, blueprintSchemaText());
   console.log(`Wrote ${out}`);

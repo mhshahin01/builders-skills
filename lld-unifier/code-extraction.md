@@ -45,7 +45,7 @@ See `confidence-rules.md` for the structural-vs-semantic weighting.
 - Use-case workflow narratives, headed `### KEY/UC-NN: Title` only when § Tracing to BRD use cases matched an SDD §7.3 entry point, otherwise `### Workflow: [name]`.
 - Cross-service sagas.
 - The §5.4 dependency view.
-- The §6.4 operationalised style, with its confidence rules.
+- The §6.4 operationalised style. The template's confidence rules apply to every claim in every ask, not only this one.
 
 Brief them unchanged.
 

@@ -53,13 +53,13 @@ If 5+ of these section names are present in template order, it's a BRD. (Multipl
 
 In either case → **DERIVE-FROM-BRD**. Read the BRD per `brd-to-sdd.md` § Detecting BRD input form.
 
-**Several BRDs.** Detect each one on its own. When they describe one system (for example, the products of one platform, or a phase-2 BRD for an existing product), they are the parents of one SDD: each is registered with a key and they are reconciled against each other (`brd-to-sdd.md` § Source BRDs and lineage). When it is unclear whether they describe one system or separate systems, ask once: "One SDD with these BRDs as parents, or one SDD per BRD?"
+**Several BRDs.** Detect each one on its own. When they describe one system (for example, the products of one platform, or a phase-2 BRD for an existing product), they are the parents of one SDD: each is registered with a key, and they are reconciled against each other (`brd-to-sdd.md` § Source BRDs and lineage). When it is unclear whether they describe one system or separate systems, ask once: "One SDD with these BRDs as parents, or one SDD per BRD?"
 
 ### Already follows this SDD template
 
 Signs:
 
-- Section headings include §1 Executive Summary, §6 Ecosystem Overview, §7 System Users & Use Cases, §8 System Design / High-Level Architecture, §11 Cross-Cutting Concerns, §13 Services Decomposition, §14 Centralized Event Hub, §15 Service Integration API Contracts, §16 Centralized User Roles, §17.X per-service blocks, §18 Performance & Capacity, §20 Operations Runbook (the earlier map used §15.X services, §17 performance, §19 runbook, and no API contracts section, see `chunking.md` § Earlier chunk map; legacy SDDs use §13.1/§13.2.X services, §14 performance; recognise all three).
+- Section headings include §1 Executive Summary, §6 Ecosystem Overview, §7 System Users & Use Cases, §8 System Design / High-Level Architecture, §11 Cross-Cutting Concerns, §13 Services Decomposition, §14 Centralized Event Hub, §15 Service Integration API Contracts, §16 Centralized User Roles, §17.X per-service blocks, §18 Performance & Capacity, §20 Operations Runbook. Two older maps exist. The earlier map used §15.X services, §17 performance, §19 runbook, and no API contracts section (see `chunking.md` § Earlier chunk map). Legacy SDDs use §13.1/§13.2.X services, §14 performance. Recognise all three.
 - Per-service blocks use `Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / API Standards / Event Model / Constraints / Error Handling / Observability / Compliance / Deployment Strategy`.
 - Has a Changes Log with Reviewer + Approver columns.
 
@@ -142,14 +142,19 @@ Treat as TRANSFORM with targeted regeneration, without rerunning intake or steps
 
 - Identify which sections the user wants changed.
 - Regenerate those (chunks: rewrite affected chunk files; combined: rewrite affected sections in place), then back-fill every other chunk or section the change makes wrong (`parts-mode.md` § What every part does, step 3).
-- Bump the version (SKILL.md § Output conventions, Versions); the Changes Log row's `Chunks:` list names every chunk changed, or every changed section in COMBINED mode, including the back-filled ones.
+- Bump the version (SKILL.md § Output conventions, Versions). The Changes Log row's `Chunks:` list names every chunk changed, or every changed section in COMBINED mode, including the back-filled ones.
 - Finish through the common tail in SKILL.md step 10: affected step 6a, chunk 19 Stale mark, scoped delta/application verification, step 8 marker handling, then step 8b gate/current-output check and the handoff. Targeted edits do not stop at the Stale mark.
 
 ### "Make a new service spec for [Service Name] in this SDD"
 
 Treat as TARGETED ADD:
 
-- In CHUNKS mode: add a new `13x-service-[slug].md` chunk (next free letter) and update the §13 Services Decomposition table in chunk 09, wire the service into the §14 event catalog (chunk 10) if it publishes or consumes events, give each of its synchronous domain or provider integrations an `API-NN` in §15 (chunk 11; standard operational infrastructure is not one: SKILL.md step 6a) and its roles and permission tokens in §16 (chunk 12), then rerun SKILL.md step 6a and mark chunk 19 `Stale` if it exists.
+- In CHUNKS mode:
+  - add a new `13x-service-[slug].md` chunk (next free letter);
+  - update the §13 Services Decomposition table in chunk 09;
+  - wire the service into the §14 event catalog (chunk 10) if it publishes or consumes events;
+  - give each of its synchronous domain or provider integrations an `API-NN` in §15 (chunk 11; standard operational infrastructure is not one: SKILL.md step 6a) and its roles and permission tokens in §16 (chunk 12);
+  - then rerun SKILL.md step 6a and mark chunk 19 `Stale` if it exists.
 - In COMBINED mode: insert a new `## 17.X` block in section 17 and update §13, §14, §15, and §16 the same way, rerun SKILL.md step 6a, and set the cover's E2E gate line to `Stale` if §24 exists.
 - Bump the version (SKILL.md § Output conventions, Versions), then finish through the common tail in SKILL.md step 10: scoped delta/application verification (step 7, On an update), step 8 marker handling, then step 8b gate/current-output check and the handoff.
 

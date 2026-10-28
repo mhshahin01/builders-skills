@@ -10,7 +10,7 @@ Read this file at step 9 (stage 3) and step 10 (stage 4, the chosen option).
 
 ## An option is a shape
 
-An option is a shape-level candidate, never a product: for example "one region, multi-AZ" against "two regions, warm standby". It never names a product, a version, or the architecture style (for example monolith or microservices; `hybrid` below is a hosting or network value, never a style), and it names a provider only when the business makes the provider a hard constraint. The SDD picks the products within the chosen shape (`handoff-guide.md`).
+An option is a shape-level candidate, never a product: for example "one region, multi-AZ" against "two regions, warm standby". It never names a product, a version, or the architecture style (for example monolith or microservices). `hybrid` below is a hosting or network value, never a style. An option names a provider only when the business makes the provider a hard constraint. The SDD picks the products within the chosen shape (`handoff-guide.md`).
 
 The skill names each option with the `set-option` op: a name (a short shape-level summary) and a shape of five parts. The engine gives it the next `OPT-NN`.
 
@@ -30,7 +30,7 @@ Which options to name:
 
 Use the same worksheet for every shape decision the Pre-SDD settles: hosting, topology, DR strategy, data shape, network shape, and, with the overlay, the migration approach (Standard § 9.4). Products and the deployment style stay with the SDD.
 
-Rename or reshape an option with `set-option`, or leave it unchosen with its result shown. Renaming or reshaping an option sends its confirmed costs and scores back to `Estimated`, because they were confirmed for the old shape. A person (or a fixture owner) may remove an option with `remove-option`; the engine refuses it while the option is the chosen one (clear the choice first with `decide`, `option: null`), and its `OPT-NN` is never used again.
+Rename or reshape an option with `set-option`, or leave it unchosen with its result shown. Renaming or reshaping an option sends its confirmed costs and scores back to `Estimated`, because they were confirmed for the old shape. A person (or a fixture owner) may remove an option with `remove-option`. The engine refuses it while the option is the chosen one (clear the choice first with `decide`, `option: null`). The removed option's `OPT-NN` is never used again.
 
 ---
 
@@ -40,7 +40,7 @@ The engine checks each option against what its shape can express, never against 
 
 - **Hosting:** when HDR-08 holds `onprem`, `cloud`, or `hybrid` and its kind is `hard`, the option's hosting must equal it.
 - **Network:** when INT-08 holds a value and its kind is `hard`, the option's network must equal it.
-- **Topology and DR:** when at least one REL-05 entry names a failure scope, the engine runs its shape-conflict check with the option's topology, the option's DR strategy for every remote scope, and the option's hosting. Any conflict fails the option; for example, `localHA` with a remote scope fails as `CONFLICT-local-dr`, and two regions of one cloud provider fail a `provider` scope as `CONFLICT-provider`.
+- **Topology and DR:** when at least one REL-05 entry names a failure scope, the engine runs its shape-conflict check with the option's topology, the option's DR strategy for every remote scope, and the option's hosting. Any conflict fails the option. For example, `localHA` with a remote scope fails as `CONFLICT-local-dr`, and two regions of one cloud provider fail a `provider` scope as `CONFLICT-provider`.
 - **Excluded:** an option a person excluded with `exclude-option` fails, with the entry it breaks and the person's reason (below).
 
 Each option's hard result is one of three:
@@ -53,7 +53,16 @@ Each option's hard result is one of three:
 
 G2 needs at least one option whose result is `true` (`gates-and-signoff.md`).
 
-**Hard entries the engine does not check.** A shape cannot express every hard entry. The defaults make BUS-07 (prohibitions), BUS-08 (commercial and legal obligations), SEC-01 (applicable laws and policies), SEC-04 (encryption and key custody), DAT-03 (sensitivity), DAT-04 (residency), and DAT-06 (retention and erasure) hard, and a person may make others hard. For each option, chunk 07 lists each hard entry the engine does not check and whether the option meets it, with the entry ID and the evidence. A person reviews that list at the G2 review stop. An option that breaks one is out (DT-04): the skill records it with `exclude-option` (the option, the entry it breaks, and the reason) under the name of that person, the engine then fails the option with the check `excluded`, so it is never ranked, chosen, or shortlisted, and the options fragment shows the failure. `include-option` lifts an exclusion that no longer holds. The engine refuses to exclude the chosen option: clear the choice first with `decide`. When ambiguity remains about a residency or compliance restriction, the Standard asks for a review by the compliance authority: record it as an unknown (`QD-NN`) with its owner and due date.
+**Hard entries the engine does not check.** A shape cannot express every hard entry. The defaults make these entries hard:
+- BUS-07 (prohibitions);
+- BUS-08 (commercial and legal obligations);
+- SEC-01 (applicable laws and policies);
+- SEC-04 (encryption and key custody);
+- DAT-03 (sensitivity);
+- DAT-04 (residency);
+- DAT-06 (retention and erasure).
+
+A person may make others hard. For each option, chunk 07 lists each hard entry the engine does not check and whether the option meets it, with the entry ID and the evidence. A person reviews that list at the G2 review stop. An option that breaks one is out (DT-04). The skill records it with `exclude-option` (the option, the entry it breaks, and the reason) under the name of that person. The engine then fails the option with the check `excluded`, so it is never ranked, chosen, or shortlisted, and the options fragment shows the failure. `include-option` lifts an exclusion that no longer holds. The engine refuses to exclude the chosen option: clear the choice first with `decide`. When ambiguity remains about a residency or compliance restriction, the Standard asks for a review by the compliance authority: record it as an unknown (`QD-NN`) with its owner and due date.
 
 ---
 
@@ -87,9 +96,9 @@ The criteria are the columns of the Standard's worksheet after "Hard constraints
 | The criterion weights | `set-weights` | A person (or a fixture owner), recorded with who approved them and when | Each weight is a number, 0 or more, and at least one is above 0. The engine refuses the skill and an answer policy. |
 | The chosen option | `decide` (`option`) | A person (or a fixture owner), in stage 4 | Only an option whose hard result is `true`; `option: null` clears the choice. |
 
-A score says how well the option does on that criterion: 1 is the worst and 5 the best, so on a cost criterion 5 is the cheapest, and on `uncertainty` 5 is the best evidence. A higher weighted score ranks higher. Each proposed score cites its evidence in its reason: the register entry, the calculation, or the conflict it rests on. A score the evidence cannot support stays unproposed, and its gap is an unknown.
+A score says how well the option does on that criterion. A score of 1 is the worst and a score of 5 the best. So on a cost criterion 5 is the cheapest, and on `uncertainty` 5 is the best evidence. A higher weighted score ranks higher. Each proposed score cites its evidence in its reason: the register entry, the calculation, or the conflict it rests on. A score the evidence cannot support stays unproposed, and its gap is an unknown.
 
-Ask for the costs, the horizon, and the weights together, in the usual batches (`stages-and-input.md`): they are the person's numbers, never proposed. A missing cost or horizon leaves its result `TBD`, and the engine names it among the option's unknowns; record each as an unknown (`QD-NN`) with its owner and due date. Missing weights give no unknown: the comparison is flagged `UNWEIGHTED` (below), with no weighted score.
+Ask for the costs, the horizon, and the weights together, in the usual batches (`stages-and-input.md`). They are the person's numbers, never proposed. A missing cost or horizon leaves its result `TBD`. The engine names it among the option's unknowns. Record each as an unknown (`QD-NN`) with its owner and due date. Missing weights give no unknown: the comparison is flagged `UNWEIGHTED` (below), with no weighted score.
 
 ---
 
@@ -114,11 +123,11 @@ Every held score counts, `Estimated` or `Confirmed`. Chunk 07 shows the flags wi
 
 ## Choosing an option
 
-In stage 4 the person chooses the option with the `decide` op (`option`), and the engine refuses one whose hard result is not `true`. The skill writes the decision under the name of the person who decided (on the web path the Studio writes it); the engine refuses the skill acting on its own. An answer policy never chooses: the engine computes no recommended option for it to take, and refuses it.
+In stage 4 the person chooses the option with the `decide` op (`option`), and the engine refuses one whose hard result is not `true`. The skill writes the decision under the name of the person who decided (on the web path the Studio writes it). The engine refuses the skill acting on its own. An answer policy never chooses. The engine computes no recommended option for it to take, and refuses it.
 
 - **More than one viable option (DT-12):** the comparison runs against the approved criteria and weights, and chunk 09's ADR candidates record the comparison and the reason for the choice.
 - **Only one feasible option (DT-13):** chunk 09 records the constraints that eliminated the others, each from its option's failures; validation is still required.
-- Record the reason for the choice, the technical assumptions, the pilots still needed, the cost sensitivities, and the condition that would reverse the decision (Standard § 9.4) in `decision-log.md` and in ADR-DR-001 in chunk 09 (its option comparison, its decision and rationale, and its conditions and review trigger). They never go into the `decide` op: it takes `reason` only with a topology or DR override, as that override's reason, and the engine refuses a `reason` with no override.
+- Record the reason for the choice, the technical assumptions, the pilots still needed, the cost sensitivities, and the condition that would reverse the decision (Standard § 9.4). Put them in `decision-log.md` and in ADR-DR-001 in chunk 09 (its option comparison, its decision and rationale, and its conditions and review trigger). They never go into the `decide` op. It takes `reason` only with a topology or DR override, as that override's reason. The engine refuses a `reason` with no override.
 
 The chosen option is part of the decisions, so it is in the signed content: a change after G3 sends G3 back to review. The locked-items fragment carries it to the handoff guide.
 
@@ -130,6 +139,6 @@ A light run (`SKILL.md` § Light run) keeps the engine run and the hard-constrai
 - the recommended shape and one alternative;
 - no weighted comparison unless the weights are already approved. Without approved weights, the two options are compared side by side and flagged `UNWEIGHTED`.
 
-The options fragment lists every option in the project state, light run or not, and stands as the engine wrote it; in a light run the skill names only the two options, so the fragment holds those two.
+The options fragment lists every option in the project state, light run or not, and stands as the engine wrote it. In a light run the skill names only the two options, so the fragment holds those two.
 
 The costs, the horizon, and the weights still come only from a person.

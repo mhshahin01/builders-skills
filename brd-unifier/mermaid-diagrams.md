@@ -27,7 +27,7 @@ BRD diagrams follow the same rule as BRD text: **no technical terminology**. Nod
 | Use case detail → Flowchart (chunks `06*`) - **gated, checklist step 5** | Main, alternate, and exception flows of one use case that has 3 or more Main Flow steps and at least one decision point | `flowchart TD` (see § Use-case flowcharts) |
 | Integrations | The product in the middle, business partners around it, arrows labelled with the business purpose (not the mechanism) | `flowchart LR` |
 
-**Do not** draw a diagram for: glossary, assumptions, scope, NFR tables, the Users & Use Cases Matrix, or any UC that is linear (no alternate flow, no exception flow, no path-changing rule) or has fewer than 3 Main Flow steps: the numbered steps are the diagram.
+**Do not** draw a diagram for: glossary, assumptions, scope, NFR tables, the Users & Use Cases Matrix, or any UC that is linear (no alternate flow, no exception flow, no path-changing rule) or has fewer than 3 Main Flow steps. The numbered steps are the diagram.
 
 **Gated diagrams.** Use-case diagrams and use-case flowcharts are never drawn during first generation. They are added to chunks 05 and `06*` at step 5 of the product-manager checklist (`14-todo.md`), only after steps 1-3 are confirmed complete (in parallel with the mockups of step 4). Rules: `delivery-chunks.md` § The gated diagram step. Every other diagram in this table is part of normal generation.
 
@@ -52,8 +52,8 @@ flowchart TD
 - Always use the `mermaid` language hint on the fence.
 - The **Summary** line after every diagram is mandatory: it is the no-renderer fallback.
 - Keep diagrams scoped (~30 lines max); split large journeys into per-phase diagrams.
-- Figure numbering is sequential across the whole BRD; every figure gets a row in chunk 00's Figures index with its chunk + section. Figures added later (to-do step 5) take the next free number; existing figures are never renumbered, because other chunks cite them.
-- Validate every emitted Mermaid block parses; on failure, fall back to a numbered text description + `[NEEDS CLARIFICATION: Mermaid syntax error: review and fix]` and surface the count in the handoff summary.
+- Figure numbering is sequential across the whole BRD. Every figure gets a row in chunk 00's Figures index with its chunk + section. Figures added later (to-do step 5) take the next free number; existing figures are never renumbered, because other chunks cite them.
+- Validate that every emitted Mermaid block parses. On failure, fall back to a numbered text description + `[NEEDS CLARIFICATION: Mermaid syntax error: review and fix]` and surface the count in the handoff summary.
 
 ## Use-case diagrams (chunk 05, gated)
 
@@ -101,7 +101,7 @@ flowchart LR
 
 Drawn only at checklist step 5, as a `### Flowchart` sub-section directly after `### Alternate & Exception Flows`.
 
-**Required** when the use case has 3 or more Main Flow steps **and** at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). **Skipped** for linear use cases and for use cases with fewer than 3 steps; the skip reason is recorded in `14-todo.md`, nothing is added to the chunk.
+**Required** when the use case has 3 or more Main Flow steps **and** at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). **Skipped** for linear use cases and for use cases with fewer than 3 steps. For a skipped use case, the skip reason is recorded in `14-todo.md` and nothing is added to the chunk.
 
 | Element | Notation |
 |---|---|
@@ -143,25 +143,25 @@ flowchart TD
 - The narrative is the source of truth; the flowchart is a derived view. Every node and edge traces to a step, an A/E flow, or a business rule. Every documented A/E flow appears.
 - Never invent behaviour to complete a path (where a branch rejoins, what happens after a failure). Record a to-do item (`TD-NN` in `14-todo.md`), mark the flowchart `Provisional` there, and finalise it after the answer.
 - A narrative choice must name its terminal outcome or rejoin. An unstated outcome becomes an owner question. A new decline/cancel flow not implied by the documented choice is an optional scope candidate, not a silently required branch.
-- Keep views about 30 lines. A long UC may compress consecutive decision-free steps with the step range or split into connected numbered views in the same Flowchart section. Preserve the original figure anchor, append stable figure IDs, label continuation nodes and check the union of all nodes/edges against every documented path. Splitting does not authorize dropping outcomes.
+- Keep views about 30 lines. A long UC may compress consecutive decision-free steps with the step range. Alternatively, it may split into connected numbered views in the same Flowchart section. Preserve the original figure anchor, append stable figure IDs, label continuation nodes and check the union of all nodes/edges against every documented path. Splitting does not authorize dropping outcomes.
 
 ---
 
 ## Label and syntax safety (all diagrams)
 
-- Wrap every node label and every edge label in double quotes. No double quotes, Markdown, or line breaks inside a label. In `stateDiagram-v2`, declare a state with a business name as `state "Order placed" as Placed`, and write a transition label after the colon, unquoted: `Placed --> Paid : customer pays`.
+- Wrap every node label and every edge label in double quotes. No double quotes, Markdown, or line breaks inside a label. In `stateDiagram-v2`, declare a state with a business name as `state "Order placed" as Placed`. Also in `stateDiagram-v2`, write a transition label after the colon, unquoted: `Placed --> Paid : customer pays`.
 - A label never starts with a number followed by a period or a bracket, or with a hyphen. Write `"Step 3: ..."`, not `"3. ..."`.
 - Edge labels use the quoted form (`A -- "text" --> B`, `A -- "text" --- B`), never the pipe form (`A ---|text| B`): pipes break Markdown tables.
 - Node IDs use letters and digits only. Never use `end` as an ID. Keep a space on both sides of every link.
 - One statement or one chain per line. Every `subgraph` has its `end`.
-- If a Mermaid parser or renderer is available in the session, parse every block with it and look at one rendered use-case diagram and one rendered flowchart (a block can parse and still render a label wrongly); otherwise check each block line by line against the examples in this file and the label rules above.
-- Never download or install a parser for the check, and never ask whether to: without a parser or renderer in the session, the line-by-line check is the validation. Write any test files to a scratch location, never into the BRD folder.
+- If a Mermaid parser or renderer is available in the session, parse every block with it. In that case, also look at one rendered use-case diagram and one rendered flowchart, because a block can parse and still render a label wrongly. If no parser or renderer is available, check each block line by line against the examples in this file and the label rules above.
+- Never download or install a parser for the check, and never ask whether to. Without a parser or renderer in the session, the line-by-line check is the validation. Write any test files to a scratch location, never into the BRD folder.
 
 ---
 
 ## Syntax quick reference
 
-The dialect cheatsheet is `mermaid-syntax.md` in this skill folder. Its examples use unquoted labels for brevity: this file's § Label and syntax safety wins, so every label in a BRD diagram stays in double quotes.
+The dialect cheatsheet is `mermaid-syntax.md` in this skill folder. Its examples use unquoted labels for brevity. This file's § Label and syntax safety wins, so every label in a BRD diagram stays in double quotes.
 
 ---
 
@@ -184,4 +184,8 @@ If, and only if, the user asks for a Miro board ("put the diagrams on Miro", "cr
 
 **Never** write a Miro placeholder (`> Miro: [TBD]`) when no real board exists, and never drop the inline Mermaid in favour of a board link: the Mermaid stays authoritative.
 
-If the Miro MCP is unavailable when the user asked for a board: generate the BRD normally (Mermaid is unaffected), tell the user the Miro MCP wasn't available, and list the figures that would be mirrored to the board once it is.
+If the Miro MCP is unavailable when the user asked for a board:
+
+- generate the BRD normally (Mermaid is unaffected);
+- tell the user the Miro MCP wasn't available;
+- list the figures that would be mirrored to the board once it is.

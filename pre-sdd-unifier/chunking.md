@@ -42,7 +42,7 @@ The chunk templates are embedded in this skill folder under `chunks/`: they are 
 - **Full mode:** 00 to 13 with 03a to 03h, except:
   - **06** only when the change type (HDR-07) is brownfield or mixed;
   - **08** only while the migration overlay applies (the engine's overlay switch, set with the `set-overlay` op).
-- A light run writes the same chunks as a full run. It leaves out only what § Light run in SKILL.md lists (the data, security, integration, and deployment diagrams in 05, the weighted comparison in 07 unless the weights are approved, the closest-example pointer in 02, and review passes beyond one application pass).
+- A light run writes the same chunks as a full run. It leaves out only what § Light run in SKILL.md lists. These are the data, security, integration, and deployment diagrams in 05, the weighted comparison in 07 (unless the weights are approved), the closest-example pointer in 02, and review passes beyond one application pass.
 - A quick Pre-SDD that continues into the full Pre-SDD keeps its chunks and adds the full-mode ones at the write-up.
 
 When the path changes later (an update turns the overlay on or off, or the change type changes), the chunk is added or removed in that update, its index rows and the neighbours' footers follow, and the Changes Log row names it.
@@ -51,7 +51,7 @@ When the path changes later (an update turns the overlay on or off, or the chang
 
 ## The master
 
-`[slug]-pre-sdd-master.md` (template: `chunks/pre-sdd-master.md`) is the index and the run's progress record. It is written at setup (SKILL.md step 5), right after `cli.mjs new`, before any chunk exists, and updated after every answered batch, every save, and every stop.
+`[slug]-pre-sdd-master.md` (template: `chunks/pre-sdd-master.md`) is the index and the run's progress record. The skill writes it at setup (SKILL.md step 5), right after `cli.mjs new` and before any chunk exists. The skill updates it after every answered batch, every save, and every stop.
 
 Its **Generation Progress** section holds:
 
@@ -100,7 +100,7 @@ The footers chain the chunks the Pre-SDD actually has, in file order, without ga
 
 The comment line above a template's footer says which of these applies; the written chunk keeps only the footer.
 
-**Headings** keep the template's numbering (`# 4. Targets and Calculations`, `## 4.2 Calculations`), so a merge needs no promotion or demotion. Section numbers follow the chunk numbers, so an omitted chunk leaves a gap in the numbering; that is expected. The register chunks share the parent heading `# 3. Requirement Register`, and each holds one `## 3.N` group.
+**Headings** keep the template's numbering (`# 4. Targets and Calculations`, `## 4.2 Calculations`), so a merge needs no promotion or demotion. Section numbers follow the chunk numbers, so an omitted chunk leaves a gap in the numbering. That is expected. The register chunks share the parent heading `# 3. Requirement Register`, and each holds one `## 3.N` group.
 
 **Row headings and anchors.** Every register row is a `### <ROW-ID>` heading (`### REL-03`), its bold title line, and its entries table. The header rows are in chunk 01 § 1.1 and the overlay rows in chunk 08 § 8.1. A downstream citation `PSDD/REL-03.2` links to `03c-register-reliability.md#rel-03`; the anchor is the row ID in lower case.
 
@@ -156,7 +156,11 @@ On "merge" or "single file", with chunks present:
 3. Concatenate in file order: 00, 01, 02, 03a to 03h, 04, 05, 06 (if present), 07, 08 (if present), 09, 10, 11, 12, 13, with a `---` rule between chunks, as `TEMPLATE-COMBINED.md` shows.
 4. Keep only the first `# 3. Requirement Register` heading.
 5. Copy the master's **Generation:**, **Source BRDs:**, **Gate:**, and **Next:** lines and the progress table into the cover, after the title block, unchanged. They replace chunk 00's **Mode:** and **Gate:** title lines, which the merged cover leaves out.
-6. Rebase the links: a link to a chunk heading (`./03c-register-reliability.md#rel-03`) becomes an in-file anchor (`#rel-03`); a link to a chunk without an anchor becomes the anchor of its first heading; a link to `../brd-...` or `../sdd-...` stays; a link to `./decision-log.md` and `./studio/...` stays.
+6. Rebase the links:
+   - a link to a chunk heading (`./03c-register-reliability.md#rel-03`) becomes an in-file anchor (`#rel-03`);
+   - a link to a chunk without an anchor becomes the anchor of its first heading;
+   - a link to `../brd-...` or `../sdd-...` stays;
+   - a link to `./decision-log.md` and `./studio/...` stays.
 7. Regenerate the contents, figures, and tables indexes against the merged outline.
 8. Write `PRE-SDD-[ProjectName]-vX.Y-MERGED.md` in `./pre-sdd-[slug]/`, beside the chunks.
 9. Never include the master or `decision-log.md` in the merged file, and leave `studio/` as it is.
@@ -173,8 +177,11 @@ On "split into chunks" or "re-chunk", with a combined file present:
 2. Find the section boundaries by their headings (`# 1.`, `# 2.`, `# 3. Requirement Register` with its `## 3.1` to `## 3.8` groups, `# 4.`, and so on).
 3. Write one chunk per section, with the register's `## 3.N` groups as 03a to 03h, each starting with the shared `# 3. Requirement Register` heading. A section the combined file does not have is not written.
 4. Add each chunk's header and footer. Its VERSION is the combined file's version for chunk 00, and for any other chunk the version of the newest Changes Log row whose `Chunks:` list names it, else the version of the first row.
-5. Rebase the links: an in-file anchor becomes a link to the chunk that now holds that heading (`#rel-03` becomes `./03c-register-reliability.md#rel-03`); a link to a BRD or SDD gains `../` when it was relative to the project root; `./pre-sdd-[slug]/decision-log.md` becomes `./decision-log.md`.
-6. Write the master: the cover's **Generation:**, **Source BRDs:**, **Gate:**, and **Next:** lines and the progress table move into its Generation Progress, and chunk 00 does not keep them. Chunk 00's title block gets its **Mode:** and **Gate:** lines back, from the Generation line and the engine's gate label.
+5. Rebase the links:
+   - an in-file anchor becomes a link to the chunk that now holds that heading (`#rel-03` becomes `./03c-register-reliability.md#rel-03`);
+   - a link to a BRD or SDD gains `../` when it was relative to the project root;
+   - `./pre-sdd-[slug]/decision-log.md` becomes `./decision-log.md`.
+6. Write the master. The cover's **Generation:**, **Source BRDs:**, **Gate:**, and **Next:** lines and the progress table move into its Generation Progress. Chunk 00 does not keep them. Chunk 00's title block gets its **Mode:** and **Gate:** lines back, from the Generation line and the engine's gate label.
 7. Keep the original combined file, and leave `studio/` and `decision-log.md` as they are.
 
 A pure conversion changes no content and bumps nothing.

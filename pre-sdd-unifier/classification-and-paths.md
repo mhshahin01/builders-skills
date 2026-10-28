@@ -1,6 +1,6 @@
 # Classification and paths
 
-Every Pre-SDD is classified once, in stage 1, by the Standard's matrix: the change type crossed with the intended target (Standard § 1.1). The classification picks the path, and the path decides which evidence stage 3 collects, which outputs the write-up carries, and whether chunk 06 exists. The migration overlay sits on top of any path and decides whether chunk 08 exists. The recovery tier only points at the closest worked example.
+Every Pre-SDD is classified once, in stage 1, by the Standard's matrix: the change type crossed with the intended target (Standard § 1.1). The classification picks the path. The path decides which evidence stage 3 collects, which outputs the write-up carries, and whether chunk 06 exists. The migration overlay sits on top of any path and decides whether chunk 08 exists. The recovery tier only points at the closest worked example.
 
 Read this file at step 7 (stage 1 classifies) and at step 9 (stage 3 assesses the path). The method is in `reference/Pre-SDD_Architecture_Standard_v1.md` § 1.1, § 7, § 8 and § 9.2, and in `reference/Pre-SDD_Quick_Discovery_Guide.md` § 3. The Standard wins when they disagree.
 
@@ -23,7 +23,7 @@ Pre-fill both rows only where a BRD states them (`prefill-and-derivation.md`), a
 
 ## The path code
 
-The engine derives the path code from HDR-07 and HDR-08 (`classify` in `studio/src/engine.js`). Chunk 02 takes it from the engine's classification fragment; never work it out by hand. The only path codes the prose names itself are the parts of a mixed decomposition (below).
+The engine derives the path code from HDR-07 and HDR-08 (`classify` in `studio/src/engine.js`). Chunk 02 takes it from the engine's classification fragment. Never work it out by hand. The only path codes the prose names itself are the parts of a mixed decomposition (below).
 
 | HDR-07 | HDR-08 | Path code |
 |---|---|---|
@@ -35,7 +35,7 @@ The engine derives the path code from HDR-07 and HDR-08 (`classify` in `studio/s
 | `mixed`, or not held | any | `Unclassified` |
 | any | `undecided`, or not held | `Unclassified` |
 
-`Unclassified` is not a fifth path. G3-02 ("The Greenfield/Brownfield × On-prem/Cloud path is recorded") needs a recorded path, so the special cases below settle it before G3: an undecided target is compared and then set, and a mixed change type is decomposed in chunk 02.
+`Unclassified` is not a fifth path. G3-02 ("The Greenfield/Brownfield × On-prem/Cloud path is recorded") needs a recorded path. So the special cases below settle it before G3. An undecided target is compared and then set. A mixed change type is decomposed in chunk 02.
 
 ---
 
@@ -45,7 +45,7 @@ The Standard's ambiguities, and what the skill does with each:
 
 - **Target undecided.** The target is not forced. HDR-08 holds `undecided` and the path reads `Unclassified` until the placements are compared. Stage 3 compares the eligible placements as options, one per hosting value the person allows (`onprem`, `cloud`, `hybrid`: `options-and-economics.md`). After the comparison, the person sets HDR-08 to the chosen placement, and the engine classifies.
 - **Hybrid.** Two deployment sub-assessments, one on-prem and one cloud, plus a boundary analysis: the cross-boundary integration, data, network, security, and DR, and one consolidated architecture decision. Chunk 02 states which components sit on each side and why. Hybrid is a composition of the two extensions, not a hidden fifth path. No worked example covers hybrid, so a hybrid Pre-SDD gets no example pointer.
-- **Mixed change type.** The Standard says "Mixed (decompose)". First ask whether one change type fits the system this Pre-SDD covers: a new product that only integrates a legacy platform is greenfield (next case), and HDR-07 then takes that value. When the system truly holds both new and existing parts, HDR-07 stays `mixed` and chunk 02 records the decomposition: each part, its change type, and its target, named by the same matrix (for example GF-CL for the new components and BF-CL for the existing ones). The engine cannot express a mixed path, so its code reads `Unclassified`; G3-02 accepts the recorded decomposition ("including mixed/hybrid logic where needed"). The existing parts get chunk 06.
+- **Mixed change type.** The Standard says "Mixed (decompose)". First ask whether one change type fits the system this Pre-SDD covers. A new product that only integrates a legacy platform is greenfield (next case), and HDR-07 then takes that value. When the system truly holds both new and existing parts, HDR-07 stays `mixed` and chunk 02 records the decomposition: each part, its change type, and its target, named by the same matrix (for example GF-CL for the new components and BF-CL for the existing ones). The engine cannot express a mixed path, so its code reads `Unclassified`. G3-02 accepts the recorded decomposition ("including mixed/hybrid logic where needed"). The existing parts get chunk 06.
 - **A new product on a legacy platform.** Greenfield for the new product (HDR-07 `greenfield`), with a brownfield dependency assessment of the legacy integrations. The assessment lives in the INT rows (INT-01 per external system, INT-03, INT-09) and in chunk 02's path evidence. It does not make the Pre-SDD brownfield, and it does not add chunk 06.
 - **An existing application moving cloud to cloud, or on-prem to cloud.** `BF-CL` plus the migration overlay (cloud-to-cloud or on-prem-to-cloud). The overlay never replaces the classification.
 - **Migration inside one platform or data center.** `BF-OP` (or `BF-CL` inside one provider) can still need the migration overlay when a workload crosses a hosting or platform boundary (Standard § 7, path BF-OP).
@@ -118,11 +118,11 @@ Required outputs: baseline and target gap analysis, full dependency graph, 7R wo
 
 ## The migration overlay
 
-The overlay is independent of the path (Standard § 8). It applies when an existing workload or component crosses a hosting or platform boundary, which the decision tree asks as "Existing workload changes hosting or platform?" (Standard § 9.2). So it comes with a brownfield or mixed change type, whatever the target; a greenfield Pre-SDD has no existing workload, and no overlay.
+The overlay is independent of the path (Standard § 8). It applies when an existing workload or component crosses a hosting or platform boundary, which the decision tree asks as "Existing workload changes hosting or platform?" (Standard § 9.2). So it comes with a brownfield or mixed change type, whatever the target. A greenfield Pre-SDD has no existing workload, and no overlay.
 
-- **The switch** is settled in stage 2, with the classification: whether it applies and the source platform (`set-overlay`). A person or a fixture owner sets it; the skill may set it with its citation in `cite`; an answer policy never does. Until it is switched on, the OVL rows are not part of the gates.
+- **The switch** is settled in stage 2, with the classification: whether it applies and the source platform (`set-overlay`). A person or a fixture owner sets it. The skill may set it with its citation in `cite`. An answer policy never does. Until it is switched on, the OVL rows are not part of the gates.
 - **What it adds:** the overlay rows OVL-01 to OVL-12 per workload `WL-NN`, one primary R per workload (7R), the cutover rules, and chunk 08. Rules: `migration-overlay.md`.
-- **Agreement with the header:** HDR-10 states the direction. When HDR-10 is `none`, the overlay does not apply; when the overlay applies, HDR-10 names its direction. A disagreement between them is a gap to raise at the G1 review stop, never settled silently. G3-03 asks for the direction explicitly, or `N/A` with a reason.
+- **Agreement with the header:** HDR-10 states the direction. When HDR-10 is `none`, the overlay does not apply. When the overlay applies, HDR-10 names its direction. A disagreement between them is a gap to raise at the G1 review stop, never settled silently. G3-03 asks for the direction explicitly, or `N/A` with a reason.
 
 ---
 
@@ -142,7 +142,7 @@ The engine then names the closest example from the path code and the tier (`clos
 
 How the skill uses the pointer:
 - Chunk 02 names the example, with a link to `examples/<file>` and the one-line reason (path and tier). A light run leaves the pointer out (`SKILL.md` § Light run): the classification fragment then reads "Not given in a light run" for the closest worked example.
-- The example shows the reasoning, not the answers. Never copy a value, a sizing, a cost, or a recovery timing from it: every example number is invented (`examples/PreSDD_Examples_README.md`), and a business number the sources do not give stays `Open`.
+- The example shows the reasoning, not the answers. Never copy a value, a sizing, a cost, or a recovery timing from it. Every example number is invented (`examples/PreSDD_Examples_README.md`). A business number the sources do not give stays `Open`.
 - Before pointing a reader at an example section, check `examples/ERRATA.md`, which lists the verified issues in the examples.
 - An 8-second RTO at zone or rack level is not an 8-second site or region recovery. Each example states its full-site or region RTO and RPO separately.
 

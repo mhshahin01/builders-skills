@@ -13,8 +13,8 @@ The stack every service builds on. The stack approval settles it before generati
 **Good:**
 
 - Every row names its source with a label from the one list of the §6.3 Convention (`03-architecture.md` § 6.3 Runtime Stack); a label that names a record links it.
-- An `Active` override, or one `Raised in SDD vX.X (Proposed)`, carries the Convention's override label, links its decision-log entry, and `17-specs.md` § 2 states the same value with `(override of SDD §6; see the decision log)`.
-- A row SDD §6 still holds as a proposal keeps `(Proposed in SDD §6)`; a missing version pin is one `> TODO:` that names SDD §6 as its home.
+- An `Active` override, or one `Raised in SDD vX.X (Proposed)`, carries the Convention's override label, and links its decision-log entry. `17-specs.md` § 2 states the same value with `(override of SDD §6; see the decision log)`.
+- A row SDD §6 still holds as a proposal keeps `(Proposed in SDD §6)`. A missing version pin is one `> TODO:` that names SDD §6 as its home.
 
 **Bad:**
 
@@ -23,7 +23,7 @@ The stack every service builds on. The stack approval settles it before generati
 - A default with no flag and no approval, written as if decided.
 - A `Proposed` SDD §6 row, or a legacy row whose Notes mark it Proposed, written as adopted.
 
-**Test:** from each row, one click reaches the record that settles it (the SDD §6 row, the project instruction file, or the decision log), and every value that differs from SDD §6 is an override with its entry.
+**Test:** from each row, one click reaches the record that settles it (the SDD §6 row, the project instruction file, or the decision log). Every value that differs from SDD §6 is an override with its entry.
 
 ---
 
@@ -124,7 +124,7 @@ We use outbox pattern. See CLAUDE.md.
 
 **Test:** Can a developer implement this pattern from the subsection alone, knowing which classes participate, what each contributes, and what the pseudocode for each is? If not, rewrite.
 
-**Outbox test:** the writer inserts the row in the aggregate's transaction, and the publisher skeleton shows the acknowledgement check before `markProcessed`, leaves failed or timed-out rows unprocessed, and names the duplicate case (`pattern-rules.md` § Outbox, Delivery contract). In from-code direction the skeleton matches the code; if the code marks rows processed without a successful acknowledgement, that stays visible and carries the HIGH anti-pattern flag (`pattern-rules.md` § Anti-patterns to flag).
+**Outbox test:** the writer inserts the row in the aggregate's transaction, and the publisher skeleton shows the acknowledgement check before `markProcessed`, leaves failed or timed-out rows unprocessed, and names the duplicate case (`pattern-rules.md` § Outbox, Delivery contract). In from-code direction the skeleton matches the code. In that direction, if the code marks rows processed without a successful acknowledgement, that stays visible and carries the HIGH anti-pattern flag (`pattern-rules.md` § Anti-patterns to flag).
 
 ### Minimum pattern set per service
 
@@ -178,7 +178,7 @@ Each workflow is where the LLD earns its keep for the implementer.
 
 Traceability is only useful if a reader can follow it both ways without searching. Rules: `sdd-to-lld.md` § Use-case traceability.
 
-**Test:** take a production error report whose `use_case` holds `REFUNDS/UC-04` and whose `screen` is `REFUNDS/MK-02`, or a failing UAT case `REFUNDS/TC-DEC-03`. From its row in 16 § 19.9, one click opens the workflow block; from the block's traceability line, one click each opens the BRD use case heading, SDD §7.3, and each test case's feature area; 13 § 16.8 names the spec to re-run (`--grep "@REFUNDS/TC-DEC-03"`). Then go the other way: pick any route in 14 § 17.3; its screen and use cases match the BRD, and the use case's block names that route.
+**Test:** take a production error report whose `use_case` holds `REFUNDS/UC-04` and whose `screen` is `REFUNDS/MK-02`, or a failing UAT case `REFUNDS/TC-DEC-03`. From its row in 16 § 19.9, one click opens the workflow block. From the block's traceability line, one click each opens the BRD use case heading, SDD §7.3, and each test case's feature area. 13 § 16.8 names the spec to re-run (`--grep "@REFUNDS/TC-DEC-03"`). Then go the other way: pick any route in 14 § 17.3. Its screen and use cases match the BRD, and the use case's block names that route.
 
 **Good line:**
 
@@ -205,12 +205,12 @@ Traceability is only useful if a reader can follow it both ways without searchin
 
 ## `06-api-contracts.md` § 9.2 Request / Response Shapes
 
-The implementer's contract for every endpoint and port: one block per § 9.1 row and per § 9.6 row. The field list is in `chunks/06-api-contracts.md` § 9.2 and is not repeated here; the derivation rules and checks are in `sdd-to-lld.md` § API contract blocks.
+The implementer's contract for every endpoint and port: one block per § 9.1 row and per § 9.6 row. The field list is in `chunks/06-api-contracts.md` § 9.2 and is not repeated here. The derivation rules and checks are in `sdd-to-lld.md` § API contract blocks.
 
 **Good:**
 
 - Every row has one block, and the block has every field of the list.
-- A value the SDD sets equals the SDD character for character, and the API ID link is one click from its source. A value no source gives is a proposal under its flag.
+- A value the SDD sets equals the SDD character for character. The API ID link is one click from its source. A value no source gives is a proposal under its flag.
 - Each error's `type` and `errorCode` equal the owner's 04 § 7.7 row.
 - A `TBD - external` field says so, with one `> TODO:` that cites the SDD contract.
 
@@ -222,7 +222,7 @@ The implementer's contract for every endpoint and port: one block per § 9.1 row
 - A permission token that differs from SDD §16.11, or an `errorCode` that differs from SDD §15.1 or the contract's domain code.
 - A proposed field with no flag, or a `TBD` that cites no SDD contract.
 
-**Test:** take any § 9.1 row. From its block alone, an implementer can write the controller signature, the request and response records with their validation, the error mapping, and the contract test, and every value the SDD set is one click from its contract.
+**Test:** take any § 9.1 row. From its block alone, an implementer can write the controller signature, the request and response records with their validation, the error mapping, and the contract test. Every value the SDD set is one click from its contract.
 
 ---
 
@@ -307,6 +307,6 @@ Empty-with-flag is correct; thin-with-words is not.
 
 If the LLD is being **reverse-engineered from code** (per `code-extraction.md`), the structural sections should be high-confidence (the code is the truth). Flags appear on inferred semantic content (rationale, business rule narrative).
 
-If the LLD is being **generated in hybrid direction** (per `hybrid-drift.md`), the quality bar above applies in full to non-drifting sections; drifting sections add the drift marker plus a resolution suggestion.
+If the LLD is being **generated in hybrid direction** (per `hybrid-drift.md`), the quality bar above applies in full to non-drifting sections. In hybrid direction, drifting sections add the drift marker plus a resolution suggestion.
 
 In a **light run** (SKILL.md § Light run), the sub-sections its light set names carry the light-work flag on purpose; the bar above applies to them when their detail is written.

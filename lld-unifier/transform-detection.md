@@ -24,17 +24,17 @@ After confirming output mode (chunks / combined), ask the direction question of 
 | Only a code path | from-code |
 | Only an SDD path | from-sdd |
 | Both code path and SDD path | hybrid |
-| Neither | from-sdd (the most common greenfield case); look for an SDD in the working folder first, then ask the user to provide one (SKILL.md step 3) |
+| Neither | from-sdd (the most common greenfield case). Look for an SDD in the working folder first, then ask the user to provide one (SKILL.md step 3) |
 | An existing LLD (an update, a refresh, an added service) | The Direction its `00-metadata.md` records (`Mode` in an older LLD, SKILL.md step 9); for `partial`, the row its inputs match |
 
-**Project Type override.** Resolve the Project Type, recorded in the SDD §1 at SDD intake (legacy chains: SDD `15-specs.md` § 4 / combined `# 19. Specs`, or BRD `12-specs.md`), and apply this override BEFORE the smart defaults above (it later lands in this LLD's own `17-specs.md` § 4):
+**Project Type override.** Resolve the Project Type, recorded in the SDD §1 at SDD intake (legacy chains: SDD `15-specs.md` § 4 / combined `# 19. Specs`, or BRD `12-specs.md`). Apply this override BEFORE the smart defaults above (it later lands in this LLD's own `17-specs.md` § 4):
 
 | Project Type | Effect on direction default |
 |---|---|
 | **Greenfield** | If neither code path nor SDD path provided, default suggestion stays from-sdd. If only code path provided, the user is doing reverse-engineering of a greenfield-built service. Keep from-code default but flag in handoff: "Greenfield project type per the recorded Project Type, but code is being reverse-engineered. Confirm intent." |
 | **Brownfield** | If only an SDD is provided, surface a friction prompt: "Brownfield project type per the recorded Project Type: was the existing codebase intentionally excluded? Direction `from-sdd` will document the *target* design without reflecting the *current* code. Consider `hybrid` (provide both) or `from-code` (point at current code) for accurate documentation." Default suggestion becomes `hybrid` if both inputs available, else keep `from-sdd` and capture the friction in the handoff. |
 
-This override never silently picks the direction: it adjusts the suggested default and surfaces friction. The user still confirms; an answer policy may confirm the suggested default instead, but never at the Brownfield friction prompt (SKILL.md step 7a, Answer policy).
+This override never silently picks the direction: it adjusts the suggested default and surfaces friction. The user still confirms. An answer policy may confirm the suggested default instead, but never at the Brownfield friction prompt (SKILL.md step 7a, Answer policy).
 
 ---
 
@@ -50,7 +50,7 @@ When the user picks `from-code` or `hybrid` and the skill detects that the code 
    > **Owns use cases (SDD 09), not built yet:** [[KEY]/UC-NN](...), … [or: None]
    > **TODO:** when this service is scaffolded, re-run lld-unifier in the from-code direction on `<service-path>` (SKILL.md step 9, "re-run from-code") to populate this chunk.
    ```
-   This placeholder is the rule in every direction that reads code (from-code, hybrid, partial) whenever an expected service has no code at all; hybrid never writes a class skeleton for it. The use-case trace accepts it: the use cases it owns are listed as not built, with no invented workflow. An SDD-only endpoint or event inside a built service is not a missing service: it is drift (hybrid) or a `> Confirm:` (from-code).
+   This placeholder is the rule in every direction that reads code (from-code, hybrid, partial) whenever an expected service has no code at all. Hybrid never writes a class skeleton for it. The use-case trace accepts it: the use cases it owns are listed as not built, with no invented workflow. An SDD-only endpoint or event inside a built service is not a missing service: it is drift (hybrid) or a `> Confirm:` (from-code).
 4. **Notes the partial-code choice** in `15-open-questions.md` § Decisions Pending.
 
 > **Important:** in partial direction, the SDD content for un-built services is *not* expanded into the LLD. The placeholder is the deliverable for those services. (Per agreement: if the user wants full SDD-driven content for un-built services, they should run from-sdd direction explicitly.)
@@ -102,9 +102,17 @@ In either case, the SDD is read in full; field mapping per `sdd-to-lld.md`.
 
 ### BRD (chunked folder OR combined file)
 
-Recognise a BRD by these signs (BRDs follow the brd-unifier convention). Chunked folder: the path is a folder ending in `brd-*`; it holds files named like `00-cover-and-changelog.md`, `01-executive-summary-and-context.md`, `02-glossary-assumptions-facts.md`, `03-definitions-and-domain-concepts.md`, `04-scope-and-personas.md`, `05-user-journeys-overview.md`, `06a-use-cases-*.md`, `07-users-use-cases-matrix.md`, `08-integrations.md`, etc. (legacy BRDs: `05-fr-overview.md`, `06a-fr-*.md`, `07-integrations.md`); each file starts with `<!-- CHUNK: NN ... PART OF: BRD - ... -->`. Four or more of these signs make it a chunked BRD. Combined file: the filename starts with `BRD-` (for example `BRD-WalletManagement-v1.0.md`), and five or more of the BRD section names are present in template order (Executive Summary, Background, Business Objectives, Glossary, Assumptions / Constraints, Facts, Challenges, Dependencies, Definitions & Important Details, Project Scope, Personas, User Journeys & Use Cases (UC blocks with `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules / Acceptance Criteria / Future Enhancements / UI/UX`), Users & Use Cases Matrix, Integrations, Reporting, NFRs, Summary, UI/UX Expectations, Appendix, Wishlist; legacy BRDs: Functional Requirements with `What/Why/How` blocks and a Technical Implementation Expectations section). The structure decides, not the filename.
+Recognise a BRD by these signs (BRDs follow the brd-unifier convention).
 
-A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location; an older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things: the IDs its use-case trace cites (use case headings in 05 and 06x, the `MK-NN` rows in 14 Mockup coverage (the screen references; the Figma link is reached through the row), any screen ID the BRD text carries from its source, test cases in 16; `sdd-to-lld.md` § Use-case traceability), and supplementary purpose, scope, and glossary content that the SDD might paraphrase.
+- Chunked folder: the path is a folder ending in `brd-*`. It holds files named like `00-cover-and-changelog.md`, `01-executive-summary-and-context.md`, `02-glossary-assumptions-facts.md`, `03-definitions-and-domain-concepts.md`, `04-scope-and-personas.md`, `05-user-journeys-overview.md`, `06a-use-cases-*.md`, `07-users-use-cases-matrix.md`, `08-integrations.md`, etc. (legacy BRDs: `05-fr-overview.md`, `06a-fr-*.md`, `07-integrations.md`). Each file starts with `<!-- CHUNK: NN ... PART OF: BRD - ... -->`. Four or more of these signs make it a chunked BRD.
+- Combined file: the filename starts with `BRD-` (for example `BRD-WalletManagement-v1.0.md`), and five or more of the BRD section names are present in template order (Executive Summary, Background, Business Objectives, Glossary, Assumptions / Constraints, Facts, Challenges, Dependencies, Definitions & Important Details, Project Scope, Personas, User Journeys & Use Cases (UC blocks with `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules / Acceptance Criteria / Future Enhancements / UI/UX`), Users & Use Cases Matrix, Integrations, Reporting, NFRs, Summary, UI/UX Expectations, Appendix, Wishlist; legacy BRDs: Functional Requirements with `What/Why/How` blocks and a Technical Implementation Expectations section).
+
+The structure decides, not the filename.
+
+A BRD is a secondary input, reached through the SDD: its Source BRDs register (chunk 00 § Document Lineage) names each BRD, its key, and its location. An older SDD names it on its cover's Related BRD line. The SDD stays the primary source for from-sdd direction. The LLD reads the BRD for two things:
+
+- The IDs its use-case trace cites: use case headings in 05 and 06x, the `MK-NN` rows in 14 Mockup coverage (the screen references; the Figma link is reached through the row), any screen ID the BRD text carries from its source, and test cases in 16. See `sdd-to-lld.md` § Use-case traceability.
+- Supplementary purpose, scope, and glossary content that the SDD might paraphrase.
 
 ### SoW / Statement of Work
 
@@ -131,7 +139,7 @@ See `code-extraction.md` for the full from-code workflow.
 
 1. Read the SDD chunks (or combined file) per `sdd-to-lld.md`.
 2. Read the BRD(s) the SDD names: the use case, screen, mockup, and test case IDs the trace cites, plus supplementary purpose / scope / glossary content.
-3. Apply the confirmed stack (SKILL.md step 3a) and rules per `pattern-rules.md`; a default no source states is applied as a proposal (SKILL.md principle 10).
+3. Apply the confirmed stack (SKILL.md step 3a) and rules per `pattern-rules.md`. A default no source states is applied as a proposal (SKILL.md principle 10).
 4. Trace every BRD use case per `sdd-to-lld.md` § Use-case traceability.
 5. For sections the SDD + CLAUDE.md cannot together fill (SLOs, threat notes, peak scenario multipliers): emit `> TODO: <best-guess> - verify`.
 6. Index every flag in `15-open-questions.md`.
@@ -172,7 +180,10 @@ Treat as targeted regeneration:
 
 Treat as targeted add:
 
-- In CHUNKS mode: add a new `04-implementation/<service-slug>.md`; update the `[project-slug]-lld-master.md` index; cross-check `05-data-model.md`, `06-api-contracts.md`, `07-event-contracts.md` for new tables/endpoints/topics.
+- In CHUNKS mode:
+  - Add a new `04-implementation/<service-slug>.md`.
+  - Update the `[project-slug]-lld-master.md` index.
+  - Cross-check `05-data-model.md`, `06-api-contracts.md`, `07-event-contracts.md` for new tables/endpoints/topics.
 - Trace the use cases the new service owns (SDD §7.3): their 04 workflow blocks, 14 §17.3 routes, 13 §16.8 specs, and 16 §19.9 index rows. Update the Scope of this LLD's row in the SDD's Child LLDs table.
 - Bump the version (SKILL.md § Output conventions, Versions).
 

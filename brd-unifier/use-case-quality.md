@@ -104,7 +104,7 @@ This is where the use case is won or lost. The Main Flow is the contract between
 
 **When:** only after to-do steps 1-3 are confirmed complete. **Which use cases:** those with 3 or more Main Flow steps and at least one decision point (an alternate flow, an exception flow, or a business rule that changes the path). A linear use case, or one with fewer than 3 steps, gets no flowchart: the numbered steps are the diagram, and the skip reason is recorded in `14-todo.md`.
 
-**Good:** Starts at the Trigger, ends at each documented outcome. Step nodes name their Main Flow step ("Step 3: ..."); branch edges carry their `A1` / `E1` identifier; an exception the narrative does not tie to a step starts from its own start node; every documented alternate and exception flow appears; decision nodes are phrased as the question the actor or the business rule answers. Followed by the mandatory Summary line. Notation: `mermaid-diagrams.md` § Use-case flowcharts.
+**Good:** Starts at the Trigger, ends at each documented outcome. Step nodes name their Main Flow step ("Step 3: ..."). Branch edges carry their `A1` / `E1` identifier. An exception the narrative does not tie to a step starts from its own start node. Every documented alternate and exception flow appears. Decision nodes are phrased as the question the actor or the business rule answers. Followed by the mandatory Summary line. Notation: `mermaid-diagrams.md` § Use-case flowcharts.
 
 A large UC may use connected numbered views under its Flowchart section. Preserve the original figure anchor and trace the union of all view nodes/edges to every narrative path; continuations are labelled, never inferred.
 
@@ -194,7 +194,7 @@ Merge what looks like two UCs into one when:
 
 The Users & Use Cases Matrix is derived, not authored independently. After writing or changing any UC:
 
-1. Every UC ID appears exactly once as a matrix row (rows marked `Merged into UC-NN` or `Removed` are left out); every persona from chunk 04 appears exactly once as a column.
+1. Every UC ID appears exactly once as a matrix row (rows marked `Merged into UC-NN` or `Removed` are left out). Every persona from chunk 04 appears exactly once as a column.
 2. A `Yes` cell must correspond to the UC's Primary or Supporting Actor, and every persona named as a UC actor must have a `Yes`. External supporting parties are never columns and need no `Yes`.
 3. Conditional access ("own records only", "requires second approval") is a numbered footnote, never a bare `Yes`.
 4. A persona column with no `Yes` at all, or a UC row where everyone is allowed everything, is a red flag: recheck the personas and the UC actors. A persona that only a later phase serves has no `Yes` until its phase starts (SKILL.md § Phase-based BRD).

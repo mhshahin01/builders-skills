@@ -14,7 +14,7 @@ It is used in two directions:
 Per `chunks/04-implementation-template.md` § 7.4, every applied pattern carries:
 
 1. **Pattern name.**
-2. **Triggering CLAUDE.md rule** (verbatim quote): the rule as the project instruction file or the SDD states it, which makes it a confirmed rule. When neither states it, the quote is this skill's default (SKILL.md principle 10), and the pattern is applied as a proposal with the gap flagged `> Confirm:`.
+2. **Triggering CLAUDE.md rule** (verbatim quote): the rule as the project instruction file or the SDD states it, which makes it a confirmed rule. When neither states it, the quote is this skill's default (SKILL.md principle 10). The pattern is then applied as a proposal with the gap flagged `> Confirm:`.
 3. **Roles**: which classes/methods play which part.
 4. **Rationale**: one-line specific to this service.
 5. **Mermaid class diagram**: pattern structure.
@@ -25,7 +25,7 @@ Per `chunks/04-implementation-template.md` § 7.4, every applied pattern carries
 
 ## Mandatory patterns (CLAUDE.md hard rules)
 
-These patterns MUST be applied in any service whose conditions match. From-sdd: applied unconditionally, with the attribution of § How patterns appear in the LLD, item 2 (a rule no source states is applied as a proposal, flagged). From-code: missing pattern → `⚠ drift` with HIGH severity in hybrid direction. The rules that are also coding conventions (constructor injection, records for DTOs, Problem Details errors, idempotency keys) are listed with their source in `03a-libraries-and-conventions.md` § 6.5.2; each keeps its triggering condition and detection here.
+These patterns MUST be applied in any service whose conditions match. From-sdd: applied unconditionally, with the attribution of § How patterns appear in the LLD, item 2 (a rule no source states is applied as a proposal, flagged). From-code: missing pattern → `⚠ drift` with HIGH severity in hybrid direction. The rules that are also coding conventions (constructor injection, records for DTOs, Problem Details errors, idempotency keys) are listed with their source in `03a-libraries-and-conventions.md` § 6.5.2. Each keeps its triggering condition and detection here.
 
 ### Outbox
 
@@ -38,20 +38,20 @@ These patterns MUST be applied in any service whose conditions match. From-sdd: 
 **FROM-CODE detection:** structural. Recognise the Outbox only when both hold, each cited with file:line:
 
 1. **Atomic write:** the service inserts a durable outbox record (an `outbox` table, or a publication log, in its own schema) in the same local transaction as the aggregate change, so both commit or neither does.
-2. **Separate publisher:** a component outside that transaction reads committed outbox records and delivers them to their target, the broker, a provider, or the in-process listeners (a scheduled poller by default; a CDC relay on the outbox table also qualifies).
+2. **Separate publisher:** a component outside that transaction reads committed outbox records and delivers them to their target, the broker, a provider, or the in-process listeners. A scheduled poller is the default. A CDC relay on the outbox table also qualifies.
 
 A `KafkaTemplate.send` (or equivalent) beside a repository write is never evidence of an Outbox, whether it runs inside the transaction or after commit. Without the atomically written record it is a direct dual-write: report it under § Anti-patterns to flag.
 
 **Roles** (the same for every target: the broker, a provider, or the in-process listeners):
 - Outbox table (in service schema; for a durable in-process event, the publication log).
 - Outbox writer (inside the same tx as the aggregate write).
-- Outbox publisher (separate from the writing tx; scheduled job by default, one active instance per service; when the SDD requires every replica to be able to run it, replicas coordinate through row locks such as `FOR UPDATE SKIP LOCKED`, and the LLD states how per-key order is kept).
+- Outbox publisher (separate from the writing tx). It is a scheduled job by default, with one active instance per service. When the SDD requires every replica to be able to run it, replicas coordinate through row locks such as `FOR UPDATE SKIP LOCKED`, and the LLD states how per-key order is kept.
 
 **Delivery contract** (the publisher the LLD specifies, and its pseudocode skeleton):
 - A record is marked processed only after its target acknowledges it: the broker's acknowledgement (`acks=all`), the provider's success response, or every listener's commit. The acknowledgement check is a visible step in the pseudocode, before `markProcessed`.
 - A failed or timed-out send leaves the record unprocessed, so the next poll retries it. It is never marked processed or deleted.
-- Duplicates are expected. If the target acknowledges but the processed update fails (database error, or a crash before the update), the record is still unprocessed and the next poll delivers it again. A failed or timed-out send may also have reached its target. The payload, including `eventId`, is fixed when the record is written, so a re-send is identical and the receiver dedupes it (broker consumers: `chunks/07-event-contracts.md` § 10.4).
-- From-code direction documents the publisher as the code behaves. A breach of this contract stays visible in the skeleton and is flagged per § Anti-patterns to flag; the skeleton is never rewritten to comply.
+- Duplicates are expected. If the target acknowledges but the processed update fails (database error, or a crash before the update), the record is still unprocessed and the next poll delivers it again. A failed or timed-out send may also have reached its target. The payload, including `eventId`, is fixed when the record is written, so a re-send is identical. The receiver dedupes it (broker consumers: `chunks/07-event-contracts.md` § 10.4).
+- From-code direction documents the publisher as the code behaves. A breach of this contract stays visible in the skeleton and is flagged per § Anti-patterns to flag. The skeleton is never rewritten to comply.
 
 ### Idempotency (on money / wallet / notification / external-provider write endpoints)
 
@@ -123,7 +123,7 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 
 **CLAUDE.md rule:** *"Schema-per-tenant for high-volume services, shared-schema with tenant_id for low-volume. Every index in shared-schema includes tenant_id. Never log tenant_id, reseller_id, or PII at INFO level."*
 
-**Applied as:** in a shared-schema table every secondary index and unique key leads with `tenant_id`; the UUIDv7 primary key `id` is exempt (globally unique); a project file may tighten this. The rule applies only where a table is shared-schema.
+**Applied as:** in a shared-schema table, every secondary index and unique key leads with `tenant_id`. The UUIDv7 primary key `id` is exempt (globally unique). A project file may tighten this. The rule applies only where a table is shared-schema.
 
 **Triggering condition:** any service with persistent storage.
 
@@ -201,9 +201,9 @@ These are **discretionary**: applied only when the triggering condition is genui
 
 ## Anti-patterns to flag (FROM-CODE direction)
 
-The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-questions.md` § 18.6 Policy Findings, in every direction that reads code (from-code, hybrid, partial). It is not drift: it claims no SDD disagreement, so a from-code run with no SDD reports it the same way. The one exception is a use that breaks a § 6.5.1 row whose Source is an SDD §6 row: the SDD disagrees, so in hybrid it is `⚠ drift` with its two resolutions, not policy (`hybrid-drift.md` § Section-by-section diff rules).
+The skill surfaces each one it finds as a `⚠ policy` finding in `15-open-questions.md` § 18.6 Policy Findings, in every direction that reads code (from-code, hybrid, partial). It is not drift, because it claims no SDD disagreement. So a from-code run with no SDD reports it the same way. The one exception is a use that breaks a § 6.5.1 row whose Source is an SDD §6 row. There the SDD disagrees, so in hybrid it is `⚠ drift` with its two resolutions, not policy (`hybrid-drift.md` § Section-by-section diff rules).
 
-The last two rows cover `03a-libraries-and-conventions.md` § 6.5. A use is reported once. A use that a row above matches (a DTO class, field injection, a missing idempotency key, a `RestTemplate` call) is reported under that row, and its finding cites the § 6.5 row it also breaks; the last row covers only the uses that no row above matches. `RestTemplate` is reported whatever the Status of the HTTP client rows. A § 6.5.3 row that records a departure with its reason (an SDD section, or a decision in `decision-log.md`) removes the finding for the row or rule it names, in that service, whichever row above reports it.
+The last two rows cover `03a-libraries-and-conventions.md` § 6.5. A use is reported once. A use that a row above matches (a DTO class, field injection, a missing idempotency key, a `RestTemplate` call) is reported under that row, and its finding cites the § 6.5 row it also breaks. The last row covers only the uses that no row above matches. `RestTemplate` is reported whatever the Status of the HTTP client rows. A § 6.5.3 row that records a departure with its reason (an SDD section, or a decision in `decision-log.md`) removes the finding for the row or rule it names, in that service, whichever row above reports it.
 
 | Anti-pattern | Rule violated (CLAUDE.md, or § 6.5) | Severity |
 |--------------|------------------------|----------|

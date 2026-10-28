@@ -5,7 +5,7 @@ This skill has **two orthogonal dimensions**:
 1. **Output mode** (CHUNKS / COMBINED): the file layout of the deliverable.
 2. **Direction** (FROM-CODE / FROM-SDD / HYBRID / PARTIAL): the source of truth for the content.
 
-The skill always asks for the direction at the start of any invocation. The output mode is determined by argument or interactive prompt with CHUNKS as default; an existing LLD keeps its own mode without a prompt (SKILL.md § Interactive mode prompt). A third setting, the generation option (`parts` or `whole`), decides how much of a first build is written before the user reviews it (`parts-mode.md`).
+The skill always asks for the direction at the start of any invocation. The output mode is set by argument or interactive prompt, with CHUNKS as default. An existing LLD keeps its own mode without a prompt (SKILL.md § Interactive mode prompt). A third setting, the generation option (`parts` or `whole`), decides how much of a first build is written before the user reviews it (`parts-mode.md`).
 
 ---
 
@@ -127,9 +127,9 @@ See `code-extraction.md` for the agent dispatch templates and `agent-orchestrati
 
 The user points the skill at an SDD (chunked folder or combined file), optionally also a BRD. The skill applies the field mapping in `sdd-to-lld.md` and the CLAUDE.md design rules in `pattern-rules.md`.
 
-**Rules:** the stack as SKILL.md step 3a settled it, and every rule the project instruction file or the SDD states, applied with attribution and rationale (per `pattern-rules.md`); a rule no source states is applied as a proposal, flagged (SKILL.md principle 10).
+**Rules:** the stack as SKILL.md step 3a settled it, and every rule the project instruction file or the SDD states, are applied with attribution and rationale (per `pattern-rules.md`). A rule no source states is applied as a proposal, flagged (SKILL.md principle 10).
 
-**Use-case trace:** every BRD use case in scope is traced from SDD §7.3, with its BRD key, to its workflow block, routes and screens, test cases, e2e specs, and `use_case` attribute (`sdd-to-lld.md` § Use-case traceability).
+**Use-case trace:** every BRD use case in scope is traced from SDD §7.3, with its BRD key. The trace runs to its workflow block, routes and screens, test cases, e2e specs, and `use_case` attribute (`sdd-to-lld.md` § Use-case traceability).
 
 **When to use:** greenfield project before any code exists; the LLD is the build target.
 
@@ -153,7 +153,7 @@ The user points the skill at an SDD covering full scope, but only some services 
 
 1. Identifies which services have code (via `code-explorer`).
 2. Runs FROM-CODE on the existing services.
-3. Emits the placeholder from `transform-detection.md` § Partial-code resolution (status, the use cases it owns as not built, the re-run TODO) for un-built services in `04-implementation/<service>.md` files.
+3. Emits the placeholder from `transform-detection.md` § Partial-code resolution for un-built services, in `04-implementation/<service>.md` files. The placeholder holds the status, the use cases it owns as not built, and the re-run TODO.
 
 **When to use:** mid-build state where some services are scaffolded and you want to capture current state without inflating the unbuilt parts from SDD intent alone.
 

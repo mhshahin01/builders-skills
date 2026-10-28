@@ -1,8 +1,8 @@
 # Gates and sign-off
 
-The Pre-SDD passes the Standard's four gates in order: G0 Initiate, G1 Discover, G2 Assess, and G3 Approve (Standard § 11). G1 and G2 end in review stops, and G3 is the sign-off stop. G3 approval is the permission to start the SDD; it is not a guarantee that the design will meet its targets (Standard § 11).
+The Pre-SDD passes the Standard's four gates in order: G0 Initiate, G1 Discover, G2 Assess, and G3 Approve (Standard § 11). G1 and G2 end in review stops, and G3 is the sign-off stop. G3 approval is the permission to start the SDD. It is not a guarantee that the design will meet its targets (Standard § 11).
 
-The engine computes every gate (`gateStatus` in `studio/src/engine.js`): `derive` prints the gate result after every patch, and `compute` writes it to `model.json` and to the gate fragment (`engine-and-studio.md`). Read every gate from that output, never from memory, and never decide a gate by hand. This file says what each gate needs, which decision rules block it, how the G3 checklist and the sign-off register work, and what a change after G3 does.
+The engine computes every gate (`gateStatus` in `studio/src/engine.js`): `derive` prints the gate result after every patch. `compute` writes it to `model.json` and to the gate fragment (`engine-and-studio.md`). Read every gate from that output, never from memory, and never decide a gate by hand. This file says what each gate needs and which decision rules block it. It also says how the G3 checklist and the sign-off register work, and what a change after G3 does.
 
 Read this file at step 8 (the G1 review stop), step 9 (the G2 review stop), and step 13 (the G3 sign-off stop).
 
@@ -17,7 +17,7 @@ Read this file at step 8 (the G1 review stop), step 9 (the G2 review stop), and 
 | G2 Assess | Hard constraints, critical NFRs, placements, feasibility, operational and cost constraints, and migration risks evaluated: a feasible option shortlist, or a blocker | `blocker` when validation holds any blocker; otherwise `shortlist` when G0 and G1 are met, no failure scope is `unresolved`, at least one option passes every hard check, and (with the overlay) every workload holds a 7R; otherwise `incomplete` | G2 review stop (step 9) |
 | G3 Approve | Business approves critical targets and trade-offs; security and data reviews complete; options and ADR candidates documented; risks accepted or closed | The G3 status, below | G3 sign-off stop (step 13) |
 
-**The gates are cumulative.** A gate is met only when every gate before it is met. The engine opens a later gate's `missing` list with the earlier gate that is not met (except a G2 `blocker`, which lists the blocker IDs), and G3 cannot reach an approved status until G2 reads `shortlist`. The Standard's gates run in order, and an SDD never starts without a feasible option.
+**The gates are cumulative.** A gate is met only when every gate before it is met. The engine opens a later gate's `missing` list with the earlier gate that is not met (except a G2 `blocker`, which lists the blocker IDs). G3 cannot reach an approved status until G2 reads `shortlist`. The Standard's gates run in order, and an SDD never starts without a feasible option.
 
 **Applicable entries.** Every register entry counts, except the OVL entries while the migration overlay does not apply (`migration-overlay.md`). While the overlay applies, G1 counts every OVL entry of every workload, so stage 2 asks for their owners and due dates.
 
@@ -31,10 +31,10 @@ The engine gives G3 one status. The first that applies wins, in this order:
 
 | Status | When | What to do |
 |---|---|---|
-| `Blocked` | Validation holds a blocker; or a sign-off on an applicable role says `Rejected` (a stand-in's rejection too); or a condition has no owner or no valid due date; or a counted sign-off says `Approved with conditions` while no condition is recorded | Fix the blocker, or have a named person grant a time-bound exception where one can lift it (§ Exceptions); talk to the signer who rejected; record each condition with its owner and due date. |
+| `Blocked` | Any one of these: validation holds a blocker; a sign-off on an applicable role says `Rejected` (a stand-in's rejection too); a condition has no owner or no valid due date; a counted sign-off says `Approved with conditions` while no condition is recorded | Fix the blocker, or have a named person grant a time-bound exception where one can lift it (§ Exceptions). Talk to the signer who rejected. Record each condition with its owner and due date. |
 | `Review` | A sign-off record, or a not-applicable mark, was given on other content (its stored content hash differs from the state's), or before G3 was last reopened | Every role named signs again after the review (§ Change after G3). |
-| `Not signed` | An applicable role has no counted sign-off; or a checklist line is neither `Done` nor `N/A` with a reason; or an earlier gate is not met; or a critical entry is not confirmed (§ Critical entries) | Work through the problems the engine lists. |
-| `Approved with conditions` | Everything above passes, and at least one condition is recorded (a counted decision of `Approved with conditions` reads this status only once a condition exists) | The SDD may start; the handoff guide carries every condition. |
+| `Not signed` | Any one of these: an applicable role has no counted sign-off; a checklist line is neither `Done` nor `N/A` with a reason; an earlier gate is not met; a critical entry is not confirmed (§ Critical entries) | Work through the problems the engine lists. |
+| `Approved with conditions` | Everything above passes, and at least one condition is recorded (a counted decision of `Approved with conditions` reads this status only once a condition exists) | The SDD may start. The handoff guide carries every condition. |
 | `Approved` | Everything above passes, with no condition | The SDD may start. |
 
 The G3 result also lists `missingRoles` (the role keys still to sign, in register order) and `problems`: every reason the engine found, not only the one behind the status. Show the person all of them.
@@ -42,7 +42,7 @@ The G3 result also lists `missingRoles` (the role keys still to sign, in registe
 **The label and authorization.** The engine's gate label is what chunk 00, chunk 11, chunk 12, and the master's gate line show. The first that applies wins, in this order:
 
 - `Discovery` in quick mode, always (a quick Pre-SDD claims no gate);
-- `Draft` while G0 is not met, even when G3 is already `Blocked` (the default hard rows start `Open`), so a new Pre-SDD reads `Draft` until G0 is met; the blueprint's `gate_status` reads `draft` while G0 is not met (in quick mode too, where the label stays `Discovery`);
+- `Draft` while G0 is not met, even when G3 is already `Blocked` (the default hard rows start `Open`). So a new Pre-SDD reads `Draft` until G0 is met. The blueprint's `gate_status` reads `draft` while G0 is not met (in quick mode too, where the label stays `Discovery`);
 - `Blocked` when G3 is `Blocked`;
 - `G3 Approved` or `G3 Approved with conditions`;
 - else the highest gate met: `G2`, `G1`, or `G0`.
@@ -53,14 +53,14 @@ The Pre-SDD is authorized for the SDD only when G3 reads `Approved` or `Approved
 
 ## Decision rules DT-01 to DT-15
 
-The Standard's decision rules apply with their STOP and BLOCK outcomes (Standard § 9.3). Five of them the engine checks, and a hit is a validation blocker with the ID shown: G2 then reads `blocker` and G3 `Blocked` until it is fixed, or lifted by a valid exception where the table says one can. The others the engine supports with its numbers or does not check; the skill applies them in the write-up and the reviewer checks them. Chunk 09's decision tree lists every rule with what fired, its evidence, and the response, citing the engine's IDs.
+The Standard's decision rules apply with their STOP and BLOCK outcomes (Standard § 9.3). The engine checks five of them. A hit on one of these five is a validation blocker with the ID shown. G2 then reads `blocker` and G3 `Blocked` until it is fixed, or lifted by a valid exception where the table says one can. The engine supports the others with its numbers or does not check them. The skill applies them in the write-up and the reviewer checks them. Chunk 09's decision tree lists every rule with what fired, its evidence, and the response, citing the engine's IDs.
 
 | Rule | Observable condition | Standard outcome | Engine |
 |---|---|---|---|
 | DT-01 | Business outcome or owner is missing | **STOP**; identify the owner and the success criterion. Evidence: a signed brief | `DT-01-STOP` while the primary entry of BUS-01 or HDR-02 is `Open`. An exception on that entry lifts the blocker, but G0 still needs the entry answered, so G0, and every later gate, is not met until it is. |
 | DT-02 | User-facing p99 not defined for a latency-critical journey | **BLOCK** agreement on that SLO; do not pick instance types based on guesses. Evidence: the journey SLI target and its measurement location | `DT-02-BLOCK@CAP-07.<n>` for each CAP-07 entry with priority `Must` and no p99 held (`Open`, or `N/A`). An exception on that entry lifts it. |
 | DT-03 | RPO or RTO unknown for critical data or function | **BLOCK** DR commitments; perform a business-impact analysis. Evidence: RPO and RTO per scope and scenario | `DT-03-BLOCK@unknown` while the primary REL-05 entry is `Open`; `DT-03-BLOCK@<scope>` for each named failure scope without a held RTO or RPO. An exception on that REL-05 entry lifts it. |
-| DT-04 | A hard residency or compliance restriction excludes an option | Remove the candidate; obtain a compliance authority review if ambiguity remains. Evidence: control and jurisdiction mapping | Partly: of the hard entries, the options' hard filter checks only HDR-08 and INT-08 against each option's shape (it also checks topology and DR against the failure scopes; `options-and-economics.md`). `RESIDENCY-region` blocks while DAT-04 says `yes` and no primary location is given. A person checks the other hard entries against each option at the G2 review stop, and records an option that breaks one with `exclude-option` (the entry and the reason), so the engine fails it (`excluded`) and never shortlists it. |
+| DT-04 | A hard residency or compliance restriction excludes an option | Remove the candidate; obtain a compliance authority review if ambiguity remains. Evidence: control and jurisdiction mapping | Partly: of the hard entries, the options' hard filter checks only HDR-08 and INT-08 against each option's shape (it also checks topology and DR against the failure scopes; `options-and-economics.md`). `RESIDENCY-region` blocks while DAT-04 says `yes` and no primary location is given. A person checks the other hard entries against each option at the G2 review stop. The person records an option that breaks one with `exclude-option` (the entry and the reason), so the engine fails it (`excluded`) and never shortlists it. |
 | DT-05 | Expected peak exceeds proven system capacity | Add capacity, change the design, or negotiate the workload or SLO; test. Evidence: load model and headroom test | Not checked. The peak numbers come from the calculations (`CALC-02`, `CALC-03`, `CALC-16`); proven capacity is evidence a person gives (brownfield baseline, chunk 06). |
 | DT-06 | Tight latency between components would span sites or clouds | Quantify RTT and co-location or async alternatives; do **not** assume cross-site calls will work. Evidence: dependency trace and measured RTT | Not checked. Hybrid boundary analysis (`classification-and-paths.md`) and INT-09; the SDD designs the mechanism. |
 | DT-07 | The target must survive a stated fault domain | Consider independent failure domains and failover, shared dependencies included. Evidence: failure mode model or DR exercise | The DR strategy per REL-05 failure scope, and the shape's conflicts (`CONFLICT-*@<scope>`), which DT-15 then holds until they are closed or accepted. |
@@ -75,7 +75,14 @@ The Standard's decision rules apply with their STOP and BLOCK outcomes (Standard
 
 So a conflict alone makes G2 read `blocker` through DT-15 until it is closed or a person ticks G3-11. Show it at the G2 review stop as a conflict to close or to accept formally, never as a failure of the shape.
 
-Other validation blockers the engine raises: `OPEN-<entry>` (a hard entry that is `Open`), `INVALID-<entry>.value` or `INVALID-<entry>.<factor>` (a value the calculations cannot read), `DUPLICATE-SCOPE@<scope>` (two REL-05 entries with one scope), `OVERRIDE-reason` (an override without its written reason), and, with the overlay, `OPEN-migration-source`. The validation fragment lists each with its message and owner (`register-and-entries.md` for the entry rules).
+Other validation blockers the engine raises:
+- `OPEN-<entry>` (a hard entry that is `Open`);
+- `INVALID-<entry>.value` or `INVALID-<entry>.<factor>` (a value the calculations cannot read);
+- `DUPLICATE-SCOPE@<scope>` (two REL-05 entries with one scope);
+- `OVERRIDE-reason` (an override without its written reason);
+- with the overlay, `OPEN-migration-source`.
+
+The validation fragment lists each with its message and owner (`register-and-entries.md` for the entry rules).
 
 ---
 
@@ -83,7 +90,7 @@ Other validation blockers the engine raises: `OPEN-<entry>` (a hard entry that i
 
 The fourteen lines are the Standard's minimum Gate 3 checklist (§ 11.1), with IDs `G3-01` to `G3-14`. Each line is `Done`, `N/A` with a reason, or `Open`; a line never ticked is `Open`.
 
-Only a person ticks a line: it is that person's attestation, not a choice. The skill shows the evidence for each line and asks; it never ticks one. An answer policy never ticks one. In a test run, the named fixture owner ticks in the person's place (`SKILL.md` § Answer policy, "Not the test-run policy"). G3-11 formally accepts the open hard-constraint conflicts and high risks and lifts DT-15, as an exception does, so only an empowered owner ticks it.
+Only a person ticks a line: it is that person's attestation, not a choice. The skill shows the evidence for each line and asks; it never ticks one. An answer policy never ticks one. In a test run, the named fixture owner ticks in the person's place (`SKILL.md` § Answer policy, "Not the test-run policy"). G3-11 formally accepts the open hard-constraint conflicts and high risks, and lifts DT-15, as an exception does. So only an empowered owner ticks it.
 
 | Line | Text | Evidence to show |
 |---|---|---|
@@ -139,7 +146,7 @@ Each applicable role of the Standard's sign-off register signs (§ 11.2). The en
 - the record's name is the stand-in label of the current policy, `Stand-in: Approver (<policy>, set by <name>, <date>)`, so a stand-in that signed under an earlier policy no longer counts and signs again;
 - nothing else in G3 fails: with the stand-in sign-offs counted, G3 reaches an approved status. Otherwise none of them counts, and their roles stay in `missingRoles`.
 
-So the stand-in signs only when the engine's G3 result names no problem other than the roles still to sign. A stand-in's `Rejected` blocks G3 whether or not it counts. A stand-in never replaces a person's sign-off (the engine refuses); a person who signs a role replaces the stand-in's record for it. A stand-in never ticks a checklist line, never marks a role not applicable, and never grants an exception. A fixture owner never signs a decision (the engine refuses; it may mark a role not applicable), so a fixture run reaches G3 only through an answer policy's Approver stand-in.
+So the stand-in signs only when the engine's G3 result names no problem other than the roles still to sign. A stand-in's `Rejected` blocks G3 whether or not it counts. A stand-in never replaces a person's sign-off (the engine refuses). A person who signs a role replaces the stand-in's record for it. A stand-in never ticks a checklist line, never marks a role not applicable, and never grants an exception. A fixture owner never signs a decision (the engine refuses; it may mark a role not applicable). So a fixture run reaches G3 only through an answer policy's Approver stand-in.
 
 ---
 
@@ -158,9 +165,9 @@ DAT-01 is also checked on its `storeKind` factor: unless its entry is `N/A` with
 
 ## Conditions
 
-A condition is what `Approved with conditions` rests on. It comes from a signer or the owner at the G3 stop, in their words; the skill records it with the `add-condition` op under the name of the person who stated it (the engine refuses the skill and an answer policy). The engine writes it as `COND-NN` with its text, its owner (a named person), and its due date (`YYYY-MM-DD`).
+A condition is what `Approved with conditions` rests on. It comes from a signer or the owner at the G3 stop, in their words. The skill records it with the `add-condition` op under the name of the person who stated it (the engine refuses the skill and an answer policy). The engine writes it as `COND-NN` with its text, its owner (a named person), and its due date (`YYYY-MM-DD`).
 
-- A condition without an owner or a valid due date makes G3 `Blocked`, and so does a sign-off of `Approved with conditions` while no condition is recorded. Record each condition complete. To change one, use `set-condition` (its `id` and at least one of `text`, `owner`, and `due`); to drop one, `remove-condition`; both under the name of the person who asked, and a removed `COND-NN` is never used again.
+- A condition without an owner or a valid due date makes G3 `Blocked`, and so does a sign-off of `Approved with conditions` while no condition is recorded. Record each condition complete. To change one, use `set-condition` (its `id` and at least one of `text`, `owner`, and `due`). To drop one, use `remove-condition`. Both go under the name of the person who asked, and a removed `COND-NN` is never used again.
 - Any recorded condition makes an otherwise approved G3 read `Approved with conditions`.
 - Conditions are part of the signed content: record them after the checklist ticks and before the signatures. A condition added after a signature sends G3 to `Review`.
 - The handoff guide carries every condition with its owner and due date, and the SDD shows the open ones as risks (`handoff-guide.md`).
@@ -169,7 +176,7 @@ A condition is what `Approved with conditions` rests on. It comes from a signer 
 
 ## Exceptions
 
-An exception lets an `Open` item pass for a stated time. Only a named person grants one, never a stand-in, an answer policy, a fixture owner, or the skill: the engine accepts the `add-exception` op only from a person actor. Ask the person accountable for the entry; record the exception under that person's name.
+An exception lets an `Open` item pass for a stated time. Only a named person grants one, never a stand-in, an answer policy, a fixture owner, or the skill. The engine accepts the `add-exception` op only from a person actor. Ask the person accountable for the entry; record the exception under that person's name.
 
 The engine writes it as `EXC-NN`, with the entry ID, the reason, who granted it and when, the expiry date, and the review date. It counts (is valid) only while:
 - it was granted by a person (not a `Policy:`, `Stand-in:`, or `Fixture:` label);
@@ -181,11 +188,11 @@ A valid exception on an entry lifts:
 - the DT-01, DT-02, DT-03, and DT-11 blockers that rest on that entry;
 - the G3 critical-entry problem for that entry, when it is `Open`.
 
-It lifts nothing else: not G0 or G1 (an `Open` entry still needs its owner and due date, and G0's rows still need answers), not `INVALID-*`, `DUPLICATE-SCOPE@*`, `OVERRIDE-reason`, `OPEN-migration-source`, or `RESIDENCY-region`, not a conflict, and not DT-15 (G3-11 does that). When an exception expires, the blocker comes back, and the engine's message names the exception that no longer lifts it. A named person may also revoke an exception before it expires (`revoke-exception`, with the reason; the engine refuses anyone else): the engine removes it, the history keeps it with the reason, and the blocker comes back at once.
+It lifts nothing else: not G0 or G1 (an `Open` entry still needs its owner and due date, and G0's rows still need answers), not `INVALID-*`, `DUPLICATE-SCOPE@*`, `OVERRIDE-reason`, `OPEN-migration-source`, or `RESIDENCY-region`, not a conflict, and not DT-15 (G3-11 does that). When an exception expires, the blocker comes back. The engine's message names the exception that no longer lifts it. A named person may also revoke an exception before it expires (`revoke-exception`, with the reason; the engine refuses anyone else). On a revoke, the engine removes it, the history keeps it with the reason, and the blocker comes back at once.
 
-An exception on an OVL-04 entry lifts `DT-11-BLOCK@WL-NN`, but G2 still needs every workload's OVL-04 to hold a value for a `shortlist`, so G3 cannot reach an approved status under that exception alone: the workload's 7R still needs its answer (`migration-overlay.md` § DT-11). The same holds for DT-01, whose rows G0 still needs answered.
+An exception on an OVL-04 entry lifts `DT-11-BLOCK@WL-NN`. But G2 still needs every workload's OVL-04 to hold a value for a `shortlist`. So G3 cannot reach an approved status under that exception alone: the workload's 7R still needs its answer (`migration-overlay.md` § DT-11). The same holds for DT-01, whose rows G0 still needs answered.
 
-Exceptions are part of the signed content: one granted after a signature sends G3 to `Review`. Chunk 10 and chunk 11 list every exception with who granted it, its expiry, and its review date; the handoff guide carries the ones that did not block G3.
+Exceptions are part of the signed content: one granted after a signature sends G3 to `Review`. Chunk 10 and chunk 11 list every exception with who granted it, its expiry, and its review date. The handoff guide carries the ones that did not block G3.
 
 ---
 
@@ -197,9 +204,15 @@ Each sign-off stores the content hash of the state its signer reviewed. G3 goes 
 
 Outside the hash: the run fields, the sign-off records themselves, the reopen mark, the history, and the Pre-SDD version number. So writing signatures into chunks 11, 12, and 00, updating gate and status lines, filling chunk 00's Consuming SDD row, and bumping the version reopen nothing.
 
-After a change, every applicable role signs again on the new content, at the G3 stop (step 13); a role marked not applicable is marked again too. The update bumps the version once (`SKILL.md` § Later requests). Until G3 is signed again, the label no longer reads approved and the SDD treats the new version as not signed, and an SDD that loaded an earlier signed version keeps that version locked.
+After a change, every applicable role signs again on the new content, at the G3 stop (step 13). After a change, a role marked not applicable is marked again too. The update bumps the version once (`SKILL.md` § Later requests). Until G3 is signed again, the label no longer reads approved and the SDD treats the new version as not signed, and an SDD that loaded an earlier signed version keeps that version locked.
 
-A change after G3 rewrites, from the new fragments after `compute`: the master's and chunk 00's gate lines (G3 `Review`, SDD authorized `No`), chunk 11, chunk 12 § 12.1, and every chunk region whose fragment the change touches (for a value: its register chunk, chunk 12 § 12.2, and chunks 04 and 10 when their fragments change). The SDD stops on the gate line and § 12.1, so both must read `Review` before the signers sign again. The full procedure is the update tail in `SKILL.md` § Later requests.
+A change after G3 rewrites these, from the new fragments after `compute`:
+- the master's and chunk 00's gate lines (G3 `Review`, SDD authorized `No`);
+- chunk 11;
+- chunk 12 § 12.1;
+- every chunk region whose fragment the change touches (for a value: its register chunk, chunk 12 § 12.2, and chunks 04 and 10 when their fragments change).
+
+The SDD stops on the gate line and § 12.1, so both must read `Review` before the signers sign again. The full procedure is the update tail in `SKILL.md` § Later requests.
 
 ---
 
@@ -207,7 +220,7 @@ A change after G3 rewrites, from the new fragments after `compute`: the master's
 
 **G1 review stop** (end of stage 2). Show the counts by status, the `Open` entries with owner and due date, the hard `Open` entries, the unknowns with owner and due date, and what stage 3 will assess. Say what to review. Update the master's progress table and the board row (`SKILL.md` § Status board). Then stop until the user says "continue". An answer policy passes this stop only when it names it. Never start stage 3 in the same turn.
 
-**G2 review stop** (end of stage 3). Show the engine's G2 result with its `missing` list, the DR strategy per failure scope, the target shape and its conflicts, the options with their hard results and TCO, and the hard entries the engine does not check against the options. An option the person finds breaking one of those entries is recorded with `exclude-option` (the option, the entry, and the reason), under that person's name, so the engine fails it. Say what to review, update the progress table and the board row, and stop until the user says "continue" (or an answer policy that names the stop). With `incomplete` or `blocker`, name what is missing and who owns it; G3 cannot reach an approved status until G2 reads `shortlist`.
+**G2 review stop** (end of stage 3). Show the engine's G2 result with its `missing` list. Also show the DR strategy per failure scope, the target shape and its conflicts, the options with their hard results and TCO, and the hard entries the engine does not check against the options. An option the person finds breaking one of those entries is recorded with `exclude-option` (the option, the entry, and the reason), under that person's name, so the engine fails it. Say what to review, update the progress table and the board row, and stop until the user says "continue" (or an answer policy that names the stop). With `incomplete` or `blocker`, name what is missing and who owns it. G3 cannot reach an approved status until G2 reads `shortlist`.
 
 **G3 sign-off stop** (step 13). Show the gate; then the person ticks the checklist, the conditions are recorded, and the signers sign, in that order. No answer policy passes this stop. When the signers are not ready, the stop waits: the board row says so, and the handoff summary says what G3 still needs.
 
@@ -227,4 +240,4 @@ A change after G3 rewrites, from the new fragments after `compute`: the master's
 | Reopen G3 after a chunk change | `reopen` | Yes | Yes | Yes | Yes | Yes, with the reason |
 | Set the answer policy | `set-policy` | Yes | Yes | No | No | No |
 
-The Person column includes the skill writing a person's own tick, sign-off, condition, or exception under that person's name, as it does with any answer on the prompt path; the last column is the skill acting on its own, with its agent actor. The engine enforces every refusal in this table and says in plain words whom to ask instead. One rule it cannot check stays the skill's: only an empowered owner ticks G3-11.
+The Person column includes the skill writing a person's own tick, sign-off, condition, or exception under that person's name, as it does with any answer on the prompt path. The last column is the skill acting on its own, with its agent actor. The engine enforces every refusal in this table and says in plain words whom to ask instead. One rule it cannot check stays the skill's: only an empowered owner ticks G3-11.

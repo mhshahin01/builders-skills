@@ -67,7 +67,7 @@ The Deck settings table has these rows. Each value comes from the source in the 
 | Tone | The skill's default. The user's word overrides it |
 | Product name | The cover of the document |
 | Logo | Optional. A file or link that the user or the project provides. Otherwise `None provided; use the product name as a text wordmark`. A logo is never invented, described, or generated. A missing logo is never an open point and never blocks the deck |
-| Color palette | The color tokens of the constitution, by name. Without a constitution, the skill's fallback source, then `Recommendation: ...` asked in the handoff. When a project file forbids asking for the palette, the palette comes from that file or from the design standard, and when neither gives one the deck states it as an open point in plain words and does not ask. An open clarification in a source stays open, in plain words, with its source linked (see Faithfulness) |
+| Color palette | The color tokens of the constitution, by name. Without a constitution, the skill's fallback source, then `Recommendation: ...` asked in the handoff. When a project file forbids asking for the palette, the palette comes from that file or from the design standard. In that case, when neither gives one, the deck states it as an open point in plain words and does not ask. An open clarification in a source stays open, in plain words, with its source linked (see Faithfulness) |
 | Typography | The typography tokens of the constitution, by name. Without a constitution, `Not defined; recommendation: ...` asked in the handoff |
 | Accessibility | Fixed text: `Text and key visuals meet at least 4.5:1 contrast against their background; meaning is never carried by color alone.` |
 | Language & locale | The language of the document. Numbers, dates, and currency follow the locale its sources state, with the currency code shown in multi-currency figures |
@@ -135,7 +135,14 @@ The deck is written only when the skill's gate is open. There is no override.
 - **Gate shut:** write nothing. No chunk, draft, preview, or outline, in a file or in the chat. Set the state in every place that keeps it: `Locked` when no chunk exists, `Stale` when one does. List what is open: each unmet condition, what is open behind it, its owner, and the next action. A request to write the deck anyway, or an offer to take responsibility, does not open the gate. Explain the rule and repeat the list.
 - **Gate open:** write the deck, then run the checks of the last section.
 - **A gap found while writing:** raise it as the skill's own files say, and label the affected slide or Deck settings row `Provisional (<reference>)`. Finish the chunk in hand. Its state is `Provisional (<reference>)`.
-- **Refresh:** a change to any section the deck cites, or a new or reopened open point, marks an existing deck `Stale`. The skill's own files list every change that does. A refresh runs only through the gate. Verify the gate again, rewrite the slides whose sources changed and the counts that moved, add a slide for new material, leave a slide whose sources did not change as it is, and keep every slide ID. Then set the state.
+- **Refresh:** a change to any section the deck cites, or a new or reopened open point, marks an existing deck `Stale`. The skill's own files list every change that does. A refresh runs only through the gate. It does these:
+  - verify the gate again;
+  - rewrite the slides whose sources changed and the counts that moved;
+  - add a slide for new material;
+  - leave a slide whose sources did not change as it is;
+  - keep every slide ID.
+
+  Then set the state.
 
 ## Exclusions
 

@@ -26,3 +26,17 @@ def permission_values(cell):
     if re.fullmatch(TOKEN, value):
         return [value]
     return []
+
+
+def consumers(cell):
+    value = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", cell).replace('`', '').replace('**', '')
+    out, depth, part = [], 0, ''
+    for ch in value:
+        depth += (ch == '(') - (ch == ')')
+        if ch == ',' and depth == 0:
+            out.append(part.strip())
+            part = ''
+        else:
+            part += ch
+    out.append(part.strip())
+    return [c for c in out if c]

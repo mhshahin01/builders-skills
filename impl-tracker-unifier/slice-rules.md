@@ -10,6 +10,11 @@ gate in status-rules.md and audit-rules.md still applies to every task.
 - `plan KEY slice` sets `slice` for that key; `plan KEY reslice` sets it and regroups existing tasks.
 - `config.md` § Slices holds the **slice order**. The order is the user's decision: the tracker proposes one
   and asks; it writes the user's answer as `order (user: "<quote>", <date>)`.
+- That Order cell (`tracking/config.md` § Slices, in the code repo) is the one home of the slice order. Each slice
+  card's Tasks field, with each task card's `Slice` field, says which slice builds a unit. lld-unifier reads them
+  to fill the LLD's build columns (05 § 8.5 Build unit, 13 § 16.8 Runs from) in this order. A
+  `slice order` or `reslice` that changes them reaches the LLD through SKILL.md § Documents chain when its build
+  columns cite slice IDs.
 
 ## 2. What a slice is
 

@@ -1,5 +1,5 @@
 import os, re, sys
-from _sdd_values import permission_values, registry_tokens
+from _sdd_values import consumers, permission_values, registry_tokens
 from _route_data import route_records
 
 
@@ -455,7 +455,7 @@ for i, line in enumerate(lines):
         if outbound:
             service = re.search(r"`([^`]+)`", heading)
             for i in outbound:
-                if service and contracts[i].get("Consumer (caller)", "").replace("`", "") != service.group(1):
+                if service and service.group(1) not in consumers(contracts[i].get("Consumer (caller)", "")):
                     problems.append(f"06 §9.1 {heading[4:]}: {i} consumer is {contracts[i].get('Consumer (caller)')!r} in SDD §15.2")
             continue
         same = [e for e in sdd_apis if e[0] == key]

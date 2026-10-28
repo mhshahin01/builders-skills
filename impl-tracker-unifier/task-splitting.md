@@ -2,17 +2,30 @@
 
 **LLD unit → task mapping**
 
+Every unit kind below is read from its LLD home and gets at least one task; plan step 7's coverage check
+proves it (SKILL.md § plan). A unit the LLD names with no home row or anchor is a `plan-gap` routed to
+lld-unifier, never a guessed task.
+
 | LLD source | Becomes | Layer |
 |---|---|---|
 | `05-data-model` table/migration group | one task per aggregate's tables | data |
+| `05` § 8.5 migration row | owned by exactly one task: its aggregate's table task, or its own task when no table task fits | data |
 | `7.2` Repositories | one task per repository (or merged with its table task if trivial) | data |
 | `7.2` Domain types | merged into the first task that needs them | domain |
 | `7.3` pseudocode block | one task per block | domain |
 | `7.2` Service with no 7.3 block | one task per service | domain |
+| `7.2` event listener or scheduled job (Controllers table) | one task each, or merged with its 7.3 block's task | events |
+| any other `7.2` class (port, adapter, authorization component) | one task, or named in the task that builds its user | domain |
 | `06-api-contracts` endpoint group | one task per controller | api |
 | `07-event-contracts` event | producer task + consumer task (consumer depends on producer) | events |
 | `7.4` cross-cutting pattern (outbox, idempotency, problem details) | one foundation task, before first user | foundation |
+| `09` § 12.x filter or interceptor (§ 12.6 Filter chain) | one task per filter, before the first route it guards | foundation |
+| `09` § 12.x limiter (a Filter chain row, or a limiter the section names) | one task per limiter | foundation |
+| `09` § 12.7 masking component | one foundation task, before the first task that logs personal data | foundation |
+| `10` § 13.2 probes (with `09` § 12.10) | one task per service's liveness and readiness checks | foundation |
 | `14-frontend` route/screen (`MK-NN`) | one task per screen | ui |
+| `14` § 17.3 route guard (Guards column) | one task per guard, before the first screen task whose route uses it | ui |
+| Interim components table row (lld 04 § 7.2 Interim Components) | one task per row, Why "temporary, replaced by <task/slice>", plus the replacing task or a gap | per the row |
 | `13-testing` e2e spec row | one task per spec, depends on all tasks realising that UC | e2e |
 | shared-kernel / platform capability used by the feature | dependency on the PLATFORM task, never re-built | - |
 

@@ -7,7 +7,7 @@ DEPENDS_ON: 02 (ecosystem: IAM, gateway), 05 (sequences), 07 (§11.6 security de
 PART OF: SDD - [Project Name]
 PURPOSE: The API contract registry for every synchronous domain or provider integration (standard operational infrastructure is not one: SKILL.md step 6a): service-to-service calls, module-to-module port calls in a modular monolith or hybrid core, outbound calls from a service to an external system, and inbound calls from an external system into a service (callbacks, webhooks). Each HTTP contract states the URI, headers, body, responses, error codes, security, and auth, and each in-process port contract its port interface, operation, DTOs, raised errors, permission token, and behaviour (idempotency and transaction), so both sides implement the same contract with zero drift.
 CONTRACT_RULE: This chunk is canonical for integration API contracts. Each per-service chunk (13x) lists an HTTP endpoint in its "List of APIs", or an in-process port call in its Integrations table, with the API ID and a link here; it never restates the headers, body, or error codes. Event contracts stay in chunk 10; roles and permission tokens stay in chunk 12 and are referenced here verbatim.
-EXTERNAL_RULE: A contract whose other side is an external system is `TBD - external` until the user supplies the provider's API documentation. Provider-owned fields (URI, headers, body, responses, error codes, auth scheme) are written as `TBD` with the marker `**[TBD - EXTERNAL: ...]**`, never invented. Our-side policy (timeout, retries, circuit breaker, fallback, where credentials are stored) comes from §12 and is filled. An imported eco-system file is provider documentation for the fields it states: SKILL.md step 3c item 8 says how a contract is filled from it, what it cites as its Source document, and when it becomes `Defined`.
+EXTERNAL_RULE: A contract whose other side is an external system is `TBD - external` until the user supplies the provider's API documentation. Provider-owned fields (URI, headers, body, responses, error codes, auth scheme) are written as `TBD` with the marker `**[TBD - EXTERNAL: ...]**`, never invented. Our-side policy (timeout, retries, circuit breaker, fallback, where credentials are stored) comes from §12 and is filled. So do two our-side facts: the stand-in used until the documentation arrives (a fixture, an emulator, or the provider's sandbox), and the gate by which the provider facts are needed (a source BRD phase, or the §2.2 phasing boundary; never a tracker slice or a roadmap date). A gate no source states is a [NEEDS CLARIFICATION: ...] marker. An imported eco-system file is provider documentation for the fields it states: SKILL.md step 3c item 8 says how a contract is filled from it, what it cites as its Source document, and when it becomes `Defined`.
 -->
 
 # 15. Service Integration API Contracts
@@ -34,7 +34,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Authorization | Per contract type (table below): a permission token from §16 on internal contracts; the provider's scheme on external ones | §16 (chunk 12) |
 | Tenant context | Carried on every call ([header or token claim]) | §11.2 |
 | Correlation | Carried on every call and propagated downstream ([header name]); W3C trace context for tracing | §11.4 |
-| Idempotency | `Idempotency-Key` header required on every write that touches money, wallet, notifications, or an external provider | §9 principles, platform doctrine |
+| Idempotency | `Idempotency-Key` header required on every write a client may retry; a write that touches money, wallet, notifications, or an external provider always requires it and is never excluded. Every consumer dedupes on `(consumer, event_id)` (§14.2.1). A route excluded from the key, with its own duplicate guard, is named in the owning LLD | §9 principles, platform doctrine |
+| Request body policy | Default cap [e.g., 1 MB per JSON body]; upload limits [per part, per request, part count, allowed media types]; a route that needs another limit declares it in its contract's Behaviour table (a client-facing endpoint: a note on its `13x` List of APIs row), with the reason; a body or part over its size cap is refused with the 413 codes below, and a part count or media type outside the policy with 400 `VALIDATION_FAILED` | §11.6, platform doctrine |
 | Content type | `application/json`; errors as `application/problem+json` | - |
 | Date and time | ISO-8601, UTC | §6 ecosystem rules |
 | IDs | UUIDv7 | §6 ecosystem rules |
@@ -62,20 +63,25 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | `Accept` | Request | Yes | `application/json` | Response format |
 | [Correlation header, e.g. `X-Correlation-Id`] | Request, Response | Yes | UUID | End-to-end correlation |
 | [Tenant header, e.g. `X-Tenant-Id`] | Request | [Yes / No if carried in the token] | UUIDv7 | Tenant context |
-| `Idempotency-Key` | Request | On writes listed above | UUID | Safe retries |
+| `Idempotency-Key` | Request | On the writes the Idempotency row names | UUID | Safe retries |
 | `traceparent` | Request | Yes | W3C trace context | Distributed tracing |
 
 ### Standard error codes
 
-<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. The HTTP status column applies only when a call crosses HTTP. -->
+<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. The HTTP status column applies only when a call crosses HTTP. The ORIGIN_REFUSED row applies only when browser clients authenticate with a cookie or session (an Origin or CSRF check); a token-only API removes it. -->
 
 | HTTP status | `errorCode` | Meaning | Retryable | Consumer action |
 |-------------|-------------|---------|-----------|-----------------|
 | 400 | `VALIDATION_FAILED` | Request fails schema or field validation | No | Fix the request; `errors[]` lists each field |
 | 401 | `UNAUTHENTICATED` | Missing or invalid credentials | No (refresh token once) | Obtain a new token, retry once |
 | 403 | `FORBIDDEN` | Caller lacks the permission token | No | Do not retry; raise an alert |
+| 403 | `ORIGIN_REFUSED` | Request origin is not allowed (Origin or CSRF check) | No | Do not retry; send from an allowed origin with the CSRF token |
 | 404 | `NOT_FOUND` | Resource does not exist for this tenant | No | Handle as a business outcome |
+| 405 | `METHOD_NOT_ALLOWED` | HTTP method not supported on this URI | No | Fix the call; `Allow` lists the methods |
 | 409 | `CONFLICT` | State conflict or idempotency key reused with a different body | No | Re-read state; never reuse a key for a new request |
+| 413 | `PAYLOAD_TOO_LARGE` | Request body exceeds the route's cap (Request body policy) | No | Reduce the body; do not retry as is |
+| 413 | `PART_TOO_LARGE` | One upload part exceeds its limit (Request body policy) | No | Reduce or split the part; do not retry as is |
+| 415 | `UNSUPPORTED_MEDIA_TYPE` | Request `Content-Type` is not one the operation accepts | No | Send a supported content type |
 | 422 | `BUSINESS_RULE_VIOLATION` | Valid request that breaks a domain rule | No | Surface the domain error |
 | 429 | `RATE_LIMITED` | Caller exceeded its limit | Yes, after `Retry-After` | Back off |
 | 500 | `INTERNAL_ERROR` | Unexpected provider failure | Yes (idempotent calls only) | Retry with backoff, then circuit-break |
@@ -86,7 +92,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call that serves no use case; §7.3 reads its APIs column from here. -->
+<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call that serves no use case; §7.3 reads its APIs column from here. Callers: the Consumer (caller) cell lists every consumer of the API-NN, separated by `, `. The list is derived from the §7.3 rows and the BRD use case steps that need the capability, never from the contract's own text or the Integrations tables alone. A consumer that needs the capability and is missing from the cell is a gap, flagged in §15.5. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
@@ -134,6 +140,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 **Request body**
 
+<!-- Field rule: every datum the operation needs is a named field, for each value of an enum that selects behaviour (a command variant) too; a description in prose in place of fields is not a contract. Each Description names where the caller gets the value: a stored column, an event field, or a caller input. -->
+
 | Field | Type | Required | Constraints | Description |
 |-------|------|----------|-------------|-------------|
 | [field] | [string] | [Yes] | [e.g., max 64, enum] | [Description] |
@@ -171,6 +179,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Retries and backoff | [e.g., 3 attempts, exponential with jitter, idempotent failures only] |
 | Circuit breaker / bulkhead | [Thresholds] |
 | Rate limit | [Limit per caller] |
+| Request body limit | [Per §15.1 Request body policy / deviation and reason] |
 | Pagination | [Not applicable / cursor-based] |
 | Fallback when unavailable | [Behaviour] |
 | Source document | [Not applicable for an internal contract. A Defined external contract: link the provider's API documentation, or the eco-system file section the fields were filled from] |
@@ -197,6 +206,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Credentials storage | [From §6 secrets row, e.g., secret per tenant in the secrets manager] |
 | Timeout, retries, circuit breaker | [From §12 INT-NN] |
 | Fallback when unavailable | [From §12 INT-NN] |
+| Stand-in until supplied | [Fixture / emulator / provider sandbox, and what it covers] |
+| Needed by | [Source BRD phase, or the §2.2 phasing boundary (EXTERNAL_RULE) / [NEEDS CLARIFICATION: ...]] |
 | Source document | TBD (link the provider's API documentation, or the eco-system file section the fields were filled from, once supplied) |
 
 ---
@@ -221,6 +232,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Tenant context | [Per §15.1; carried in the call context] |
 
 **DTO fields**
+
+<!-- The field rule of the API-01 Request body applies to each request DTO. -->
 
 | DTO | Field | Type | Required | Constraints | Description |
 |-----|-------|------|----------|-------------|-------------|
@@ -268,10 +281,10 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 ## 15.6 External Contracts Awaiting the User
 
-<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. A contract that an eco-system file filled in part lists only the fields still TBD. -->
+<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. A contract that an eco-system file filled in part lists only the fields still TBD. Stand-in and Needed by are read from the contract block's rows of the same names. -->
 
-| API ID | Provider | Fields still TBD | Document needed from the user |
-|--------|----------|------------------|-------------------------------|
-| [API-02] | [External system] | [URI, headers, body, error codes, auth] | [Provider API reference / sandbox guide] |
+| API ID | Provider | Fields still TBD | Document needed from the user | Stand-in until supplied | Needed by (BRD phase) |
+|--------|----------|------------------|-------------------------------|-------------------------|-----------------------|
+| [API-02] | [External system] | [URI, headers, body, error codes, auth] | [Provider API reference / sandbox guide] | [Fixture / emulator / sandbox] | [BRD phase / §2.2 boundary] |
 
 <!-- MASTER: [project-slug]-sdd-master.md | PREV: 10-events-hub.md | NEXT: 12-centralized-user-roles.md -->

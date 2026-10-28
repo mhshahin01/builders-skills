@@ -11,16 +11,19 @@ flowchart LR
     lld --> trk["7. impl-tracker-unifier<br/>init · discover · plan · next · wave · start · done<br/>audit · verify · gap · lesson · change<br/>standup · status · sync · slice · report"]
     trk --> code(["code + commits"])
     code -. "drift, bugs, missing deps" .-> trk
-    trk -. "doc gaps handed back (never edits docs)" .-> brd
+    trk -. "doc gaps and decided changes (never edits docs)" .-> brd
     trk -.-> sdd
     trk -.-> lld
 ```
 
 **Summary:** the tracker is the seventh stage: in the chain it comes after SoW, BRD, Pre-SDD, SDD and LLD. It reads the BRD, SDD and LLD, never edits them, and owns
 only `./tracking/`. A doc problem nobody has decided yet goes back to the owning skill as a gap row, the same way the
-review panel hands points to the authoring skills. A change that is decided runs the owning skills in chain order in the same change, before its code reaches In review: up the chain when it starts at the code or the LLD, down the chain when it starts at the BRD, and both ways when it starts at the SDD (up to the BRD when a business rule changes, down to each child LLD), and always ending with the tracker's own `sync` (and `plan` for new scope). See `SKILL.md` § Documents chain.
+review panel hands points to the authoring skills. A change that is decided runs the owning skills in chain order in the same change, before its code reaches In review: up the chain when it starts at the code or the LLD, down the chain when it starts at the BRD, and both ways when it starts at the SDD (up to the BRD when a business rule changes, down to each child LLD), and always ending with the tracker's own `sync` (and `plan` for new scope). In `solo` run mode the tracker runs each hop in the same session; in `team` run mode, or when the owning skill cannot run now, it raises a `Decided change` request for the hop instead. See `SKILL.md` § Documents chain.
 The tracker also writes its own row on the shared status board, `unifier-status.md` in the docs root, through
-the `Board` path that `init` records in `tracking/config.md`. It also raises a handoff request on the board for each doc gap it routes to an owning skill (`SKILL.md` § The tracker's board row). The owner's result comes back on that request: a version closes the gap, `No change` turns it into `code-drift`, and Declined sends it to the named owner.
+the `Board` path that `init` records in `tracking/config.md`. It raises two forms of handoff request there (`SKILL.md` § The tracker's board row):
+
+- `Doc gap <KEY>/GAP-NNN: <question>`, for each doc gap it routes to an owning skill. The owner's result comes back on that request: a version closes the gap, `No change` turns it into `code-drift`, and Declined sends it to the named owner.
+- `Decided change <KEY>/CHG-NNN: <summary>`, for a hop of a decided change it does not run in the session, raised to the first hop of the chain order not yet run. The CHG decider quote is the owner's acceptance, so nothing is asked again unless a record disagrees. The owner's version, or `No change: <reason>`, fills the CHG Follow-up, and once every hop has one, the baseline move runs.
 
 ## Why a custom skill instead of Spec Kit / Task Master / Backlog.md
 
@@ -41,8 +44,12 @@ the `Board` path that `init` records in `tracking/config.md`. It also raises a h
    Tasks are `AUTOAPPLY/T-014`, gaps `AUTOAPPLY/GAP-007`. Every task cites the keyed UC/AC it realises
    and the LLD/SDD anchor it implements. Commits carry `Task: AUTOAPPLY/T-014`.
 2. **The LLD is the plan; the tracker is the ledger.** Tasks are derived from LLD units (workflow blocks,
-   §7.2 classes, migrations, API contracts, events, screens, e2e specs) grouped by the LLD 17-specs
-   Roadmap phases. The tracker adds order, ownership, status and evidence, never new design.
+   §7.2 classes, migrations, API contracts, events, screens, e2e specs, and every other buildable unit kind
+   in `task-splitting.md`'s unit map: filters, limiters, masking, probes, route guards, interim components)
+   grouped by the LLD 17-specs Roadmap phases. The plan's coverage check proves each unit has a task; a unit
+   with no LLD home is a `plan-gap` for `lld-unifier`. Slices stay with the tracker: their order lives in
+   `tracking/config.md` § Slices, which `lld-unifier` reads for its build columns. The tracker adds order,
+   ownership, status and evidence, never new design.
 3. **No start without ready dependencies.** `start` refuses when any `depends_on` task is not `Done` or `Verified`.
    The only way past is an explicit user override, recorded as a gap.
 4. **No double build.** Every task declares what it *owns* (classes, tables, endpoints, screens, files).
@@ -53,7 +60,7 @@ the `Board` path that `init` records in `tracking/config.md`. It also raises a h
 ## Where the files live
 
 **Recommended: in the code repo**, folder `./tracking/`, committed with the code. Reason: task status and
-code change in the same commit, so they can't drift. The docs stay in their own repo (for example `../chagaf-platform` in the `templates.md` config example); the tracker
+code change in the same commit, so they can't drift. The docs stay in their own repo; the tracker
 links to them by relative path and records the doc **versions** it planned against (baseline), so a
 later BRD/LLD bump is detected by `sync`.
 
@@ -74,12 +81,12 @@ worth it when several products share one tracker (not now).
 |---|---|
 | `SKILL.md` | Commands, workflow per command, rules, documents chain, board row, quality checks |
 | `templates.md` | Templates for every file written in `./tracking/` |
-| `task-splitting.md` | How LLD units become tasks, sizing, dependencies, risk, the "why" rules |
+| `task-splitting.md` | How LLD units become tasks (the unit map covers every buildable unit kind), sizing, dependencies, risk, the "why" rules |
 | `status-rules.md` | Task states, legal transitions, blocking and override |
 | `gap-rules.md` | Gap types, severity, owner routing, closing |
 | `sync-and-drift.md` | Doc-version baseline, stale detection, code-ownership checks |
 | `discovery-rules.md` | Inventory of existing code, matching it to LLD units, Adopted status |
-| `slice-rules.md` | Slice mode: end-to-end slices, order, delivery gate, manager report |
+| `slice-rules.md` | Slice mode: end-to-end slices, order (its one home is `tracking/config.md` § Slices), delivery gate, manager report |
 | `lessons-rules.md` | Lessons, recall, promotion, the change log |
 | `audit-rules.md` | The fresh auditor, layer matrix, verdicts, clean export, Stop hook |
 | `scripts/` | `preflight.py` (mechanical checks before any audit) and `history.py` (builds `tracking/history.md` from recorded facts) |

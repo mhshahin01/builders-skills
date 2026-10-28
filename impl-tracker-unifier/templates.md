@@ -10,8 +10,8 @@ Exact templates for every file the skill writes in `./tracking/`. Replace `<rel>
 | Key | Value |
 |---|---|
 | Code root | . |
-| Docs root | ../chagaf-platform |
-| Board | ../chagaf-platform/unifier-status.md |
+| Docs root | ../acme-platform |
+| Board | ../acme-platform/unifier-status.md |
 | Current phase | AUTOAPPLY: P1 |
 | Commit trailer | Task: <KEY/T-NNN>; tracking-only commits of no single task: Tracking: <reason> |
 
@@ -84,7 +84,7 @@ value means ask.
 
 | Key | BRD master | SDD §7.3 | LLD master | LLD 04-implementation | Baseline (BRD / SDD / LLD) | Mode |
 |---|---|---|---|---|---|---|
-| AUTOAPPLY | features/job-manager/brd-chagaf-autoapply/chagaf-autoapply-brd-master.md | tech/sdd-chagaf-platform/03-users-and-use-cases.md#73-… | tech/lld-chagaf-autoapply/chagaf-autoapply-lld-master.md | tech/lld-chagaf-autoapply/04-implementation/autoapply.md | v1.3 / vX / v1.4 | layer |
+| AUTOAPPLY | features/job-manager/brd-acme-autoapply/acme-autoapply-brd-master.md | tech/sdd-acme-platform/03-users-and-use-cases.md#73-… | tech/lld-acme-autoapply/acme-autoapply-lld-master.md | tech/lld-acme-autoapply/04-implementation/autoapply.md | v1.3 / vX / v1.4 | layer |
 ~~~
 
 ## `tracking/index.md` (generated, one line per task)

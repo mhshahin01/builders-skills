@@ -182,16 +182,16 @@ P1 rows: one named start frame, every Main Flow playable with no dead ends and a
 P2 rows: connected to neighbouring frames, at the source/owner-confirmed breakpoints from chunk 11.
 States are component variants. Variables and text styles map to the constitution tokens [or: to the chunk 11 colors]. Label simulated data and demo actions.
 Name the UC-NN on each frame, or the MK-NN and owning report/requirement section for a no-UC screen. List unstated behaviour for a decision; do not add it.
-Return the share link (view permission, opening on the start frame) and the list of frames per breakpoint.
+Return the share link (view permission, opening on the start frame), the list of frames per breakpoint, and the links each frame holds.
 ```
 
 ### Mockup coverage
 
-<!-- One row per screen or flow, each with its own MK-NN: the BRD's screen reference. When the source material defined a screen ID, add it in the Screen / flow cell; never invent one. -->
+<!-- One row per screen or flow, each with its own MK-NN: the BRD's screen reference. When the source material defined a screen ID, add it in the Screen / flow cell; never invent one. Links and sent URLs: every link in the row's frames that leaves the screen, and every URL the system sends from this screen or flow in an email or notification. Each one gives its name and the exact form the user sees, character for character: a path form (`/terms`) or a query form (`/verify?token=<token>`). A form the source or the owner did not state gets a TD row; never invent one. A row with no such link reads "None". -->
 
-| Mockup | Screen / flow | Use cases | Requirements and decisions to honour | States to cover | Priority | Playable | Breakpoints delivered | Status | Play-through | Figma link |
-|--------|---------------|-----------|--------------------------------------|-----------------|----------|----------|-----------------------|--------|--------------|-----------|
-| MK-01 | [Screen or flow name; the source's screen ID only if the source defined one] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Source/owner-confirmed breakpoints] | [Pending gate / Not started / In progress / Blocked by TD-NN / In review / Approved] | [Confirmed by PM or a named stand-in, date, result] | [Link] |
+| Mockup | Screen / flow | Use cases | Requirements and decisions to honour | States to cover | Priority | Playable | Breakpoints delivered | Links and sent URLs | Status | Play-through | Figma link |
+|--------|---------------|-----------|--------------------------------------|-----------------|----------|----------|-----------------------|---------------------|--------|--------------|-----------|
+| MK-01 | [Screen or flow name; the source's screen ID only if the source defined one] | [UC-01, UC-02] | [UC-01 BR-1; 11 / Data Tables; TD-02 once resolved] | [Default, empty, loading, error, role variations] | [P1] | [Y / N] | [Source/owner-confirmed breakpoints] | ["Read the full terms" link: `/terms`; verify-email link in the sign-up email: `/verify?token=<token>`; or None] | [Pending gate / Not started / In progress / Blocked by TD-NN / In review / Approved] | [Confirmed by PM or a named stand-in, date, result] | [Link] |
 
 **Expected coverage:** every actor-facing UC has a screen; every observable flow/state appears; roles follow the matrix and standards follow chunk 11. P1 rows are fully interactive, P2 rows connected. All rows use source/owner-confirmed breakpoints, not a priority-implied minimum.
 
@@ -199,6 +199,7 @@ Return the share link (view permission, opening on the start frame) and the list
 
 - [ ] Each frame names its UC, or its MK and owning report/requirement section when no UC exists.
 - [ ] Every flow can be walked end to end without a missing screen, and played in play mode from the named start frame with no dead ends.
+- [ ] Every link in a frame and every URL in an email or notification is listed in its row's Links and sent URLs cell, with its exact form.
 - [ ] Every actor-facing control on a P1 screen is wired (navigation, overlays, drawers, dialogs, tabs, filters, form validation and error paths, destructive-action confirmation).
 - [ ] Loading, empty, and error states are present where the use cases call for them, as variants rather than duplicate frames.
 - [ ] Frames exist for every source/owner-confirmed breakpoint in chunk 11; no unstated tablet minimum was added.

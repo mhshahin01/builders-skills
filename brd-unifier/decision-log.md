@@ -19,7 +19,8 @@ The content chunks (00-13) hold only the settled requirements in plain present t
 - Lives in `./brd-[project-slug]/`, next to `[project-slug]-brd-master.md` (in COMBINED mode, next to `14-todo.md`).
 - Created on first use, with its first record. The first record is one of these:
   - a clarification or marker decided at a part checkpoint, in the acceptance loop (SKILL.md step 8), or in a later request;
-  - a business review point applied to this BRD.
+  - a business review point applied to this BRD;
+  - a decided change from the implementation tracker (SKILL.md step 10), recorded as an action entry with `Source: <KEY>/CHG-NNN`.
 - Do not write an empty register.
 - Linked from `[project-slug]-brd-master.md` and from chunk 00's Table of Contents once it exists; in COMBINED mode, from the combined file's Table of Contents as `./brd-[project-slug]/decision-log.md`.
 - Never merged into the combined or merged BRD. It is decision history, not requirement text.

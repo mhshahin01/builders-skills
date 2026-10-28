@@ -39,9 +39,11 @@ PART OF: LLD - [Project Name]
 
 <!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, and so do chunk 15 flag rows and the 16 § 19.1 upstream state (SKILL.md § Output conventions, Versions). -->
 
+<!-- Review stamp: every row states, just before `Chunks:`, which reviews ran for it. One of: `Review: full` (the first build's full review); `Review: delta` (the delta review ran); `Review: application check` (the delta review and then the application check ran); `Review: none needed: <reason>` (the row changed no chunk a delta review covers: only chunk 18 records, chunk 15 flag rows, or the 16 § 19.1 upstream state; never a body chunk); `Review: not run` (the update was applied with no review, which the next update replays: SKILL.md step 7, Review stamp). A replay adds `replays v[X.X]` to its stamp. A row with no stamp below a row that has one counts as `Review: not run`. Each stamp from `full` to `application check` has its dated Reviewer Notes rows in chunk 18 at that version. -->
+
 | Version | Date | Author | Direction | Change Summary |
 |---------|------|--------|-----------|----------------|
-| [X.X] | [YYYY-MM-DD] | [Author] | [direction] | Initial LLD draft via lld-unifier. Chunks: none (initial build) |
+| [X.X] | [YYYY-MM-DD] | [Author] | [direction] | Initial LLD draft via lld-unifier. Review: full. Chunks: none (initial build) |
 
 ---
 

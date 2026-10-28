@@ -135,7 +135,7 @@ Every row should have a concrete value, not a wave-of-the-hand.
 | **DB Engine** | "Relational database." | "PostgreSQL 17+ (LTS), HA via Patroni with 1 sync replica + 2 async replicas." |
 | **PK strategy** | "UUIDs." | "UUIDv7, generated at the service layer (not DB-side), to preserve time-ordering for index efficiency." |
 | **Multi-tenancy** | "Multi-tenant." | "Default: shared schema with `tenant_id`. Override: schema-per-tenant for high-volume services (wallet-core, reporting-aggregator). Cross-tenant queries forbidden at the application layer; enforced via row-level-security in shared-schema services." |
-| **Logging** | "Structured logs." | "JSON, fields: `ts`, `level`, `service`, `trace_id`, `span_id`, `tenant_id` (never PII), `event`, `attrs`. Aggregated to Loki, retained 30 days hot / 1 year cold." |
+| **Logging** | "Structured logs." Or field names with no meaning: "fields: `service`, `module`, `trace_id`", where a reader cannot tell whether `module` is the emitting or the calling module. | "JSON, fields: `ts`, `level`, `service` (the emitting service), `module` (the module that emits the line; absent on framework lines), `trace_id`, `span_id`, `tenant_id` (never PII), `event`, `attrs`. Aggregated to Loki, retained 30 days hot / 1 year cold." |
 | **Service-to-service auth** | "JWT or mTLS." | "mTLS via Istio for service-to-service. JWTs (Keycloak-issued) for external traffic only, validated at the API gateway. Internal service-to-service does not validate JWTs." |
 
 **Test:** Can an SRE setting up monitoring or a security engineer doing a review get specific actionable rules from this section, or is it filler?
@@ -208,11 +208,18 @@ The platform catalogues are only useful if they are **reconciled**: a catalogue 
 
 **Test (roles):** pick any permission token in a §17.X authorization note. Is it in the §16.11 grid with the same spelling and the same role set? Does every capability row trace to a BRD UC or an ADR (§16.10)?
 
-**Test (API contracts):** pick any synchronous domain or provider row (not standard operational infrastructure, SKILL.md step 6a) in a §17.X Integrations table. Does it carry an `API-NN` that exists in §15.2? For an HTTP contract: are method and URI identical to the service's List of APIs, and does the contract state URI, version, security and auth (a §16 permission token on an internal contract, per §15.1 Authorization by contract type), headers, parameters, body with a sample, responses, error codes with retryability, and behaviour (idempotency, timeout, retries)? For an `Internal (in-process)` contract: does it state the port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), the permission token, and its behaviour (idempotency and transaction), with no invented method or URI? For an external system: are the provider-owned fields `TBD` with a `[TBD - EXTERNAL: ...]` marker instead of plausible invented values?
+**Test (API contracts):** pick any synchronous domain or provider row (not standard operational infrastructure, SKILL.md step 6a) in a §17.X Integrations table. Does it carry an `API-NN` that exists in §15.2? For an HTTP contract: are method and URI identical to the service's List of APIs, and does the contract state URI, version, security and auth (a §16 permission token on an internal contract, per §15.1 Authorization by contract type), headers, parameters, body with a sample, responses, error codes with retryability, and behaviour (idempotency, timeout, retries)? For an `Internal (in-process)` contract: does it state the port interface, operation, request and response DTOs, the errors it raises (each mapped to an `errorCode`), the permission token, and its behaviour (idempotency and transaction), with no invented method or URI? For an external system: are the provider-owned fields `TBD` with a `[TBD - EXTERNAL: ...]` marker instead of plausible invented values, and does the contract name its stand-in and the BRD phase the provider facts are needed by? Then pick any operation, and each value of an enum that selects its behaviour: is every datum it needs a named field, and does each request field say where the caller gets it? Pick any §7.3 row whose use case needs a capability: is that use case's service listed in the Consumer (caller) cell of the capability's `API-NN` in §15.2?
 
 **Good API contract:** "API-04 `POST /v1/wallets/{walletId}/debits`, OAuth2 client credentials, token `wallet:debit`; `Idempotency-Key` required; body `amount` (decimal, > 0, scale 2), `currency` (ISO 4217); 201 returns `debitId`; 409 `CONFLICT` on key reuse, 422 `INSUFFICIENT_FUNDS` (not retryable); timeout 800 ms, 2 retries on 503/504 with jitter."
 
 **Bad API contract:** "Payment service calls wallet service to debit the wallet via REST." No URI, no auth, no body, no errors: an OI, not a contract.
+
+**Also bad:**
+
+- A command DTO whose `action` enum has a `CANCEL_LINE` value but no field naming the line to cancel.
+- Inputs described in prose ("untrusted text, marked and schema-validated") instead of fields.
+- A field such as `inReplyTo` whose value no stored column, event field, or caller input supplies.
+- A capability that three services need, with only the two callers its contract text named in its §15.2 Consumer (caller) cell.
 
 **Test (e2e):** do the counts in §24 "Counts at a Glance" match §13 (services), §14.4 (topics), §14.9 coverage (events), and §14.10 (in-process domain events) exactly? Is every deliberate simplification listed under "no silent caps"? Do §24.2 and §24.3 cite §8.2 and §8.3 and draw only what those do not show?
 
@@ -224,7 +231,7 @@ The platform catalogues are only useful if they are **reconciled**: a catalogue 
 
 Traceability is only useful if a reader can follow it both ways without searching.
 
-**Test:** pick any BRD use case. Its ID in the SDD names its source BRD (the key) and one click opens its heading in that BRD. From its §7.3 row you reach these places: the owner's `13x` chunk, the endpoint that starts it, the diagram that shows it, and the API contracts and events it drives. Each of those places cites the same keyed use case. Then pick any service in 09: every use case in its `Use cases (BRD)` cell has a §7.3 row naming that service, and its Business Logic cites each one with the steps it realises.
+**Test:** pick any BRD use case. Its ID in the SDD names its source BRD (the key) and one click opens its heading in that BRD. From its §7.3 row you reach these places: the owner's `13x` chunk, the endpoint that starts it, the diagram that shows it, and the API contracts and events it drives. Each of those places cites the same keyed use case. Then pick any service in 09: every use case in its `Use cases (BRD)` cell has a §7.3 row naming that service, and its Business Logic cites each one with the steps it realises. Last, pick any acceptance criterion or business rule the owner's Business Logic cites that names data (who changed a value, the old and new values): does each data item map to a field in the serving contract (an `API-NN`, a List of APIs response, or an event payload) and to a column in the owner's Tables Design?
 
 **Good rows:**
 
@@ -240,6 +247,7 @@ Traceability is only useful if a reader can follow it both ways without searchin
 - Ownership only in prose ("refund-service handles UC-04 and UC-05"), with no 09 column or §7.3 row.
 - A link built from a guessed title (`#uc-04-approve-reject-refund` when the heading is `UC-04: Approve / Reject Refund`, whose anchor is `#uc-04-approve--reject-refund`). It looks right and lands nowhere.
 - A new `UC-12` the SDD made up for key rotation. The SDD cites BRD use cases; it never adds one.
+- An acceptance criterion that asks for the admin identity and the old and new values, served by a history response that carries only the new value, with no open item or marker.
 
 ---
 
@@ -247,7 +255,7 @@ Traceability is only useful if a reader can follow it both ways without searchin
 
 A reader must see at a glance which stack rows are settled and where each one came from.
 
-**Test:** pick any §6 row. Does it carry a Status and a Source (SKILL.md step 3c items 1 and 6)? A table written before those columns keeps the label in its Notes and is read as it is (SKILL.md step 10). Do its Notes hold the evidence the Source names: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR? In a finished first build, is every `Proposed` row the one exception step 3c item 6 allows, with its marker (a table written before those columns is read as it is)? Then pick any system in §12: does the Integration landscape have its row, and does that row link §12 instead of repeating its protocol, auth, or timeouts?
+**Test:** pick any §6 row. Does it carry a Status and a Source (SKILL.md step 3c items 1 and 6)? A table written before those columns keeps the label in its Notes and is read as it is (SKILL.md step 10). Do its Notes hold the evidence the Source names: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR? In a finished first build, is every `Proposed` row the one exception step 3c item 6 allows, with its marker (a table written before those columns is read as it is)? Then pick any system in §12: does the Integration landscape have its row, and does that row link §12 instead of repeating its protocol, auth, or timeouts? Last, pick any library, SDK, or framework that a design text relies on (a §11 policy, a `13x` adapter, an ADR): does it have a §6 row, or sit in the Notes of a named layer such as Backend Runtime, with its version? A name with neither a §6 place nor a `Proposed` label and a `[NEEDS CLARIFICATION: ...]` marker is a finding.
 
 **Good rows:**
 
@@ -265,6 +273,7 @@ A reader must see at a glance which stack rows are settled and where each one ca
 - A `Proposed` row in a finished first build with no marker and no reason.
 - An Integration landscape row that repeats an auth scheme or a timeout that §12 states.
 - A value taken from an eco-system file the user did not choose to import, or a provider field the file does not state.
+- An AI adapter policy in §11 that names a client library §6 does not list and no row labels `Proposed`.
 
 ---
 

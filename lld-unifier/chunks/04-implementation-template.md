@@ -36,6 +36,10 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS mode, copy this file 
 ## 7.2 Class & Interface Map
 
 > **Convention:** list the load-bearing classes only - controllers, services, service implementations, repositories, mappers, key domain types. Skip DTOs that are obvious from controller signatures.
+>
+> **Wiring:** the runtime roles that load each listener, job, filter, runner and adapter are stated once in [03 § 6.2a](../03-architecture.md#62a-process-and-profile-wiring); this file does not restate them. Shared constants, shared infrastructure beans, the port guard, and module scanning and repository package rules follow [03 § 6.4 Shared Code and Wiring](../03-architecture.md#shared-code-and-wiring).
+
+<!-- Value lists in this file (enums, setting keys, audit actions, error codes) are written in full, or name their single source. Never an ellipsis, "e.g." or a wildcard in place of values. The quality bar is in `lld-quality.md`. -->
 
 ### Controllers
 
@@ -102,15 +106,23 @@ public interface FooService {
 | `[POST /v1/foo]` | REST | `[foo:write]` | `@PreAuthorize` on `FooController.create` |
 | `[FooEventListener.onFooCreated]` | Listener | `[token, or None - system consumer]` | [Listener guard, or None] |
 | `[FooCleanupJob.run]` | Job | `[token, or None - system job]` | [Job runner check, or None] |
-| `[FooPort.reserve]` | Port | `[token]` | At the port, in its adapter (SDD §15.1) |
+| `[FooPort.reserve]` | Port | `[token]` | `[PortGuard]`, called first by its adapter ([03 § 6.4](../03-architecture.md#shared-code-and-wiring); SDD §15.1) |
 
 > **Convention:** one row per entry point of this service (REST method, event listener, scheduled job, in-process port). Tokens are the SDD §16 permission tokens, verbatim, and a contract the SDD marks with no token copies its cell verbatim (`None - public`), with any reason in `06-api-contracts.md` § 9.3, never in the cell (never `- (<reason>)`); the role catalogue stays in the SDD (`sdd-to-lld.md` § One fact, one home). On an internal HTTP entry point the provider's filter or sidecar checks the caller's client-credentials token against the token (SDD §15.1). From code with no SDD: the scopes the code checks.
+
+### Interim Components
+
+| Component | What and why | Owner decision | Replaced by, and when | Rules that still bind it | Entered through |
+|-----------|--------------|----------------|-----------------------|--------------------------|-----------------|
+| `[MinimalFooStore]` | [What it is, and why it is built ahead of or outside the target design] | [[decision-log entry]](../decision-log.md#direct-design-instructions) | [The target component or SDD section that replaces it, and the phase, slice or condition that triggers it] | [Deletion: 05 § 8.6 row; Logging: 09 § 12.7; Auth: the § 7.2 Authorization row] | [`[KEY]/CHG-NNN` or `[KEY]/GAP-NNN`] |
+
+> **Convention:** a component built by owner decision ahead of, or outside, the target design. Its classes still sit in the tables above; this row states only why it is interim and what replaces it. A row enters only through the documents chain, from a tracker decided change or doc gap (SKILL.md step 9), never invented by the author. The platform rules cell links the home of each rule that still applies (deletion, logging, auth at minimum), never `None`. The SDD names each row in one line in this service's `13x`, linked here. The decision story stays in `decision-log.md`. With no interim component, write "None".
 
 ---
 
 ## 7.3 Method-Level Pseudocode (non-trivial logic only)
 
-> **Convention:** include pseudocode only for methods where the algorithm is non-obvious. Skip for plain CRUD.
+> **Convention:** include pseudocode only for methods where the algorithm is non-obvious. Skip for plain CRUD. A load-bearing operation gets its **Outcomes** table (below) even when its pseudocode is skipped.
 
 ### `[FooServiceImpl.create]`
 
@@ -127,6 +139,22 @@ public interface FooService {
 7. Commit transaction.
 8. Return FooResponse.
 ```
+
+**Outcomes:**
+
+| Input class | Result | `errorCode` (§ 7.7) | HTTP status |
+|-------------|--------|---------------------|-------------|
+| Valid | `[Foo created; outbox row written; 201 with FooResponse]` | None | `[201]` |
+| Missing | `[Required field or referenced record absent; nothing written]` | `[VALIDATION_FAILED / NOT_FOUND]` | `[400 / 404]` |
+| Expired | `[Token, offer or window past its end; nothing written]` | `[EXPIRED]` | `[410]` |
+| Replay | `[Same key, same request: the cached response, nothing written again]` | None | `[201]` |
+| Replay after the TTL | `[Key record gone: treated as a new request, or refused by a business key]` | `[None / CONFLICT]` | `[201 / 409]` |
+| Oversize | `[Body or file over its limit; refused before parsing]` | `[PAYLOAD_TOO_LARGE]` | `[413]` |
+| Unknown type | `[Type or kind no handler serves; nothing written]` | `[UNSUPPORTED_TYPE]` | `[400]` |
+| Cancelled or timeout | `[Caller cancels or the hard stop fires; transaction rolled back]` | `[TIMEOUT]` | `[504]` |
+| Provider down | `[Circuit open or provider error; nothing written, or the work queued for retry]` | `[PROVIDER_UNAVAILABLE]` | `[503 / 202]` |
+
+> **Convention:** one outcome table per load-bearing operation: one that a use case's main flow depends on, that changes state a client may retry, or that calls a provider or another service. Every input class has a row; a class that cannot occur reads `Not applicable - <reason>`, so no branch is left for the build to decide. Each `errorCode` is a § 7.7 row. A code this table needs that § 7.7 lacks gets its § 7.7 row (from SDD §15.1) in the same edit. For a listener, job or port operation, HTTP status reads `Not applicable - <kind>`, and Result names the retry, dead-letter or refusal.
 
 > **Confidence:** [Medium with `> Confirm:` by default, citing its source ([file:line] or SDD §17.X Business Logic) / High only under a `confidence-rules.md` upgrade (a straight-line method of 10 lines or fewer, a passing test that exercises it, or an SDD Business Logic block that dictates the algorithm) / Low with `> TODO:`, best guess from the sequence flow]
 
@@ -273,6 +301,8 @@ graph TB
 ```
 
 **Summary:** [1-2 sentences: what is injected where, and the most connected components.]
+
+> **Convention:** a shared infrastructure type is injected as [03 § 6.4 Shared Code and Wiring](../03-architecture.md#shared-code-and-wiring) states: by type when it has one bean, by its named qualifier otherwise. The graph labels an injection that uses a qualifier with that qualifier.
 
 ---
 

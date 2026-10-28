@@ -45,6 +45,8 @@ One home per mapping. The LLD cites the homes it does not own and adds only its 
 |---|---|---|
 | Use case ID, title, status (and phase, in a phase-based BRD) | BRD Use Case Summary (chunk 05; its `Phase` column) and the use case heading (chunk 06x) | 04 headings, 16 §19.9; the phase only in 17 § 3 Roadmap |
 | Use case → owner service, entry points | SDD §7.3, which reads SDD 09 and each `13x` List of APIs | 04 traceability line |
+| Use case → preconditions (the guards) | The BRD use case's Preconditions and Actor | 14 §17.3 Guards |
+| Screen → inbound links and sent URLs | The `Links and sent URLs` cell of the BRD chunk 14 Mockup coverage row | 14 §17.3, §17.3a |
 | Use case → UAT/BAT test cases | BRD chunk 16: each case's `Related UC`, checked against its Traceability Matrix | 04 line, 13 §16.8, 16 §19.9 |
 | Screen (its chunk 14 row) → use cases | BRD chunk 14 Mockup coverage: one row per screen or flow, the screen reference, keyed `MK-NN` (a BRD written before `MK-NN` keys it by a screen ID) | 14 §17.3, 04 line, 16 §19.9 |
 | Screen ID with no chunk 14 row → use cases | The BRD text, only where it carries a screen ID from its source (brd-unifier never defines one) | Same places as an `MK-NN` |
@@ -131,6 +133,7 @@ Directly under each `### KEY/UC-NN: Title` heading (the SDD's key, then the BRD'
 - Every route has a row. `Screen (BRD)` holds the screen reference of the screen or flow the route implements, cited and linked as § The link, Targets says (the chunk 14 row wins); else `None - platform page` for pages no BRD use case needs (sign-in, not found, the shell). A route that serves a `### Workflow:` block (such as a BRD chunk 09 report page) reads `None - no BRD screen ([link to what the block realises])` in both BRD columns and carries no route data. When its screen has a chunk 14 row, the row wins: `Screen (BRD)` cites it, `Use cases (BRD)` reads `None - no BRD use case ([link to what the block realises])`, and its route data carries `screen` only.
 - `Use cases (BRD)` is read from the BRD for that screen, never guessed from the route: the use cases its chunk 14 row lists, or, for a screen ID with no chunk 14 row, those whose UI/UX section names the screen.
 - The route path and component are the LLD's own design choice (`> Confirm:` in from-sdd, per `confidence-rules.md`).
+- The BRD-listed inbound links and email URLs, the guards from use-case preconditions, the unknown sub-path redirect and the allowlist generated from the route table follow 14 § 17.3 and § 17.3a. Mockups are never read for them.
 - Every active use case with a screen the actor sees has at least one route. A use case with neither a screen ID nor an `MK-NN` keeps its routes and gets `> Confirm: no screen ID or MK-NN in the BRD for KEY/UC-NN`.
 - Runtime context: each route that implements a BRD screen declares `screen`. It also declares `useCases` when the BRD names use cases for it, for example `data: { screen: 'REFUNDS/MK-02', useCases: ['REFUNDS/UC-04'] }`. A Workflow route with no BRD use case carries `screen` only. The global `ErrorHandler` and frontend telemetry read the deepest active route, attach its `screen`, and attach `use_case` only when that route has `useCases`.
 
@@ -138,14 +141,14 @@ Directly under each `### KEY/UC-NN: Title` heading (the SDD's key, then the BRD'
 
 - One spec per BRD use case, named from its key and BRD title: `e2e/refunds-uc-04-approve-reject-refund.spec.ts`. The key keeps two BRDs' `UC-01` apart.
 - Every test carries its keyed use case and test case IDs as tags. Playwright uses `test('...', { tag: ['@REFUNDS/UC-04', '@REFUNDS/TC-DEC-01'] }, ...)`. A backend REST harness (JUnit 5) uses `@Tag("REFUNDS/UC-04")` and `@Tag("REFUNDS/TC-DEC-01")`. A failing UAT case or a production regression re-runs with `npx playwright test --grep "@REFUNDS/TC-DEC-01"`, or with the JUnit Platform tag filter (the `groups` parameter of Maven Surefire or Failsafe).
-- A test case with no spec goes on the `Not automated:` line with its reason (a `(BAT observation)` case, a manual-only check). Nothing is left out silently.
+- A test case with no spec goes on the `Not automated:` line with its reason (a `(BAT observation)` case, a manual-only check). Nothing is left out silently. A case on the 13 § 16.8 `Deferred to a later phase` line that names its spec counts as covered.
 - While BRD chunk 16 is not written, specs carry use case tags only and the `Not automated:` line reads `Pending (BRD 16 not written)`; test case tags and the line are filled on refresh.
 
 ### The use_case attribute (09 §12.7, §12.8)
 
 - Every entry point §7.3 lists for an in-scope use case (REST method, event listener, scheduled job) carries a project annotation, `@UseCase("REFUNDS/UC-04")`. An `Event:` or `Schedule:` trigger that §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. That listener or job sits in the 04 file of the service §7.3 names with the trigger (the owner's when it names none). One aspect puts `use_case` into the log MDC and onto the server or consumer span, and clears it afterwards.
 - The value is the use case ID as §7.3 writes it, with its key. An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`). The span attribute, the log field, and frontend telemetry all use this form. To find one use case's requests, match a whole comma-delimited token: `(^|,)REFUNDS/UC-04(,|$)`. Never match by equality (it misses shared entry points) or by substring (it also matches a longer ID that contains the one searched for).
-- Platform endpoints (health, actuator, sign-in) carry none. Neither does an endpoint the LLD proposes that no SDD `13x` List of APIs names, even when it serves a use case's screen: §7.3 lists no use case for it, and the use case to entry point mapping is §7.3's (§ Homes).
+- Platform endpoints (health, actuator, sign-in) carry none. Neither does an endpoint the LLD proposes, until SDD §7.3 lists it, even when it serves a use case's screen: the use case to entry point mapping is §7.3's (§ Homes). Every endpoint the LLD proposes, reads included, goes up to the owner's `13x` List of APIs through the documents chain (SKILL.md step 7b), so none stays LLD-only.
 - A use case ID is not tenant data or PII, so it is allowed at INFO.
 - It is an LLD convention: flag it `> Confirm:` unless SDD §11.4 Observability or the owner's `13x` Observability already settles it.
 
@@ -186,10 +189,10 @@ Flag what is missing upstream; never fill it.
 ### Checks (SKILL.md step 6a)
 
 1. Every active §7.3 use case in scope has exactly one `### KEY/UC-NN: Title` block (`####` in a combined LLD), in its owner's file or §7 block, with the SDD's key and the BRD's ID and title. An owner with no code yet (a placeholder, `transform-detection.md` § Partial-code resolution) lists the use case as not built instead. No heading, line, route, tag, or index row cites an ID its document does not have. Every `### Workflow:` block for behaviour the BRD or SDD asks for that no use case covers has the `No BRD use case - realises [link]` line and no index row. A from-code block for an entry point nothing asks for carries its `> Confirm:` instead.
-2. Each line's Owner and Entry points equal §7.3; its test cases equal chunk 16's `Related UC`; its Screens equal the 14 §17.3 rows that name the use case.
-3. Every 14 §17.3 route has a Screen and a Use cases cell, or `None - platform page`, or `None - no BRD screen ([link])` for a route that serves a `### Workflow:` block (when its screen has a chunk 14 row: that row as Screen and `None - no BRD use case ([link])` as Use cases). Each screen's use cases equal the BRD's. Every active use case with a screen the actor sees has a route. Every route with a BRD screen has its own `data` entry in the 14 §17.3 route configuration, and it matches its row.
+2. Each line's Owner and Entry points equal §7.3, and every HTTP entry point a line names is a 06 § 9.1 row; its test cases equal chunk 16's `Related UC`; its Screens equal the 14 §17.3 rows that name the use case.
+3. Every 14 §17.3 route has a Screen and a Use cases cell, or `None - platform page`, or `None - no BRD screen ([link])` for a route that serves a `### Workflow:` block (when its screen has a chunk 14 row: that row as Screen and `None - no BRD use case ([link])` as Use cases). Each screen's use cases equal the BRD's. Every active use case with a screen the actor sees has a route. Every route with a BRD screen has its own `data` entry in the 14 §17.3 route configuration, and it matches its row. Every BRD-listed inbound link has its route row and § 17.3a row, each guard traces to a use-case precondition or is flagged `> Confirm:` (a platform page's guard is a design choice), and the unknown sub-path redirect and the generated allowlist are present (14 § 17.3, § 17.3a).
 4. The index has one row per §7.3 row, in the same order and groups, and every cell equals its home, in both directions.
-5. Every 13 §16.8 tag names a use case or test case the BRD has; every non-retired case of an in-scope use case has a spec or a `Not automated` reason.
+5. Every 13 §16.8 tag names a use case or test case the BRD has; every non-retired case of an in-scope use case has a spec, a `Not automated` reason, or a spec named on the 13 § 16.8 `Deferred to a later phase` line.
 6. Every entry point a use case's 04 line names carries `@UseCase` with the §7.3 value; one a `### Workflow:` line names, and an endpoint the LLD proposes that §7.3 does not list, carry none. No `### Workflow:` block carries a use-case ID in its heading or traceability line (route cells, the index, spec tags, and §19.9 rows are not workflow-block headings or traceability lines; they are unchanged).
 7. Every link resolves: the file exists at that relative path, and the anchor equals the one built from the real heading in that file.
 8. Every BRD ID, including each ID in a list, carries a key from the SDD's Source BRDs register, and its link points into that BRD's location.
@@ -254,7 +257,7 @@ Tech Stack and Project Type are also **inputs to LLD generation itself**: resolv
 
 - Reading the SDD in full (and BRD if linked).
 - Auto-filling LLD sections that have direct SDD analogues (Bounded Context, Architecture overview, Data Model skeleton, API endpoints, Event topics).
-- Applying the confirmed stack and rules per `pattern-rules.md` (constructor injection, records DTOs, idempotency on money writes, outbox for state changes, sagas for cross-service, Resilience4j, multi-tenant indexes, RFC 9457 errors, OpenAPI versioning, Flyway migrations): the stack as SKILL.md step 3a settled it, and every rule the project instruction file or the SDD states. A default no source states is applied as a proposal, with its gap flagged (SKILL.md principle 10).
+- Applying the confirmed stack and rules per `pattern-rules.md` (constructor injection, records DTOs, idempotency per `pattern-rules.md` § Idempotency, outbox for state changes, sagas for cross-service, Resilience4j, multi-tenant indexes, RFC 9457 errors, OpenAPI versioning, Flyway migrations): the stack as SKILL.md step 3a settled it, and every rule the project instruction file or the SDD states. A default no source states is applied as a proposal, with its gap flagged (SKILL.md principle 10).
 - Producing a per-service implementation chunk (`04-implementation/<service>.md`) that is **implementation-ready** for an AI implementer to pick up.
 - Tracing every BRD use case end to end (§ Use-case traceability): its workflow block, the routes and screens that start it, its UAT/BAT test cases, the e2e specs that automate them, and the `use_case` attribute on its entry points.
 - Flagging gaps with `> Confirm: ...` (medium confidence) or `> TODO: <best-guess> - verify` (low confidence).
@@ -401,7 +404,7 @@ The BRD is located through the SDD (§ Use-case traceability › Upstream docume
 
 ### Checks (SKILL.md step 6)
 
-Run after the body, before the Specs, in every direction. Check 5 needs an SDD. In `parts` they run at the end of part 2, before its stop (`parts-mode.md` § Exit checklists).
+Run after the body, before the Specs, in every direction. Checks 5 and 7 need an SDD. In `parts` they run at the end of part 2, before its stop (`parts-mode.md` § Exit checklists).
 
 1. Every § 9.1 row and every § 9.6 row has exactly one block, headed as the row, and every block has a row.
 2. Every block has every field of its column of the list (`chunks/06-api-contracts.md` § 9.2), none blank or written "standard". A bare `TBD` is allowed only where the Convention's `TBD - external` bullet allows it.
@@ -409,6 +412,7 @@ Run after the body, before the Specs, in every direction. Check 5 needs an SDD. 
 4. Every Errors row's `type`, `errorCode`, and status equal the owner's 04 § 7.7 row, and every `errorCode` is the SDD §15.1 code or the contract's domain code, verbatim (from code with no SDD: the code the service returns).
 5. Every value equals the contract or `13x` row it cites, and every permission token equals SDD §16.11.
 6. Every proposed value carries its flag, and every `TBD - external` field the block's `> TODO:`.
+7. Every § 9.1 endpoint is a row of its owner's SDD `13x` List of APIs, and every § 9.6 port contract a §15.2 row, reads included. One that is not is on this update's step 7b list (SKILL.md step 7b, Every proposed endpoint goes up), never left LLD-only.
 
 Fix what is mechanical and flag the rest (SKILL.md step 6a, item 2). Never resolve an upstream disagreement in the LLD.
 

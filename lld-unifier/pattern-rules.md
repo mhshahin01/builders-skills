@@ -53,20 +53,25 @@ A `KafkaTemplate.send` (or equivalent) beside a repository write is never eviden
 - Duplicates are expected. If the target acknowledges but the processed update fails (database error, or a crash before the update), the record is still unprocessed and the next poll delivers it again. A failed or timed-out send may also have reached its target. The payload, including `eventId`, is fixed when the record is written, so a re-send is identical. The receiver dedupes it (broker consumers: `chunks/07-event-contracts.md` § 10.4).
 - From-code direction documents the publisher as the code behaves. A breach of this contract stays visible in the skeleton and is flagged per § Anti-patterns to flag. The skeleton is never rewritten to comply.
 
-### Idempotency (on money / wallet / notification / external-provider write endpoints)
+### Idempotency (on every write endpoint a client may retry, and on every consumer)
 
-**CLAUDE.md rule:** *"Idempotency keys on all write endpoints touching money/wallet/notifications or external providers."*
+**CLAUDE.md rule:** *"Idempotency on every consumer and every write endpoint. Assume at-least-once delivery everywhere."* The stricter rule for money stays: *"Idempotency keys on all write endpoints touching money/wallet/notifications or external providers."*
 
-**Triggering condition:** the service exposes a write endpoint that touches money, wallet, notifications, or calls an external provider.
+**Triggering condition:** the service exposes a write endpoint a client may retry (any `POST`, `PUT`, `PATCH` or `DELETE` that is not an excluded route of `chunks/09-cross-cutting.md` § 12.2), or it consumes messages (a broker listener, a queue or job worker, or a listener of a durable in-process event).
 
-**FROM-SDD detection:** the SDD's per-service API list includes a `POST/PUT/PATCH/DELETE` endpoint whose name or summary mentions money / wallet / notification / payment / send / charge / transfer.
+**Money writes keep their stricter rules:** a write endpoint that touches money, wallet, notifications or an external provider always requires the key, is never an excluded route, and a missing key there is a HIGH finding (§ Anti-patterns to flag).
 
-**FROM-CODE detection:** structural. Look for `@RequestHeader("Idempotency-Key")` parameter on the controller method, AND an `idempotency_record` table OR equivalent dedup store.
+**FROM-SDD detection:** every `POST/PUT/PATCH/DELETE` endpoint in the SDD's per-service API list, minus the excluded routes; every event the per-service Event Model lists with the service as consumer. The money rule applies where a name or summary mentions money / wallet / notification / payment / send / charge / transfer, or the endpoint calls a provider.
+
+**FROM-CODE detection:** structural. Look for `@RequestHeader("Idempotency-Key")` parameter on the controller method, or an idempotency filter or interceptor whose scope covers the route, AND an `idempotency_record` table OR equivalent dedup store. For a consumer, look for a processed-message store keyed by `eventId` (`chunks/07-event-contracts.md` § 10.4).
 
 **Roles:**
 - Idempotency record table.
 - Idempotency check (controller or interceptor).
 - Cached-response storage.
+- Consumer dedup store.
+
+**End-to-end rows:** client key lifetime, sameness tuple, cached-body cap, completion record, pre-lock refusals, replay after the TTL and excluded routes are in `chunks/09-cross-cutting.md` § 12.2.
 
 ### RFC 9457 ProblemDetails error model
 
@@ -214,6 +219,7 @@ The last two rows cover `03a-libraries-and-conventions.md` § 6.5. A use is repo
 | Outbox record written outside the aggregate's transaction (`REQUIRES_NEW`, after commit) | "Outbox pattern is mandatory" | HIGH |
 | Outbox publisher marks a record processed without its target's acknowledgement (fire-and-forget send, or update before the acknowledgement) | "Outbox pattern is mandatory" | HIGH |
 | Missing idempotency on money endpoints | "Idempotency keys on all write endpoints touching money..." | HIGH |
+| Missing idempotency on another write endpoint a client may retry (not an excluded route of `chunks/09-cross-cutting.md` § 12.2), or on a consumer | "Idempotency on every consumer and every write endpoint" | MEDIUM |
 | Synchronous chained REST > 1 hop | "No service-to-service chained REST calls more than one hop deep" | MEDIUM |
 | Distributed 2PC / `XA` transactions | "No distributed 2PC" | HIGH |
 | Cross-service shared DB schema | "A service's database is private" | HIGH |

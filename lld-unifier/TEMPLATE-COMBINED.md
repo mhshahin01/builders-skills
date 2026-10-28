@@ -31,11 +31,11 @@
 
 ## Changes Log
 
-<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, and so do §18 flag rows and the §19.1 upstream state (SKILL.md § Output conventions, Versions). -->
+<!-- Initial row: Chunks: none (initial build), dated when the first build completes. Later rows: Chunks lists semantic edits only, excluding routine synchronized metadata; date = the request's first content change. Review-content changes count, and so do §18 flag rows and the §19.1 upstream state (SKILL.md § Output conventions, Versions). Review stamp: every row states, just before `Chunks:`, which reviews ran for it: `Review: full | delta | application check | none needed: <reason> | not run`, as in `chunks/00-metadata.md`. -->
 
 | Version | Date | Author | Direction | Change Summary |
 |---------|------|--------|-----------|----------------|
-| [X.X] | [YYYY-MM-DD] | [Author] | [direction] | Initial LLD draft via lld-unifier. Chunks: none (initial build) |
+| [X.X] | [YYYY-MM-DD] | [Author] | [direction] | Initial LLD draft via lld-unifier. Review: full. Chunks: none (initial build) |
 
 ## Table of Contents
 
@@ -139,6 +139,16 @@ graph TB
 | Orchestrator | Kubernetes (Helm) | [SDD §8.6](./sdd-[sdd-slug]/05a-infrastructure-and-network.md#86-infrastructure-architecture) / CLAUDE.md default |
 | Replicas | [N min / M max] | [SDD §17.X Deployment Strategy] |
 
+## 6.2a Process and Profile Wiring
+
+As in `chunks/03-architecture.md` § 6.2a.
+
+### Runtime Roles
+
+### One-off Commands
+
+### Mutually Exclusive Roles
+
 ## 6.3 Runtime Stack
 
 | Layer | Technology | Version | Source |
@@ -163,6 +173,10 @@ graph TB
 ## 6.4 Architectural Style - As Operationalised
 
 [Concrete operationalisation of the SDD §8.1 style.]
+
+### Shared Code and Wiring
+
+As in `chunks/03-architecture.md` § 6.4 Shared Code and Wiring.
 
 ## 6.5 Libraries & Coding Conventions
 
@@ -201,7 +215,7 @@ graph TB
 | UTC for all datetimes | Store, exchange, and log every date-time in UTC. | Use a local time zone. | Every service | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §5.5. | review |
 | UUIDv7 primary keys | Generate each primary key as a UUIDv7 at the service layer. | Use another ID type for a primary key. | Every table | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §5.5. | review |
 | Problem Details errors | Translate every exception to an RFC 9457 `ProblemDetails` in one global `@RestControllerAdvice`. Business exceptions extend `ServiceException` and carry an error code. | Expose a stack trace or a raw code. | Every REST service | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §12.6. | review |
-| Idempotency keys on writes | Require an `Idempotency-Key` on a write endpoint that touches money, wallets, notifications, or external providers. | Accept such a write without a key. | Those endpoints | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §12.2. | review |
+| Idempotency keys on writes | Require an `Idempotency-Key` on every write endpoint a client may retry, except the excluded routes of §12.2; a money, wallet, notification, or external-provider write is never excluded. Dedupe every consumer. | Accept such a write without a key. | Those endpoints and every consumer | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §12.2. | review |
 | Test naming | Name each test `methodName_scenario_expectedResult`. | Use another name shape. | Every test | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §16. | review |
 | Standalone components | Write standalone components and route them with `provideRouter` and `loadComponent`. | Use NgModules or `RouterModule`. | Angular frontend | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §17. | review |
 | Signals for state | Use signals for component state, NgRx SignalStore for shared or complex state, and RxJS for streams only. | Use RxJS for anything but streams. | Angular frontend | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §17; §6.5.1, NgRx SignalStore row. | review |
@@ -236,6 +250,8 @@ graph TB
 - Controllers (with the event listeners and scheduled jobs that are entry points, their trigger as the endpoint), Services, ServiceImpls, Repositories, Domain types (records), Method signatures
 - Every entry point a use case's traceability line names (REST method, event listener, scheduled job) carries `@UseCase("[KEY]/UC-NN")` with that use case's keyed ID (§12.8). An `Event:` or `Schedule:` trigger that SDD §7.3 lists for a use case is an entry point too, so its listener or job carries the annotation. Platform endpoints, the entry points of a `#### Workflow:` block, and an endpoint the LLD proposes that SDD §7.3 does not list, carry none.
 
+Wiring, shared constants and value lists: as in `chunks/04-implementation-template.md` § 7.2. Outcomes table for a load-bearing operation: as in `chunks/04-implementation-template.md` § 7.3.
+
 #### Ports and Adapters (in-process contracts)
 
 Modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process)` contract this module provides or calls (port interface, operation, API ID, role, adapter class), as in `chunks/04-implementation-template.md` § 7.2; the contract itself is in §9.6. With no SDD §15 `Internal (in-process)` contract here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules call no port), write "Not applicable - no in-process contracts".
@@ -247,6 +263,10 @@ Modular monolith or hybrid core only: one row per SDD §15 `Internal (in-process
 | `[POST /v1/foo]` | REST | `[foo:write]` | `@PreAuthorize` on `FooController.create` |
 
 One row per entry point of this service (REST method, event listener, scheduled job, in-process port), as in `chunks/04-implementation-template.md` § 7.2 Authorization. Tokens are the SDD §16 permission tokens, verbatim, and a contract the SDD marks with no token copies its cell verbatim (`None - public`), with any reason in §9.3, never in the cell (never `- (<reason>)`); an internal HTTP entry point checks the caller's client-credentials token in the provider's filter or sidecar, and a port checks it at the port (SDD §15.1). From code with no SDD, the scopes the code checks.
+
+### Interim Components
+
+As in `chunks/04-implementation-template.md` § 7.2.
 
 ### Method-Level Pseudocode (non-trivial logic only)
 
@@ -350,7 +370,11 @@ One block per table (Table name, Table purpose, Column details, Indexes) with a 
 
 ## 8.5 Migration Plan (Flyway)
 
+As in `chunks/05-data-model.md` § 8.5.
+
 ## 8.6 Retention & Archival
+
+As in `chunks/05-data-model.md` § 8.6 (with the Personal-data inventory).
 
 ## 8.7 Encryption
 
@@ -360,7 +384,9 @@ One block per table (Table name, Table purpose, Column details, Indexes) with a 
 
 | API ID (§15) | Method | Path | Summary | Idempotency-Key | Permission token (SDD §16) | Status Codes |
 |--------------|--------|------|---------|-----------------|----------------------------|--------------|
-| [API-01](./sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) | `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 409, 422 |
+| [API-01](./sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) | `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 401, 403, 409, 413, 422, 429 |
+
+Idempotency scope, Status Codes and Traced entry points: as in `chunks/06-api-contracts.md` § 9.1.
 
 API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked; `-` for an endpoint no §15 contract covers. Every row has one block in §9.2. A call a service makes to a provider is not a §9.1 row: it is recorded in the §12.3 Instances table, and the provider's contract (its SDD §15 entry, or the provider LLD) holds the block. A client is the one that the HTTP client rows of §6.5.1 give that service. Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in §9.3, never in the cell (never `- (<reason>)`).
 
@@ -376,16 +402,20 @@ API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint impl
 | Method and path | `Method` and `Path`, as the row writes them | `Type` (`Internal (in-process)`) and `Operation` (`[ProviderPort].[operation]`), as the row writes them |
 | Request headers | Each header beyond the standard ones: name, required, format | Omitted: the call never leaves the process |
 | Path and query parameters | Each parameter: name, where, type, required, constraints | Omitted |
-| Request body | The record, and each field: name, type, required, constraints | The request record, and each field in the same table |
+| Request body | The record, and each field: name, type, required, constraints; the body limit when it differs from the default of §12.6a | The request record, and each field in the same table |
 | Responses | Each success status: meaning, body record, response headers; then each body record's fields | The response record, and each field in the same table |
 | Errors | Each error status of the row that is not a shared error: Problem Details `type`, `errorCode`, when | Each error the operation raises: `errorCode`, when. No status and no `type` |
-| Idempotency | `Required` or `N/A` as the row says, then the key, the dedup window, and what a repeat returns | The key and what a repeated call returns, and `Transaction` as the row says |
+| Idempotency | `Required` or `N/A` as the row says, then the key, the dedup window, what a repeat returns, and for `Required` what a repeat after the dedup window returns (§12.2 Replay after TTL) | The key and what a repeated call returns, and `Transaction` as the row says |
 | Authentication, Permission token | The scheme; the SDD §16 token, verbatim | The token, verbatim, checked at the port |
 
 > **Convention:**
 >
 > - **One block per row.** The blocks of a service group follow its §9.1 rows in order. A block is headed by the row's Method and Path (`POST /v1/foo`), or for a port by its port and operation (`[ProviderPort].[operation]`). A row whose Method and Path read `TBD` is headed by its API ID and operation (`API-02: [Operation]`). A service with no §9.1 row has no group.
 > - **Equal to the row.** A block's API ID, Method and Path (or Type and Operation), permission token, and idempotency requirement (`Required` or `N/A`) equal the row's cells. Every status of the row's Status Codes cell is a Responses row, an Errors row, a shared error, or covered by a `TBD - external` Responses or Errors field, and no other status appears.
+> - **Proposed endpoints in full.** An endpoint the LLD proposes (API ID `-`, or one no SDD source shapes) gets a full block: every field carries a proposed value, and the `> Confirm:` flags those values. A block that is only a `> Confirm:`, with no request and response shape, is incomplete.
+> - **Distinct outcomes.** Each outcome the client must react to differently has its own `type` and `errorCode`. Where several such outcomes share one code, the block declares a `reason` extension with its full value list, one value per outcome (§12.6).
+> - **Server deadlines.** An endpoint that enforces a time limit the UI shows (a session, an expiry, a countdown) returns the absolute server deadline as an ISO 8601 UTC timestamp, not only a duration (§17.10).
+> - **Siblings agree.** Sibling responses use the same type and shape for the same concept: field errors are always the `errors[]` array, never a joined string, and an ID or a timestamp has one type across the group.
 > - **Nothing blank.** A field with nothing to list says so on one line: `None`, `Standard headers only`, or `Not applicable - <reason>`.
 > - **Values.** A value the SDD states, in its contract or for API ID `-` in its `13x` rows, is written as the SDD writes it, with no flag.
 > - **Flags.** A value no source gives is written as a proposal and flagged: one `> Confirm:` directly under the block heading that names the proposed fields, or one under the group heading when every block of the group has the same gap. Where the SDD carries an open question on the value, the flag is a `> TODO: <best-guess> - verify` that cites it. From code, a field the code does not show is flagged the same way. A field is never invented without its flag.
@@ -402,6 +432,7 @@ API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint impl
 |--------|-------------|------------------------|-----------|
 | 401 | `UNAUTHENTICATED` | `https://errors.example.com/auth/unauthenticated` | The security chain |
 | 403 | `FORBIDDEN` | `https://errors.example.com/auth/forbidden` | The permission check |
+| 413 | `PAYLOAD_TOO_LARGE` | `https://errors.example.com/request/too-large` | The body limit filter (§12.6a) |
 | 429 | `RATE_LIMITED` | `https://errors.example.com/rate-limit/exceeded` | [The gateway or the rate limiter] |
 | 500 | `INTERNAL_ERROR` | `https://errors.example.com/internal/error` | The global `@RestControllerAdvice` |
 | 503 | `UNAVAILABLE` | `https://errors.example.com/[context]/unavailable` | [A downstream dependency is down] |
@@ -421,7 +452,7 @@ API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint impl
 | Path | `/v1/foo` |
 | Authentication | Bearer JWT, validated as §9.3 says |
 | Permission token | `foo:write` (SDD §16, verbatim) |
-| Idempotency | Required. The `Idempotency-Key` header; dedup tuple and TTL as §12.2; a repeat of a finished request returns the stored response |
+| Idempotency | Required. The `Idempotency-Key` header; dedup tuple and TTL as §12.2; a repeat of a finished request returns the stored response; after the window, 409 `CONFLICT` from the natural key |
 
 **Request headers**
 
@@ -548,6 +579,12 @@ Internal HTTP calls follow SDD §15.1: the caller sends its client-credentials t
 
 ## 11.3 Algorithm Pseudocode (non-trivial only)
 
+## 11.4 State × Producer × Job Matrix
+
+As in `chunks/08-state-and-rules.md` § 11.4.
+
+### `foo.status` (table `foo`, in `[service-a]`)
+
 # 12. Cross-Cutting Concerns
 
 ## 12.1 Authentication & Tenant Resolution
@@ -556,9 +593,11 @@ Internal calls follow SDD §15.1: the caller's client-credentials token, checked
 
 ## 12.2 Idempotency
 
+As in `chunks/09-cross-cutting.md` § 12.2.
+
 ## 12.3 Resilience (downstream calls)
 
-HTTP and broker calls only; in-process port calls (§9.6) take no timeout, retry, circuit breaker, or bulkhead. The resilience library, with its Status, is the row of §6.3 or §6.5.1. The defaults table comes first, then an Instances table with one row per instance of that library (Instance, Caller (service, API ID), Timeout, Retry, Circuit breaker, Bulkhead, Source), `Default` where a cell equals the defaults, as in `chunks/09-cross-cutting.md` § 12.3.
+HTTP and broker calls only; in-process port calls (§9.6) take no timeout, retry, circuit breaker, or bulkhead. Every outbound client is a row of §15.4c Outbound Clients, which holds its connect and read timeouts; for a client an instance below wraps, that row names the instance, and the call timeout and retries are here. The resilience library, with its Status, is the row of §6.3 or §6.5.1. The defaults table comes first, then an Instances table with one row per instance of that library (Instance, Caller (service, API ID), Timeout, Retry, Circuit breaker, Bulkhead, Source), `Default` where a cell equals the defaults, as in `chunks/09-cross-cutting.md` § 12.3.
 
 ## 12.4 Outbox Pattern (mandatory for side effects that must follow a state change)
 
@@ -568,11 +607,24 @@ Every side effect that must follow a state change and must not be lost: integrat
 
 ## 12.6 Error Model (RFC 9457 ProblemDetails)
 
+As in `chunks/09-cross-cutting.md` § 12.6 (extensions, Filter chain, Framework and container errors).
+
+### Filter chain
+
+### Framework and container errors
+
+## 12.6a Request Body Limits
+
+As in `chunks/09-cross-cutting.md` § 12.6a.
+
 ## 12.7 Logging
 
 | Concern | Choice |
 |---------|--------|
-| Mandatory fields | The SDD §11.4 Logging fields, verbatim; when it names none: `ts`, `level`, `service`, `traceId`, `spanId`, `correlationId`, `event`, `attrs`. No PII at INFO; the tenant ID only at DEBUG (Level for tenant context) |
+| Mandatory fields | The SDD §11.4 Logging fields, verbatim; when it names none: `ts`, `level`, `service`, `traceId`, `spanId`, `correlationId`, `event`, `attrs`. No PII at INFO; the tenant ID only at DEBUG (Level for tenant context). Each has a row in the Mandatory fields table of `chunks/09-cross-cutting.md` § 12.7 |
+| Never logged | [Secrets, tokens, passwords, one-time codes, and PII at INFO]. The list applies under every profile and flag, local and dev included; no debug or local flag turns it off |
+| Masking | `[LogMaskingComponent]`: [a mechanism the chosen encoder calls, for example a field masker or JSON-generator decorator of that encoder], never a mechanism the encoder skips (for example a pattern-layout converter under a JSON encoder). It masks the Never logged list and is a buildable unit with this row as its anchor. Source: the encoder's §6.3 row |
+| Port call line | Each call through a port (an in-process port of §9.6, or an outbound client of §15.4c) logs one line on completion: `port`, `outcome` (`success` / `failure`), `failureCategory` from a closed list ([`timeout`, `unavailable`, `rejected`, `invalid_response`, `unauthorized`, `rate_limited`, `internal`]), `durationMs`. A new category is a change to this row |
 | Use-case field | `use_case`: the keyed BRD use case ID(s) of the entry point handling the request (`REFUNDS/UC-04`), from the log MDC (§12.8). Absent on platform endpoints. |
 | Level for tenant context | DEBUG (never INFO per CLAUDE.md) |
 | Level for `use_case` | Any level, INFO included: a use case ID is not tenant data or PII |
@@ -590,7 +642,7 @@ The tracing library, with its Status, is the row of §6.3 or §6.5.1; this secti
 | Attribute | `use_case` on the server or consumer span of every entry point SDD §7.3 lists for an in-scope use case, and the same key in the log MDC | [LLD convention / SDD §11.4] |
 | Value | The use case ID as §7.3 writes it, with its BRD key (`REFUNDS/UC-04`). An entry point §7.3 lists under several use cases carries all of them in one string, in §7.3 order, joined by commas without spaces (`REFUNDS/UC-02,REFUNDS/UC-04`) | SDD §7.3 |
 | Lookup | Match one use case as a whole comma-delimited token, e.g. regex `(^\|,)REFUNDS/UC-04(,\|$)`; never equality (misses shared entry points) or a substring (it also matches a longer ID that contains the one searched for) | LLD convention |
-| Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and clears the MDC afterwards | LLD convention |
+| Set by | A project annotation, `@UseCase("[KEY]/UC-NN")`, on the controller method, listener, or scheduled method; one aspect puts the value into the SLF4J MDC and onto the current span (OpenTelemetry `Span.current().setAttribute`), and afterwards removes only the `use_case` key it set (§12.7 Mandatory fields) | LLD convention |
 | Not set | Platform endpoints (health, actuator, sign-in); an endpoint the LLD proposes that SDD §7.3 does not list | LLD convention |
 | Frontend | `screen` and `use_case` from the active route's data on every error report and RUM span (§17.3); `use_case` joins the route's `useCases` in the Value form when present; a screen-only Workflow route has no `use_case` | LLD convention |
 
@@ -607,6 +659,10 @@ The tracing library, with its Status, is the row of §6.3 or §6.5.1; this secti
 ## 13.1 Configuration (per service)
 
 One row per variable with a Source column, as in `chunks/10-operations.md` § 13.1.
+
+## 13.1a Environment-Varying Values
+
+As in `chunks/10-operations.md` § 13.1a.
 
 ## 13.2 Health & Readiness
 
@@ -638,9 +694,19 @@ One row per alert with a Source column, as in `chunks/10-operations.md` § 13.7.
 
 ## 14.3 Secrets Management
 
+As in `chunks/11-security.md` § 14.3 (Loader column).
+
+## 14.3a Deployable Permissions
+
+As in `chunks/11-security.md` § 14.3a.
+
 ## 14.4 Authentication / Authorisation Decisions
 
 Service-to-service: per SDD §15.1, the caller's client-credentials token (`Authorization: Bearer`) is checked by the provider (its filter or a sidecar) against the contract's SDD §16 permission token; mTLS stays as the transport. In-process port calls check the token at the port (§7 Authorization, Kind Port).
+
+## 14.4a HTTP Security Headers
+
+As in `chunks/11-security.md` § 14.4a.
 
 ## 14.5 Threat Notes
 
@@ -654,9 +720,23 @@ Service-to-service: per SDD §15.1, the caller's client-credentials token (`Auth
 
 ## 15.2 Caching Strategy
 
+As in `chunks/12-performance.md` § 15.2 (Derived keys).
+
 ## 15.3 Hot-Path Indexes
 
 ## 15.4 Bulkhead & Concurrency
+
+## 15.4a Pool Sizing
+
+As in `chunks/12-performance.md` § 15.4a.
+
+## 15.4b Derived Timeouts
+
+As in `chunks/12-performance.md` § 15.4b.
+
+## 15.4c Outbound Clients
+
+As in `chunks/12-performance.md` § 15.4c.
 
 ## 15.5 Peak Scenarios
 
@@ -694,15 +774,22 @@ The home of spec -> use case and spec -> test case. One row per e2e spec: one sp
 Use cases and test cases carry the key from the SDD's Source BRDs register and link to their BRD headings (test cases to the chunk 16 feature-area heading that holds them), listed one by one, never as a range.
 While BRD chunk 16 is not written (its delivery gate is shut): "Pending (BRD 16 not written)" in the test case column; specs carry use case tags only.
 The Not automated line lists every non-retired chunk 16 case of an in-scope use case that no spec covers, with its reason. "None" when every case is automated; "Pending (BRD 16 not written)" while chunk 16 is not written.
+Runs from and the Deferred line: as in `chunks/13-testing.md` § 16.8.
 -->
 
 > **Convention:** one spec per BRD use case, named `e2e/[key-lowercase]-uc-NN-[title-slug].spec.ts`. Every test carries its keyed use case and test case IDs as tags: Playwright `test('[TC name]', { tag: ['@[KEY]/UC-NN', '@[KEY]/TC-[AREA]-NN'] }, async ({ page }) => { ... })`; a backend REST harness (JUnit 5) uses `@Tag("[KEY]/UC-NN")` and `@Tag("[KEY]/TC-[AREA]-NN")`. To re-run a failing UAT case or a production regression: `npx playwright test --grep "@[KEY]/TC-[AREA]-NN"`, or the JUnit Platform tag filter (the `groups` parameter of Maven Surefire or Failsafe).
 
-| Spec | Use cases (BRD) | UAT/BAT test cases (BRD) | Parts covered | Runner |
-|------|-----------------|--------------------------|---------------|--------|
-| `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` | [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [[KEY]/TC-[AREA]-01](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) [or: Pending (BRD 16 not written)] | [step 1-5, A1, E1] | Playwright |
+| Spec | Use cases (BRD) | UAT/BAT test cases (BRD) | Parts covered | Runner | Runs from |
+|------|-----------------|--------------------------|---------------|--------|-----------|
+| `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` | [[KEY]/UC-01](./brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [[KEY]/TC-[AREA]-01](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) [or: Pending (BRD 16 not written)] | [step 1-5, A1, E1] | Playwright | [P1](#203-roadmap) |
 
 **Not automated:** [[KEY]/TC-NFR-02](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-nfr-acceptance-[ids-slug]) ([reason]) [or: None / Pending (BRD 16 not written)]
+
+**Deferred to a later phase:** [[KEY]/TC-[AREA]-03](./brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) in `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` (runs from [P3](#203-roadmap): [what it waits for]) [or: None / Pending (BRD 16 not written)]
+
+## 16.9 External Dependency Stand-ins
+
+As in `chunks/13-testing.md` § 16.9.
 
 # 17. Frontend
 
@@ -723,6 +810,7 @@ Every route has a row (sdd-to-lld.md § Use-case traceability). This table is th
 Every BRD ID carries the key from the SDD's Source BRDs register. Every active use case with a screen the actor sees has at least one route; a use case with neither a screen ID nor an MK-NN gets "> Confirm: no screen ID or MK-NN in the BRD for [KEY]/UC-NN".
 Route: the path only. When the LLD has more than one front-end app, the app's name follows the path in parentheses (`/points` (Loyalty Points)); the 04 Screens fields and the §19.9 Routes cells carry the path alone.
 Route paths and components are this LLD's design choice (from-sdd: "> Confirm:"). With no source BRD, the two BRD columns read "Not applicable - no source BRD".
+Inbound links and Guards: as in `chunks/14-frontend.md` § 17.3.
 -->
 
 | Route | Component | Screen (BRD) | Use cases (BRD) | Guards | Lazy-loaded? |
@@ -743,6 +831,20 @@ Route paths and components are this LLD's design choice (from-sdd: "> Confirm:")
 
 The global `ErrorHandler` and the frontend telemetry read the data of the deepest active route and attach its `screen` to every error report and RUM span; they attach `use_case` only when that route has `useCases` (§12.8). Platform pages carry no such data.
 
+Unknown sub-paths and the return-destination allowlist: as in `chunks/14-frontend.md` § 17.3.
+
+## 17.3a Inbound Links
+
+As in `chunks/14-frontend.md` § 17.3a.
+
+## 17.3b Async Action States
+
+As in `chunks/14-frontend.md` § 17.3b.
+
+## 17.3c Idempotent Submissions
+
+As in `chunks/14-frontend.md` § 17.3c.
+
 ## 17.4 PrimeNG Components Used
 
 ## 17.5 Theming
@@ -754,6 +856,10 @@ The global `ErrorHandler` and the frontend telemetry read the data of the deepes
 ## 17.8 Form Conventions
 
 ## 17.9 Component Architecture
+
+## 17.10 Client Mirrors of Server Rules
+
+As in `chunks/14-frontend.md` § 17.10.
 
 # 18. Open Questions & Flag Index
 
@@ -870,7 +976,7 @@ This section complements (does not replace) §18, which is the author-generated 
 |-------|---------|
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Service name + sub-section, or "global". |
-| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak / Test gap / Drift / Contract drift (vs SDD §14/§15/§16) / Specs-body mismatch / Duplication (SDD content restated outside the sourced derived views in SKILL.md principle 13) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour that no BRD use case covers and no BRD or SDD section asks for; never a new UC). |
+| **Type** | Implementation gap / Missing edge case / Pattern misapplication / Error path / Concurrency hazard / Transaction boundary / Idempotency gap / Multi-tenancy leak (tenant or owner isolation) / Test gap / Drift / Contract drift (vs SDD §14/§15/§16) / Specs-body mismatch / Duplication (SDD content restated outside the sourced derived views in SKILL.md principle 13) / Traceability gap (a use case, route, test case, spec, or entry point the trace misses, a link that does not resolve, or a BRD ID without its key) / Missing scenario (behaviour that no BRD use case covers and no BRD or SDD section asks for; never a new UC). |
 | **Concern** | One paragraph. What was missed and why it matters. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | REQUIRED. The reviewer's suggested option and the concrete resolution text, written so it can be pasted into the LLD as-is - always pick one, even for close calls. |
@@ -904,12 +1010,12 @@ Write a closed Status as the literal legend value on its own line. Put the Resol
 
 ## 21.4 Reviewer Notes
 
-<!-- The coverage table is required (SKILL.md step 7): one row per risk surface per service, plus the three `global` rows. Zero findings is valid for a surface that was checked. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed section: its Service cell reads `[YYYY-MM-DD] delta: section N (vX.X)` or `[YYYY-MM-DD] delta: global (vX.X)`, and its Risk surface cell names the surfaces checked. A scoped application check (SKILL.md step 7, Answers in the same update) adds one dated row per applied item: its Service cell reads `[YYYY-MM-DD] application check: OI-NN (vX.X)`, and its What was checked cell names each section the item changed. The brackets are part of each label: `[2026-10-07] delta: section 16 (v1.4)`, `[2026-10-07] application check: OI-14 (v1.4)`. vX.X is the LLD version when the review runs; earlier rows keep their labels. -->
+<!-- The coverage table is required (SKILL.md step 7): one row per service for each per-service check of the Risk surfaces list (SKILL.md step 7), plus one `global` row for each global check. That list is the one home of the labels and checks; this table only records them. A check that does not fit the style (a set ADR-01 does not select, or a check that does not fit one service) reads `Not applicable - <reason>` in Checked and `-` in Findings, never "No issue found". A check the reviewer derives from §6.4 is labelled `Derived: <name>`, and its What was checked cell names the §6.4 line and why. Zero findings is valid for a surface that was checked. A delta review (SKILL.md step 7, On an update) keeps these rows and adds one dated row per changed section: its Service cell reads `[YYYY-MM-DD] delta: section N (vX.X)` or `[YYYY-MM-DD] delta: global (vX.X)`, and its Risk surface cell names the surfaces checked. A scoped application check (SKILL.md step 7, Answers in the same update) adds one dated row per applied item: its Service cell reads `[YYYY-MM-DD] application check: OI-NN (vX.X)`, and its What was checked cell names each section the item changed. The brackets are part of each label: `[2026-10-07] delta: section 16 (v1.4)`, `[2026-10-07] application check: OI-14 (v1.4)`. vX.X is the LLD version when the review runs; earlier rows keep their labels. -->
 
 | Service | Risk surface | Checked | Findings | What was checked |
 |---------|--------------|---------|----------|------------------|
-| [service-a] | [Error envelope (RFC 9457) / Transactions / Idempotency / Multi-tenancy / Outbox / Saga compensation / Retry and backoff / Observability / Test coverage / Schema versioning / Duplication] | [Yes / No] | [OI-NN, … or "No issue found"] | [What the reviewer read and verified] |
-| global | [Contract drift (SDD §14/§15/§16) / Specs-body / Use-case traceability] | [Yes / No] | [OI-NN, … or "No issue found"] | [What the reviewer read and verified] |
+| [service-a] | [A per-service label of the Risk surfaces list (SKILL.md step 7), or `Derived: <name>`] | [Yes / No / Not applicable - <reason>] | [OI-NN, … or "No issue found"; `-` when not applicable] | [What the reviewer read and verified] |
+| global | [A global label of the Risk surfaces list (SKILL.md step 7), a check of a set the style does not select, or `Derived: <name>`] | [Yes / No / Not applicable - <reason>] | [OI-NN, … or "No issue found"; `-` when not applicable] | [What the reviewer read and verified] |
 
 - [Note 1]
 - [Note 2]

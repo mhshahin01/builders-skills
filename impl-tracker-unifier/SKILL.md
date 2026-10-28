@@ -134,7 +134,7 @@ Follow `task-splitting.md`. In short:
    (`In progress` + missing list + gaps), Missing (`Planned`); unclaimed inventory items → `untracked-code`.
 6. Run the ownership check: nothing owned twice (across all features).
 7. Run the **coverage check**: every in-scope UC, every AC, every e2e spec, every migration,
-   every endpoint in scope has ≥ 1 task. Missing → `GAP` type `plan-gap` (the LLD has no unit for it)
+   every endpoint in scope, and every unit of each kind in task-splitting.md's unit map has ≥ 1 task. Missing → `GAP` type `plan-gap` (the LLD has no unit for it)
    or task added.
 8. Show the plan summary (phases, counts, DAG Mermaid, gaps, **existing-code match table** with
    confidence (discovery-rules.md § 3), and the **risk table**: each task's Risk with its reason,
@@ -143,7 +143,8 @@ Follow `task-splitting.md`. In short:
 
 **Slice mode** (`plan KEY slice` / `reslice`, or `Mode: slice` in config): after step 5c, group the tasks into
 slices and check slice order per slice-rules.md § 3; step 8 shows the slice table first and asks for the
-grouping and the order; on approval also write the slice cards and `config.md` § Slices.
+grouping and the order; on approval also write the slice cards and `config.md` § Slices (the home of the
+slice order that lld-unifier reads: slice-rules.md § 1).
 
 Re-running `plan` on a planned scope is a **re-plan**: it diffs against existing tasks, never renumbers,
 never deletes (unused tasks become `Dropped` with a reason), and keeps all status/evidence.
@@ -332,6 +333,9 @@ and promotion. The `checks.json` entry is written in the same step as the lesson
 Follow `lessons-rules.md` § 6. Needs a user quote or doc version as the decider; otherwise ask.
 Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, and runs the documents chain
 (§ Documents chain) for every design point the change decides; only an undecided doc problem becomes a gap.
+In `solo` run mode (the board's Run mode line) the tracker runs each hop in the same session. In `team` run mode,
+or when the owning skill cannot run now, it raises a `Decided change` request to the first hop not yet run instead, and later hops travel through that
+skill's documents chain (§ The tracker's board row); the hop stays pending until the request ends, and its result fills the CHG Follow-up.
 
 ### gap
 
@@ -422,7 +426,10 @@ item settled) goes through the documents chain in the same change, before the co
 | The SDD | sdd-unifier, then brd-unifier when a business rule changes, and lld-unifier for every child LLD the change reaches, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the same |
 | The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then pre-sdd-unifier, then sdd-unifier, then lld-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
 
-- Each hop is run through its owning skill; the tracker never writes the document itself.
+- Each hop is run through its owning skill; the tracker never writes the document itself. In `team` run mode, or
+  when that skill cannot run now, the change travels as `Decided change` requests (§ The tracker's board row). In both
+  transports the CHG decider quote is the hop's acceptance: the owning skill asks again only when a record
+  disagrees with it.
 - The CHG row's Follow-up names every document the change reached with the version that records it, and every
   document that needed no change with the reason (`SDD: no change, contract unchanged`).
 - A gap is closed by the version that records its fix. Only a question still waiting for its owner (a business
@@ -448,6 +455,7 @@ The tracker runs in the code repo, and the status board lives in the docs root.
 - **Path:** `<docs root>/unifier-status.md`, taken from the `Board` row `init` records in `tracking/config.md`. The docs root may differ from the folder holding the hop folders; the tracker then uses the recorded path as written.
 - **Its row:** the tracker writes only the row whose Skill cell is `impl-tracker-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
 - **Requests:** for each doc gap it routes to an owner (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), it raises one handoff request on the board, `Doc gap <KEY>/GAP-NNN: <question>`, with the gap row as Link, and reuses its pending request on the same gap. The owner's result decides the gap: Done with a version closes it with that version, and the baseline move is a chain hop (§ Documents chain); Done with `No change` re-classifies it as `code-drift` with a fix task; Declined routes it to the named owner with a new request. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
+- **Decided changes:** for each hop of a `change` that it does not run in the session (`team` run mode, or the owning skill cannot run now: § change), it raises one handoff request to that skill, `Decided change <KEY>/CHG-NNN: <summary>`, with the CHG row in `tracking/changes.md` as Link, and reuses its pending request on the same CHG and skill. It raises it only for the first hop of the chain order (§ Documents chain) that is not yet run. That skill's documents chain raises each later hop, up or down the chain, with the same request form and Link. The tracker reads every board request whose Request carries that CHG ID, whoever raised it, to fill the CHG Follow-up for its document: Done with a version writes the document and that version; Done with `No change: <reason>` writes the document and the reason; Declined routes it to the named owner with a new request. When every hop the chain reached has a version or a reason, the Follow-up is complete and the baseline move runs as the tracker hop (§ Documents chain).
 - **Missing file:** when the recorded path is reachable but `unifier-status.md` does not exist there, the tracker creates the board from the template in the Status board section below, as that section says the first skill to run does, then writes its row.
 - **Unreachable path:** when the recorded path cannot be reached or written, the tracker skips the board update and says so in a note in its reply; the run goes on.
 

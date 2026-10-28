@@ -58,6 +58,43 @@ graph TB
 
 > **Convention:** a Source cell links the SDD §8.6 or §8.7 part it implements; with no SDD, or an SDD written before chunk 05a, it names §6, §11.3, §19, or §17.X as before. A value that differs is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3).
 
+## 6.2a Process and Profile Wiring
+
+> **Inherits from:** the § 6.2 deployables and the style SDD ADR-01 records (§ 6.4).
+>
+> **What this section adds:** the one home for "what loads in which runtime role". A runtime role is a process, a profile (for example a Spring profile), or a one-off command of a deployable. `04-implementation/<service>.md`, `09-cross-cutting.md` and `10-operations.md` cite the role here and never restate it.
+
+<!-- Required when SDD ADR-01 is a modular monolith or hybrid core, or whenever one image runs several processes or profiles (for example a web and a worker command of one image). Otherwise one row per deployable is enough, naming its single role. From code with no SDD: read the style from § 6.4, and the roles from the profile files, the launch commands and the conditional wiring. -->
+
+### Runtime Roles
+
+| Role | Deployable | Kind | Filters (in order) | Scheduled jobs | Runners | Listeners | Adapter set | Port bindings | Source |
+|------|------------|------|--------------------|----------------|---------|-----------|-------------|---------------|--------|
+| `[api]` | `[image]` | Long-running | `1 [CorrelationIdFilter]`, `2 [TenantFilter]`, `3 [BodyLimitFilter]` | None | None | None | Real | `[FooPort]` -> `[FooPortAdapter]` | [SDD §8.6 / `code (<file>:<line>)` / LLD] |
+| `[worker]` | `[image]` | Long-running | None | `[OutboxPublisher]`, `[LeaseReaper]` | None | `[FooEventListener]` | Real | `[FooPort]` -> `[FooPortAdapter]` | [SDD §8.6 / `code (<file>:<line>)` / LLD] |
+| `[migrate]` | `[image]` | One-off | None | None | `[MigrationRunner]` | None | None | None | [SDD §8.6 / `code (<file>:<line>)` / LLD] |
+| `[setup]` | `[image]` | One-off | None | None | `[SetupRunner]` | None | Real | None | [SDD §8.6 / `code (<file>:<line>)` / LLD] |
+| `[demo]` | `[image]` | Long-running | Same as `[api]` | None | `[DemoSeedRunner]` | None | Demo / stub | `[FooPort]` -> `[FooPortStub]` | [SDD §8.6 / `code (<file>:<line>)` / LLD] |
+
+> **Convention:** every filter, scheduled job, runner, listener and adapter that 04 § 7.2, 09 or 10 names appears here, in exactly the roles that load it. A component in no role is never built; a role that 09 or 10 states differently is drift to fix in one place. Filters are numbered in execution order; 09 states what each filter does and cites this order. A cell with nothing to load reads `None`, never blank.
+
+### One-off Commands
+
+| Command | Role | Arguments | Exit behaviour | Waited on by |
+|---------|------|-----------|----------------|--------------|
+| `[migrate]` | `[migrate]` | `[none]` | `[0 on success; non-zero on a failed migration, with no partial version left applied]` | `[api and worker start only after it exits 0, for example an init container or a pre-upgrade hook]` |
+| `[setup]` | `[setup]` | `[--tenant=<slug> --admin-email=<email>]` | `[0 when done or already done (idempotent); 2 on invalid arguments]` | `[Nothing; an operator runs it once per environment]` |
+
+> **Convention:** each argument is written with its exact format. A command that is safe to run twice says so in Exit behaviour. With no one-off command, write "None - no one-off commands".
+
+### Mutually Exclusive Roles
+
+| Role | Never runs with | Why | Start-up guard |
+|------|-----------------|-----|----------------|
+| `[demo]` | `[api]`, `[worker]` | Demo or stub adapters never load with real ones | `[Start-up fails when both are active, for example a profile-condition check]` |
+
+> **Convention:** a demo or stub adapter set never loads in the same process as a real one, and the guard that stops it is named. With no demo or stub role, write "None - no demo or stub roles".
+
 ## 6.3 Runtime Stack
 
 | Layer | Technology | Version | Source |
@@ -94,5 +131,26 @@ graph TB
 - **Inter-service sync:** [allowed for / forbidden - per CLAUDE.md "no service-to-service chained REST calls more than one hop deep"]. Module-to-module calls of a modular monolith go through ports (`06-api-contracts.md` § 9.6), never HTTP.
 - **Outbox pattern:** mandatory for every side effect that must follow a state change and must not be lost; scope and implementation per `09-cross-cutting.md` § Outbox.
 - **Saga choreography vs orchestration:** [default per CLAUDE.md - choreography unless flow is complex; orchestrator-owning service named per case].
+
+### Shared Code and Wiring
+
+> **What this section adds:** the one home for where shared code lives and how shared components are wired. The 04 files cite it and never restate it.
+
+| Rule | This LLD | Applies when | Source |
+|------|----------|--------------|--------|
+| Shared constants | `[Values callers need (event names, codes, setting keys, limits) live in the owning module's or service's api or domain package: <package>.]` Never on an adapter, a stub or a demo class. | Always | [`[Project rule](../<file>)` / SDD §8.1 and ADR-01 / LLD default] |
+| Shared infrastructure beans | One bean per shared infrastructure type, or a named qualifier stated for each extra one (table below). | Always | [LLD default] |
+| Port guard | `[PortGuard]` in `[package]`. Every port adapter calls it before any other work. Checks, in order: `[1 the caller module is a declared caller of the contract (SDD §15); 2 the contract's SDD §16 permission token; 3 the tenant or account context is present and matches the target]`. Ignores: `[the acting user's role]`. Refusal: `[errorCode]`. | Modular monolith or hybrid core | [SDD §15.1, §16] |
+| Module scanning | `[Each module's components are found from its own package root, for example a list of scan base packages.]` A module's scan never widens past its package, and the application package stays scanned. | Modular monolith or hybrid core | [SDD ADR-01 / `code (<file>:<line>)`] |
+| Repository packages | `[Each module's repositories and entities sit in its own package and are registered for that module only, for example one repository base package per module.]` No repository reads another module's tables. | Modular monolith or hybrid core | [SDD ADR-01 / `code (<file>:<line>)`] |
+
+> **Convention:** the port guard's checks are written here once. A port adapter calls the guard and adds no check of its own. A row that does not fit the style reads `Not applicable - <reason>`, for example `Not applicable - microservices, no in-process ports`.
+
+| Infrastructure type | Bean or qualifier | Defined in | Injected by |
+|---------------------|-------------------|------------|-------------|
+| `[Clock]` | One bean | `[TimeConfig]` | All modules |
+| `[ObjectStorageClient]` | `[documentsStorage]`, `[exportsStorage]` (qualifiers) | `[StorageConfig]` | `[DocumentAdapter]` (documentsStorage), `[ExportJob]` (exportsStorage) |
+
+> **Convention:** one row per shared infrastructure type (for example a clock, an object-storage client, an HTTP client, a message producer, a data source). A type with a second bean names a qualifier for each bean, and every injection point names its qualifier, so injection by type never finds two candidates.
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 02-context.md | NEXT: 03a-libraries-and-conventions.md -->

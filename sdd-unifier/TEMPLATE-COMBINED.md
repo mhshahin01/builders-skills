@@ -49,7 +49,7 @@
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD reflects (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this file are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier)" to its SDD version cell (replacing an earlier such note) and names the LLD in the handoff; it never writes into the LLD, whose next run rewrites its own row and clears the note only when the row then names this SDD's current version. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD reflects (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier) Affected: [anchor links]" to its SDD version cell (replacing an earlier such note) and names the LLD in the handoff; Affected lists, by anchor link, every SDD section changed since the row's SDD version (the Anchors of the Changes Log rows after it), and lld-unifier maps them to its own sections; it never writes into the LLD, whose next run rewrites its own row and clears the note only when the row then names this SDD's current version. Before any LLD exists: one row "None yet". -->
 
 | LLD | Scope (§13 services) | Direction | Version | SDD version | Link |
 |-----|----------------------|-----------|---------|-------------|------|
@@ -63,9 +63,9 @@
 
 | Version | Updated Date | Updated By | Reviewed By | Approved By | Update Summary |
 |---------|--------------|------------|-------------|-------------|----------------|
-| 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. Chunks: none (initial build) |
+| 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. Review: full. Chunks: none (initial build) |
 
-<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. Reviewed By and Approved By: SKILL.md § Output conventions, Approvals. -->
+<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. Before `Chunks:` the row carries its review stamp, `Review:` and the baseline that ran: `full` (the first build), `delta`, `application check`, `none needed: <reason>` (no content in chunks 01 to 17 changed), or `not run` (the review could not run, for example in a delta apply without it; SKILL.md § Running outside Claude Code). A replay adds `replays v[X.X]`. A `not run` row is a review owed (SKILL.md step 10, common tail). When the change reaches a child LLD (SKILL.md step 9a), `Anchors:` follows the stamp and lists each changed SDD section as an anchor link, for example `Anchors: [§15.2](./11-api-contracts.md#anchor)`. `Chunks:` stays last and unchanged. Reviewed By and Approved By: SKILL.md § Output conventions, Approvals. -->
 
 ---
 
@@ -696,6 +696,7 @@ For deeper, individual ADRs, link to a separate ADR repository / folder.
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
 (§17 Detailed Service Specs below) and the override must be justified there.
 With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)).
+A library, SDK, or framework that a concern here names as policy (an adapter or client library, for example) meets the library test in sdd-quality.md § §6 Ecosystem Overview.
 -->
 
 ## 11.1 DB Modeling (Default)
@@ -730,7 +731,14 @@ With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 a
 
 ## 11.4 Observability (Default)
 
-- **Logging:** [Format + mandatory fields]
+- **Logging:** [Format; mandatory fields in the table below]
+
+<!-- Field table: as in chunks/07-cross-cutting-concerns.md § 11.4. -->
+
+| Field | Meaning (whose value) | When absent |
+|-------|-----------------------|-------------|
+| [field, e.g. `module`] | [e.g., the module that emits the line] | [e.g., omitted on framework lines] |
+
 - **Metrics:** [Tooling + RED + golden signals]
 - **Tracing:** [Tooling + sampling]
 - **Dashboards:** [Default dashboard expectations]
@@ -1062,7 +1070,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Authorization | Per contract type (table below): a permission token from §16 on internal contracts; the provider's scheme on external ones | §16 (chunk 12) |
 | Tenant context | Carried on every call ([header or token claim]) | §11.2 |
 | Correlation | Carried on every call and propagated downstream ([header name]); W3C trace context for tracing | §11.4 |
-| Idempotency | `Idempotency-Key` header required on every write that touches money, wallet, notifications, or an external provider | §9 principles, platform doctrine |
+| Idempotency | `Idempotency-Key` header required on every write a client may retry; a write that touches money, wallet, notifications, or an external provider always requires it and is never excluded. Every consumer dedupes on `(consumer, event_id)` (§14.2.1). A route excluded from the key, with its own duplicate guard, is named in the owning LLD | §9 principles, platform doctrine |
+| Request body policy | Default cap [e.g., 1 MB per JSON body]; upload limits [per part, per request, part count, allowed media types]; a route that needs another limit declares it in its contract's Behaviour table (a client-facing endpoint: a note on its `13x` List of APIs row), with the reason; a body or part over its size cap is refused with the 413 codes below, and a part count or media type outside the policy with 400 `VALIDATION_FAILED` | §11.6, platform doctrine |
 | Content type | `application/json`; errors as `application/problem+json` | - |
 | Date and time | ISO-8601, UTC | §6 ecosystem rules |
 | IDs | UUIDv7 | §6 ecosystem rules |
@@ -1090,20 +1099,25 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | `Accept` | Request | Yes | `application/json` | Response format |
 | [Correlation header, e.g. `X-Correlation-Id`] | Request, Response | Yes | UUID | End-to-end correlation |
 | [Tenant header, e.g. `X-Tenant-Id`] | Request | [Yes / No if carried in the token] | UUIDv7 | Tenant context |
-| `Idempotency-Key` | Request | On writes listed above | UUID | Safe retries |
+| `Idempotency-Key` | Request | On the writes the Idempotency row names | UUID | Safe retries |
 | `traceparent` | Request | Yes | W3C trace context | Distributed tracing |
 
 ### Standard error codes
 
-<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. The HTTP status column applies only when a call crosses HTTP. -->
+<!-- Every contract uses these; a contract adds its own domain codes in its Error codes table. The HTTP status column applies only when a call crosses HTTP. The ORIGIN_REFUSED row applies only when browser clients authenticate with a cookie or session (an Origin or CSRF check); a token-only API removes it. -->
 
 | HTTP status | `errorCode` | Meaning | Retryable | Consumer action |
 |-------------|-------------|---------|-----------|-----------------|
 | 400 | `VALIDATION_FAILED` | Request fails schema or field validation | No | Fix the request; `errors[]` lists each field |
 | 401 | `UNAUTHENTICATED` | Missing or invalid credentials | No (refresh token once) | Obtain a new token, retry once |
 | 403 | `FORBIDDEN` | Caller lacks the permission token | No | Do not retry; raise an alert |
+| 403 | `ORIGIN_REFUSED` | Request origin is not allowed (Origin or CSRF check) | No | Do not retry; send from an allowed origin with the CSRF token |
 | 404 | `NOT_FOUND` | Resource does not exist for this tenant | No | Handle as a business outcome |
+| 405 | `METHOD_NOT_ALLOWED` | HTTP method not supported on this URI | No | Fix the call; `Allow` lists the methods |
 | 409 | `CONFLICT` | State conflict or idempotency key reused with a different body | No | Re-read state; never reuse a key for a new request |
+| 413 | `PAYLOAD_TOO_LARGE` | Request body exceeds the route's cap (Request body policy) | No | Reduce the body; do not retry as is |
+| 413 | `PART_TOO_LARGE` | One upload part exceeds its limit (Request body policy) | No | Reduce or split the part; do not retry as is |
+| 415 | `UNSUPPORTED_MEDIA_TYPE` | Request `Content-Type` is not one the operation accepts | No | Send a supported content type |
 | 422 | `BUSINESS_RULE_VIOLATION` | Valid request that breaks a domain rule | No | Surface the domain error |
 | 429 | `RATE_LIMITED` | Caller exceeded its limit | Yes, after `Retry-After` | Back off |
 | 500 | `INTERNAL_ERROR` | Unexpected provider failure | Yes (idempotent calls only) | Retry with backoff, then circuit-break |
@@ -1114,7 +1128,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 ## 15.2 Contract Index
 
-<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call that serves no use case; §7.3 reads its APIs column from here. -->
+<!-- One row per API-NN. Type: Internal (service -> service over HTTP), Internal (in-process) (module -> module through a port, in a modular monolith or hybrid: architecture-questionnaire.md § Effect on the SDD), External outbound (service -> external system), External inbound (external system -> service). Method & URI: an Internal (in-process) contract shows its port operation (`[ProviderPort].[operation]`) instead, never an invented URI. Status: Defined / TBD - external / Flagged (see §15.5). Use case ref (derive-from-BRD): the BRD use cases the call serves, each as a link to its BRD heading (brd-to-sdd.md § Use-case traceability), or "-" for a call that serves no use case; §7.3 reads its APIs column from here. Callers: the Consumer (caller) cell lists every consumer of the API-NN, separated by `, `. The list is derived from the §7.3 rows and the BRD use case steps that need the capability, never from the contract's own text or the Integrations tables alone. A consumer that needs the capability and is missing from the cell is a gap, flagged in §15.5. -->
 
 | API ID | Operation | Consumer (caller) | Provider (callee) | Type | Method & URI | Integration ref | Use case ref | Status |
 |--------|-----------|-------------------|-------------------|------|--------------|-----------------|--------------|--------|
@@ -1162,6 +1176,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 **Request body**
 
+<!-- Field rule: as in chunks/11-api-contracts.md § 15.3, API-01 Request body. -->
+
 | Field | Type | Required | Constraints | Description |
 |-------|------|----------|-------------|-------------|
 | [field] | [string] | [Yes] | [e.g., max 64, enum] | [Description] |
@@ -1199,6 +1215,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Retries and backoff | [e.g., 3 attempts, exponential with jitter, idempotent failures only] |
 | Circuit breaker / bulkhead | [Thresholds] |
 | Rate limit | [Limit per caller] |
+| Request body limit | [Per §15.1 Request body policy / deviation and reason] |
 | Pagination | [Not applicable / cursor-based] |
 | Fallback when unavailable | [Behaviour] |
 | Source document | [Not applicable for an internal contract. A Defined external contract: link the provider's API documentation, or the eco-system file section the fields were filled from] |
@@ -1225,6 +1242,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Credentials storage | [From §6 secrets row, e.g., secret per tenant in the secrets manager] |
 | Timeout, retries, circuit breaker | [From §12 INT-NN] |
 | Fallback when unavailable | [From §12 INT-NN] |
+| Stand-in until supplied | [Fixture / emulator / provider sandbox, and what it covers] |
+| Needed by | [Source BRD phase, or the §2.2 phasing boundary / [NEEDS CLARIFICATION: ...]] |
 | Source document | TBD (link the provider's API documentation, or the eco-system file section the fields were filled from, once supplied) |
 
 ---
@@ -1249,6 +1268,8 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Tenant context | [Per §15.1; carried in the call context] |
 
 **DTO fields**
+
+<!-- The field rule of the API-01 Request body applies to each request DTO. -->
 
 | DTO | Field | Type | Required | Constraints | Description |
 |-----|-------|------|----------|-------------|-------------|
@@ -1296,11 +1317,11 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 ## 15.6 External Contracts Awaiting the User
 
-<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. A contract that an eco-system file filled in part lists only the fields still TBD. -->
+<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. A contract that an eco-system file filled in part lists only the fields still TBD. Stand-in and Needed by are read from the contract block's rows of the same names. -->
 
-| API ID | Provider | Fields still TBD | Document needed from the user |
-|--------|----------|------------------|-------------------------------|
-| [API-02] | [External system] | [URI, headers, body, error codes, auth] | [Provider API reference / sandbox guide] |
+| API ID | Provider | Fields still TBD | Document needed from the user | Stand-in until supplied | Needed by (BRD phase) |
+|--------|----------|------------------|-------------------------------|-------------------------|-----------------------|
+| [API-02] | [External system] | [URI, headers, body, error codes, auth] | [Provider API reference / sandbox guide] | [Fixture / emulator / sandbox] | [BRD phase / §2.2 boundary] |
 
 
 ---
@@ -1502,6 +1523,9 @@ Each service follows the exact same structure for predictability and grep-abilit
 - **Does not own:** [Things explicitly outside its boundary]
 - **Upstream consumers:** [Who calls this service]
 - **Downstream dependencies:** [What this service calls / consumes]
+- **Interim components:** [None | one line each: the component, what it stands in for, and a link to its row in the child LLD's Interim components table]
+
+<!-- Interim components: as in chunks/13a-service-detailed-template.md § Boundaries. -->
 
 ### Input
 
@@ -2227,7 +2251,7 @@ flowchart LR
 
 ## 24.7 Synchronous Edges (one-hop rule)
 
-<!-- The whole-system view of every service-to-service synchronous call: one row per §15.2 contract of Type Internal or Internal (in-process), and no other row. External contracts are not rows here. With no such contract, write `None: no synchronous call between services (external contracts: §15.2).` in place of the table. The contracts themselves (URI, headers, body, error codes, auth) live in §15 and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. A modular monolith or hybrid core lists its `Internal (in-process)` port calls as separately labelled edges (`in-process` after the callee), never as HTTP edges. -->
+<!-- The whole-system view of every service-to-service synchronous call: one row per §15.2 contract of Type Internal or Internal (in-process), and no other row. External contracts are not rows here. With no such contract, write `None: no synchronous call between services (external contracts: §15.2).` in place of the table. The contracts themselves (URI, headers, body, error codes, auth) live in §15 and are referenced by API ID, never restated. Per CLAUDE.md: no chained REST more than one hop deep. A modular monolith or hybrid core lists its `Internal (in-process)` port calls as separately labelled edges (`in-process` after the callee), never as HTTP edges. A contract whose §15.2 Consumer (caller) cell lists several consumers keeps its one row: the Caller cell names every consumer, separated by `, ` (`[svc], [svc] → [svc]`). -->
 
 | # | Caller → Callee | API ID (§15) | Purpose | Why synchronous |
 |---|---|---|---|---|

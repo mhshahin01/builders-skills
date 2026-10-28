@@ -106,6 +106,8 @@ erDiagram
 | `idx_outbox_unprocessed` | `outbox` | `(created_at) WHERE processed_at IS NULL` | partial btree | Outbox publisher poll, oldest unprocessed first |
 | `idx_idempotency_created` | `idempotency_record` | `(created_at)` | btree | Cleanup job |
 
+> **Unique keys and ordered reads:** each unique key or unique index names, in its Rationale, how a clash is handled on each write path that can hit it: a refusal (the status and problem type), an upsert (the conflict target it uses), or an ignore (for example a do-nothing conflict clause, with what the caller gets). An upsert on a partial unique index repeats the index predicate, in the form the § 6.3 database accepts. A "latest", "newest" or paged read that an index serves orders by a unique tie-breaker after its sort column (for example `created_at DESC, id DESC`). The quality bar is `lld-quality.md` § Data access.
+
 ## 8.4 Multi-Tenancy Strategy
 
 > **Default per CLAUDE.md:** schema-per-tenant for high-volume services; shared-schema with `tenant_id` for low-volume.
@@ -121,22 +123,36 @@ erDiagram
 
 ## 8.5 Migration Plan (Flyway)
 
-| Version | File | Purpose |
-|---------|------|---------|
-| `V001__create_foo.sql` | `[service-a]/src/main/resources/db/migration` | Initial foo + foo_line_item tables |
-| `V002__create_outbox.sql` | `[service-a]/...` | Outbox table |
-| `V003__create_idempotency.sql` | `[service-a]/...` | Idempotency record table |
+<!-- One table per migration location (each service schema, or the one location of a single deployable). Versions are assigned in the order the migrations will be applied, with no holes: no reserved, skipped or empty number. A migration added later takes its place in apply order: after every `Built` row and after every `Planned` row of an earlier or the same build unit. `Planned` rows of later build units move up one version each, because only `Built` rows are frozen. A version is never left free for a later table. Build unit: filled only from impl-tracker-unifier's slice plan when one exists (the slice ID, for example `[KEY]/S-01`); otherwise it links the Roadmap phase that delivers the migration (17 § 3), never a copy of the phase text. From code with no Roadmap, Build unit reads `Not applicable - no Roadmap`. Read in build order (the tracker's slice order when Build unit holds slice IDs, otherwise the 17 § 3 phase order), versions only go up. Status: `Planned`, or `Built` once the migration file is on the main branch or applied in any shared environment. A `Built` row is frozen: on any update after code exists (from-code, hybrid, or a later request), its version, file and content never change, and a change takes a new row. From code: the rows come from the migration files, each `Built`. -->
+
+| Version | File | Purpose | Build unit | Status |
+|---------|------|---------|------------|--------|
+| `V001__create_foo.sql` | `[service-a]/src/main/resources/db/migration` | Initial foo + foo_line_item tables | [P1](./17-specs.md#3-roadmap) | Planned |
+| `V002__create_outbox.sql` | `[service-a]/...` | Outbox table | [P1](./17-specs.md#3-roadmap) | Planned |
+| `V003__create_idempotency.sql` | `[service-a]/...` | Idempotency record table | [P1](./17-specs.md#3-roadmap) | Planned |
+
+**Out-of-order setting:** [Off / On, with the reason] (for example Flyway `outOfOrder`). With it off, the tool refuses a version below the highest applied one, which is why versions follow the apply order.
 
 > **Convention per CLAUDE.md:** versioned SQL only; backward-compatible changes only; expand-contract for breaking changes.
 
 ## 8.6 Retention & Archival
 
-| Table | Hot retention | Archival destination | Restore SLA |
+| Store | Hot retention | Archival destination | Restore SLA |
 |-------|---------------|---------------------|-------------|
 | `foo` | Indefinite | N/A (operational) | N/A |
 | `outbox` | 7 days after `processed_at`; unprocessed rows are never deleted | Cleanup job (delete) | N/A |
 | `idempotency_record` | The `09-cross-cutting.md` § 12.2 TTL | Cleanup job (delete) | N/A |
 | `audit_log` (if any) | 90 days hot | S3-compatible cold storage | 24h |
+| `[object-store-name]` (if any) | [N days after the owner is deleted] | Orphan sweep (delete) | N/A |
+
+**Personal-data inventory:**
+
+<!-- One row per store that holds user data: every table with a column 11 § 14.2 classifies, and every object or file store, cache or search index that holds user content. 11 § 14.2 keeps the column classification; this inventory owns the lifecycle. Owner key: the column or key part that ties the data to its owner (the user, account or tenant, as § 8.4 and the SDD isolation model say). Deletion participant: the component that erases or anonymises this store's data when the SDD erasure rule fires (SDD §16.8 erasure rule and the owning service's `13x` GDPR right-to-erasure flow; the SDD §14.9 erasure-path mapping for event payloads), and how (delete, anonymise, key destruction). Presence answer: how the system answers "do you hold data for this person" for this store, by the owner key. Retention: the store's row in the table above, plus the trigger that starts the clock for personal data. Orphan sweep: the recurring job that removes data whose owning row is gone, with its predicate and schedule, or `None - <reason>` (for example an FK cascade). A sweep that selects by a state column is also a row in 08 § 11.4. With no store holding user data, write "None - no store holds user data." -->
+
+| Store | Kind | User data held | Owner key | Deletion participant | Presence answer | Retention | Orphan sweep |
+|-------|------|----------------|-----------|----------------------|-----------------|-----------|--------------|
+| `foo` | Table | [Columns, as 11 § 14.2 classifies them] | `[owner_id]` | `[FooErasureHandler]` on `[erasure event]`: delete | Lookup by `(tenant_id, owner_id)` | Row `foo` above; [clock starts at account closure] | None - FK cascade from `[owner table]` |
+| `[object-store-name]` | Object or file store | [Uploaded files] | Key prefix `[tenant]/[owner]/` (12 § 15.2 Derived keys) | `[FileErasureHandler]`: delete by prefix | List by owner prefix | Row `[object-store-name]` above | `[OrphanObjectSweep]`, [daily]: objects with no owning row, older than [24h] |
 
 ## 8.7 Encryption
 

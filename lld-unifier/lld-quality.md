@@ -1,6 +1,6 @@
 # LLD Quality Bar
 
-The LLD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones: the Runtime Stack, Libraries & Coding Conventions, Per-Service Implementation, Use-Case Workflows, Design Pattern Application, API Contracts, Cross-Cutting Concerns, and Operations Runbook.
+The LLD has multiple high-value sections. This file captures the quality bar for the most easily-thinned ones: the Runtime Stack, Libraries & Coding Conventions, Per-Service Implementation, Use-Case Workflows, Design Pattern Application, API Contracts, Cross-Cutting Concerns, Operations Runbook, value lists, and data access.
 
 The principle is the same as `sdd-quality.md` in `sdd-unifier`: substantive content, not template-shaped filler.
 
@@ -131,7 +131,7 @@ We use outbox pattern. See CLAUDE.md.
 Apply unconditionally if conditions match:
 
 1. Outbox (if a state change must be followed by a side effect that must not be lost: an integration event, a provider write, or an in-process domain event under a durable SDD §14.10 Delivery line; in-memory events of `07-event-contracts.md` § 10.6 use none).
-2. Idempotency (if service exposes write endpoints touching money / wallet / notifications / external providers).
+2. Idempotency (if the service exposes a write endpoint a client may retry, or consumes messages: the triggering condition of `pattern-rules.md` § Idempotency, where money writes keep their stricter rules).
 3. RFC 9457 error model (always for REST services).
 4. Saga (if service participates in cross-service business transactions).
 
@@ -291,11 +291,52 @@ Caches are the easiest place to add accidental bugs (stale data, cross-tenant le
 - Eviction (LRU / time / none).
 - TTL.
 - Invalidation triggers (which events invalidate which keys).
-- Tenant scoping (a shared cache keys by tenant, whatever the tenancy model, as the project file states).
+- Owner scoping (a shared cache keys by tenant, whatever the tenancy model, as the project file states; when isolation is per account, the owning account replaces the tenant; the key's parts follow `12-performance.md` § 15.2 Derived keys).
 
 Bad: "Use Redis cache where appropriate."
 
 Good: Per-cache table row with all five columns above.
+
+---
+
+## Value lists (any chunk)
+
+A list written as examples is read as complete, and the build then guesses the rest.
+
+**Good:**
+
+- Every enum, setting key, audit action, error code, purpose code, data category and route list is written in full where it lives.
+- A list that lives elsewhere names its single source with a link (the SDD catalogue, the owner's table, a § 6.5.1 row) and is not restated.
+
+**Bad:**
+
+- An ellipsis or wildcard in a value list (`...`, `etc.`, `SETUP_*`, "for example A, B"), where the list is meant to be complete.
+- A value that code needs but no list holds, such as a setting key or an audit action named only in pseudocode.
+- Two lists of the same values in two chunks.
+
+**Test:** take any value a workflow, a table or a route uses. One list holds it, in full or by its single source. A value list with an ellipsis or a wildcard is a finding.
+
+---
+
+## Data access (04 § 7.3 pseudocode, 05 § 8.3)
+
+Pseudo-SQL is read as a contract for the stated database. A query that cannot run there is found only at build time.
+
+**Good:**
+
+- Every query, constraint and conflict clause is valid for the database and version of § 6.3.
+- Every "latest" or "newest" query orders by a unique tie-breaker, not only by a timestamp.
+- Every unique constraint a write can hit names its handling (refuse with a stated error, or upsert, or ignore), per flow.
+- Every numbering assumption (gap-free, monotonic, one per parent) is stated as an invariant, with what enforces it.
+
+**Bad:**
+
+- A conflict clause, cast or function the stated database version does not support.
+- "Take the latest row" ordered by a value two rows can share.
+- A unique constraint with no handling stated, so each flow picks its own.
+- Logic that reads a previous revision as `revision - 1` with no statement that revisions have no gaps.
+
+**Test:** take any query or write in 04 or 05. It runs as written on the § 6.3 database version; its ordering picks one row; its unique clashes have a stated outcome; and every numbering it relies on is an invariant with its enforcement.
 
 ---
 

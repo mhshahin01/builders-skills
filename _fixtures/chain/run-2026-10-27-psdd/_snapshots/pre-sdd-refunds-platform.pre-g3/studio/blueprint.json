@@ -1,0 +1,4976 @@
+{
+  "schema_version": "2.0.0",
+  "project": {
+    "id": "REFUNDS-PLATFORM",
+    "name": "Refunds Platform",
+    "slug": "refunds-platform",
+    "path_code": "GF-CL",
+    "change_type": "GF",
+    "target_hosting": "CL",
+    "source_to_target": "Not applicable",
+    "project_status": "G2"
+  },
+  "sources": {
+    "pre_sdd": {
+      "path": "refunds-platform-pre-sdd-master.md",
+      "version": "1.0",
+      "approval_status": "discovery"
+    },
+    "brds": [
+      {
+        "key": "REFUNDS",
+        "path": "../brd-refunds-portal/refunds-portal-brd-master.md",
+        "version": "1.5",
+        "status": "In Review"
+      },
+      {
+        "key": "LOYALTY",
+        "path": "../brd-loyalty-points/loyalty-points-brd-master.md",
+        "version": "1.7",
+        "status": "In Review"
+      }
+    ],
+    "engine": {
+      "name": "pre-sdd-engine",
+      "version": "3.0.0"
+    },
+    "skill": {
+      "name": "pre-sdd-unifier",
+      "version": "1.0.0"
+    }
+  },
+  "requirements": [
+    {
+      "id": "HDR-01.1",
+      "item": "HDR-01",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Refunds Platform",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-02.1",
+      "item": "HDR-02",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Head of Retail",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-03.1",
+      "item": "HDR-03",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Refunds and Loyalty Product Owner",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-04.1",
+      "item": "HDR-04",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Lead Architect, Retail IT",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-05.1",
+      "item": "HDR-05",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Architecture Review Board",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-06.1",
+      "item": "HDR-06",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Finance Director",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-07.1",
+      "item": "HDR-07",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "greenfield",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 01: refunds are handled on paper and by phone today; LOYALTY 01: the current state is not stated.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:35:16.514Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-08.1",
+      "item": "HDR-08",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "cloud",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": "provider-hosted public cloud; no provider is a hard constraint",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:35:16.514Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-09.1",
+      "item": "HDR-09",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "None: there is no source platform; refunds are on paper and by phone today",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "HDR-10.1",
+      "item": "HDR-10",
+      "group": "HDR",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "none",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": null,
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:30.023Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-01.1",
+      "item": "BUS-01",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "REFUNDS: cut the average time from request to payout from 10 days to 3 days; stop lost refund requests, so every request is recorded and visible to the customer; give branch managers one place to decide for their own branch; refund complaints fall from 18% of all complaints to customer care (target and date not stated); a share of refund requests made through the portal (target and date not stated). LOYALTY: members trust their points balance (zero upheld balance complaints a month, LOYALTY/NFR-01); members check their points without calling a branch (baseline, target and date not stated).",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 01"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 01 Business Objectives 1 to 5; LOYALTY 01 Business Objectives 1 and 2.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-02.1",
+      "item": "BUS-02",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": "Request a refund (REFUNDS/UC-01)",
+      "scope": null,
+      "workload": null,
+      "value": "The customer requests a refund for items on a branch receipt within the 30-day refund window; it needs the receipt lookup from Point-of-Sale Records (Critical); when receipts cannot be checked, the customer is asked to try again later.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-01"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/UC-01, UC-01 E5; REFUNDS 08.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-02.2",
+      "item": "BUS-02",
+      "group": "BUS",
+      "n": 2,
+      "primary": false,
+      "label": "Track a refund request (REFUNDS/UC-02)",
+      "scope": null,
+      "workload": null,
+      "value": "The customer sees each own refund request with its status and history (Business Objective 2).",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-02"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-02.3",
+      "item": "BUS-02",
+      "group": "BUS",
+      "n": 3,
+      "primary": false,
+      "label": "Cancel a refund request (REFUNDS/UC-03)",
+      "scope": null,
+      "workload": null,
+      "value": "The customer cancels an own request while it is Submitted; Loyalty Points is told the outcome.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-03"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-02.4",
+      "item": "BUS-02",
+      "group": "BUS",
+      "n": 4,
+      "primary": false,
+      "label": "Approve or reject a refund, and the payout (REFUNDS/UC-04)",
+      "scope": null,
+      "workload": null,
+      "value": "The branch manager approves a request in full or in part, or rejects it with a reason; the payout goes to the original card through the Payment Provider (Critical); a failed payout is tried again, and the branch manager is told after one day.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-02.5",
+      "item": "BUS-02",
+      "group": "BUS",
+      "n": 5,
+      "primary": false,
+      "label": "View the points balance (LOYALTY/UC-01)",
+      "scope": null,
+      "workload": null,
+      "value": "The member sees the current points balance; when points cannot be shown, the member is asked to try again later and is never shown a balance of 0.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/UC-01"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-02.6",
+      "item": "BUS-02",
+      "group": "BUS",
+      "n": 6,
+      "primary": false,
+      "label": "View the points history (LOYALTY/UC-02)",
+      "scope": null,
+      "workload": null,
+      "value": "The member sees every points movement, newest first, with the purchase or refund behind it.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/UC-02"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-02.7",
+      "item": "BUS-02",
+      "group": "BUS",
+      "n": 7,
+      "primary": false,
+      "label": "Earn points on a branch purchase (LOYALTY 03, no use case)",
+      "scope": null,
+      "workload": null,
+      "value": "Points are earned at 1 point per 1 EUR on each branch purchase received from POS Records; a purchase that arrives late keeps its purchase date.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY 03"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-03.1",
+      "item": "BUS-03",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "In scope: online refund requests for branch purchases; customers follow and cancel their own requests; branch manager decisions in full or in part; payout to the original card; email and SMS messages; refund outcomes sent to Loyalty Points; a daily branch refund report (REFUNDS 04). Earning points on branch purchases; points balance and history; taking points back after a paid refund (LOYALTY 04). Out of scope: refunds for online-shop purchases, cash refunds, a customer mobile app (REFUNDS 04); redeeming points, handling points complaints and correcting points by hand (LOYALTY 04). The Refunds Portal starts in a pilot group of branches and Loyalty Points goes live in all branches at once; neither waits for the other.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 04"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 04 Project Scope; LOYALTY 04 Project Scope.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-04.1",
+      "item": "BUS-04",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-05.1",
+      "item": "BUS-05",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-20",
+      "evidence": "No launch date is stated. REFUNDS 04: a pilot group of branches first; the pilot branches, its length and the order of the other branches are not stated. REFUNDS 02: the CardPay Ltd answer is needed before the build of UC-04, the Point-of-Sale receipt lookup before the build of UC-01, the Legal confirmation before go-live. LOYALTY 04: all branches at once after BAT sign-off.",
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-06.1",
+      "item": "BUS-06",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Customers of 40 retail branches and loyalty members; customer and member screens work in a web browser on phones and computers; purchases are counted in EUR. Not stated: the countries the branches operate in, the languages, the date and number formats, and the accessibility standard.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 02"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 02 Facts 1; REFUNDS 11; LOYALTY 11; LOYALTY 02 Glossary (EUR); REFUNDS/NFR-07 (countries open).",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-07.1",
+      "item": "BUS-07",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Payouts go only to the card used for the purchase. Non-goals: refunds for online-shop purchases, cash refunds and a customer mobile app; redeeming points, handling points complaints and correcting points by hand.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "hard",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 02"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 02 Assumptions / Constraints 2; REFUNDS 04 Out of Scope; LOYALTY 04 Out of Scope.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:38:52.863Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "BUS-08.1",
+      "item": "BUS-08",
+      "group": "BUS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "No customer-facing contract or penalty applies; payouts follow the refund terms agreed with the payment provider (CardPay Ltd).",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "hard",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-07: every paid refund carries the refund document and records the tax law requires; the countries, the document and the register are not stated. REFUNDS 02: the CardPay Ltd refund conditions and consumer refund rights beyond the 30-day window are open. No penalty condition is stated.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:38:51.926Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-01.1",
+      "item": "CAP-01",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": "Points movement (earned on a branch purchase, or taken back after a refund)",
+      "scope": null,
+      "workload": null,
+      "value": 2000,
+      "unit": "transactions/day",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 02 Facts 1: about 1,200 refund requests a month across 40 branches. A daily figure needs a month length, so it is not stated for this row.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:35:16.514Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-01.2",
+      "item": "CAP-01",
+      "group": "CAP",
+      "n": 2,
+      "primary": false,
+      "label": "Refund request",
+      "scope": null,
+      "workload": null,
+      "value": 40,
+      "unit": "transactions/day",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "LOYALTY states no volume of purchases or points movements.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:35:16.514Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-02.1",
+      "item": "CAP-02",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": 0.22916666666666669,
+      "unit": "req/s",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "derived",
+        "text": "Derived: CALC-03 from CAP-01, CAP-04, CAP-02"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:33.180Z",
+      "proposal": null,
+      "factors": {
+        "callsPerTxn": {
+          "value": 3,
+          "status": "confirmed",
+          "source": {
+            "type": "default",
+            "text": "Default: policy appendix v1"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:33.180Z"
+        },
+        "requestFactor": {
+          "value": 1.1,
+          "status": "confirmed",
+          "source": {
+            "type": "default",
+            "text": "Default: policy appendix v1"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:33.180Z"
+        }
+      }
+    },
+    {
+      "id": "CAP-03.1",
+      "item": "CAP-03",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "300 peak simultaneously active users (customers, members and branch managers)",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:35:17.550Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-04.1",
+      "item": "CAP-04",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": 3,
+      "unit": "×",
+      "window": "About 3 weeks of seasonal sales",
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-03"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 02 Facts 2: seasonal sales triple the number of requests for about 3 weeks. REFUNDS/NFR-03: 3 times the normal number of requests for 3 weeks, while still meeting NFR-05.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:35:17.550Z",
+      "proposal": null,
+      "factors": {
+        "utilization": {
+          "value": 0.65,
+          "status": "confirmed",
+          "source": {
+            "type": "default",
+            "text": "Default: policy appendix v1"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:33.180Z"
+        }
+      }
+    },
+    {
+      "id": "CAP-05.1",
+      "item": "CAP-05",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": "%/yr",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-06.1",
+      "item": "CAP-06",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Requests about 4 KB and responses about 16 KB; receipts are looked up, not uploaded",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:31.980Z",
+      "proposal": null,
+      "factors": {
+        "requestKB": {
+          "value": 4,
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:40:31.980Z"
+        },
+        "responseKB": {
+          "value": 16,
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:40:31.980Z"
+        },
+        "networkOverhead": {
+          "value": 1.2,
+          "status": "confirmed",
+          "source": {
+            "type": "default",
+            "text": "Default: policy appendix v1"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:33.180Z"
+        }
+      }
+    },
+    {
+      "id": "CAP-07.1",
+      "item": "CAP-07",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": "Everyday portal actions: enter a receipt number, submit a request, open a request list (REFUNDS/NFR-05)",
+      "scope": null,
+      "workload": null,
+      "value": 2000,
+      "unit": "ms",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "policy",
+        "text": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-05: each everyday action completes within a number of seconds that is not stated.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:35:18.594Z",
+      "proposal": null,
+      "factors": {
+        "meanLatencyMs": {
+          "value": 120,
+          "status": "confirmed",
+          "source": {
+            "type": "default",
+            "text": "Default: policy appendix v1"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:33.180Z"
+        }
+      }
+    },
+    {
+      "id": "CAP-07.2",
+      "item": "CAP-07",
+      "group": "CAP",
+      "n": 2,
+      "primary": false,
+      "label": "Open the points balance and the points history (LOYALTY/UC-01, UC-02)",
+      "scope": null,
+      "workload": null,
+      "value": 2000,
+      "unit": "ms",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "policy",
+        "text": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "LOYALTY states no response time for the points screens.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:35:18.594Z",
+      "proposal": null,
+      "factors": {
+        "meanLatencyMs": {
+          "value": null,
+          "status": "open",
+          "source": {
+            "type": "none",
+            "text": ""
+          },
+          "confirmed_by": null,
+          "confirmed_at": null
+        }
+      }
+    },
+    {
+      "id": "CAP-08.1",
+      "item": "CAP-08",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Ingress edge; successful and failed requests measured separately",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "assumption",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "default",
+        "text": "Default: project rule CAP-08"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:33.180Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-09.1",
+      "item": "CAP-09",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Points taken back after a paid refund show within 1 hour of the refund being paid; a payout that still fails after one day is reported to the branch manager; the branch refund report is daily. The deadline for points earned on a purchase is not stated.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/NFR-02"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "LOYALTY/NFR-02; REFUNDS/UC-04 E1; REFUNDS 09; LOYALTY/NFR-03 (open).",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:33.180Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-10.1",
+      "item": "CAP-10",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": "%",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+E",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {
+        "queryShape": {
+          "value": null,
+          "status": "open",
+          "source": {
+            "type": "none",
+            "text": ""
+          },
+          "confirmed_by": null,
+          "confirmed_at": null
+        }
+      }
+    },
+    {
+      "id": "CAP-11.1",
+      "item": "CAP-11",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "A refused or sent-back payout stays Approved and is tried again; the customer is told it is delayed, and the branch manager is told after one day. When Point-of-Sale Records cannot be reached, the customer is asked to try again later. A message that does not reach the customer never stops a request. Points or history that cannot be shown ask the member to try again later. How long a failed payout is tried again is not stated.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/UC-04 E1; REFUNDS/UC-01 E5; REFUNDS 03 Customer messages; LOYALTY/UC-01 E1, UC-02 E1.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:33.180Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "CAP-12.1",
+      "item": "CAP-12",
+      "group": "CAP",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "not_applicable",
+      "na_reason": "No AI, ML or media jobs are in scope of either BRD.",
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-01.1",
+      "item": "REL-01",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": "Refund journeys for customers and branch managers (REFUNDS/UC-01 to UC-04)",
+      "scope": null,
+      "workload": null,
+      "value": 99.9,
+      "unit": "%",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "policy",
+        "text": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-02: no more than 2 hours of disruption a month, planned maintenance included. A percentage needs a month length, so it is not stated for this row.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:35:18.594Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-01.2",
+      "item": "REL-01",
+      "group": "REL",
+      "n": 2,
+      "primary": false,
+      "label": "Points balance and points history screens (LOYALTY/UC-01, UC-02)",
+      "scope": null,
+      "workload": null,
+      "value": 99.9,
+      "unit": "%",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "policy",
+        "text": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "LOYALTY/NFR-04: the points screens open at any time of day, every day; the minutes per month are not stated.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:35:18.594Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-02.1",
+      "item": "REL-02",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-03.1",
+      "item": "REL-03",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": "Whole platform, region loss",
+      "scope": "region",
+      "workload": null,
+      "value": 14400,
+      "unit": "s",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "Neither BRD states a recovery time after a failure.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:01.249Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-03.2",
+      "item": "REL-03",
+      "group": "REL",
+      "n": 2,
+      "primary": false,
+      "label": "Whole platform, zone loss",
+      "scope": "az",
+      "workload": null,
+      "value": 300,
+      "unit": "s",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:01.249Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-04.1",
+      "item": "REL-04",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": "All refund and points data, region loss",
+      "scope": "region",
+      "workload": null,
+      "value": 900,
+      "unit": "s",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+D",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-01: refund money is never lost or paid twice. Neither BRD states an acceptable data loss.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:01.249Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-04.2",
+      "item": "REL-04",
+      "group": "REL",
+      "n": 2,
+      "primary": false,
+      "label": "All refund and points data, zone loss",
+      "scope": "az",
+      "workload": null,
+      "value": 5,
+      "unit": "s",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+D",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:01.249Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-05.1",
+      "item": "REL-05",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": "Loss of a whole region",
+      "scope": null,
+      "workload": null,
+      "value": "region",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+Ops",
+      "owner_name": null,
+      "due": null,
+      "evidence": "Neither BRD states a failure scope to survive.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:01.249Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-05.2",
+      "item": "REL-05",
+      "group": "REL",
+      "n": 2,
+      "primary": false,
+      "label": "Loss of one zone",
+      "scope": null,
+      "workload": null,
+      "value": "az",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+Ops",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:01.249Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-06.1",
+      "item": "REL-06",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "A staff member records a payout result by hand and a second staff member confirms it; a monthly check makes sure no payout is missing or paid twice (its owner is not stated); a customer whose purchase cannot be refunded online can visit the branch.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      },
+      "owner": "B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 03 Decision record; REFUNDS 04 Personas; REFUNDS/UC-01 E1, E4.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:35.695Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-07.1",
+      "item": "REL-07",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+Ops",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-08.1",
+      "item": "REL-08",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Planned maintenance is allowed and counts toward the 2 hours of disruption a month of the refund journeys; for the points screens it counts toward a monthly limit that is not stated.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-02"
+      },
+      "owner": "B+Ops",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-02; LOYALTY/NFR-04.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:35.695Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-09.1",
+      "item": "REL-09",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+Ops",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "REL-10.1",
+      "item": "REL-10",
+      "group": "REL",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Refund money is never lost or paid twice: zero missing or duplicate payouts a month. The decision record of every status change cannot be changed. Every points movement follows the points rules; each paid refund takes points back once, even when reported more than once; the balance always equals the sum of the movements.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-01"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-01; REFUNDS 03 Decision record; LOYALTY/NFR-01; LOYALTY/UC-02 BR-3; LOYALTY 03.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:35.695Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "DAT-01.1",
+      "item": "DAT-01",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": "Refund requests, decisions and payouts",
+      "scope": null,
+      "workload": null,
+      "value": "Refund request with its lifecycle (Submitted, Approved, Rejected, Paid, Cancelled), the decision record of every status change, and the payout to the original card; the Refunds Portal records them.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      },
+      "owner": "D+B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 03 Refund request, Decision record.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:28.127Z",
+      "proposal": null,
+      "factors": {
+        "storeKind": {
+          "value": "relational",
+          "status": "confirmed",
+          "source": {
+            "type": "brd",
+            "text": "BRD: REFUNDS 12 (TI-02)"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:28.127Z"
+        }
+      }
+    },
+    {
+      "id": "DAT-01.2",
+      "item": "DAT-01",
+      "group": "DAT",
+      "n": 2,
+      "primary": false,
+      "label": "Points ledger",
+      "scope": null,
+      "workload": null,
+      "value": "Points balance and points movements (earned, taken back) for each member, with the purchase and refund details behind each movement; the balance is the sum of the movements; Loyalty Points keeps them.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY 03"
+      },
+      "owner": "D+B",
+      "owner_name": null,
+      "due": null,
+      "evidence": "LOYALTY 03 Points movement, Keeping points history.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:28.127Z",
+      "proposal": null,
+      "factors": {
+        "storeKind": {
+          "value": "relational",
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:40:27.062Z"
+        }
+      }
+    },
+    {
+      "id": "DAT-02.1",
+      "item": "DAT-02",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": 0.016,
+      "unit": "GB/day",
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "forecast",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "derived",
+        "text": "Derived: CALC-10 from CAP-01, DAT-02"
+      },
+      "owner": "D+B",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:02.171Z",
+      "proposal": null,
+      "factors": {
+        "storedKB": {
+          "value": 8,
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:36:01.249Z"
+        },
+        "initialGB": {
+          "value": 1,
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:36:01.249Z"
+        },
+        "retentionDays": {
+          "value": 3653,
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:36:01.249Z"
+        },
+        "indexFactor": {
+          "value": 1.4,
+          "status": "confirmed",
+          "source": {
+            "type": "default",
+            "text": "Default: policy appendix v1"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:28.127Z"
+        },
+        "copies": {
+          "value": 2,
+          "status": "confirmed",
+          "source": {
+            "type": "default",
+            "text": "Default: policy appendix v1"
+          },
+          "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+          "confirmed_at": "2026-10-27T16:40:28.127Z"
+        }
+      }
+    },
+    {
+      "id": "DAT-03.1",
+      "item": "DAT-03",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "sensitive",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "hard",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-04"
+      },
+      "owner": "D+Sec",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-04: customer personal data is protected; REFUNDS 08: card payout records; LOYALTY/NFR-05: points, history and purchase details visible only to the member.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:28.127Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "DAT-04.1",
+      "item": "DAT-04",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "yes",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "hard",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "D+Legal",
+      "owner_name": null,
+      "due": null,
+      "evidence": "No residency or allowed location is stated; the applicable data-protection law is open (REFUNDS 02, LOYALTY 02 Dependencies).",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:27.062Z",
+      "proposal": null,
+      "factors": {
+        "primaryLocation": {
+          "value": "Within the European Union",
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:40:27.062Z"
+        },
+        "recoveryLocation": {
+          "value": "Within the European Union, in a second region",
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:40:27.062Z"
+        }
+      }
+    },
+    {
+      "id": "DAT-05.1",
+      "item": "DAT-05",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": "Refund requests, decisions and payouts",
+      "scope": null,
+      "workload": null,
+      "value": "strong",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+D",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-01: refund money is never lost or paid twice. The consistency model is not stated.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:27.062Z",
+      "proposal": null,
+      "factors": {
+        "transactionNeed": {
+          "value": "yes",
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:40:27.062Z"
+        }
+      }
+    },
+    {
+      "id": "DAT-05.2",
+      "item": "DAT-05",
+      "group": "DAT",
+      "n": 2,
+      "primary": false,
+      "label": "Points ledger",
+      "scope": null,
+      "workload": null,
+      "value": "strong",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+D",
+      "owner_name": null,
+      "due": null,
+      "evidence": "LOYALTY/NFR-01: every points movement follows the points rules. The consistency model is not stated.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:27.062Z",
+      "proposal": null,
+      "factors": {
+        "transactionNeed": {
+          "value": null,
+          "status": "open",
+          "source": {
+            "type": "none",
+            "text": ""
+          },
+          "confirmed_by": null,
+          "confirmed_at": null
+        }
+      }
+    },
+    {
+      "id": "DAT-06.1",
+      "item": "DAT-06",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Refund requests, decisions and payout results are kept for 10 years for tax records; customer contact details are deleted 90 days after a request ends; a member's points history is kept while the membership lasts and deleted within 30 days after it ends.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "hard",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "D",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-06: the retention of refund records and of customer contact details is not stated; REFUNDS 03: the decision record is deleted only when the NFR-06 period ends; LOYALTY 03: how long movement details are kept, and when the data of a member who leaves is deleted, are not stated.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:27.062Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "DAT-07.1",
+      "item": "DAT-07",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+D",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "DAT-08.1",
+      "item": "DAT-08",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "A daily branch refund report for each branch manager: requests per status, amounts paid, average time from Submitted to decision and to Paid. A monthly check that no payout is missing or paid twice (owner not stated). Loyalty Points has no reporting in this release.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 09"
+      },
+      "owner": "B+D",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 09; REFUNDS 04 Personas; LOYALTY 09.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:28.127Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "DAT-09.1",
+      "item": "DAT-09",
+      "group": "DAT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "D+Ops",
+      "owner_name": "Data Owner, Retail Finance",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-01.1",
+      "item": "SEC-01",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "hard",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "Sec+D",
+      "owner_name": "Legal Counsel",
+      "due": "2026-12-15",
+      "evidence": "REFUNDS 02 and LOYALTY 02 Dependencies: the Legal confirmation of the applicable data-protection law (and, for REFUNDS, of consumer refund rights) is a hard dependency needed before go-live, owner not stated; REFUNDS/NFR-04 and NFR-07 wait on it.",
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-02.1",
+      "item": "SEC-02",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Customers prove who they are before they see receipt items or their requests (method not stated); branch managers act only for their own branch; staff members record and confirm a payout result by hand; members sign in (the sign-in party is not stated). Partners: Payment Provider, Notification Partner, Point-of-Sale Records.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      },
+      "owner": "B+Sec",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 03 Customer identity, Branch ownership, Decision record; LOYALTY/UC-01 Preconditions; REFUNDS 08; LOYALTY 08.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:26.019Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-03.1",
+      "item": "SEC-03",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "Sec",
+      "owner_name": "Security Lead",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-04.1",
+      "item": "SEC-04",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Customer personal data, payout records and points data are encrypted at rest and in transit; the business holds the keys and rotates them at least once a year.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "hard",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "Sec+D",
+      "owner_name": null,
+      "due": null,
+      "evidence": "Neither BRD states encryption or key custody.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:25.038Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-05.1",
+      "item": "SEC-05",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Every refund status change is recorded with who made it, the date and time, the amount and the reason; a payout result recorded by hand needs a second staff member to confirm it; nobody can change the record, and it is deleted only when the retention period ends.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 03"
+      },
+      "owner": "D+Sec",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 03 Decision record.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:26.019Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-06.1",
+      "item": "SEC-06",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "Sec+Ops",
+      "owner_name": "Security Lead",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-07.1",
+      "item": "SEC-07",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "A branch manager decides only for the own branch and never on a request they submitted as a customer; a payout result recorded by hand is confirmed by a second staff member. A second approver above an amount is not stated.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      },
+      "owner": "Sec",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/UC-04 BR-1, BR-6, BR-7; REFUNDS 03 Decision record.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:26.019Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "SEC-08.1",
+      "item": "SEC-08",
+      "group": "SEC",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+Sec",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-01.1",
+      "item": "INT-01",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": "Payment Provider (CardPay Ltd)",
+      "scope": null,
+      "workload": null,
+      "value": "Payment Provider, CardPay Ltd: payout requests, payout results, card disputes and their outcome; both ways; Critical.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 08.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:30.533Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-01.2",
+      "item": "INT-01",
+      "group": "INT",
+      "n": 2,
+      "primary": false,
+      "label": "Point-of-Sale Records (Retail IT team)",
+      "scope": null,
+      "workload": null,
+      "value": "Point-of-Sale Records, Retail IT team: receipt, items, amounts, branch, purchase date and how the purchase was paid, for the refund lookup; member purchases for earning points; we receive; Critical.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 08; LOYALTY 08.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:30.533Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-01.3",
+      "item": "INT-01",
+      "group": "INT",
+      "n": 3,
+      "primary": false,
+      "label": "Notification Partner (MsgHub)",
+      "scope": null,
+      "workload": null,
+      "value": "Notification Partner, MsgHub: customer contact details and message content for email and SMS; we send; Important.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 08.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:30.533Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-02.1",
+      "item": "INT-02",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "The receipt lookup runs when the customer enters a receipt number; payout requests and results go both ways with the Payment Provider; refund outcomes go to Loyalty Points at each change to Paid, Rejected, Cancelled or back to Approved, and are kept and sent later while Loyalty Points has not started; branch purchases are known the same day.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 08"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/UC-01 step 2; REFUNDS 08; REFUNDS 04; REFUNDS/UC-04 Business Rules; LOYALTY 02 Assumption 1.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:30.533Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-03.1",
+      "item": "INT-03",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": "Payment Provider (CardPay Ltd)",
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+E",
+      "owner_name": "CardPay Ltd",
+      "due": "2026-11-30",
+      "evidence": "REFUNDS 08: integration details and availability targets are left to the SDD; no quota, latency or SLA is stated.",
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-03.2",
+      "item": "INT-03",
+      "group": "INT",
+      "n": 2,
+      "primary": false,
+      "label": "Point-of-Sale Records (Retail IT team)",
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+E",
+      "owner_name": "Retail IT team",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-03.3",
+      "item": "INT-03",
+      "group": "INT",
+      "n": 3,
+      "primary": false,
+      "label": "Notification Partner (MsgHub)",
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+E",
+      "owner_name": "MsgHub",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-04.1",
+      "item": "INT-04",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "A refused or sent-back payout is tried again and the request stays Approved; when Point-of-Sale Records cannot be reached, the customer is asked to try again later; a failed message never stops a request; refund outcomes are kept and sent when Loyalty Points starts; a paid refund whose purchase has not earned points waits up to 30 days.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/UC-04"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/UC-04 E1; REFUNDS/UC-01 E5; REFUNDS 03; REFUNDS 04; LOYALTY/UC-02 BR-5.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:30.533Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-05.1",
+      "item": "INT-05",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Each paid refund takes points back once, even when it is reported more than once; points taken back show within 1 hour of the refund being paid; a purchase that arrives late keeps its purchase date.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: LOYALTY/UC-02"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "LOYALTY/UC-02 BR-3; LOYALTY/NFR-02; LOYALTY 03 Earning points.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:30.533Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-06.1",
+      "item": "INT-06",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "E+Sec",
+      "owner_name": "Lead Architect, Retail IT",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-07.1",
+      "item": "INT-07",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Customers and members use a web browser on phones and computers; branch managers work in 40 branches; no offline operation is stated; the devices for the branch manager screens are not stated.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 11"
+      },
+      "owner": "B+E",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 11; LOYALTY 11; REFUNDS 02 Facts.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:30.533Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "INT-08.1",
+      "item": "INT-08",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "public",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "E",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:29.350Z",
+      "proposal": null,
+      "factors": {
+        "cidrPrefix": {
+          "value": null,
+          "status": "open",
+          "source": {
+            "type": "none",
+            "text": ""
+          },
+          "confirmed_by": null,
+          "confirmed_at": null
+        }
+      }
+    },
+    {
+      "id": "INT-09.1",
+      "item": "INT-09",
+      "group": "INT",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+E",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-01.1",
+      "item": "OPS-01",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Users reach the refund journeys and the points screens at any time of day, every day. Support hours, incident severities and escalation are not stated.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-02"
+      },
+      "owner": "B+Ops",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS/NFR-02; LOYALTY/NFR-04.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:37.794Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-02.1",
+      "item": "OPS-02",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "Ops+E",
+      "owner_name": "Operations Lead",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-03.1",
+      "item": "OPS-03",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+Ops",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-04.1",
+      "item": "OPS-04",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "dev, test, stage, prod, dr",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "assumption",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "default",
+        "text": "Default: project rule OPS-04"
+      },
+      "owner": "Ops",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:37.794Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-05.1",
+      "item": "OPS-05",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "Ops",
+      "owner_name": "Operations Lead",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-06.1",
+      "item": "OPS-06",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+Ops",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-07.1",
+      "item": "OPS-07",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "The Refunds Portal starts in a pilot group of branches, then the other branches; until a branch starts, it handles refunds as today. The pilot branches, its length, the order of the other branches and the handling of open paper requests are not stated. Loyalty Points goes live in all branches at once after BAT sign-off.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS 04"
+      },
+      "owner": "B+Ops",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 04 Project Scope; LOYALTY 04 Project Scope.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:37.794Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "OPS-08.1",
+      "item": "OPS-08",
+      "group": "OPS",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Business acceptance testing before go-live; a seasonal load of 3 times the normal number of requests for 3 weeks while meeting REFUNDS/NFR-05. The accessibility standard is not stated.",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "brd",
+        "text": "BRD: REFUNDS/NFR-03"
+      },
+      "owner": "B+Ops",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 02 Glossary (BAT); LOYALTY 04; REFUNDS/NFR-03; REFUNDS 11.",
+      "confirmed_by": "Policy: test-run policy (set by Product Owner (fixture owner), 2026-10-27)",
+      "confirmed_at": "2026-10-27T16:40:37.794Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "ECO-01.1",
+      "item": "ECO-01",
+      "group": "ECO",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "One-time budget 250,000 EUR; run cost up to 12,000 EUR a month",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+Fin",
+      "owner_name": null,
+      "due": null,
+      "evidence": "REFUNDS 01: the cost today and the expected saving are not stated; LOYALTY 01: the cost to build and run is not stated.",
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:36:03.097Z",
+      "proposal": null,
+      "factors": {
+        "budgetPressure": {
+          "value": "balanced",
+          "status": "confirmed",
+          "source": {
+            "type": "fixture",
+            "text": "Fixture: Product Owner stand-in (test-run policy)"
+          },
+          "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+          "confirmed_at": "2026-10-27T16:36:03.097Z"
+        }
+      }
+    },
+    {
+      "id": "ECO-02.1",
+      "item": "ECO-02",
+      "group": "ECO",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "Currency EUR; operating expense preferred",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+Fin",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:39.149Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "ECO-03.1",
+      "item": "ECO-03",
+      "group": "ECO",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": "36 months",
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "confirmed",
+      "na_reason": null,
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+Fin",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": "Fixture: Product Owner stand-in (test-run policy)",
+      "confirmed_at": "2026-10-27T16:40:39.149Z",
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "ECO-04.1",
+      "item": "ECO-04",
+      "group": "ECO",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "ECO-05.1",
+      "item": "ECO-05",
+      "group": "ECO",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "not_applicable",
+      "na_reason": "The business states no energy or environmental footprint goal for this system.",
+      "source": {
+        "type": "fixture",
+        "text": "Fixture: Product Owner stand-in (test-run policy)"
+      },
+      "owner": "B+Fin",
+      "owner_name": null,
+      "due": null,
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    },
+    {
+      "id": "ECO-06.1",
+      "item": "ECO-06",
+      "group": "ECO",
+      "n": 1,
+      "primary": true,
+      "label": null,
+      "scope": null,
+      "workload": null,
+      "value": null,
+      "unit": null,
+      "window": null,
+      "measured_at": null,
+      "priority": null,
+      "kind": "target",
+      "verification": null,
+      "status": "open",
+      "na_reason": null,
+      "source": {
+        "type": "none",
+        "text": ""
+      },
+      "owner": "B+Fin",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30",
+      "evidence": null,
+      "confirmed_by": null,
+      "confirmed_at": null,
+      "proposal": null,
+      "factors": {}
+    }
+  ],
+  "calculations": [
+    {
+      "id": "CALC-01",
+      "rule_id": "CALC-01",
+      "rule_version": "3.0.0",
+      "label": "Average business TPS",
+      "formula": "daily_transactions / 86400",
+      "substitution": "2,000 / 86400",
+      "row_ids": [
+        "CAP-01"
+      ],
+      "output": {
+        "value": 0.023148148148148147,
+        "unit": "txn/s"
+      },
+      "status": "estimated",
+      "limitations": "Daily average is not peak or burst demand."
+    },
+    {
+      "id": "CALC-02",
+      "rule_id": "CALC-02",
+      "rule_version": "3.0.0",
+      "label": "Peak business TPS",
+      "formula": "average_TPS × peak_factor",
+      "substitution": "0.023 × 3",
+      "row_ids": [
+        "CAP-01",
+        "CAP-04"
+      ],
+      "output": {
+        "value": 0.06944444444444445,
+        "unit": "txn/s"
+      },
+      "status": "estimated",
+      "limitations": "Peak multiplier requires measured demand curve or agreed forecast."
+    },
+    {
+      "id": "CALC-03",
+      "rule_id": "CALC-03",
+      "rule_version": "3.0.0",
+      "label": "Peak API RPS",
+      "formula": "peak_TPS × calls_per_txn × request_amplification",
+      "substitution": "0.069 × 3 × 1.1",
+      "row_ids": [
+        "CAP-01",
+        "CAP-04"
+      ],
+      "output": {
+        "value": 0.22916666666666669,
+        "unit": "req/s"
+      },
+      "status": "estimated",
+      "limitations": "API calls, event fanout and retries must not be double-counted."
+    },
+    {
+      "id": "CALC-04",
+      "rule_id": "CALC-04",
+      "rule_version": "3.0.0",
+      "label": "Headroom throughput budget",
+      "formula": "peak_API_RPS / utilization_fraction",
+      "substitution": "0.229 / 0.65",
+      "row_ids": [
+        "CAP-01",
+        "CAP-07"
+      ],
+      "output": {
+        "value": 0.3525641025641026,
+        "unit": "req/s"
+      },
+      "status": "estimated",
+      "limitations": "Throughput envelope, not number of nodes. Requires P99 load tests."
+    },
+    {
+      "id": "CALC-05",
+      "rule_id": "CALC-05",
+      "rule_version": "3.0.0",
+      "label": "Mean requests in flight",
+      "formula": "peak_API_RPS × mean_latency_ms / 1000",
+      "substitution": "0.229 × 120 / 1000",
+      "row_ids": [
+        "CAP-07"
+      ],
+      "output": {
+        "value": 0.0275,
+        "unit": "requests"
+      },
+      "status": "estimated",
+      "limitations": "Little’s Law uses mean latency, not P99 or logged-in users."
+    },
+    {
+      "id": "CALC-06",
+      "rule_id": "CALC-06",
+      "rule_version": "3.0.0",
+      "label": "Peak inbound network",
+      "formula": "peak_RPS × request_KB × 8 / 1000 × overhead",
+      "substitution": "0.229 × 4 × 8 / 1000 × 1.2",
+      "row_ids": [
+        "CAP-01",
+        "INT-08"
+      ],
+      "output": {
+        "value": 0.0088,
+        "unit": "Mbps"
+      },
+      "status": "estimated",
+      "limitations": "One selected network boundary; excludes replication/east-west flows."
+    },
+    {
+      "id": "CALC-07",
+      "rule_id": "CALC-07",
+      "rule_version": "3.0.0",
+      "label": "Peak outbound network",
+      "formula": "peak_RPS × response_KB × 8 / 1000 × overhead",
+      "substitution": "0.229 × 16 × 8 / 1000 × 1.2",
+      "row_ids": [
+        "CAP-01",
+        "INT-08"
+      ],
+      "output": {
+        "value": 0.0352,
+        "unit": "Mbps"
+      },
+      "status": "estimated",
+      "limitations": "Directional egress is not a separate guaranteed link rating."
+    },
+    {
+      "id": "CALC-08",
+      "rule_id": "CALC-08",
+      "rule_version": "3.0.0",
+      "label": "Combined modeled boundary traffic",
+      "formula": "inbound_Mbps + outbound_Mbps",
+      "substitution": "0.009 + 0.035",
+      "row_ids": [
+        "INT-08"
+      ],
+      "output": {
+        "value": 0.044000000000000004,
+        "unit": "Mbps"
+      },
+      "status": "estimated",
+      "limitations": "Sum of directional traffic; not a physical link-speed requirement."
+    },
+    {
+      "id": "CALC-09",
+      "rule_id": "CALC-09",
+      "rule_version": "3.0.0",
+      "label": "Daily API payload transfer",
+      "formula": "avg_API_RPS × 86400 × (request_KB + response_KB) / 1e6",
+      "substitution": "0.076 × 86400 × (4 + 16) / 1e6",
+      "row_ids": [
+        "CAP-01"
+      ],
+      "output": {
+        "value": 0.13200000000000003,
+        "unit": "GB/day"
+      },
+      "status": "estimated",
+      "limitations": "Decimal GB; excludes internal and replication traffic."
+    },
+    {
+      "id": "CALC-10",
+      "rule_id": "CALC-10",
+      "rule_version": "3.0.0",
+      "label": "New logical data per day",
+      "formula": "daily_txn × stored_KB_per_txn / 1e6",
+      "substitution": "2,000 × 8 / 1e6",
+      "row_ids": [
+        "DAT-01"
+      ],
+      "output": {
+        "value": 0.016,
+        "unit": "GB/day"
+      },
+      "status": "estimated",
+      "limitations": "Assumes every transaction contributes its stated logical size."
+    },
+    {
+      "id": "CALC-11",
+      "rule_id": "CALC-11",
+      "rule_version": "3.0.0",
+      "label": "Retained logical data",
+      "formula": "starting_GB + daily_new_GB × retention_days",
+      "substitution": "1 + 0.016 × 3,653",
+      "row_ids": [
+        "DAT-01"
+      ],
+      "output": {
+        "value": 59.448,
+        "unit": "GB"
+      },
+      "status": "estimated",
+      "limitations": "Steady-state simplified model; excludes historical growth and erasure."
+    },
+    {
+      "id": "CALC-12",
+      "rule_id": "CALC-12",
+      "rule_version": "3.0.0",
+      "label": "Planning storage footprint",
+      "formula": "logical_GB × index_factor × modeled_copies",
+      "substitution": "59.448 × 1.4 × 2",
+      "row_ids": [
+        "DAT-01"
+      ],
+      "output": {
+        "value": 166.4544,
+        "unit": "GB"
+      },
+      "status": "estimated",
+      "limitations": "Provider redundancy, snapshots, WAL, logs and backups are not fully modeled."
+    },
+    {
+      "id": "CALC-13",
+      "rule_id": "CALC-13",
+      "rule_version": "3.0.0",
+      "label": "30-day downtime budget",
+      "formula": "(1 − availability_pct/100) × 30 × 86400",
+      "substitution": "(1 − 99.9 / 100) × 2592000",
+      "row_ids": [
+        "REL-01"
+      ],
+      "output": {
+        "value": 2591.9999999997144,
+        "unit": "s"
+      },
+      "status": "estimated",
+      "limitations": "Calendar-time assumption; SLA exclusions may differ."
+    },
+    {
+      "id": "CALC-14",
+      "rule_id": "CALC-14",
+      "rule_version": "3.0.0",
+      "label": "Annual downtime budget",
+      "formula": "(1 − availability_pct/100) × 365 × 86400",
+      "substitution": "(1 − 99.9 / 100) × 31536000",
+      "row_ids": [
+        "REL-01"
+      ],
+      "output": {
+        "value": 31535.999999996526,
+        "unit": "s"
+      },
+      "status": "estimated",
+      "limitations": "SLO downtime budget is not an outage-specific RTO."
+    },
+    {
+      "id": "CALC-15",
+      "rule_id": "CALC-15",
+      "rule_version": "3.0.0",
+      "label": "Hypothetical RPO exposure",
+      "formula": "peak_TPS × RPO_seconds",
+      "substitution": "0.069 × 900",
+      "row_ids": [
+        "REL-04",
+        "CAP-01"
+      ],
+      "output": {
+        "value": 62.5,
+        "unit": "txns"
+      },
+      "status": "estimated",
+      "limitations": "Potential exposure if peak persisted; not the number of lost committed writes."
+    },
+    {
+      "id": "CALC-16",
+      "rule_id": "CALC-16",
+      "rule_version": "3.0.0",
+      "label": "One-year projected peak API RPS",
+      "formula": "peak_RPS × (1 + growth_pct/100)",
+      "substitution": "0.229 × (1 + TBD / 100)",
+      "row_ids": [
+        "CAP-05"
+      ],
+      "output": {
+        "value": null,
+        "unit": "req/s"
+      },
+      "status": "open",
+      "limitations": "Simple uniform growth scenario; not an adopted business forecast."
+    },
+    {
+      "id": "CALC-17",
+      "rule_id": "CALC-17",
+      "rule_version": "3.0.0",
+      "label": "Ideal migration bulk transfer",
+      "formula": "migration_GB × 8000 / (effective_Mbps × 3600)",
+      "substitution": "TBD × 8000 / (TBD × 3600)",
+      "row_ids": [],
+      "output": {
+        "value": null,
+        "unit": "hours"
+      },
+      "status": "open",
+      "limitations": "Only bulk-copy lower bound: excludes transform, CDC, verification and rollback."
+    },
+    {
+      "id": "CALC-18",
+      "rule_id": "CALC-18",
+      "rule_version": "3.0.0",
+      "label": "Proposed address block count",
+      "formula": "2 ^ (32 − prefix)",
+      "substitution": "2 ^ (32 − TBD)",
+      "row_ids": [
+        "INT-08"
+      ],
+      "output": {
+        "value": null,
+        "unit": "IPv4 addresses"
+      },
+      "status": "open",
+      "limitations": "Planning block only; no CIDR allocation. Per-provider reserved subnet addresses and IPAM need confirmation."
+    },
+    {
+      "id": "CALC-19",
+      "rule_id": "CALC-19",
+      "rule_version": "3.0.0",
+      "label": "Estimated business read TPS",
+      "formula": "peak_business_TPS × read_percent / 100",
+      "substitution": "0.069 × TBD / 100",
+      "row_ids": [
+        "CAP-01",
+        "DAT-01"
+      ],
+      "output": {
+        "value": null,
+        "unit": "reads/s"
+      },
+      "status": "open",
+      "limitations": "Assumes read fraction applies to business transactions; not DB query rate."
+    },
+    {
+      "id": "CALC-20",
+      "rule_id": "CALC-20",
+      "rule_version": "3.0.0",
+      "label": "Estimated business write TPS",
+      "formula": "peak_business_TPS × (100 − read_percent) / 100",
+      "substitution": "0.069 × (100 − TBD) / 100",
+      "row_ids": [
+        "CAP-01",
+        "DAT-01"
+      ],
+      "output": {
+        "value": null,
+        "unit": "writes/s"
+      },
+      "status": "open",
+      "limitations": "Business operations do not map one-to-one to physical DB writes."
+    }
+  ],
+  "architecture": {
+    "patterns": [
+      {
+        "id": "PAT-TOPO-001",
+        "name": "Primary + independent recovery location",
+        "status": "proposed",
+        "row_ids": [
+          "REL-01",
+          "REL-05"
+        ],
+        "rationale": "Candidate only: the topology every failure scope needs, or the decided override; validate it against each failure scope and its evidence."
+      },
+      {
+        "id": "PAT-DR-001",
+        "name": "Pilot Light (scope region)",
+        "status": "proposed",
+        "row_ids": [
+          "REL-03",
+          "REL-04",
+          "REL-05"
+        ],
+        "rationale": "The DR ladder applied provider-neutrally to this failure scope; no recovery guarantee."
+      },
+      {
+        "id": "PAT-DR-002",
+        "name": "Local HA only · broader DR not scoped (scope az)",
+        "status": "proposed",
+        "row_ids": [
+          "REL-03",
+          "REL-04",
+          "REL-05"
+        ],
+        "rationale": "The DR ladder applied provider-neutrally to this failure scope; no recovery guarantee."
+      },
+      {
+        "id": "PAT-DATA-001",
+        "name": "Relational transactional store",
+        "status": "proposed",
+        "row_ids": [
+          "DAT-01",
+          "DAT-05"
+        ],
+        "rationale": "Assess commit durability, replication semantics, and failover data correctness explicitly."
+      }
+    ],
+    "components": [
+      {
+        "id": "NODE-CLIENT",
+        "name": "Consumers",
+        "kind": "actor_boundary",
+        "placement": "External boundary",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-DNS",
+        "name": "Routing & health checks",
+        "kind": "edge",
+        "placement": "Shared entry point",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-EDGE",
+        "name": "L7 ingress + security",
+        "kind": "edge",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-APP-A",
+        "name": "Application tier",
+        "kind": "compute",
+        "placement": "Zone A",
+        "status": "proposed",
+        "row_ids": [
+          "CAP-01",
+          "CAP-07"
+        ]
+      },
+      {
+        "id": "NODE-DB-PRIMARY",
+        "name": "Relational transactional store",
+        "kind": "database",
+        "placement": "Zone A",
+        "status": "proposed",
+        "row_ids": [
+          "DAT-01",
+          "REL-04"
+        ]
+      },
+      {
+        "id": "NODE-BACKUP",
+        "name": "Backups / restore points",
+        "kind": "storage",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": [
+          "REL-04"
+        ]
+      },
+      {
+        "id": "NODE-APP-B",
+        "name": "Application tier",
+        "kind": "compute",
+        "placement": "Zone B",
+        "status": "proposed",
+        "row_ids": [
+          "CAP-01",
+          "REL-01"
+        ]
+      },
+      {
+        "id": "NODE-DB-SECONDARY",
+        "name": "HA standby / replica",
+        "kind": "database",
+        "placement": "Zone B",
+        "status": "proposed",
+        "row_ids": [
+          "REL-03",
+          "REL-04"
+        ]
+      },
+      {
+        "id": "NODE-RECOVERY-APP",
+        "name": "Recovery app capacity",
+        "kind": "other",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": [
+          "REL-03"
+        ]
+      },
+      {
+        "id": "NODE-RECOVERY-DB",
+        "name": "Recoverable data copy",
+        "kind": "database",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": [
+          "REL-04"
+        ]
+      },
+      {
+        "id": "NODE-N-CLIENT",
+        "name": "External clients",
+        "kind": "actor_boundary",
+        "placement": "Outside target",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-DNS",
+        "name": "DNS / traffic direction",
+        "kind": "edge",
+        "placement": "Shared control plane",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-ENTRY",
+        "name": "WAF / managed edge policy",
+        "kind": "security",
+        "placement": "Trust edge",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-PERIMETER",
+        "name": "Internet ingress boundary",
+        "kind": "network",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-LB",
+        "name": "Layer-7 load balancer",
+        "kind": "edge",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-APP-A",
+        "name": "Private application tier A",
+        "kind": "compute",
+        "placement": "Availability Zone A / private subnets",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-DB-A",
+        "name": "Restricted data access A",
+        "kind": "database",
+        "placement": "Availability Zone A / private subnets",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-EGRESS",
+        "name": "NAT / outbound egress",
+        "kind": "network",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-SERVICE",
+        "name": "Private service endpoint",
+        "kind": "network",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-APP-B",
+        "name": "Private application tier B",
+        "kind": "compute",
+        "placement": "Availability Zone B / private subnets",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-DB-B",
+        "name": "Standby / data access B",
+        "kind": "database",
+        "placement": "Availability Zone B / private subnets",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-DR-NET",
+        "name": "Standby recovery ingress",
+        "kind": "other",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-DR-APP",
+        "name": "Recovery application capacity",
+        "kind": "compute",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-N-DR-DB",
+        "name": "Recovery database / replica",
+        "kind": "database",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-OBS",
+        "name": "Detect / declare incident",
+        "kind": "security",
+        "placement": "Recovery procedure",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-TRAFFIC",
+        "name": "Traffic switching",
+        "kind": "edge",
+        "placement": "Recovery procedure",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-APP",
+        "name": "Primary application",
+        "kind": "compute",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-DB",
+        "name": "Primary committed data",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-BACKUP",
+        "name": "Protected recovery points",
+        "kind": "storage",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-RECAPP",
+        "name": "Scale pilot-light app",
+        "kind": "other",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-RECDB",
+        "name": "Recovery copy / restore",
+        "kind": "database",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-D-VERIFY",
+        "name": "Business service verification",
+        "kind": "security",
+        "placement": "Within the European Union, in a second region",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-DF-INPUT",
+        "name": "Input / caller",
+        "kind": "actor_boundary",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-DF-APP",
+        "name": "Application services",
+        "kind": "compute",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-DF-DB",
+        "name": "Authoritative data workload",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-DF-BACK",
+        "name": "Backup / archive",
+        "kind": "storage",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-DF-EXTRA-1",
+        "name": "Additional store: Points ledger",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-S-CALLER",
+        "name": "Client / partner",
+        "kind": "actor_boundary",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-S-WAF",
+        "name": "Ingress security control",
+        "kind": "security",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-S-IAM",
+        "name": "IAM / key authority",
+        "kind": "security",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      },
+      {
+        "id": "NODE-S-DB",
+        "name": "Protected data",
+        "kind": "database",
+        "placement": "Within the European Union",
+        "status": "proposed",
+        "row_ids": []
+      }
+    ],
+    "connections": [
+      {
+        "id": "EDGE-E-I-01",
+        "from": "NODE-CLIENT",
+        "to": "NODE-DNS",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "request",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-02",
+        "from": "NODE-DNS",
+        "to": "NODE-EDGE",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "route",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-03",
+        "from": "NODE-EDGE",
+        "to": "NODE-APP-A",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "traffic",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-04",
+        "from": "NODE-APP-A",
+        "to": "NODE-DB-PRIMARY",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "reads/writes",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-05",
+        "from": "NODE-DB-PRIMARY",
+        "to": "NODE-BACKUP",
+        "relationship": "other",
+        "direction": "unidirectional",
+        "notes": "backup",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-06",
+        "from": "NODE-EDGE",
+        "to": "NODE-APP-B",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "route",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-07",
+        "from": "NODE-DB-PRIMARY",
+        "to": "NODE-DB-SECONDARY",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "notes": "replicate",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-08",
+        "from": "NODE-DNS",
+        "to": "NODE-RECOVERY-APP",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "notes": "failover",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-I-09",
+        "from": "NODE-DB-PRIMARY",
+        "to": "NODE-RECOVERY-DB",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "notes": "replicate/restore",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-01",
+        "from": "NODE-N-CLIENT",
+        "to": "NODE-N-DNS",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "DNS / access",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-02",
+        "from": "NODE-N-DNS",
+        "to": "NODE-N-ENTRY",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "request policy",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-03",
+        "from": "NODE-N-ENTRY",
+        "to": "NODE-N-LB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "front-end request",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-04",
+        "from": "NODE-N-LB",
+        "to": "NODE-N-APP-A",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "L7/private app",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-05",
+        "from": "NODE-N-APP-A",
+        "to": "NODE-N-DB-A",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "restricted DB",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-06",
+        "from": "NODE-N-APP-A",
+        "to": "NODE-N-EGRESS",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "outbound candidate",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-07",
+        "from": "NODE-N-APP-A",
+        "to": "NODE-N-SERVICE",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "private service",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-08",
+        "from": "NODE-N-EGRESS",
+        "to": "NODE-N-PERIMETER",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "egress route",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-09",
+        "from": "NODE-N-LB",
+        "to": "NODE-N-APP-B",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "AZ balance",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-10",
+        "from": "NODE-N-APP-B",
+        "to": "NODE-N-DB-B",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "data access",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-11",
+        "from": "NODE-N-DB-A",
+        "to": "NODE-N-DB-B",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "notes": "replicate",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-13",
+        "from": "NODE-N-DNS",
+        "to": "NODE-N-DR-NET",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "notes": "recovery route",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-14",
+        "from": "NODE-N-DR-NET",
+        "to": "NODE-N-DR-APP",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "notes": "activate / route",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-15",
+        "from": "NODE-N-DR-APP",
+        "to": "NODE-N-DR-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "data access",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-N-16",
+        "from": "NODE-N-DB-A",
+        "to": "NODE-N-DR-DB",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "notes": "replicate / lag TBD",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-D-01",
+        "from": "NODE-D-OBS",
+        "to": "NODE-D-TRAFFIC",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "authorize",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-D-02",
+        "from": "NODE-D-APP",
+        "to": "NODE-D-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "writes",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-D-03",
+        "from": "NODE-D-DB",
+        "to": "NODE-D-BACKUP",
+        "relationship": "other",
+        "direction": "unidirectional",
+        "notes": "protect",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-D-04",
+        "from": "NODE-D-DB",
+        "to": "NODE-D-RECDB",
+        "relationship": "replication",
+        "direction": "unidirectional",
+        "notes": "replicate / restore",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-D-05",
+        "from": "NODE-D-TRAFFIC",
+        "to": "NODE-D-RECAPP",
+        "relationship": "failover",
+        "direction": "unidirectional",
+        "notes": "reroute",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-D-06",
+        "from": "NODE-D-RECDB",
+        "to": "NODE-D-RECAPP",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "data ready",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-E-D-07",
+        "from": "NODE-D-RECAPP",
+        "to": "NODE-D-VERIFY",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "check",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-DF-E1",
+        "from": "NODE-DF-INPUT",
+        "to": "NODE-DF-APP",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "requests",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-DF-E2",
+        "from": "NODE-DF-APP",
+        "to": "NODE-DF-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "transaction/data",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-DF-E3",
+        "from": "NODE-DF-DB",
+        "to": "NODE-DF-BACK",
+        "relationship": "other",
+        "direction": "unidirectional",
+        "notes": "protect",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-DF-E-X1",
+        "from": "NODE-DF-APP",
+        "to": "NODE-DF-EXTRA-1",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "access pattern TBD",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-S-E1",
+        "from": "NODE-S-CALLER",
+        "to": "NODE-S-WAF",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "authenticated request",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-S-E2",
+        "from": "NODE-S-WAF",
+        "to": "NODE-S-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "authorized data path",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      },
+      {
+        "id": "EDGE-S-E3",
+        "from": "NODE-S-IAM",
+        "to": "NODE-S-DB",
+        "relationship": "request",
+        "direction": "unidirectional",
+        "notes": "key/permission",
+        "status": "proposed",
+        "row_ids": [
+          "INT-08"
+        ]
+      }
+    ]
+  },
+  "dr_scenarios": [
+    {
+      "id": "DR-SCOPE-REGION",
+      "entry": "REL-05.1",
+      "scope": "region",
+      "status": "proposed",
+      "rto_seconds": 14400,
+      "rpo_seconds": 900,
+      "rto_entry": "REL-03.1",
+      "rpo_entry": "REL-04.1",
+      "strategy": "pilot",
+      "strategy_candidate": "Pilot Light",
+      "replication": "asynchronous",
+      "component_ids": [
+        "NODE-D-OBS",
+        "NODE-D-TRAFFIC",
+        "NODE-D-APP",
+        "NODE-D-DB",
+        "NODE-D-BACKUP",
+        "NODE-D-RECAPP",
+        "NODE-D-RECDB",
+        "NODE-D-VERIFY"
+      ],
+      "validation_tasks": [
+        "Define recovery critical path: detection → failover authorization → data promotion/restore → app/IAM connectivity → routing → business verification.",
+        "Demonstrate application-level recovery, data consistency, dependency reattachment, failback and split-brain protections.",
+        "Document separate recovery objective for every in-scope failure scenario, including cyber/data corruption where relevant."
+      ],
+      "notes": "A target, not a tested result: nothing here claims that the strategy achieves the RTO or RPO until recovery tests show it."
+    },
+    {
+      "id": "DR-SCOPE-AZ",
+      "entry": "REL-05.2",
+      "scope": "az",
+      "status": "proposed",
+      "rto_seconds": 300,
+      "rpo_seconds": 5,
+      "rto_entry": "REL-03.2",
+      "rpo_entry": "REL-04.2",
+      "strategy": "localHA",
+      "strategy_candidate": "Local HA only · broader DR not scoped",
+      "replication": "asynchronous",
+      "component_ids": [
+        "NODE-D-OBS",
+        "NODE-D-TRAFFIC",
+        "NODE-D-APP",
+        "NODE-D-DB",
+        "NODE-D-BACKUP",
+        "NODE-D-RECAPP",
+        "NODE-D-RECDB",
+        "NODE-D-VERIFY"
+      ],
+      "validation_tasks": [
+        "Define recovery critical path: detection → failover authorization → data promotion/restore → app/IAM connectivity → routing → business verification.",
+        "Demonstrate application-level recovery, data consistency, dependency reattachment, failback and split-brain protections.",
+        "Document separate recovery objective for every in-scope failure scenario, including cyber/data corruption where relevant."
+      ],
+      "notes": "A target, not a tested result: nothing here claims that the strategy achieves the RTO or RPO until recovery tests show it."
+    }
+  ],
+  "options": {
+    "horizon_months": 36,
+    "weighted": true,
+    "flags": [],
+    "chosen_option": "OPT-01",
+    "list": [
+      {
+        "id": "OPT-01",
+        "name": "One primary region with a pilot-light recovery region",
+        "hardPass": true,
+        "oneTime": 180000,
+        "monthly": 6500,
+        "tco": 414000,
+        "weighted": 3.769230769230769,
+        "unknowns": [],
+        "failures": [],
+        "calculations": [
+          {
+            "id": "CALC-21@OPT-01",
+            "rule_id": "CALC-21",
+            "rule_version": "3.0.0",
+            "label": "Option total cost of ownership",
+            "formula": "one_time_cost + horizon_months × monthly_cost",
+            "substitution": "180,000 + 36 × 6,500",
+            "row_ids": [],
+            "output": {
+              "value": 414000,
+              "unit": "currency units"
+            },
+            "status": "estimated",
+            "limitations": "Undiscounted: no discount rate, inflation or price change over the horizon; one-time and monthly costs come from a person."
+          },
+          {
+            "id": "CALC-22@OPT-01",
+            "rule_id": "CALC-22",
+            "rule_version": "3.0.0",
+            "label": "Option weighted score",
+            "formula": "sum(weight × score) / sum(weight)",
+            "substitution": "(3 × 4 + 1 × 4 + 2 × 4 + 1 × 4 + 2 × 3 + 2 × 4 + 1 × 4 + 1 × 3) / (3 + 1 + 2 + 1 + 2 + 2 + 1 + 1)",
+            "row_ids": [],
+            "output": {
+              "value": 3.769230769230769,
+              "unit": "score (1 to 5)"
+            },
+            "status": "estimated",
+            "limitations": "Counts every criterion with an approved weight above 0, and each needs a score; an option is ranked only when every hard check passes."
+          }
+        ]
+      },
+      {
+        "id": "OPT-02",
+        "name": "One primary region with a warm-standby recovery region",
+        "hardPass": true,
+        "oneTime": 210000,
+        "monthly": 9800,
+        "tco": 562800,
+        "weighted": 3.5384615384615383,
+        "unknowns": [],
+        "failures": [],
+        "calculations": [
+          {
+            "id": "CALC-21@OPT-02",
+            "rule_id": "CALC-21",
+            "rule_version": "3.0.0",
+            "label": "Option total cost of ownership",
+            "formula": "one_time_cost + horizon_months × monthly_cost",
+            "substitution": "210,000 + 36 × 9,800",
+            "row_ids": [],
+            "output": {
+              "value": 562800,
+              "unit": "currency units"
+            },
+            "status": "estimated",
+            "limitations": "Undiscounted: no discount rate, inflation or price change over the horizon; one-time and monthly costs come from a person."
+          },
+          {
+            "id": "CALC-22@OPT-02",
+            "rule_id": "CALC-22",
+            "rule_version": "3.0.0",
+            "label": "Option weighted score",
+            "formula": "sum(weight × score) / sum(weight)",
+            "substitution": "(3 × 5 + 1 × 3 + 2 × 2 + 1 × 3 + 2 × 3 + 2 × 4 + 1 × 3 + 1 × 4) / (3 + 1 + 2 + 1 + 2 + 2 + 1 + 1)",
+            "row_ids": [],
+            "output": {
+              "value": 3.5384615384615383,
+              "unit": "score (1 to 5)"
+            },
+            "status": "estimated",
+            "limitations": "Counts every criterion with an approved weight above 0, and each needs a score; an option is ranked only when every hard check passes."
+          }
+        ]
+      }
+    ]
+  },
+  "decisions": [
+    {
+      "id": "ADR-CAND-ARCH-01",
+      "topic": "Classification & hosting",
+      "candidate": "Route to GF-CL; migration is a separate overlay.",
+      "status": "proposed",
+      "level": "info",
+      "rationale": "change=greenfield; target=cloud; assessment: Route to GF-CL; migration is a separate overlay.",
+      "rule_ids": [
+        "ARCH-01"
+      ],
+      "row_ids": [
+        "HDR-07",
+        "HDR-08"
+      ],
+      "alternatives": [
+        {
+          "name": "Alternative requires trade-off review",
+          "tradeoff": "Confirm target-hosting responsibility and hard platform restrictions."
+        }
+      ],
+      "owner": "Lead architect / responsible owner",
+      "open_validation": [
+        "Confirm target-hosting responsibility and hard platform restrictions."
+      ]
+    },
+    {
+      "id": "ADR-CAND-DR-03@region",
+      "topic": "Independent region/provider failure",
+      "candidate": "Assess independent recovery locations plus identity, data, DNS, networks and application dependencies.",
+      "status": "proposed",
+      "level": "caution",
+      "rationale": "failure scope=region; assessment: Assess independent recovery locations plus identity, data, DNS, networks and application dependencies.",
+      "rule_ids": [
+        "DR-03@region"
+      ],
+      "row_ids": [
+        "REL-03",
+        "REL-04",
+        "REL-05"
+      ],
+      "alternatives": [
+        {
+          "name": "Alternative requires trade-off review",
+          "tradeoff": "Prove full service recovery and RPO after the specified failure scenario."
+        }
+      ],
+      "owner": "Lead architect / responsible owner",
+      "open_validation": [
+        "Prove full service recovery and RPO after the specified failure scenario."
+      ]
+    },
+    {
+      "id": "ADR-CAND-LOAD-04",
+      "topic": "Workload-based capacity planning",
+      "candidate": "Size and benchmark at sustained peak with headroom and failure-mode capacity.",
+      "status": "proposed",
+      "level": "info",
+      "rationale": "peak=0.07 TPS; 0.23 API RPS; assessment: Size and benchmark at sustained peak with headroom and failure-mode capacity.",
+      "rule_ids": [
+        "LOAD-04"
+      ],
+      "row_ids": [
+        "CAP-01",
+        "CAP-04"
+      ],
+      "alternatives": [
+        {
+          "name": "Alternative requires trade-off review",
+          "tradeoff": "Obtain peak duration, load profile, per-instance P99 throughput, storage IOPS and growth."
+        }
+      ],
+      "owner": "Lead architect / responsible owner",
+      "open_validation": [
+        "Obtain peak duration, load profile, per-instance P99 throughput, storage IOPS and growth."
+      ]
+    },
+    {
+      "id": "ADR-CAND-DATA-08@az",
+      "topic": "Near-real-time recovery data",
+      "candidate": "Measure replication lag/backup point age against scoped dataset and failure.",
+      "status": "proposed",
+      "level": "caution",
+      "rationale": "RPO=5 s; assessment: Measure replication lag/backup point age against scoped dataset and failure.",
+      "rule_ids": [
+        "DATA-08@az"
+      ],
+      "row_ids": [
+        "REL-04"
+      ],
+      "alternatives": [
+        {
+          "name": "Alternative requires trade-off review",
+          "tradeoff": "Exercise writer failure and measure committed-record recovery point."
+        }
+      ],
+      "owner": "Lead architect / responsible owner",
+      "open_validation": [
+        "Exercise writer failure and measure committed-record recovery point."
+      ]
+    },
+    {
+      "id": "ADR-CAND-DB-10",
+      "topic": "Per-workload data architecture",
+      "candidate": "Recommend logical data-store pattern; compare provider products and failover semantics.",
+      "status": "proposed",
+      "level": "info",
+      "rationale": "type=relational; consistency=strong; assessment: Recommend logical data-store pattern; compare provider products and failover semantics.",
+      "rule_ids": [
+        "DB-10"
+      ],
+      "row_ids": [
+        "DAT-01",
+        "DAT-05"
+      ],
+      "alternatives": [
+        {
+          "name": "Alternative requires trade-off review",
+          "tradeoff": "Validate operations, constraints and benchmarks per workload."
+        }
+      ],
+      "owner": "Lead architect / responsible owner",
+      "open_validation": [
+        "Validate operations, constraints and benchmarks per workload."
+      ]
+    },
+    {
+      "id": "ADR-CAND-SEC-11",
+      "topic": "Data sensitivity/residency",
+      "candidate": "Cloud regions, DR copies, data transfers, encryption and access must satisfy applicable controls.",
+      "status": "proposed",
+      "level": "caution",
+      "rationale": "classification=sensitive; geographic restrictions=yes; assessment: Cloud regions, DR copies, data transfers, encryption and access must satisfy applicable controls.",
+      "rule_ids": [
+        "SEC-11"
+      ],
+      "row_ids": [
+        "DAT-03",
+        "DAT-04"
+      ],
+      "alternatives": [
+        {
+          "name": "Alternative requires trade-off review",
+          "tradeoff": "Obtain compliance authority, permitted locations, data lineage and control evidence."
+        }
+      ],
+      "owner": "Lead architect / responsible owner",
+      "open_validation": [
+        "Obtain compliance authority, permitted locations, data lineage and control evidence."
+      ]
+    },
+    {
+      "id": "ADR-CAND-SLO-15@region",
+      "topic": "One outage can consume SLO budget",
+      "candidate": "One full-length, user-visible outage in the measurement window may exceed the availability allowance; not inherently contradictory.",
+      "status": "proposed",
+      "level": "review",
+      "rationale": "RTO=4 h; 30-day budget=43.2 min; assessment: One full-length, user-visible outage in the measurement window may exceed the availability allowance; not inherently contradictory.",
+      "rule_ids": [
+        "SLO-15@region"
+      ],
+      "row_ids": [
+        "REL-01",
+        "REL-03"
+      ],
+      "alternatives": [
+        {
+          "name": "Alternative requires trade-off review",
+          "tradeoff": "Clarify measurement exclusions and design impact on customer journeys."
+        }
+      ],
+      "owner": "Lead architect / responsible owner",
+      "open_validation": [
+        "Clarify measurement exclusions and design impact on customer journeys."
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "infrastructure",
+      "type": "infrastructure",
+      "status": "proposed",
+      "component_ids": [
+        "NODE-CLIENT",
+        "NODE-DNS",
+        "NODE-EDGE",
+        "NODE-APP-A",
+        "NODE-DB-PRIMARY",
+        "NODE-BACKUP",
+        "NODE-APP-B",
+        "NODE-DB-SECONDARY",
+        "NODE-RECOVERY-APP",
+        "NODE-RECOVERY-DB"
+      ],
+      "summary": "Primary + independent recovery location candidate, Relational transactional store. RTO 4 h; RPO 15 min; scope region. All nodes and links are proposed logical candidates, not verified deployment facts. Source of product use cases remains the BRD. Required validation: Confirm region/site and actual fault-domain independence; do not infer region or zone availability. | Benchmark compute and data tier throughput under peak and impaired-zone load. | Confirm database durability, failover behavior, backups, IAM, monitoring, and provider eligibility.",
+      "mermaid_file": "diagrams/infrastructure.mmd",
+      "drawio_file": "diagrams/architecture.drawio"
+    },
+    {
+      "id": "network",
+      "type": "network",
+      "status": "proposed",
+      "component_ids": [
+        "NODE-N-CLIENT",
+        "NODE-N-DNS",
+        "NODE-N-ENTRY",
+        "NODE-N-PERIMETER",
+        "NODE-N-LB",
+        "NODE-N-APP-A",
+        "NODE-N-DB-A",
+        "NODE-N-EGRESS",
+        "NODE-N-SERVICE",
+        "NODE-N-APP-B",
+        "NODE-N-DB-B",
+        "NODE-N-DR-NET",
+        "NODE-N-DR-APP",
+        "NODE-N-DR-DB"
+      ],
+      "summary": "Region/VPC(or VNet)/private app and data segments. Trust boundaries, zones/subnets and public/private paths are provisional. Actual IPAM, public subnet associations, provider-managed interfaces, routing and firewall rules must be verified. Required validation: Confirm real CIDR/IPAM allocations, public/private subnet eligibility, zone placement, routes, DNS and security/firewall rules; no IP addresses are assigned here. | Provider networking differs: AWS VPCs regional with AZ subnets; GCP VPCs global with regional subnets; Azure VNets regional. Managed service resources may live on provider-owned boundaries. | Confirm public or private ingress, internet egress/NAT and private endpoint eligibility, independent availability zone paths, and hybrid/partner failover before SDD. | Verify physically independent recovery network and provider/region/site boundaries. Active-active servicing does not ensure zero client-visible failover time.",
+      "mermaid_file": "diagrams/network.mmd",
+      "drawio_file": "diagrams/architecture.drawio"
+    },
+    {
+      "id": "dr",
+      "type": "dr",
+      "status": "proposed",
+      "component_ids": [
+        "NODE-D-OBS",
+        "NODE-D-TRAFFIC",
+        "NODE-D-APP",
+        "NODE-D-DB",
+        "NODE-D-BACKUP",
+        "NODE-D-RECAPP",
+        "NODE-D-RECDB",
+        "NODE-D-VERIFY"
+      ],
+      "summary": "Failure scope: region; RTO=4 h; RPO=15 min; candidate: Pilot Light. These are targets, NOT achieved results. Required validation: Define recovery critical path: detection → failover authorization → data promotion/restore → app/IAM connectivity → routing → business verification. | Demonstrate application-level recovery, data consistency, dependency reattachment, failback and split-brain protections. | Document separate recovery objective for every in-scope failure scenario, including cyber/data corruption where relevant.",
+      "mermaid_file": "diagrams/dr.mmd",
+      "drawio_file": "diagrams/architecture.drawio"
+    },
+    {
+      "id": "data",
+      "type": "data_flow",
+      "status": "proposed",
+      "component_ids": [
+        "NODE-DF-INPUT",
+        "NODE-DF-APP",
+        "NODE-DF-DB",
+        "NODE-DF-BACK",
+        "NODE-DF-EXTRA-1"
+      ],
+      "summary": "Only technical data paths are proposed here; product entities, use cases and APIs must come from BRDs. Required validation: Confirm authoritative data owners, transaction boundaries, query patterns, mutation/replay semantics and supported cross-region consistency. | Do not infer product schemas or event names.",
+      "mermaid_file": "diagrams/data.mmd",
+      "drawio_file": "diagrams/architecture.drawio"
+    },
+    {
+      "id": "security",
+      "type": "security",
+      "status": "proposed",
+      "component_ids": [
+        "NODE-S-CALLER",
+        "NODE-S-WAF",
+        "NODE-S-IAM",
+        "NODE-S-DB"
+      ],
+      "summary": "Network trust boundaries are logical; identity provider, data classification and compliance controls need owner validation. Required validation: Validate authentication/authorization ownership from BRD and architecture questionnaire. | Review segmentation, encryption, key recovery, sensitive data location, audit/retention and source-to-target trust.",
+      "mermaid_file": "diagrams/security.mmd",
+      "drawio_file": "diagrams/architecture.drawio"
+    }
+  ],
+  "conflicts": [],
+  "governance": {
+    "pre_sdd_gate": "G2",
+    "gate_status": "provisional",
+    "signoffs": [],
+    "conditions": [],
+    "exceptions": [
+      {
+        "id": "EXC-01",
+        "entry": "SEC-01.1",
+        "reason": "The applicable data-protection law is a hard BRD dependency needed before go-live (REFUNDS 02 and LOYALTY 02 Dependencies), not before the SDD; the SDD may start while Legal Counsel confirms it by 2026-12-15.",
+        "granted_by": "Product Owner (fixture owner)",
+        "granted_at": "2026-10-27T16:44:29.967Z",
+        "expires": "2027-12-31",
+        "review": "2027-03-31",
+        "valid": true
+      }
+    ],
+    "approved_at": null,
+    "authorized_to_start_sdd": false
+  },
+  "validation": {
+    "export_status": "provisional",
+    "sdd_source_intake": "ready_for_reconciliation",
+    "blockers": [],
+    "conflicts": [],
+    "advisories": [
+      {
+        "id": "PRIMARY-ONLY-CAP-01",
+        "message": "CAP-01.1 holds 2000 transactions/day. Not read: CAP-01.2 holds 40 transactions/day. The calculations and rules read only CAP-01.1; make the primary entry the one to size for, or carry the others to the SDD.",
+        "owner": "B+E",
+        "entry": "CAP-01.1"
+      }
+    ],
+    "checked_at": "2026-10-27T17:21:04.612Z"
+  }
+}

@@ -1,6 +1,6 @@
 # Hybrid Direction: Two-Pass Drift Detection
 
-This file defines the diff logic for hybrid direction: when both an SDD and complete code are available, the skill produces a unified LLD with inline drift markers showing where design intent diverges from code reality.
+This file defines the diff logic for hybrid direction. When both an SDD and complete code are available, the skill produces a unified LLD with inline drift markers showing where design intent diverges from code reality.
 
 The output is a **single unified LLD**, not separate `designed/` and `built/` folders. Drift is surfaced inline.
 
@@ -91,6 +91,16 @@ A service the SDD lists in §13 with no code at all is not Case D: it gets only 
 
 - Component topology: emit code as live state; mark drift inline.
 - Architectural style: emit SDD as designed; mark `⚠ drift` if code's actual operationalisation differs (e.g., SDD says event-driven, code uses synchronous chained REST calls).
+- Runtime stack (§ 6.3): emit the manifests' values as live state, row by row. A value that differs from SDD §6 is `⚠ drift`, unless the stack approval record in `decision-log.md` holds an `Active` or `Raised in SDD vX.X (Proposed)` override for that layer. In that case the code is compared with the override value, and only a difference from it is drift. A drift row on a stack layer offers two resolutions: reconcile in code, or record an override (SKILL.md step 3a). A row no manifest pins, the stack of a service not yet built, goes through the stack approval.
+
+### `03a-libraries-and-conventions.md`
+
+- Libraries (§ 6.5.1): the table states the standard, and the code is read against it (`code-extraction.md` § Libraries and conventions in use).
+  - A row whose Source is an SDD §6 row follows the § 6.3 rule above. For such a row, a difference in the code is `⚠ drift`, with the same two resolutions (reconcile in code, or record an override: SKILL.md step 3a). An `Active` or `Raised in SDD vX.X (Proposed)` override changes what the code is compared with: the code is compared with the override's value, and only a difference from it is drift.
+  - A use that breaks any other `Approved` row (its Source is the project file, the stack approval, a manifest, or code), or a § 6.5.2 rule, is a `⚠ policy` finding in `15-open-questions.md` § 18.6 (`pattern-rules.md` § Anti-patterns to flag).
+  - A direct dependency that a service's own code calls, for a concern that no row of § 6.3 or § 6.5.1 covers, is a new § 6.5.1 row marked `🆕 code-only`. Its Source is the manifest. A row no manifest shows (the DTOs row) cites the call sites instead (`code-extraction.md` § Libraries and conventions in use).
+  - A dependency row whose Source is an SDD §6 row, outside the three seed rows, that no manifest shows is `⛔ sdd-only`.
+- Deltas (§ 6.5.3): a departure the code shows is a row only when a source states its reason; otherwise it is the finding above.
 
 ### `04-implementation/<service>.md`
 
@@ -179,7 +189,7 @@ This is the **drift index**: every drift marker placed elsewhere has a row here.
 
 ## Use-case trace drift
 
-The trace follows `sdd-to-lld.md` § Use-case traceability. SDD §7.3 and the BRD stay the reference: the LLD cites their values, and each place where the code disagrees is marked. Entry points and routes are matched per `code-extraction.md` § Tracing to BRD use cases.
+The trace follows `sdd-to-lld.md` § Use-case traceability. SDD §7.3 and the BRD stay the reference. The LLD cites their values, and each place where the code disagrees is marked. Entry points and routes are matched per `code-extraction.md` § Tracing to BRD use cases.
 
 | Situation | Marker | Default severity |
 |---|---|---|

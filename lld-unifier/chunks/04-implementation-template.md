@@ -3,11 +3,12 @@ CHUNK: 04
 TITLE: Per-Service Implementation - [Service Name]
 PROJECT: [Project Name]
 VERSION: [X.X]
-DEPENDS_ON: 03, 09
+DEPENDS_ON: 03, 03a, 09
 PART OF: LLD - [Project Name]
 NOTE: This is the TEMPLATE for a single service. In CHUNKS mode, copy this file as
       ./lld-[project-slug]/04-implementation/[service-slug].md per service.
       Cross-service sagas live with the orchestrator service's file.
+      The citations of 03a § 6.5 below apply when the LLD has chunk 03a. An LLD written before it existed states each rule in one clause instead.
 -->
 
 # 7. Per-Service Implementation - [Service Name]
@@ -56,6 +57,8 @@ NOTE: This is the TEMPLATE for a single service. In CHUNKS mode, copy this file 
 |-------|------------|-------------|
 | `[FooServiceImpl]` | `[FooService]` | `[create(...)]`, `[update(...)]`, `[query(...)]` |
 
+> **Convention:** a class that calls an HTTP API, of another service or of a provider, uses the HTTP client that [03a § 6.5.1](../03a-libraries-and-conventions.md#651-libraries-by-concern) gives this service. A service that uses another client has a [§ 6.5.3](../03a-libraries-and-conventions.md#653-per-service-deltas) row.
+
 ### Repositories
 
 | Class | Entity | Notes |
@@ -82,7 +85,7 @@ public interface FooService {
 }
 ```
 
-> **Convention:** records are used for all DTOs (CLAUDE.md default). Constructor injection only - no `@Autowired` on fields.
+> **Convention:** the DTO style and the injection rule are those of [03a § 6.5.1](../03a-libraries-and-conventions.md#651-libraries-by-concern) (DTOs) and [§ 6.5.2](../03a-libraries-and-conventions.md#652-coding-conventions-clean-code) (constructor injection). A departure is a [§ 6.5.3](../03a-libraries-and-conventions.md#653-per-service-deltas) row.
 
 ### Ports and Adapters (in-process contracts)
 
@@ -254,7 +257,7 @@ class PricingService {
 
 ## 7.5 Dependency Injection Graph
 
-> **Convention:** constructor injection only. Document the wiring graph for non-trivial cases (3+ collaborators, or any factory/strategy/mediator wiring).
+> **Convention:** constructor injection, per [03a § 6.5.2](../03a-libraries-and-conventions.md#652-coding-conventions-clean-code). Document the wiring graph for non-trivial cases (3+ collaborators, or any factory/strategy/mediator wiring).
 
 ```mermaid
 graph TB
@@ -293,7 +296,7 @@ graph TB
 | `IdempotencyConflictException` | `https://errors.example.com/idempotency/conflict` | `CONFLICT` | 409 | Same idempotency key in-flight on a different request | Wait + retry, OR use a new key |
 | `FooConcurrencyException` | `https://errors.example.com/foo/concurrency` | `CONFLICT` | 409 | Optimistic lock failure | Re-fetch and retry |
 
-> **Convention:** all exceptions extend `ServiceException` (CLAUDE.md base class). Global `@RestControllerAdvice` translates to `ProblemDetails` (RFC 9457). Error envelope schema in `09-cross-cutting.md` § Error Model.
+> **Convention:** the Problem Details rule of [03a § 6.5.2](../03a-libraries-and-conventions.md#652-coding-conventions-clean-code) applies to every exception in this table. Error envelope schema in `09-cross-cutting.md` § Error Model.
 
 ---
 
@@ -425,4 +428,4 @@ sequenceDiagram
 
 **Summary:** [1-2 sentences: the saga's steps and what triggers compensation.]
 
-<!-- MASTER: [project-slug]-lld-master.md | PREV: 03-architecture.md | NEXT: 05-data-model.md -->
+<!-- MASTER: [project-slug]-lld-master.md | PREV: 03a-libraries-and-conventions.md | NEXT: 05-data-model.md -->

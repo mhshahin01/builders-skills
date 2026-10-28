@@ -9,6 +9,8 @@ PART OF: SDD - [Project Name]
 
 # 18. Performance & Capacity Planning
 
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), §18 cites its calculations as PSDD/CALC-NN, with the values of the calculations table in the Pre-SDD's chunk 12 § 12.2 and a link to their chunk 04 anchor, and never recomputes them: the load, throughput, latency budgets, growth, payload sizes, storage, and bandwidth are the Pre-SDD's, and this section adds what the Pre-SDD leaves to it: the per-service breakdown, sizing per deployable, caching, and the §18.4 stress testing strategy. It sizes within PSDD/INT-03 and PSDD/CAP-03, and measures its latency targets where PSDD/CAP-08 says (brd-to-sdd.md § Pre-SDD inputs (locked), the §18 and §18.5 row). Each §18.5 row cites the Pre-SDD entry that settles its NFR's target (brd-to-sdd.md § Pre-SDD inputs (locked)). A disagreement with one is a chunk 18 open item owned by the E2E Architect, never an edit (SKILL.md principle 20). -->
+
 ## 18.1 Load Estimates
 
 | Dimension | Year 1 | Year 2 | Year 3 | Notes |
@@ -41,7 +43,7 @@ PART OF: SDD - [Project Name]
 
 ## 18.5 NFR Targets
 
-<!-- Derive-from-BRD: one row per NFR of every source BRD, keyed (REFUNDS/NFR-02), with the technical target it is quantified into and where the design realises it (a §18 row, a §11 default, an ADR, or a §17.X section). A target the BRD does not imply is a [NEEDS CLARIFICATION: ...], never invented. -->
+<!-- Derive-from-BRD: one row per NFR of every source BRD, keyed (REFUNDS/NFR-02), with the technical target it is quantified into and where the design realises it (a §18 row, a §11 default, an ADR, or a §17.X section). A target the BRD does not imply is a [NEEDS CLARIFICATION: ...], never invented. The RPO and RTO of a recovery NFR live in §8.6.4 (chunk 05a): its row links there and holds neither a figure nor a marker of its own. -->
 
 | BRD NFR | Technical target | Realised in |
 |---------|------------------|-------------|

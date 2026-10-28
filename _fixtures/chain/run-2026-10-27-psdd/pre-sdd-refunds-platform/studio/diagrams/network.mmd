@@ -1,0 +1,47 @@
+flowchart LR
+  %% Network Architecture · LOGICAL - PROPOSED / NOT AN APPROVED DESIGN
+  %% canonical component NODE-N-CLIENT
+  N_CLIENT["External clients - Boundary / requests"]
+  %% canonical component NODE-N-DNS
+  N_DNS["DNS / traffic direction - Global / shared managed control"]
+  %% canonical component NODE-N-ENTRY
+  N_ENTRY["WAF / managed edge policy - Public access candidate"]
+  %% canonical component NODE-N-PERIMETER
+  N_PERIMETER["Internet ingress boundary - Internet edge / approved routes TBD"]
+  %% canonical component NODE-N-LB
+  N_LB["Layer-7 load balancer - LB ingress in allowed public zone(s)"]
+  %% canonical component NODE-N-APP-A
+  N_APP_A["Private application tier A - Compute in Availability Zone A / private subnets"]
+  %% canonical component NODE-N-DB-A
+  N_DB_A["Restricted data access A - Private DB network / endpoint"]
+  %% canonical component NODE-N-EGRESS
+  N_EGRESS["NAT / outbound egress - Candidate only if internet egress needed"]
+  %% canonical component NODE-N-SERVICE
+  N_SERVICE["Private service endpoint - Service network interface/boundary TBD"]
+  %% canonical component NODE-N-APP-B
+  N_APP_B["Private application tier B - Compute in Availability Zone B / private subnets"]
+  %% canonical component NODE-N-DB-B
+  N_DB_B["Standby / data access B - Replication and failover TBD"]
+  %% canonical component NODE-N-DR-NET
+  N_DR_NET["Standby recovery ingress - Failover path & trust controls TBD"]
+  %% canonical component NODE-N-DR-APP
+  N_DR_APP["Recovery application capacity - Standby activation/scale-up TBD"]
+  %% canonical component NODE-N-DR-DB
+  N_DR_DB["Recovery database / replica - Replication lag & promotion TBD"]
+  N_CLIENT -->|DNS / access| N_DNS
+  N_DNS -->|request policy| N_ENTRY
+  N_ENTRY -->|front-end request| N_LB
+  N_LB -->|L7/private app| N_APP_A
+  N_APP_A -->|restricted DB| N_DB_A
+  N_APP_A -->|outbound candidate| N_EGRESS
+  N_APP_A -->|private service| N_SERVICE
+  N_EGRESS -->|egress route| N_PERIMETER
+  N_LB -->|AZ balance| N_APP_B
+  N_APP_B -->|data access| N_DB_B
+  N_DB_A -->|replicate| N_DB_B
+  N_DNS -->|recovery route| N_DR_NET
+  N_DR_NET -->|activate / route| N_DR_APP
+  N_DR_APP -->|data access| N_DR_DB
+  N_DB_A -->|replicate / lag TBD| N_DR_DB
+  classDef proposed fill:#e8f3f6,stroke:#368b94,color:#15354b;
+  class N_CLIENT,N_DNS,N_ENTRY,N_PERIMETER,N_LB,N_APP_A,N_DB_A,N_EGRESS,N_SERVICE,N_APP_B,N_DB_B,N_DR_NET,N_DR_APP,N_DR_DB proposed;

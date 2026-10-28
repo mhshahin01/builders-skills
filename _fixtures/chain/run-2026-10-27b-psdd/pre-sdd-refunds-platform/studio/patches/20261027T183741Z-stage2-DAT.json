@@ -1,0 +1,100 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set-factor",
+      "entry": "DAT-01.2",
+      "factor": "storeKind",
+      "value": "relational"
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-01.2",
+      "factor": "storeKind"
+    },
+    {
+      "op": "set",
+      "entry": "DAT-04.1",
+      "value": "yes"
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-04.1"
+    },
+    {
+      "op": "set-factor",
+      "entry": "DAT-04.1",
+      "factor": "primaryLocation",
+      "value": "Within the European Union"
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-04.1",
+      "factor": "primaryLocation"
+    },
+    {
+      "op": "set-factor",
+      "entry": "DAT-04.1",
+      "factor": "recoveryLocation",
+      "value": "Within the European Union, in a second region"
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-04.1",
+      "factor": "recoveryLocation"
+    },
+    {
+      "op": "set",
+      "entry": "DAT-05.1",
+      "value": "strong"
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-05.1"
+    },
+    {
+      "op": "set-factor",
+      "entry": "DAT-05.1",
+      "factor": "transactionNeed",
+      "value": "yes"
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-05.1",
+      "factor": "transactionNeed"
+    },
+    {
+      "op": "set",
+      "entry": "DAT-05.2",
+      "value": "strong"
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-05.2"
+    },
+    {
+      "op": "set",
+      "entry": "DAT-06.1",
+      "value": "Refund requests, decisions and payout results are kept for 10 years for tax records; customer contact details are deleted 90 days after a request ends; a member's points history is kept while the membership lasts and deleted within 30 days after it ends."
+    },
+    {
+      "op": "confirm",
+      "entry": "DAT-06.1"
+    },
+    {
+      "op": "set",
+      "entry": "DAT-07.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "DAT-09.1",
+      "owner_name": "Data Owner, Retail Finance",
+      "due": "2026-11-30"
+    }
+  ]
+}

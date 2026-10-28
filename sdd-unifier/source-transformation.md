@@ -20,9 +20,9 @@ For deciding **which** intent to use (transform vs derive vs generate), see `tra
 
 ## Field-by-field mapping (SoW source; note: not the recommended path)
 
-A SoW alone is **not** a strong source for an SDD. SDDs depend on architectural decisions; SoWs typically don't have those. This skill recommends running `brd-unifier` first (SoW → BRD), then `sdd-unifier` (BRD → SDD) per `brd-to-sdd.md`.
+A SoW alone is **not** a strong source for an SDD. SDDs depend on architectural decisions; SoWs typically don't have those. This skill recommends running `brd-unifier` first (SoW → BRD), then `pre-sdd-unifier` (BRD → Pre-SDD, signed at G3), then `sdd-unifier` (BRD and Pre-SDD → SDD) per `brd-to-sdd.md` and SKILL.md step 2a.
 
-If the user insists on going directly from a SoW to an SDD, treat the SoW as raw context for GENERATE intent, not as a transformation target. Most SDD sections will be heavy with `[NEEDS CLARIFICATION: ...]` markers. Be explicit about this in the handoff: "This SDD was generated from a SoW directly, bypassing the BRD step. The marker count is high (N markers) because the SoW does not capture the technical decisions an SDD requires. Recommend either generating a BRD first (run brd-unifier) and re-deriving, or working through the markers with an architect."
+A SoW never goes directly to a new SDD, even when the user insists: it is raw context for GENERATE intent, not a transformation target. GENERATE writes no SDD content and hands the SoW to brd-unifier for the BRD (SKILL.md step 2); the Pre-SDD follows, and the SDD is then derived from both.
 
 ---
 
@@ -33,7 +33,7 @@ This is the main TRANSFORM path. The source is already an SDD but in a different
 ### Approach
 
 1. **Build a section crosswalk first.** Map each source section to a target template section. Note any source sections with no target.
-2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs; they must use the sub-sections of `chunks/13a-service-detailed-template.md`, in order: `What / Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / Multi-Tenancy Specifications / API Standards / Event-Driven Architecture / Constraints / Error Handling / Observability & Monitoring / Developer Notes / Service-Level Diagrams / Compliance / Deployment Strategy / Future Enhancements`).
+2. **Carry content for matching sections**, restructuring to fit this template's expected sub-structure (especially per-service detailed specs; they must use the sub-sections of `chunks/13a-service-detailed-template.md`, in order: `What / Boundaries / Input / Business Logic / Output / Integrations / DB Modeling / Multi-Tenancy Specifications / API Standards / Event-Driven Architecture / Constraints / Error Handling / Observability & Monitoring / Developer Notes / Service-Level Diagrams / Compliance / Deployment Strategy / Future Enhancements`). Source tables are carried into the table format of Tables Design (Table name, Table purpose, Column details). When looking for a table's purpose, the source's own table notes, summaries, and business logic count first. A purpose that nothing in the source states becomes a `[NEEDS CLARIFICATION: why <table> exists]`. Infrastructure and network content (deployment views, environment topology, network zones, firewall rules, port tables) goes to §8.6 and §8.7 (chunk 05a). Its IP ranges, hostnames, and products are carried verbatim; none is added.
 3. **Stub missing sections** with `[NEEDS CLARIFICATION: ...]`.
 4. **Drop irrelevant sections** silently (vendor sign-off blocks, commercial appendices) and note in the handoff.
 
@@ -77,11 +77,11 @@ Drop vendor scaffolding; keep behavioural and architectural commitments.
 
 ## Gap inventory and thresholds
 
-Per `brd-unifier`'s pattern, surface the count in the handoff. These bands apply to TRANSFORM and GENERATE. A DERIVE-FROM-BRD count is read differently: `brd-to-sdd.md` § Workflow when deriving from BRD, step 11.
+Per `brd-unifier`'s pattern, surface the count in the handoff. These bands apply to TRANSFORM, and to an SDD generated without a BRD before every new SDD needed one (SKILL.md step 2). A DERIVE-FROM-BRD count is read differently: `brd-to-sdd.md` § Workflow when deriving from BRD, step 11.
 
-- **0–5 markers:** healthy. Source was rich.
-- **6–14 markers:** typical. Recommend review.
-- **15–29 markers:** moderate gap. Recommend an architect-review session before circulating.
+- **0 to 5 markers:** healthy. Source was rich.
+- **6 to 14 markers:** typical. Recommend review.
+- **15 to 29 markers:** moderate gap. Recommend an architect-review session before circulating.
 - **30+ markers:** the source was severely under-specified for SDD purposes. Recommend rebuilding the source first (e.g., generate a proper BRD via brd-unifier) and re-running.
 
 Don't soften this recommendation. An SDD with 30+ open clarifications is a structured backlog, not a design document.

@@ -1,0 +1,22 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "set", "entry": "HDR-01.1", "value": "Refunds Platform" },
+    { "op": "confirm", "entry": "HDR-01.1" },
+    { "op": "set", "entry": "HDR-02.1", "value": "Head of Retail" },
+    { "op": "confirm", "entry": "HDR-02.1" },
+    { "op": "set", "entry": "HDR-03.1", "value": "Refunds and Loyalty Product Owner" },
+    { "op": "confirm", "entry": "HDR-03.1" },
+    { "op": "set", "entry": "HDR-04.1", "value": "Lead Architect, Retail IT" },
+    { "op": "confirm", "entry": "HDR-04.1" },
+    { "op": "set", "entry": "HDR-05.1", "value": "Architecture Review Board" },
+    { "op": "confirm", "entry": "HDR-05.1" },
+    { "op": "set", "entry": "HDR-06.1", "value": "Finance Director" },
+    { "op": "confirm", "entry": "HDR-06.1" },
+    { "op": "set", "entry": "HDR-09.1", "value": "None: there is no source platform; refunds are on paper and by phone today" },
+    { "op": "confirm", "entry": "HDR-09.1" },
+    { "op": "set", "entry": "HDR-10.1", "value": "none" },
+    { "op": "confirm", "entry": "HDR-10.1" },
+    { "op": "set-overlay", "applies": false }
+  ]
+}

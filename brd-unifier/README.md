@@ -1,6 +1,6 @@
 # BRD Unifier
 
-The requirements stage of the suite: it converts ideas, SoWs, and existing documents into the house-template Business Requirements Document (stage 2, Requirements). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
+The requirements stage of the suite: it converts ideas, SoWs, and existing documents into the house-template Business Requirements Document (stage 2, Requirements). In the unifier company it acts as the Product manager (Product Management & Business Development). The chain runs pre-BRD, then BRD, then Pre-SDD, then SDD: a G3-signed Pre-SDD is required for every new SDD built from BRDs (`sdd-unifier` step 2a). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
 
 ---
 
@@ -32,6 +32,8 @@ The embedded templates are the authoritative source: `TEMPLATE-COMBINED.md` for 
 - **The matrix is derived, never authored.** The Users & Use Cases Matrix is built from the completed use cases and cross-checked both directions; a contradiction means the use case is fixed first, never the matrix.
 - **Gaps are flagged, never papered over.** Anything the source does not cover becomes `**[NEEDS CLARIFICATION: ...]**`; nothing is invented to fill a table.
 - **Delivery chunks are earned.** Chunks 15-17 (implementation plan, UAT/BAT test cases, presentation brief) are locked behind a delivery gate (conditions G1-G5): every to-do step in chunk 14 complete with evidence and every item resolved. `Deferred` does not count, and there is no override.
+- **Answer policy and stand-ins.** The user can set an answer policy for a run, for example to accept the recommended option. It answers only questions that carry a recommended option or a stated default, and never supplies a fact only a person or a provider can give. It can also name stand-ins for the Product Owner, Mockup and Approver tasks. The rules are in SKILL.md step 8 (Answer policy, Stand-ins).
+- **The chain runs both ways.** A change to a use case, rule, persona, integration or screen goes down the chain in the same request (the Pre-SDD when the project has one, the SDD, each child LLD, and the implementation tracker when one exists). A decision taken downstream that changes a BRD-owned fact comes back up through this skill. See SKILL.md core principle 17.
 - **One fact, one home.** UC IDs, persona names, and integration partner names stay stable across revisions so the downstream SDD and LLD can reference them (`INT-NN` IDs belong to the SDD, not the BRD); nothing is restated across chunks. Decision history lives in `decision-log.md`, the companion register, never in the body.
 
 ## How
@@ -56,16 +58,16 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 
 ### The workflow
 
-1. **Resolve mode and generation option.** From the arguments or the interactive prompt (chunks is the default; never guessed silently). A resume check on `[project-slug]-brd-master.md` runs first, so an interrupted parts run continues instead of restarting.
-2. **Resolve intent.** Generate (fresh BRD from a conversation, raw notes, or a seed) or transform (re-shape an existing document, such as a SoW, a pre-BRD, or an old BRD, into the template), per `transform-detection.md`. Both end in the same output mode.
-3. **Intake.** At most three questions: project name, source material, personas. Answers already in the conversation are not re-asked.
-4. **Plan and generate.** Enumerate the chunks (one use-case chunk per persona, plus `14-todo.md`) and write them from the embedded skeletons. Diagrams are inline Mermaid with a prose summary; Miro only on explicit request. Transforms preserve verbatim numbers, dates, and commitments.
-5. **Build the matrix.** The Users & Use Cases Matrix (chunk 07) is derived from the completed use cases, cross-checked in both directions, with conditional access footnoted.
-6. **Plain-language pass.** Mandatory reread of every chunk against `writing-style.md`: short sentences, common words, no number, rule, or exception dropped.
-7. **Adversarial review.** A cleared-context reviewer subagent hunts gaps, ambiguities, risks, matrix inconsistencies, and technical leaks, and writes chunk 13 with a Recommended Answer and Why per item.
-8. **Acceptance loop.** The user decides each Open Item (accept, choose another option, defer, or reject), or an answer policy the user set for the run accepts the recommended answers (SKILL.md step 8); accepted answers are applied to the body and recorded in `decision-log.md`. Every item still `Open`, including one left for later, is presented again by the next request's loop.
-9. **Write the to-do.** `14-todo.md`: the open-items register, consistency check (C1-C10), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block.
-10. **Gated follow-ons, on later invocations.** Step 8b adds use-case diagrams and flowcharts once to-do steps 1-3 are confirmed (in parallel with the step 4 mockups). Step 8c writes chunks 15, 16, 17 in order, only once the delivery gate (G1-G5) verifies open against the files. Cross-mode conversion (merge, re-chunk, regenerate one chunk, refresh the to-do) is handled on explicit request.
+- **Step 1. Resolve mode and generation option.** From the arguments or the interactive prompt (chunks is the default; never guessed silently). A resume check on `[project-slug]-brd-master.md` runs first, so an interrupted parts run continues instead of restarting.
+- **Step 2. Resolve intent.** Generate (fresh BRD from a conversation, raw notes, or a seed) or transform (re-shape an existing document, such as a SoW, a pre-BRD, or an old BRD, into the template), per `transform-detection.md`. Both end in the same output mode.
+- **Step 3. Intake.** At most three questions: project name, source material, personas. Answers already in the conversation are not re-asked.
+- **Steps 4 to 6. Plan, diagram policy, and generate.** Enumerate the chunks (one use-case chunk per persona, plus `14-todo.md`) and write them from the embedded skeletons. Diagrams are inline Mermaid with a prose summary; Miro only on explicit request. Transforms preserve verbatim numbers, dates, and commitments.
+- **Step 6a. Build the matrix.** The Users & Use Cases Matrix (chunk 07) is derived from the completed use cases, cross-checked in both directions, with conditional access footnoted.
+- **Step 6b. Plain-language pass.** Mandatory reread of every chunk against `writing-style.md`: short sentences, common words, no number, rule, or exception dropped.
+- **Step 7. Adversarial review.** A cleared-context reviewer subagent hunts gaps, ambiguities, risks, matrix inconsistencies, and technical leaks, and writes chunk 13 with a Recommended Answer and Why per item.
+- **Step 8. Acceptance loop.** The user decides each Open Item (accept, choose another option, defer, or reject), or an answer policy the user set for the run accepts the recommended answers; accepted answers are applied to the body and recorded in `decision-log.md`. Every item still `Open`, including one left for later, is presented again by the next request's loop.
+- **Steps 8a and 9. Write the to-do, then present and hand off.** `14-todo.md`: the open-items register, consistency check (C1-C10), grill-me inputs, mockup coverage, gated-diagram tracking, and the delivery gate block. At the hand-off it offers the next hop, Pre-SDD (E2E Architect), now or later, and raises `Hand-off: BRD <KEY> v<version> is ready` on the status board (`unifier-status.md`; see SKILL.md § Status board). A Pre-SDD signed at G3 is required before any new SDD built from BRDs.
+- **Steps 8b, 8c, and 10. Gated follow-ons and later requests, on later invocations.** Step 8b adds use-case diagrams and flowcharts once to-do steps 1-3 are confirmed (in parallel with the to-do step 4 mockups). Step 8c writes chunks 15, 16, 17 in order, only once the delivery gate (G1-G5) verifies open against the files. Step 10 handles cross-mode conversion (merge, re-chunk, regenerate one chunk, refresh the to-do) on explicit request, and takes the board requests addressed to the Product manager: a pre-BRD hand-off, a "Create the BRD" request from `sdd-unifier`, and follow-up questions from `pre-sdd-unifier` or `sdd-unifier`.
 
 ### Outputs
 
@@ -73,12 +75,14 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 - Combined: `./BRD-[ProjectName]-v[X.X].md`, with `14-todo.md`, `17-for-ppt.md`, and `decision-log.md` kept as separate files in `./brd-[project-slug]/`.
 - Merged (on request): `./brd-[project-slug]/BRD-[ProjectName]-v[X.X]-MERGED.md`, next to the chunks, which are kept.
 - Delivery chunks, once the gate opens: `15-implementation.md`, `16-uat-bat-test-cases.md`, `17-for-ppt.md` (in combined mode, 15 and 16 are appended as the last two sections).
+- Status board: `unifier-status.md` in the project root, shared by every chain skill. This skill keeps its own row (Product manager), raises its handoff requests, and takes the requests addressed to it (SKILL.md § Status board).
 - Markdown only, UTF-8, pipe tables, no hard line wrap. No `.docx` or `.pdf` unless explicitly requested.
 
 ### Reference files
 
 | File | Contents |
 | ---- | -------- |
+| `SKILL.md` | The skill itself: arguments, the workflow steps (1 to 10, with 6a, 6b, 8a, 8b, 8c), principles, the Status board, and output conventions |
 | `TEMPLATE-COMBINED.md` | The single-file template, read at the start of any combined-mode generation |
 | `chunks/*.md` | The per-chunk template skeletons, read at the start of any chunks-mode generation |
 | `chunking.md` | Canonical chunk map, naming convention, heading map, merge and re-chunk rules |
@@ -87,6 +91,7 @@ Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Co
 | `transform-detection.md` | Rules for deciding generate vs transform |
 | `sow-transformation.md` | Mapping SoW or existing-BRD content into the template |
 | `mermaid-diagrams.md` | Inline Mermaid conventions for every diagram, plus the Miro-on-demand flow |
+| `mermaid-syntax.md` | Mermaid syntax cheatsheet for the five dialects; a shared file (line 1 names its copies) |
 | `use-case-quality.md` | The bar for a substantive use case, flowchart quality, matrix consistency rules |
 | `writing-style.md` | The plain-language style: rules, word list, and the mandatory plain-language pass |
 | `decision-log.md` | The companion decision register: what belongs there, its structure, the companion-file rules |

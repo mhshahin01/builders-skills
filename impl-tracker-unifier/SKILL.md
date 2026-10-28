@@ -1,33 +1,30 @@
 ---
 name: impl-tracker-unifier
 description: >-
-  Track implementation against the BRD, SDD and LLD. Use to plan implementation, split a feature into
-  tasks, pick what to build next, start or finish a task, log a bug or gap, audit consistency, record a
-  lesson or direction change, write a standup, show progress, or check doc/code drift. Splits each LLD into
-  keyed tasks citing the BRD use case and ACs, with the why. Blocks tasks with unmet
-  dependencies, finds code that already exists (pages, endpoints, migrations) and maps it to the
-  LLD, prevents double builds via an ownership index, keeps gaps and a dated journal. Before any
-  task is Done, a fresh read-only auditor subagent checks API, DB migrations, frontend, logs/audit trail,
-  security and tests against the LLD. Mistakes, reopens, user corrections and direction changes become
-  checkable lessons and change-log rows replayed before the next matching task. Commands: init, plan,
-  next, wave, start, done, audit, discover, verify, gap, lesson, change, standup, status, sync, slice, report, docs. Slice mode plans feature-by-feature end-to-end slices in the user's order and reports delivered slices for a manager. A pre-flight
-  script runs every mechanical check before an audit is spent. Every point that needs a doc change is triaged
-  (LLD only, or SDD, BRD, SoW too), queued as a doc update and applied by a background doc worker, then
-  verified and synced, so the docs stay consistent with the code. The tracker writes ./tracking/ only.
+  Track implementation against the BRD, SDD and LLD. Use to plan implementation, split a feature into tasks,
+  pick what to build next, start or finish a task, log a bug or gap, audit consistency, record a lesson or
+  direction change, write a standup, show progress, or check doc/code drift. Splits each LLD into keyed tasks
+  citing BRD use cases and ACs, blocks tasks with unmet dependencies, maps existing code to the LLD and
+  prevents double builds. A pre-flight script and a fresh read-only auditor check each task before Done.
+  Lessons and direction changes are replayed before matching tasks. Doc points are queued as doc updates and
+  applied by a background doc worker. Commands: init, plan, next, wave, start, done, audit, discover, verify,
+  gap, lesson, change, standup, status, sync, slice, report, docs. Writes ./tracking/ only.
 ---
 
 # Implementation Tracker
 
-The sixth stage of the documentation chain:
+The seventh stage of the documentation chain:
 
-    SoW → BRD → SDD → LLD → **impl-tracker** → code
+    SoW → BRD → Pre-SDD → SDD → LLD → **impl-tracker** → code
 
 It turns an approved LLD into an ordered, dependency-checked task ledger, keeps that ledger true while
 code is written, and reports the gap between what the documents require and what the code does.
 
+You act as the Developer / software engineer (Software Development & Delivery) in the unifier company.
+
 It **never edits** BRD, SDD or LLD files itself. Every doc point becomes a gap row **and** a doc update
 (`KEY/DU-NNN`), triaged to the docs it affects and applied in the background by a separate doc worker that
-uses the owning skill (brd-unifier, sdd-unifier, lld-unifier) — doc-impact-rules.md.
+uses the owning skill (brd-unifier, pre-sdd-unifier, sdd-unifier, lld-unifier) - doc-impact-rules.md.
 
 Support files (paths relative to this skill folder):
 
@@ -66,7 +63,7 @@ Support files (paths relative to this skill folder):
 
 | Command | Target | Does |
 |---|---|---|
-| `init` | — | Create `./tracking/` and `config.md`; detect doc roots and feature keys; inventory existing code. |
+| `init` | - | Create `./tracking/` and `config.md`; detect doc roots and feature keys; inventory existing code. |
 | `discover` | `[KEY]` | Re-scan the code; match new/changed items to tasks; open gaps (discovery-rules.md). |
 | `plan` | `KEY` or `KEY/UC-NN[,…]` or `KEY/P2`; flags `slice`, `reslice` | Split the LLD (and its BRD/SDD links) into tasks for that scope; with `slice`, group them into ordered end-to-end slices (slice-rules.md); `reslice` regroups existing tasks. |
 | `next` | `[KEY]` | Show the next ready task(s), with why it's next. |
@@ -109,7 +106,7 @@ Natural language maps to commands: "what's next" → `next`; "do several at once
 3. Write `tracking/config.md` (incl. § Audit checks: detect migration tool, API spec, test, lint commands
    from the repo and propose them), empty `index.md`, `gaps.md`, `ownership.md`, `lessons.md`,
    `changes.md`, `doc-updates.md`, `journal/`; config § Doc updates with the defaults (LLD/SDD `auto`,
-   BRD/SoW `ask`) and the docs repo path (doc-impact-rules.md § 4).
+   BRD/SoW `ask`) and the docs repo path (doc-impact-rules.md § 4), and the `Board` row: `<docs root>/unifier-status.md` (§ The tracker's board row).
 3b. **Inventory existing code** (discovery-rules.md § 1) → `tracking/inventory.md`. Print counts by kind
    and key guess ("found 14 endpoints, 6 screens, 9 migrations"). Nothing is marked done here.
 4. Install the Stop audit hook (audit-rules.md § 7) in the code repo's `.claude/settings.json`: ask once, then
@@ -133,7 +130,7 @@ Follow `task-splitting.md`. In short:
 4. Derive dependencies (layer order + LLD-stated order + cross-feature `INT-` links).
 5. Apply lessons (lessons-rules.md § 5): Promoted-DoD lessons → DoD items; skip anything superseded in
    `changes.md`.
-5b. For each task write the **Why** (task-splitting.md § Why rules) — cite the LLD pattern/ADR/BR.
+5b. For each task write the **Why** (task-splitting.md § Why rules) - cite the LLD pattern/ADR/BR.
 5c. **Match existing code** (discovery-rules.md § 2): each unit → Match (`Adopted`), Partial
    (`In progress` + missing list + gaps), Missing (`Planned`); unclaimed inventory items → `untracked-code`.
 6. Run the ownership check: nothing owned twice (across all features).
@@ -141,7 +138,7 @@ Follow `task-splitting.md`. In short:
    every endpoint in scope has ≥ 1 task. Missing → `GAP` type `plan-gap` (the LLD has no unit for it)
    or task added.
 8. Show the plan summary (phases, counts, DAG Mermaid, gaps, **existing-code match table** with
-   confidence — discovery-rules.md § 3, and the **risk table**: each task's Risk with its reason,
+   confidence - discovery-rules.md § 3, and the **risk table**: each task's Risk with its reason,
    task-splitting.md § Risk) and **ask for approval** before writing
    task cards. On approval write `KEY/plan.md`, task cards, update `index.md`, `ownership.md`.
 
@@ -171,7 +168,7 @@ Builds several tasks in one pass without loosening any gate.
 2. Pick tasks in `next` order such that: no two share an owned item (ownership.md); none depends on
    another in the set; at most one is risk `high` unless the user asks for more; total size ≤ 3 M
    (S = ½, M = 1, L = 2), so the wave fits one session. Default at most 4 tasks; **at most 2 when the
-   current slice is mostly `high` risk** (e.g. auth, money, personal data) — short waves get audit
+   current slice is mostly `high` risk** (e.g. auth, money, personal data) - short waves get audit
    feedback sooner. "Mostly" = more than half of the slice's open (not Done/Dropped) tasks are risk `high`.
 3. Show the set (id, title, risk with reason, owned files, why grouped) and ask once for approval.
 4. On approval, for each task **in turn**: run `start` (all gates; this records the task's **own** start
@@ -191,7 +188,7 @@ Builds several tasks in one pass without loosening any gate.
 1. Read the task card + `index.md` + `ownership.md`.
 2. **Readiness gate** (status-rules.md § Gate): every `depends_on` Done/Verified; task not Stale;
    no open `blocker` gap linked to it; for risk `high`, no open `plan-gap`/`doc-gap` or LLD open item
-   (OI) on an anchor the task cites — settle the doc first, so the design does not move mid-task (PLATFORM/T-055
+   (OI) on an anchor the task cites - settle the doc first, so the design does not move mid-task (PLATFORM/T-055
    waited on LLD v1.3 then v1.4 mid-build); no open DU on a cited anchor per doc-impact-rules.md § 9. If it fails: refuse, print the blocking chain down to the first
    ready task, and offer to start that one. Override only per status-rules.md § Override.
 3. **Double-build gate**: grep the code repo for each owned symbol/table/route/file. Exists already →
@@ -239,16 +236,16 @@ Builds several tasks in one pass without loosening any gate.
    Stamp the start clock: `python <skill>/scripts/preflight.py --tracking <tracking> --history-start KEY/T-NNN`
    (writes `history-clock.json`, used by `history.md` for the task's span; run once, a second run keeps the first).
 5. Print the **task brief** for the implementer: Goal, Why, Doc refs (links), Owns, **Layers to touch**
-   (API / DB / UI / logs / security — derived from the LLD, each with its doc anchor), **Lessons that
+   (API / DB / UI / logs / security - derived from the LLD, each with its doc anchor), **Lessons that
    apply** (lessons-rules.md § 5, with their Checks), the **Design check** (high risk), Definition of done,
-   Tests to write — nothing else.
+   Tests to write - nothing else.
 
 ### done
 
 Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per task.
 
 1. Collect evidence: commits with `Task: KEY/T-NNN` (git log), changed files, unit tests added.
-   A Partial task with no start commit first runs `start` steps 1–4 (gates, start commit) — never a
+   A Partial task with no start commit first runs `start` steps 1-4 (gates, start commit) - never a
    hand-picked start sha.
 1b. **Bring the test environment up:** `preflight.py --tracking <t> --doctor` (seconds). It starts Docker
    when down (never installs or reconfigures it), recreates a missing verify worktree, checks Node against
@@ -314,9 +311,9 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    It checks: clean tree; commits (start commit, exactly one `Task:` trailer each); card/index status;
    every owned item; **P14** removals report current and passing; **P15** every DU the task raised is listed
    on its card, none Failed, a `contract` DU Verified, every doc-owned gap has a DU (also in `--lint`); **P12** an added migration is above every version present at start (L-014); **P13** no
-   second bean of a single-instance type (AWS clients, `HttpClient`, `JsonMapper`…; L-061) — both also in
+   second bean of a single-instance type (AWS clients, `HttpClient`, `JsonMapper`…; L-061) - both also in
    `--lint`; **P10 mutation** on the task's changed production files (templates.md § Mutation
-   suites: every surviving mutant gets a test or a reasoned `## Equivalent mutants` line — fix these here,
+   suites: every surviving mutant gets a test or a reasoned `## Equivalent mutants` line - fix these here,
    never leave them for the audit); **P11 template bindings** (each behaviour binding the task adds to an
    `.html` template is mapped under `## Template bindings` to a spec test that exists; also in `--lint`);
    every required test suite (counted by `<testcase>`; any skip, failure, error, zero
@@ -335,7 +332,7 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    `node_modules`, `npm ci` only when `package-lock.json` changed), so a live IDE or dev server in the main
    checkout is never disturbed and installs are not repeated (L-028). Copy the report back into the main
    tracking folder before committing it.
-3. Set `In review`. **Run the audit** (audit-rules.md) — mandatory; an agent cannot skip it, only the user
+3. Set `In review`. **Run the audit** (audit-rules.md) - mandatory; an agent cannot skip it, only the user
    in chat (then record `audit skipped by user: "<quote>"` in History and open a major gap). Launch the auditor
    with `run_in_background: false`: the turn waits for the verdict and goes straight on to Done.
    - The audit runs on a **clean export** of the task's last commit (audit-rules.md § 1a), never on the
@@ -382,7 +379,7 @@ slice-rules.md § 6. Reads `index.md`, slice cards, `gaps.md` only.
 
 ### verify
 
-1. For each BRD AC/BR the task (or UC) cites: find the test that proves it — unit test comment tag,
+1. For each BRD AC/BR the task (or UC) cites: find the test that proves it - unit test comment tag,
    e2e tag `@KEY/UC-NN`, `@KEY/TC-…` as `13-testing.md` defines.
 2. All proven and passing and no open DU on a cited anchor → `Verified`. Unproven AC → gap `untested-ac`.
    Behaviour differs from the AC → doc-impact-rules.md § 2 decides: `code-drift` (fix task) or `doc-update`
@@ -396,7 +393,7 @@ trace; FAIL on a Done task → `Done` becomes `In progress` (reopened → lesson
 
 ### lesson
 
-Follow `lessons-rules.md` §§ 2–4: classify root cause, write Rule + Check + Scope, dedup, handle recurrence
+Follow `lessons-rules.md` §§ 2-4: classify root cause, write Rule + Check + Scope, dedup, handle recurrence
 and promotion. The `checks.json` entry is written in the same step as the lesson (rule 1a).
 `lesson list [layer|key|tag]` prints matching Active/Promoted lessons.
 
@@ -415,7 +412,7 @@ type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code →
 ### docs
 
 Follow `doc-impact-rules.md`. Every command first checks `doc-updates.md`: `Queued` rows and no live worker →
-dispatch (§ 6); a worker or verifier that reported → process it (§§ 7–8). `docs [KEY]` prints the queue by
+dispatch (§ 6); a worker or verifier that reported → process it (§§ 7-8). `docs [KEY]` prints the queue by
 state and the doc-drift count (§ 11). `docs run` dispatches now. `docs approve KEY/DU-NNN` applies a
 `Waiting-decision` DU (the user's word is its decider, quoted); `docs reject KEY/DU-NNN <reason>` sets it
 `Rejected` and turns its gap into `code-drift` when the code must change instead.
@@ -434,7 +431,7 @@ state and the doc-drift count (§ 11). `docs run` dispatches now. `docs approve 
 
 `index.md` + `gaps.md` + `doc-updates.md` only → table per feature: phase, tasks by status, % Done/Verified by UC,
 doc drift (doc-impact-rules.md § 11),
-% existing-but-unaudited (Adopted) shown separately — never counted as done,
+% existing-but-unaudited (Adopted) shown separately - never counted as done,
 blocked chains, open gaps by severity. Mermaid progress optional.
 
 ### sync
@@ -451,6 +448,74 @@ Inventory + diff + match only (discovery-rules.md §§ 1, 2, 5); proposes Adopte
 asks before writing.
 
 ---
+
+## The tracker's board row
+
+The tracker runs in the code repo, and the status board lives in the docs root.
+
+- **Path:** `<docs root>/unifier-status.md`, taken from the `Board` row `init` records in `tracking/config.md`. The docs root may differ from the folder holding the hop folders; the tracker then uses the recorded path as written.
+- **Its row:** the tracker writes only the row whose Skill cell is `impl-tracker-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
+- **Requests:** for each doc gap whose DU it routes to an owner (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), it raises one handoff request on the board, `Doc gap <KEY>/GAP-NNN: <question>`, with the gap row as Link, and reuses its pending request on the same gap. The owner's result decides the gap: Done with a version closes it with that version through its DU (doc-impact-rules.md § 8); Done with `No change` re-classifies it as `code-drift` with a fix task; Declined routes it to the named owner with a new request. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
+- **Missing file:** when the recorded path is reachable but `unifier-status.md` does not exist there, the tracker creates the board from the template in the Status board section below, as that section says the first skill to run does, then writes its row.
+- **Unreachable path:** when the recorded path cannot be reached or written, the tracker skips the board update and says so in a note in its reply; the run goes on.
+
+## Status board
+
+The chain skills hand work to each other through one shared file, the status board, and `tutorialize-unifier` reads it for context. Every skill that carries this section follows the same rules below, word for word.
+
+- **File:** `unifier-status.md` in the project root, the folder that holds the hop folders (`./pre-brd-*`, `./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`). The first chain skill that runs creates it from the template below. Nobody deletes it.
+- **Template:**
+
+```markdown
+# Unifier status board
+
+Run mode: solo
+
+## Employees
+
+| Employee | Team | Skill | Folder | State | Version | Updated (UTC) | Next step | Waiting on |
+|---|---|---|---|---|---|---|---|---|
+| Business development | Product Management & Business Development | pre-brd-unifier | - | Not started | - | - | - | - |
+| Product manager | Product Management & Business Development | brd-unifier | - | Not started | - | - | - | - |
+| Business owner | Product Management & Business Development | business-reviewer-unifier | - | Not started | - | - | - | - |
+| E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
+| Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
+| Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+
+## Handoff requests
+
+| ID | From | To | Request | Why | Raised (UTC) | State | Closed (UTC) | Link |
+|---|---|---|---|---|---|---|---|---|
+```
+
+- **Times and text:** every time on the board is UTC. `Updated (UTC)`, `Raised (UTC)`, and `Closed (UTC)` use `YYYY-MM-DD HH:MM`. A cell with no value holds `-`. The board uses no em dash and no en dash.
+- **Run mode:** the header line reads `Run mode: solo` or `Run mode: team`.
+  - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
+  - Only the user changes it.
+  - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. On "later", the raiser sets the request State to `Later` (Handoff requests table, below).
+- **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
+  - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
+  - A skill writes only its own row, the one whose Skill cell names it.
+  - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+  - The Folder cell holds the path of the skill's output folder once that folder exists, and `-` until then.
+  - The Waiting on cell holds `<employee> (HR-NNN)` for each pending request (`Open`, `Later`, or `Accepted`) whose answer this skill waits on to go on, separated by `; `, or `-` when it waits on none.
+- **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
+  - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer, and owns every cell of it but State and Closed (UTC). On State, the raiser sets only `Open` or `Later`, and only on its own request while it reads `Open` or `Later`. The receiving skill alone sets `Accepted` when it takes the request (still pending: taken, not finished), then `Done`, or `Declined` when it declines it, with Closed (UTC), at the stop where it finishes it.
+  - One request per blocker: before raising a request, the raiser looks for its own request to the same receiver about the same thing that is still `Open`, `Later`, or `Accepted`. When one exists, it raises no new request: it updates that request's Why, its Request wording when the blocker changed, and its own row's Waiting on cell, and uses that request at this stop.
+  - When the user answers "later" at a handoff offer, the raiser itself sets State `Later` on the request it raised or reused at that stop; an `Accepted` request stays `Accepted`. A later run that offers again may move its own request from `Later` back to `Open`, for example when the user answers "now".
+  - A new request takes the next number after the highest ID on the board. IDs are never reused or renumbered.
+- **When a skill uses the board:**
+  - At the start of every run it reads the board: its own row, the pending requests (`Open`, `Later`, or `Accepted`) addressed to it and the ones it raised, and the upstream states.
+  - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
+  - At its handoff points it raises requests, or reuses its own pending one (Handoff requests table).
+- **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
+- **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
+- **Writers outside the project root:**
+  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `tutorialize-unifier` only reads the board and has no row.
 
 ## Rules that apply to every command
 
@@ -492,7 +557,7 @@ asks before writing.
 8e. **Fewer, tighter rounds.** Audit claims freeze at audit 1; only the 7 big points (audit-rules.md § 4)
     can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
     strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
-    round. Audit budget 15–25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
+    round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
 8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
     gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →
     the audit. A task that fails its first audit records which earlier gate should have caught it.
@@ -520,7 +585,7 @@ asks before writing.
 ## Quality checks before finishing any write
 
 - [ ] Every task has: keyed ID, phase, layer, Doc refs (≥ 1 LLD anchor, ≥ 1 BRD UC/AC or a stated
-      reason why none — e.g. infra), Why, Owns, depends_on, DoD, Tests.
+      reason why none - e.g. infra), Why, Owns, depends_on, DoD, Tests.
 - [ ] Dependency graph has no cycles; every depends_on ID exists.
 - [ ] No item owned by two non-Dropped tasks.
 - [ ] Every link resolves (file + anchor).

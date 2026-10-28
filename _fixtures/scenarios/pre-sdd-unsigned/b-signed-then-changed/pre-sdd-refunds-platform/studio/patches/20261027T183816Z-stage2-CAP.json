@@ -1,0 +1,56 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set",
+      "entry": "CAP-06.1",
+      "value": "Requests about 4 KB and responses about 16 KB; receipts are looked up, not uploaded"
+    },
+    {
+      "op": "confirm",
+      "entry": "CAP-06.1"
+    },
+    {
+      "op": "set-factor",
+      "entry": "CAP-06.1",
+      "factor": "requestKB",
+      "value": 4
+    },
+    {
+      "op": "confirm",
+      "entry": "CAP-06.1",
+      "factor": "requestKB"
+    },
+    {
+      "op": "set-factor",
+      "entry": "CAP-06.1",
+      "factor": "responseKB",
+      "value": 16
+    },
+    {
+      "op": "confirm",
+      "entry": "CAP-06.1",
+      "factor": "responseKB"
+    },
+    {
+      "op": "na",
+      "entry": "CAP-12.1",
+      "reason": "No AI, ML or media jobs are in scope of either BRD."
+    },
+    {
+      "op": "set",
+      "entry": "CAP-05.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    },
+    {
+      "op": "set",
+      "entry": "CAP-10.1",
+      "owner_name": "Refunds and Loyalty Product Owner",
+      "due": "2026-11-30"
+    }
+  ]
+}

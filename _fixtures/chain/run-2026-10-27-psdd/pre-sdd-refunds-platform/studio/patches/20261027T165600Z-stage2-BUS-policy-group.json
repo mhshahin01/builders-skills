@@ -1,0 +1,6 @@
+{
+  "actor": { "type": "policy" },
+  "ops": [
+    { "op": "confirm-group", "group": "BUS" }
+  ]
+}

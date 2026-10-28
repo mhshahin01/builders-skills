@@ -22,9 +22,9 @@ Chunks 15, 16, and 17 are outside both options. They stay locked behind the deli
 
 | Part | Chunks | What it settles | The user reviews |
 |---|---|---|---|
-| **1** | 00, 01, 02, 03, 04, 05, plus `[project-slug]-brd-master.md` | Why the product exists, the business terms, scope, personas, journeys, the list of use cases | Scope (in / out), personas, and the Use Case Summary: names, actors, and whether each use case holds one goal (split or merge now, before the details are written). These drive part 2; changing them later is costly. |
+| **1** | 00, 01, 02, 03, 04, 05, plus `[project-slug]-brd-master.md` | Why the product exists, the business terms, scope, personas, journeys, the list of use cases | Scope (in / out), personas, and the Use Case Summary: names, actors, and whether each use case holds one goal. Split or merge now, before the details are written. These drive part 2, and changing them later is costly. |
 | **2** | every `06*` chunk, then 07 | The detailed use cases and the Users & Use Cases Matrix | Main flows, alternate and exception flows, business rules with numbers, acceptance criteria, who may do what |
-| **3** | 08, 09, 10, 11, 12, then 13, then 14 | Integrations, reports, NFRs, UI/UX, appendix; the independent review; the to-do | The open items (acceptance loop) and the to-do |
+| **3** | 08, 09, 10, 11, 12, then 13, then 14 | Integrations, reports, NFRs, UI/UX, appendix. Then the independent review. Then the to-do. | The open items (acceptance loop) and the to-do |
 
 The order is fixed: 1, then 2, then 3. A part is never skipped, and a later part is never started before the earlier one is complete. Intake (SKILL.md step 3) happens once, before part 1.
 
@@ -39,7 +39,7 @@ Chunks 05 and `06a` are never collapsed into one file in `parts`, even for a sma
 3. **Back-fill earlier parts** (parts 2 and 3 only). Later work changes earlier chunks. Apply the change and list it in the part summary:
    - New business terms and acronyms go into the Glossary (02). New assumptions and dependencies go into 02. New domain rules go into 03.
    - The Use Case Summary (05) follows the detailed use cases: if part 2 renamed, split, merged, or re-assigned a use case, the use case wins and 05 is updated. If this touches the personas or the scope (04), say so clearly: it is a change to what the user approved in part 1.
-   - The user has seen the UC IDs in part 1, so they are never renumbered and never reused (`use-case-quality.md` § UC numbering and IDs). A use case added or split off in part 2 takes the next free ID and is listed under its persona in the summary; IDs inside a persona group can then be out of order, which is expected. A use case merged away keeps its row, marked `Merged into UC-NN`; a removed one keeps its row, marked `Removed: [reason]`.
+   - The user has seen the UC IDs in part 1, so they are never renumbered and never reused (`use-case-quality.md` § UC numbering and IDs). A use case added or split off in part 2 takes the next free ID and is listed under its persona in the summary. IDs inside a persona group can then be out of order, which is expected. A use case merged away keeps its row, marked `Merged into UC-NN`; a removed one keeps its row, marked `Removed: [reason]`.
    - Figures index, Tables index, and Table of Contents in chunk 00.
 4. **Plain-language pass** on the chunks written or changed in this part (`writing-style.md`).
 5. **Run the part's exit checklist** (below). Fix what fails; flag what cannot be fixed with `[NEEDS CLARIFICATION: ...]`.
@@ -63,7 +63,15 @@ When the user gives corrections: apply them to the existing chunks first, rerun 
 
 ### End of part 3
 
-Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run the plain-language pass and the part 3 exit checklist. Then run the rest of the normal workflow in order: the independent reviewer pass (SKILL.md step 7, chunk 13), the open items acceptance loop (step 8), the to-do (step 8a, chunk 14), the final `[project-slug]-brd-master.md` and chunk 00, and the full handoff (step 9). The independent reviewer runs **once**, here, on the whole BRD.
+Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run the plain-language pass and the part 3 exit checklist. Then run the rest of the normal workflow in order:
+
+- the independent reviewer pass (SKILL.md step 7, chunk 13);
+- the open items acceptance loop (step 8);
+- the to-do (step 8a, chunk 14);
+- the final `[project-slug]-brd-master.md` and chunk 00;
+- the full handoff (step 9).
+
+The independent reviewer runs **once**, here, on the whole BRD.
 
 ---
 
@@ -71,7 +79,7 @@ Part 3 does not end with a checkpoint. After chunks 08-12 and the back-fill, run
 
 **Part 1**
 
-In a phase-based BRD, the checks below ask for no use case yet for a later phase's scope items, or for a persona or objective that only a later phase serves; such a persona is listed in 04 with its phase label (SKILL.md § Phase-based BRD).
+In a phase-based BRD, the checks below ask for no use case yet in two cases: for a later phase's scope items, and for a persona or objective that only a later phase serves. Such a persona is listed in 04 with its phase label (SKILL.md § Phase-based BRD).
 
 - [ ] Every persona in 04 has a journey in 05 and at least one use case in the Use Case Summary.
 - [ ] Every use case in the summary has a Primary Actor that is a persona from 04, and sits inside In Scope.
@@ -145,6 +153,12 @@ When the skill is invoked on a folder whose `[project-slug]-brd-master.md` shows
 
 **The user asks for a later part while an earlier one is pending.** Explain the order and offer the next pending part. Do not skip.
 
-**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 13 that points into the part, and keep the diagrams added at to-do step 5 (they are re-verified at step 5). Then, for every later part that is already complete: rerun its back-fill and exit checklist, and tell the user what no longer fits (for example, detailed use cases whose persona was removed). If part 3 was complete, this is a content change: bump the version (`delivery-chunks.md` § Refresh triggers, Version), update chunk 13 by status only (the independent reviewer runs again only if the user asks), rerun the consistency check (SKILL.md step 7, On an update), refresh chunk 14 (steps whose inputs changed fall back to `In progress`), and mark chunks 15-17 `Stale` if they exist and their source meaning changed (`delivery-chunks.md` § The delivery gate, Re-lock).
+**The user asks to redo a completed part.** Rewrite that part's chunks, keeping every decision taken since: re-apply each Resolution Log entry in chunk 13 that points into the part, and keep the diagrams added at to-do step 5. They are re-verified at step 5. Then, for every later part that is already complete: rerun its back-fill and exit checklist, and tell the user what no longer fits (for example, detailed use cases whose persona was removed). If part 3 was complete, this is a content change. In that case:
+
+- Bump the version (`delivery-chunks.md` § Refresh triggers, Version).
+- Update chunk 13 by status only. The independent reviewer runs again only if the user asks.
+- Rerun the consistency check (SKILL.md step 7, On an update).
+- Refresh chunk 14. Steps whose inputs changed fall back to `In progress`.
+- Mark chunks 15-17 `Stale` if they exist and their source meaning changed (`delivery-chunks.md` § The delivery gate, Re-lock).
 
 **The user switches to `whole` midway.** Write all remaining parts in one run, with no more checkpoints, and record `Generation: parts, completed whole from part N`.

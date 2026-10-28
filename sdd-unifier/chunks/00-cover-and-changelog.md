@@ -16,7 +16,7 @@ PART OF: SDD - [Project Name]
 **Reviewers:** [Reviewer Name(s)]
 **Approvers:** [Approver Name(s)]
 **Date:** [YYYY-MM-DD]
-**Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
+**Lineage:** [Document Lineage](#document-lineage) (source BRDs, source Pre-SDD, and child LLDs)
 
 ---
 
@@ -31,6 +31,14 @@ PART OF: SDD - [Project Name]
 | Key | BRD | Version | Link | Covers |
 |-----|-----|---------|------|--------|
 | [KEY] | [BRD project name] | [X.X] | [[brd-slug]-brd-master.md](../brd-[brd-slug]/[brd-slug]-brd-master.md) | [What this BRD contributes] |
+
+### Source Pre-SDD
+
+<!-- Rules: brd-to-sdd.md § Source Pre-SDD. One row: the G3-signed Pre-SDD this SDD loaded (SKILL.md step 2a), key PSDD; every Pre-SDD ID this SDD cites is PSDD/<ID> with a link. Version and Gate: the version loaded and the gate its master's Gate line showed then (G3 Approved or G3 Approved with conditions). Link: the Pre-SDD master (chunked) or combined file. With none, one row whose Pre-SDD cell reads "None - <reason>" and the other cells "-": not derived from a BRD; declined, with the decision-log.md link; or not yet run, with the open request (HR-NNN). Checked on every run (SKILL.md step 1): a newer signed Pre-SDD version gets one offer. -->
+
+| Key | Pre-SDD | Version | Gate | Link |
+|-----|---------|---------|------|------|
+| PSDD | [Pre-SDD project name] | [X.X] | [G3 Approved / G3 Approved with conditions] | [[pre-sdd-slug]-pre-sdd-master.md](../pre-sdd-[pre-sdd-slug]/[pre-sdd-slug]-pre-sdd-master.md) |
 
 ### Child LLDs (children)
 
@@ -56,7 +64,7 @@ PART OF: SDD - [Project Name]
 
 ## Table of Contents
 
-<!-- Auto-generated or manually maintained. Include Figures and Tables indices if the document is large. -->
+<!-- Auto-generated or manually maintained: in CHUNKS mode one entry per chunk, in file-name order (05a follows 05; chunk 20, the deck brief, has no entry: SKILL.md step 8c item 7); in COMBINED mode one entry per numbered section (§8.6 and §8.7 follow §8.5). Include Figures and Tables indices if the document is large. -->
 
 **Figures**
 

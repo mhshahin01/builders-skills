@@ -5,7 +5,7 @@ This skill has **two orthogonal dimensions**:
 1. **Output mode** (CHUNKS / COMBINED): the file layout of the deliverable.
 2. **Direction** (FROM-CODE / FROM-SDD / HYBRID / PARTIAL): the source of truth for the content.
 
-The skill always asks for the direction at the start of any invocation. The output mode is determined by argument or interactive prompt with CHUNKS as default; an existing LLD keeps its own mode without a prompt (SKILL.md § Interactive mode prompt).
+The skill always asks for the direction at the start of any invocation. The output mode is set by argument or interactive prompt, with CHUNKS as default. An existing LLD keeps its own mode without a prompt (SKILL.md § Interactive mode prompt). A third setting, the generation option (`parts` or `whole`), decides how much of a first build is written before the user reviews it (`parts-mode.md`).
 
 ---
 
@@ -26,6 +26,7 @@ lld-[project-slug]/
 ├── 01-purpose-and-scope.md
 ├── 02-context.md
 ├── 03-architecture.md
+├── 03a-libraries-and-conventions.md # §6.5; an LLD written before it existed has none
 ├── 04-implementation/               # one file per service
 │   ├── [service-1-slug].md
 │   ├── [service-2-slug].md
@@ -43,7 +44,9 @@ lld-[project-slug]/
 ├── 15-open-questions.md
 ├── 16-references.md
 ├── 17-specs.md
-└── 18-open-items-and-clarifications.md
+├── 18-open-items-and-clarifications.md
+├── 19-for-ppt.md                    # ON REQUEST: implementation deck brief, once chunk 18 is cleared; never merged; not part of a build
+└── decision-log.md                  # decision log (companion file; created on first use; never merged)
 ```
 
 `[project-slug]-lld-master.md` (skeleton: `chunks/lld-master.md`) is the master index pointing at the chunks. Regenerate it per project so it links to that project's chunks specifically.
@@ -62,6 +65,8 @@ PART OF: LLD - [Project Name]
 
 See `chunking.md` for the canonical chunk map and per-service split rules.
 
+**Generation option.** A first build in CHUNKS mode is written in three parts by default, with a stop after parts 1 and 2 (`parts-mode.md`). `whole` writes chunks 00-18 in one run. COMBINED mode is always written whole: `combined parts` is not available.
+
 **When to prefer CHUNKS:**
 
 - Multi-service systems where each service deserves its own file.
@@ -76,9 +81,13 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 
 **Skeleton source:** `TEMPLATE-COMBINED.md`.
 
-**Structure follows the template top-to-bottom** (sections 1–21 per `TEMPLATE-COMBINED.md`).
+**Structure follows the template top-to-bottom** (sections 1 to 21 per `TEMPLATE-COMBINED.md`).
 
 **No chunk comment blocks** in combined mode: the file is a single artefact.
+
+**The decision log stays outside the file**, at `./lld-[project-slug]/decision-log.md` (the folder is created for it): the combined file holds the design only.
+
+**The deck brief stays outside the file too.** On request, once chunk 18 is cleared, it is written to `./lld-[project-slug]/19-for-ppt.md`, and its links point at the combined file (SKILL.md step 7c item 6).
 
 **When to prefer COMBINED:**
 
@@ -91,7 +100,7 @@ See `chunking.md` for the canonical chunk map and per-service split rules.
 
 The two modes are reversible.
 
-**Chunks → Combined (merge)**: see `chunking.md` § Merge handling.
+**Chunks → Combined (merge)**: see `chunking.md` § Merge handling. The merge skips `19-for-ppt.md` (and `decision-log.md`).
 
 **Combined → Chunks (re-chunk)**: see `chunking.md` § Re-chunk handling.
 
@@ -118,9 +127,9 @@ See `code-extraction.md` for the agent dispatch templates and `agent-orchestrati
 
 The user points the skill at an SDD (chunked folder or combined file), optionally also a BRD. The skill applies the field mapping in `sdd-to-lld.md` and the CLAUDE.md design rules in `pattern-rules.md`.
 
-**Pattern aggressiveness:** every CLAUDE.md rule that applies is applied with explicit attribution and rationale (per `pattern-rules.md`).
+**Rules:** the stack as SKILL.md step 3a settled it, and every rule the project instruction file or the SDD states, are applied with attribution and rationale (per `pattern-rules.md`). A rule no source states is applied as a proposal, flagged (SKILL.md principle 10).
 
-**Use-case trace:** every BRD use case in scope is traced from SDD §7.3, with its BRD key, to its workflow block, routes and screens, test cases, e2e specs, and `use_case` attribute (`sdd-to-lld.md` § Use-case traceability).
+**Use-case trace:** every BRD use case in scope is traced from SDD §7.3, with its BRD key. The trace runs to its workflow block, routes and screens, test cases, e2e specs, and `use_case` attribute (`sdd-to-lld.md` § Use-case traceability).
 
 **When to use:** greenfield project before any code exists; the LLD is the build target.
 
@@ -144,7 +153,7 @@ The user points the skill at an SDD covering full scope, but only some services 
 
 1. Identifies which services have code (via `code-explorer`).
 2. Runs FROM-CODE on the existing services.
-3. Emits the placeholder from `transform-detection.md` § Partial-code resolution (status, the use cases it owns as not built, the re-run TODO) for un-built services in `04-implementation/<service>.md` files.
+3. Emits the placeholder from `transform-detection.md` § Partial-code resolution for un-built services, in `04-implementation/<service>.md` files. The placeholder holds the status, the use cases it owns as not built, and the re-run TODO.
 
 **When to use:** mid-build state where some services are scaffolded and you want to capture current state without inflating the unbuilt parts from SDD intent alone.
 
@@ -154,7 +163,7 @@ The user points the skill at an SDD covering full scope, but only some services 
 
 |  | FROM-CODE | FROM-SDD | HYBRID | PARTIAL |
 |---|---|---|---|---|
-| **CHUNKS** | Reverse-engineer 19-chunk LLD from code. | Forward-design 19-chunk LLD from SDD. | Two-pass + unified 19-chunk LLD with drift markers. | From-code on existing services; the not-yet-built placeholder (the Status / Owns use cases / TODO re-run block, `transform-detection.md` § Partial-code resolution) for the rest. |
+| **CHUNKS** | Reverse-engineer 20-chunk LLD from code (chunk 19, the deck brief, is not counted). | Forward-design 20-chunk LLD from SDD. | Two-pass + unified 20-chunk LLD with drift markers. | From-code on existing services; the not-yet-built placeholder (the Status / Owns use cases / TODO re-run block, `transform-detection.md` § Partial-code resolution) for the rest. |
 | **COMBINED** | Reverse-engineer single-file LLD. | Forward-design single-file LLD. | Two-pass + unified single-file LLD with inline drift markers. | Same as chunks but in one file. |
 
 See `transform-detection.md` for how the skill prompts for direction and resolves ambiguity.

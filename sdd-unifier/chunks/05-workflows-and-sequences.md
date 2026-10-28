@@ -52,4 +52,4 @@ sequenceDiagram
 
 <!-- Repeat for each critical sequence. -->
 
-<!-- MASTER: [project-slug]-sdd-master.md | PREV: 04-architecture-style-and-diagrams.md | NEXT: 06-principles-and-decisions.md -->
+<!-- MASTER: [project-slug]-sdd-master.md | PREV: 04-architecture-style-and-diagrams.md | NEXT: 05a-infrastructure-and-network.md -->

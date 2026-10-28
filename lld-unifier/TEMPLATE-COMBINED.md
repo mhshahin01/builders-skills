@@ -135,24 +135,88 @@ graph TB
 
 | Concern | Choice | Source |
 |---------|--------|--------|
-| Container | Docker | CLAUDE.md default |
-| Orchestrator | Kubernetes (Helm) | CLAUDE.md default |
+| Container | Docker | [SDD §8.6](./sdd-[sdd-slug]/05a-infrastructure-and-network.md#86-infrastructure-architecture) / CLAUDE.md default |
+| Orchestrator | Kubernetes (Helm) | [SDD §8.6](./sdd-[sdd-slug]/05a-infrastructure-and-network.md#86-infrastructure-architecture) / CLAUDE.md default |
 | Replicas | [N min / M max] | [SDD §17.X Deployment Strategy] |
 
 ## 6.3 Runtime Stack
 
 | Layer | Technology | Version | Source |
 |-------|-----------|---------|--------|
-| Language | Java | 21 | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
-| Framework | Spring Boot | 3.5+ | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
-| Database | PostgreSQL | 17+ | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
-| Broker | Kafka | [version] | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
-| Auth | Keycloak | [version] | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
-| Migrations | Flyway | [version] | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) row / manifest (no SDD) / CLAUDE.md default] |
+| Language | Java | 21 | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) [layer] row / `manifest (<file>)` / LLD default] |
+| Framework | Spring Boot | 3.5+ | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) [layer] row / `manifest (<file>)` / LLD default] |
+| Database | PostgreSQL | 17+ | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) [layer] row / `manifest (<file>)` / LLD default] |
+| Broker | Kafka | [version] | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) [layer] row / `manifest (<file>)` / LLD default] |
+| Auth | Keycloak | [version] | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) [layer] row / `manifest (<file>)` / LLD default] |
+| Migrations | Flyway | [version] | [[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) [layer] row / `manifest (<file>)` / LLD default] |
+
+> **Convention:** the stack approval (SKILL.md step 3a) settles these rows. This is the one list of the Source labels of §6.3 and of §6.5.1 below; other text that names a label spells it as here.
+>
+> - **SDD §6 row:** `[SDD §6](./sdd-[sdd-slug]/02-ecosystem-overview.md#6-ecosystem-overview) <layer> row`, for a row derived from SDD §6. SDD §6 is read in either shape (`sdd-to-lld.md` field mapping, row 02). When the SDD row is a proposal (Status `Proposed`, or a legacy row whose Notes mark it Proposed in any form, bold or plain text), it pins nothing: the LLD row stays a proposal, and the label ends with `(Proposed in SDD §6)`.
+> - **Project rule:** a link named `Project rule` to the project instruction file that states the row (`./AGENTS.md` or `./CLAUDE.md`).
+> - **Stack approval:** `[Stack approval](./lld-[project-slug]/decision-log.md#stack-approval-record)`, for a row neither SDD §6 nor the project rules pin that the stack approval settled.
+> - **Override:** `Customer decision, overrides SDD §6 <layer>`, or `Customer decision, overrides Project rule <layer>` for a layer SDD §6 does not state, linked to its entry in `./lld-[project-slug]/decision-log.md`. An approved override is not drift; any other value that disagrees with SDD §6 is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3).
+> - **Manifest:** `manifest (<file>)`, in a code-read direction, for a row a dependency manifest pins (`<file>` is that manifest, such as `pom.xml`).
+> - **Code:** `code (<file>:<line>)`, in a code-read direction, for a row no dependency manifest shows because it is not a dependency (the DTOs row, the `RestClient` row of a Spring MVC service): the declaration or call site it was read from.
+> - **LLD default:** `LLD default`, for a default nothing has confirmed. A §6.3 row with this label is flagged `> Confirm:` until it is confirmed, and one that adds a dependency SDD §6 does not name is marked `proposed; needs approval when the project's rules reserve new dependencies`; where those rules reserve it, only the explicit request of SKILL.md step 3a, item 1 confirms it. A §6.5.1 row is marked by its Status column alone, by the Status rule of §6.5.1 below.
 
 ## 6.4 Architectural Style - As Operationalised
 
 [Concrete operationalisation of the SDD §8.1 style.]
+
+## 6.5 Libraries & Coding Conventions
+
+> **Note:** this section owns the library choices and their Status (§ 6.5.1), an index of the coding rules whose detail stays where each row's Source points (§ 6.5.2), and the per-service deltas (§ 6.5.3). §12, §16, and §17 cite a §6.5.1 row (or the §6.3 row, for a layer §6.3 holds) instead of naming the library and its approval state. A service block in § 7 cites a row of this section and never restates it. A service that departs from a row has a § 6.5.3 row with its reason.
+
+### 6.5.1 Libraries by Concern
+
+| Concern | Use | Instead of | Why (one line) | Scope | Source | Status |
+|---------|-----|------------|----------------|-------|--------|--------|
+| HTTP client, synchronous | `RestClient` | `RestTemplate` | The default HTTP client of a Spring MVC service. `RestTemplate` is not used in new code. | Spring MVC services | [SDD §6 row / `[Project rule](./<file>)` / [Stack approval](./lld-[project-slug]/decision-log.md#stack-approval-record) / `code (<file>:<line>)` / LLD default] | [Approved / Proposed - needs approval] |
+| HTTP client, reactive or non-blocking | `WebClient` | `RestTemplate` | The client for reactive or non-blocking calls. In a Spring MVC service it adds the WebFlux starter, a new dependency. | [Services with reactive or non-blocking calls, or `None in this LLD`] | LLD default | Proposed - needs approval |
+| DTOs | Java records | Classes | A record states a DTO's fields once and is immutable. | Every service | [SDD §6 row / `[Project rule](./<file>)` / [Stack approval](./lld-[project-slug]/decision-log.md#stack-approval-record) / `code (<file>:<line>)` / LLD default] | [Approved / Proposed - needs approval] |
+| [Concern] | [Library] | [The alternative it rules out, or `-`] | [One line] | [Services or tiers] | [Source] | [Approved / Proposed - needs approval] |
+
+> **Convention:**
+>
+> - **Rows.** One row per concern, in the form the services build with. `Use` is the library. `Instead of` names the alternative the row rules out, or `-` where neither the skill nor the project rules name one. A layer or library that § 6.3 already holds (the database, broker, auth, migrations, observability, and any other row SDD §6 gives a layer of its own) is not repeated here. A row no service uses is left out, except the three seed rows above, which stay as the standard.
+> - **Other rows.** Add one row, unless § 6.3 already holds the library, for each library below that the LLD uses and for each library the project instruction file or SDD §6 names for a concern a service builds with. A frontend library gets a row only when the LLD has §17. A library that neither SDD §6 nor the project instruction file names is a new dependency (see Status). `Instead of` is `-` unless the entry names one.
+>   - Resilience: `Resilience4j` (SKILL.md principle 10; §12.3).
+>   - Tracing: `OpenTelemetry` SDK with automatic instrumentation for Spring Boot (§12.8).
+>   - Backend tests: `JUnit 5` with `Mockito` for unit tests, and `Testcontainers` for integration tests instead of mocked repositories (§16.1, §16.3); contract tests with `Spring Cloud Contract` or `Pact` (§16.1), and static analysis with `SpotBugs`, `Checkstyle`, or `SonarQube` (§16.7), each a choice between the tools named.
+>   - Frontend tests: `Jest` with `Angular Testing Library` for unit and component tests, `Playwright` for end-to-end tests, and `axe-core` for accessibility checks inside the Playwright runs (§16.1, §16.5).
+>   - Frontend: `PrimeNG` for UI components first, with custom components only when PrimeNG cannot do it; `Tailwind` for styling; `NgRx SignalStore` for shared or complex state (§17.2); `@angular/localize` or `ngx-translate` for i18n (§17.6).
+> - **Rows from code.** In a code-read direction, add one row for each direct dependency that a service's own code calls, for a concern that no row of § 6.3 or § 6.5.1 covers. A transitive dependency never gets one (`code-extraction.md` § Libraries and conventions in use).
+> - **Source.** A label from the one list of the §6.3 Convention above, as for a §6.3 row. A default nothing has confirmed reads `LLD default`.
+> - **Status.** `Approved` when SDD §6 names the library, when the project instruction file states it, or when the stack approval approved a row that adds no dependency (SKILL.md step 3a, Group B). In a code-read direction a row the manifests pin, or a `code (<file>:<line>)` row, is `Approved` too: the project already depends on the library or already uses the declaration. Every other row is `Proposed - needs approval`: a default nothing has confirmed, and, in every project, whatever the project's rules reserve, a library that adds a dependency SDD §6 does not name (the `WebClient` row of a Spring MVC service is one, because it adds the WebFlux starter). Approve all never confirms such a row, an Approve all on a later run included. It becomes `Approved` only when SDD §6 or the project rules name it, or on the one route SKILL.md step 3a, item 1 names: an explicit request that names the row and its decider, after which the stack approval record holds the row, the decider, and the date.
+> - **Proposals in SDD §6.** An SDD §6 row whose Status is `Proposed`, or a legacy row whose Notes mark it Proposed in any form, confirms nothing. The row stays `Proposed - needs approval`, and its Source names the SDD row with `(Proposed in SDD §6)`.
+
+### 6.5.2 Coding Conventions (Clean Code)
+
+| Rule | Do | Don't | Applies to | Source | Enforced by |
+|------|----|-------|------------|--------|-------------|
+| Constructor injection only | Inject collaborators through the constructor. | Put `@Autowired` on a field. | Every Spring component | [`[Project rule](./<file>)` / SDD § that states it / LLD default] | review |
+| Records for DTOs | Declare each DTO as a record, as the DTOs row of § 6.5.1 says. | Declare a DTO as a class. | Request, response, and event DTOs | § 6.5.1, DTOs row | review |
+| Package layering | Follow the layout a source states: the layers the project instruction file states (controller, service, service impl, entity, repository, dto), or the layout SDD ADR-01 records (hexagonal ports and adapters, or a modular monolith's module packages). | Mix two layouts in one service. | Every backend service | [`[Project rule](./<file>)` / SDD §8.1 and ADR-01] | review |
+| UTC for all datetimes | Store, exchange, and log every date-time in UTC. | Use a local time zone. | Every service | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §5.5. | review |
+| UUIDv7 primary keys | Generate each primary key as a UUIDv7 at the service layer. | Use another ID type for a primary key. | Every table | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §5.5. | review |
+| Problem Details errors | Translate every exception to an RFC 9457 `ProblemDetails` in one global `@RestControllerAdvice`. Business exceptions extend `ServiceException` and carry an error code. | Expose a stack trace or a raw code. | Every REST service | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §12.6. | review |
+| Idempotency keys on writes | Require an `Idempotency-Key` on a write endpoint that touches money, wallets, notifications, or external providers. | Accept such a write without a key. | Those endpoints | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §12.2. | review |
+| Test naming | Name each test `methodName_scenario_expectedResult`. | Use another name shape. | Every test | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §16. | review |
+| Standalone components | Write standalone components and route them with `provideRouter` and `loadComponent`. | Use NgModules or `RouterModule`. | Angular frontend | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §17. | review |
+| Signals for state | Use signals for component state, NgRx SignalStore for shared or complex state, and RxJS for streams only. | Use RxJS for anything but streams. | Angular frontend | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §17; §6.5.1, NgRx SignalStore row. | review |
+| OnPush change detection | Use `OnPush` change detection by default. | Use default change detection. | Angular frontend | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §17. | review |
+| Strict TypeScript | Compile with strict TypeScript. | Use `any`. | Angular frontend | [`[Project rule](./<file>)` / SDD § that states it / LLD default]. §17. | review |
+
+> **Convention:** a rule is seeded only from the project instruction file, the SDD, or a rule this skill already states; none is invented. A rule that also has a § 6.5.1 row names it in `Source`; that row is the home, and the two never differ. Each row is an index line: the rule's detail stays where its `Source` points (§5.5, §12, §16, or §17). `Enforced by` names a tool only when that tool is an `Approved` row of § 6.5.1; otherwise it reads `review`. A rule that only this skill states, with no project file or SDD behind it, is applied as a proposal with its gap flagged `> Confirm:` (SKILL.md principle 10). The package layering row has no skill default: it is written only when a source states a layout, and with none it is left out and nothing is invented. The Angular rows are written only when the LLD has §17.
+
+### 6.5.3 Per-Service Deltas
+
+| Service | Departs from | Standard | This service | Reason | Source | Status |
+|---------|--------------|----------|--------------|--------|--------|--------|
+| [service-slug] | [§ 6.5.1 concern or § 6.5.2 rule] | [What the row says] | [What this service does instead] | [Why it departs] | [SDD section / `Customer decision`, linked to its entry in `./lld-[project-slug]/decision-log.md`] | [Approved / Proposed - needs approval] |
+
+> **Convention:** a row only where a service departs from § 6.5.1 or § 6.5.2, each with its reason. The reason comes from a source: an SDD section or a decision in `./lld-[project-slug]/decision-log.md`. In from-sdd, where none states it, the row carries a `> Confirm:` that asks for it. In a code-read direction, a departure with no such reason gets no row and stays the finding: `⚠ policy` (`pattern-rules.md` § Anti-patterns to flag), or in hybrid `⚠ drift` for a row sourced from SDD §6 (`hybrid-drift.md` § Section-by-section diff rules). With no departure, this section reads `None: every service follows § 6.5.1 and § 6.5.2.` and the table is dropped.
 
 ---
 
@@ -278,7 +342,7 @@ erDiagram
 
 ## 8.2 Tables (per service)
 
-One table per service with a Source column per row, as in `chunks/05-data-model.md` § 8.2.
+One block per table (Table name, Table purpose, Column details, Indexes) with a Source column per column row, as in `chunks/05-data-model.md` § 8.2.
 
 ## 8.3 Indexes
 
@@ -298,11 +362,143 @@ One table per service with a Source column per row, as in `chunks/05-data-model.
 |--------------|--------|------|---------|-----------------|----------------------------|--------------|
 | [API-01](./sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) | `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 409, 422 |
 
-API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked; `-` for an endpoint no §15 contract covers. Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in §9.3, never in the cell (never `- (<reason>)`).
+API ID: the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked; `-` for an endpoint no §15 contract covers. Every row has one block in §9.2. A call a service makes to a provider is not a §9.1 row: it is recorded in the §12.3 Instances table, and the provider's contract (its SDD §15 entry, or the provider LLD) holds the block. A client is the one that the HTTP client rows of §6.5.1 give that service. Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in §9.3, never in the cell (never `- (<reason>)`).
 
 ## 9.2 Request / Response Shapes
 
-> **Source:** from an SDD, each endpoint links its SDD §15 `API-NN` contract and adds only the implementation delta; the full shape is written here only from code with no SDD, or for an endpoint the SDD does not define (flagged).
+> **Source:** one block below for every §9.1 endpoint and every §9.6 port contract, each with every field of the list that follows. From an SDD, a block is a derived view of the SDD §15 contract its API ID cell links or, for an endpoint with API ID `-`, of the owner's `13x` List of APIs and API Standards. It restates the values the implementer needs, names that source, and adds the implementation delta (records, validation, mapping). A value that differs from the SDD is drift to flag, never a silent local truth (`sdd-to-lld.md` § API contract blocks). The block follows its SDD contract and is the design: the OpenAPI spec must match the blocks, and a difference is a `Contract drift` item, never a silent edit of either. From code, a block is read from the controller, its records, and its controller advice. Request and response bodies are records, as the DTOs row of §6.5.1 says. Timeout, retry, circuit breaker, and bulkhead values stay in the §12.3 instance rows. Hybrid marks follow `hybrid-drift.md` § Section-by-section diff rules: `🆕 code-only` for an endpoint only the code has, `⛔ sdd-only` for one only the SDD has, `⚠ drift` for a field that differs.
+
+**Block fields:** the one list. A block has every field of its column; none is left out, left blank, or written "standard".
+
+| Field | HTTP endpoint (a §9.1 row) | In-process port (a §9.6 row) |
+|-------|-----------------------------|-------------------------------|
+| API ID | The SDD §15 `API-NN` the endpoint implements, linked to its contract block; `-` when no §15 contract covers it | The same |
+| Method and path | `Method` and `Path`, as the row writes them | `Type` (`Internal (in-process)`) and `Operation` (`[ProviderPort].[operation]`), as the row writes them |
+| Request headers | Each header beyond the standard ones: name, required, format | Omitted: the call never leaves the process |
+| Path and query parameters | Each parameter: name, where, type, required, constraints | Omitted |
+| Request body | The record, and each field: name, type, required, constraints | The request record, and each field in the same table |
+| Responses | Each success status: meaning, body record, response headers; then each body record's fields | The response record, and each field in the same table |
+| Errors | Each error status of the row that is not a shared error: Problem Details `type`, `errorCode`, when | Each error the operation raises: `errorCode`, when. No status and no `type` |
+| Idempotency | `Required` or `N/A` as the row says, then the key, the dedup window, and what a repeat returns | The key and what a repeated call returns, and `Transaction` as the row says |
+| Authentication, Permission token | The scheme; the SDD §16 token, verbatim | The token, verbatim, checked at the port |
+
+> **Convention:**
+>
+> - **One block per row.** The blocks of a service group follow its §9.1 rows in order. A block is headed by the row's Method and Path (`POST /v1/foo`), or for a port by its port and operation (`[ProviderPort].[operation]`). A row whose Method and Path read `TBD` is headed by its API ID and operation (`API-02: [Operation]`). A service with no §9.1 row has no group.
+> - **Equal to the row.** A block's API ID, Method and Path (or Type and Operation), permission token, and idempotency requirement (`Required` or `N/A`) equal the row's cells. Every status of the row's Status Codes cell is a Responses row, an Errors row, a shared error, or covered by a `TBD - external` Responses or Errors field, and no other status appears.
+> - **Nothing blank.** A field with nothing to list says so on one line: `None`, `Standard headers only`, or `Not applicable - <reason>`.
+> - **Values.** A value the SDD states, in its contract or for API ID `-` in its `13x` rows, is written as the SDD writes it, with no flag.
+> - **Flags.** A value no source gives is written as a proposal and flagged: one `> Confirm:` directly under the block heading that names the proposed fields, or one under the group heading when every block of the group has the same gap. Where the SDD carries an open question on the value, the flag is a `> TODO: <best-guess> - verify` that cites it. From code, a field the code does not show is flagged the same way. A field is never invented without its flag.
+> - **Errors.** An error's `type` and `errorCode` equal the owner's Error Handling row (`chunks/04-implementation-template.md` § 7.7) for the exception that raises it, and the `errorCode` is the SDD §15.1 standard code or the contract's domain code, verbatim. A status with an endpoint-specific `errorCode` is the block's own error, even when the status is also a shared error. `VALIDATION_FAILED` carries the `errors[]` extension (§12.6).
+> - **Idempotency.** `Required` names the key, the dedup window (the SDD's, when it states one; otherwise the default of §12.2), and what a repeat returns.
+> - **Pagination.** A paginated list endpoint lists its pagination parameters, and each cites §9.4 in its Constraints cell.
+> - **`TBD - external`.** A field the SDD marks `TBD - external` reads `TBD - external`, except a Method or Path that equals a §9.1 cell reading `TBD`, which reads `TBD`. The block carries one `> TODO:` that cites the SDD contract and its §15.6 row. Such a field is not a missing field. The fields on our side (idempotency, the tenant rule, the permission token or `-`) are filled from the SDD.
+
+**Standard headers:** every endpoint takes the headers of the SDD [§15.1 Standard headers](./sdd-[sdd-slug]/11-api-contracts.md#standard-headers) table: `Authorization`, `Content-Type`, `Accept`, the correlation header, the tenant header unless the token carries the tenant, `Idempotency-Key` on the writes that table names, and `traceparent`. With no SDD, list them here once. A block lists only the headers it adds, and lists `Idempotency-Key` only when its contract's §15.3 Request headers do (for API ID `-`, when it proposes the header).
+
+**Shared errors:** the statuses the platform raises for any endpoint, each with its SDD [§15.1 Standard error codes](./sdd-[sdd-slug]/11-api-contracts.md#standard-error-codes) `errorCode` and its Problem Details `type`. A block lists only its own errors, and a shared status in a §9.1 row needs no row in the block. This table is the home of the shared `type` values; a service's own exceptions are in its Error Handling rows (`chunks/04-implementation-template.md` § 7.7). With no SDD, the rows are the statuses the code's security chain and global handler return.
+
+| Status | `errorCode` | Problem Details `type` | Raised by |
+|--------|-------------|------------------------|-----------|
+| 401 | `UNAUTHENTICATED` | `https://errors.example.com/auth/unauthenticated` | The security chain |
+| 403 | `FORBIDDEN` | `https://errors.example.com/auth/forbidden` | The permission check |
+| 429 | `RATE_LIMITED` | `https://errors.example.com/rate-limit/exceeded` | [The gateway or the rate limiter] |
+| 500 | `INTERNAL_ERROR` | `https://errors.example.com/internal/error` | The global `@RestControllerAdvice` |
+| 503 | `UNAVAILABLE` | `https://errors.example.com/[context]/unavailable` | [A downstream dependency is down] |
+
+### Service: `[service-a]`
+
+> **Source:** a block with an API ID restates that SDD §15 contract. A block with API ID `-` restates its row of the SDD [§17.X List of APIs](./sdd-[sdd-slug]/13[x]-service-[service-a].md#list-of-apis-swagger-friendly) and the API Standards, and proposes the fields they leave open, flagged. From code with no SDD, this line names the controller.
+
+#### `POST /v1/foo`
+
+<!-- A block with proposed values carries its flag line here: `> Confirm:` naming them. -->
+
+| Field | Value |
+|-------|-------|
+| API ID | [API-01](./sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) |
+| Method | `POST` |
+| Path | `/v1/foo` |
+| Authentication | Bearer JWT, validated as §9.3 says |
+| Permission token | `foo:write` (SDD §16, verbatim) |
+| Idempotency | Required. The `Idempotency-Key` header; dedup tuple and TTL as §12.2; a repeat of a finished request returns the stored response |
+
+**Request headers**
+
+| Header | Required | Format | Notes |
+|--------|----------|--------|-------|
+| `Idempotency-Key` | Yes | string, max 64 | One key per logical request |
+
+**Path and query parameters:** None.
+
+<!-- With parameters, a table with the columns Name, In (path or query), Type, Required, Constraints. -->
+
+**Request body** (record `FooDto`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `name` | string | Yes | 1..255 |
+| `amount` | decimal | Yes | > 0, 2 dp |
+| `metadata` | object | No | `metadata.key` is a string |
+
+**Responses**
+
+| Status | Meaning | Body record | Response headers |
+|--------|---------|-------------|------------------|
+| 201 | Created | `FooResponse` | `Location` |
+
+**Response 201 body** (record `FooResponse`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `id` | uuid | Yes | UUIDv7 |
+| `name` | string | Yes | - |
+| `amount` | decimal | Yes | 2 dp |
+| `status` | string | Yes | `ACTIVE` |
+| `createdAt` | string | Yes | ISO 8601 UTC |
+
+**Errors** (RFC 9457 Problem Details; `type` and `errorCode` as the owner's Error Handling table, `chunks/04-implementation-template.md` § 7.7)
+
+| Status | Problem Details `type` | `errorCode` | When |
+|--------|------------------------|-------------|------|
+| 400 | `https://errors.example.com/foo/validation` | `VALIDATION_FAILED` | Bean Validation or a domain rule fails; `errors[]` lists each field |
+| 409 | `https://errors.example.com/idempotency/conflict` | `CONFLICT` | The key is in flight on another request, or was used with a different body |
+| 422 | `https://errors.example.com/foo/[rule]` | `[DOMAIN_CODE]` | [The domain rule the request breaks] |
+
+<!-- Repeat the block for each §9.1 row of the group, in the row order, and the group for each service. -->
+
+### In-process port contracts (§9.6)
+
+<!-- Modular monolith or hybrid core only: one block per §9.6 row, in its order. With no §9.6 row, write "Not applicable - no in-process contracts" and drop the block below. -->
+
+#### `[ProviderPort].[operation]`
+
+| Field | Value |
+|-------|-------|
+| API ID | [API-03](./sdd-[sdd-slug]/11-api-contracts.md#[api-03-heading-slug]) |
+| Type | `Internal (in-process)` |
+| Operation | `[ProviderPort].[operation]` |
+| Permission token | `[token]` (SDD §16, verbatim), checked at the port |
+| Idempotency | [The key; what a repeated call returns] |
+| Transaction | [Joins the caller's transaction / Runs in its own] |
+
+**Request** (record `[RequestDto]`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `[field]` | [type] | [Yes / No] | [Constraints] |
+
+**Response** (record `[ResponseDto]`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `[field]` | [type] | [Yes / No] | [Constraints] |
+
+**Errors raised** (typed errors carrying the `errorCode`; no status and no `type`)
+
+| Error | `errorCode` | When |
+|-------|-------------|------|
+| `[DomainError]` | `[DOMAIN_CODE]` | [Condition] |
 
 ## 9.3 Authentication & Authorisation
 
@@ -362,7 +558,7 @@ Internal calls follow SDD §15.1: the caller's client-credentials token, checked
 
 ## 12.3 Resilience (downstream calls)
 
-HTTP and broker calls only; in-process port calls (§9.6) take no timeout, retry, circuit breaker, or bulkhead. The defaults table comes first, then an instance table with one row per Resilience4j instance (Instance, Caller (service, API ID), Timeout, Retry, Circuit breaker, Bulkhead, Source), `Default` where a cell equals the defaults, as in `chunks/09-cross-cutting.md` § 12.3.
+HTTP and broker calls only; in-process port calls (§9.6) take no timeout, retry, circuit breaker, or bulkhead. The resilience library, with its Status, is the row of §6.3 or §6.5.1. The defaults table comes first, then an Instances table with one row per instance of that library (Instance, Caller (service, API ID), Timeout, Retry, Circuit breaker, Bulkhead, Source), `Default` where a cell equals the defaults, as in `chunks/09-cross-cutting.md` § 12.3.
 
 ## 12.4 Outbox Pattern (mandatory for side effects that must follow a state change)
 
@@ -382,6 +578,8 @@ Every side effect that must follow a state change and must not be lost: integrat
 | Level for `use_case` | Any level, INFO included: a use case ID is not tenant data or PII |
 
 ## 12.8 Tracing
+
+The tracing library, with its Status, is the row of §6.3 or §6.5.1; this section gives its use only.
 
 ### Use-case attribute
 
@@ -466,6 +664,8 @@ Service-to-service: per SDD §15.1, the caller's client-credentials token (`Auth
 
 # 16. Testing
 
+> **Convention:** each test tool, with its Status, is a row of §6.5.1 (or of §6.3, for a layer §6.3 holds); the tiers below use those rows.
+
 ## 16.1 Test Pyramid (per service)
 
 | Tier | Tooling | Scope | Speed target |
@@ -507,6 +707,8 @@ The Not automated line lists every non-retired chunk 16 case of an in-scope use 
 # 17. Frontend
 
 > **Conditional section.** Generate only when the project has a UI surface (Angular, React, etc.). Omit entirely otherwise - do not stub.
+>
+> **Convention:** each UI, styling, i18n, state, and test library, with its Status, is a row of §6.5.1 (or of §6.3, for a layer §6.3 holds); the sections below use those rows.
 
 ## 17.1 Module / Component Tree
 
@@ -628,7 +830,7 @@ With no source BRD, write "Not applicable - no source BRD."
 # 20. Specs
 
 <!--
-Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD: Mission from SDD §1 (2-3 sentences, core idea only), Tech Stack from SDD §6 verbatim with version pins (must equal §6.3 Runtime Stack above - a mismatch is drift to flag; a pin missing from the resolved stack is never asked for and points to the §6.3 `> TODO:`, SKILL.md step 6b), Roadmap from SDD §13 + BRD UC ownership (delivery phases per SKILL.md step 6b: the BRD's own phases when the BRD is phase-based), Project Type from intake with the LLD direction taken. Direct input for speckit /constitution. Tone: short, precise, declarative. See chunks/17-specs.md for the full skeleton.
+Constitution-grade summary, owned by lld-unifier and authored AFTER the LLD body. Synthesised from the source SDD: Mission from SDD §1 (2-3 sentences, core idea only), Tech Stack from the stack SKILL.md step 3a settled, SDD §6 verbatim with version pins (must equal §6.3 Runtime Stack above - a mismatch is drift to flag; an approved override is no mismatch, and its bullet ends with `(override of SDD §6; see the decision log)` while it is Active or Raised in SDD vX.X (Proposed); a tier whose SDD §6 row is a proposal, its Status `Proposed` or, in a legacy table, its Notes marking it Proposed, keeps `(Proposed in SDD §6)`; a pin missing from the settled stack is never asked for and points to the §6.3 `> TODO:`, SKILL.md step 6b), Roadmap from SDD §13 + BRD UC ownership (delivery phases per SKILL.md step 6b: the BRD's own phases when the BRD is phase-based), Project Type from intake with the LLD direction taken. Direct input for speckit /constitution. Tone: short, precise, declarative. See chunks/17-specs.md for the full skeleton.
 -->
 
 ## 20.1 Mission

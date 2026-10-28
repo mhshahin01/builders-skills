@@ -9,11 +9,9 @@ PART OF: LLD - [Project Name]
 # 16. Testing
 
 > **Conventions per CLAUDE.md:**
-> - Backend: JUnit 5 + Mockito (unit), Testcontainers (integration).
-> - Frontend: Jest (unit/component), Playwright (e2e).
+> - Test tools: each tool, with its Status, is a row of `03a-libraries-and-conventions.md` § 6.5.1 (or of § 6.3, for a layer § 6.3 holds). The tiers below use those rows.
 > - Test naming: `methodName_scenario_expectedResult`.
-> - No mocking repositories in integration tests; use real DB via Testcontainers.
-> - A tool above that SDD §6 does not name is a new dependency: mark it `proposed; needs approval when the project's rules reserve new dependencies`.
+> - No mocking repositories in integration tests; use a real database through the integration-test tool.
 
 ## 16.1 Test Pyramid (per service)
 

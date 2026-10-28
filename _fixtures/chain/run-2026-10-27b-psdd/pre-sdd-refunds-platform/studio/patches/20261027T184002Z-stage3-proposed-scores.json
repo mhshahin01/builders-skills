@@ -1,0 +1,120 @@
+{
+  "actor": {
+    "type": "agent",
+    "name": "pre-sdd-unifier"
+  },
+  "ops": [
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "nfr_fit",
+      "value": 4,
+      "reason": "Pilot light meets REL-03.1 and REL-04.1 for scope region and local HA meets REL-03.2 and REL-04.2 for scope az (05 target shape), with less recovery margin than a warm standby."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "one_time_cost",
+      "value": 4,
+      "reason": "The recovery region holds replicated data and an idle environment only, so less is built up front than for a running standby."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "recurring_tco",
+      "value": 4,
+      "reason": "Only replication and stored data run in the recovery region each month; compute starts at failover (REL-03.1 allows the scale-up time)."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "delivery_time",
+      "value": 4,
+      "reason": "One running region plus replication and a scripted recovery environment is less to build and test before go-live."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "operability",
+      "value": 4,
+      "reason": "One running region to operate day to day; the recovery region needs only its replication watched and its recovery drilled (REL-09)."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "security_compliance",
+      "value": 4,
+      "reason": "Both regions stay in the European Union (DAT-04.1) and use the same encryption and key custody (SEC-04.1); SEC-01.1 is still open for both options."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "reversibility",
+      "value": 4,
+      "reason": "Little runs in the recovery region, so moving to a warm standby later is an additive change."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "uncertainty",
+      "value": 3,
+      "reason": "Recovery depends on starting the environment within REL-03.1, which only a drill proves; the drill frequency (REL-09) is open."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "nfr_fit",
+      "value": 5,
+      "reason": "A running standby recovers well inside REL-03.1 and meets REL-04.1 for scope region, and local HA meets REL-03.2 and REL-04.2 for scope az."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "one_time_cost",
+      "value": 3,
+      "reason": "A second running environment is built and tested up front."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "recurring_tco",
+      "value": 2,
+      "reason": "Scaled-down compute runs in the recovery region every month, beyond what REL-03.1 needs."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "delivery_time",
+      "value": 3,
+      "reason": "Two running environments to deploy, keep in step and test before go-live."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "operability",
+      "value": 3,
+      "reason": "Two running regions to patch, deploy to and watch."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "security_compliance",
+      "value": 4,
+      "reason": "Both regions stay in the European Union (DAT-04.1) and use the same encryption and key custody (SEC-04.1); SEC-01.1 is still open for both options."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "reversibility",
+      "value": 3,
+      "reason": "More resources are committed in the recovery region, so stepping down later costs more change."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "uncertainty",
+      "value": 4,
+      "reason": "The standby runs all the time, so its readiness is visible before a failover is needed."
+    }
+  ]
+}

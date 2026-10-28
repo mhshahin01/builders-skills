@@ -1,0 +1,6 @@
+{
+  "actor": { "type": "agent", "name": "pre-sdd-unifier" },
+  "ops": [
+    { "op": "set-run", "stage": 2, "group": "HDR" }
+  ]
+}

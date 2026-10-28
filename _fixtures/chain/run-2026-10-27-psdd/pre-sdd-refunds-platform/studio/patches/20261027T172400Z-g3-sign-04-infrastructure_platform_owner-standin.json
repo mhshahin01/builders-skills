@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "infrastructure_platform_owner",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

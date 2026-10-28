@@ -14,7 +14,7 @@
 | `7.4` cross-cutting pattern (outbox, idempotency, problem details) | one foundation task, before first user | foundation |
 | `14-frontend` route/screen (`MK-NN`) | one task per screen | ui |
 | `13-testing` e2e spec row | one task per spec, depends on all tasks realising that UC | e2e |
-| shared-kernel / platform capability used by the feature | dependency on the PLATFORM task, never re-built | — |
+| shared-kernel / platform capability used by the feature | dependency on the PLATFORM task, never re-built | - |
 
 ## Slice placement (slice mode)
 
@@ -51,7 +51,7 @@ only wires it. (Source: PLATFORM/T-018 failed three audits on an idle timer buil
 5. Cross-feature: `INT-NN` links → depend on the other key's task; if not planned there → gap
    `missing-dep`.
 
-**Why rules — every task's "Why this way" must say at least one of:**
+**Why rules - every task's "Why this way" must say at least one of:**
 - the LLD pattern / ADR / decision-log entry it follows (linked);
 - the BRD rule (BR-n) or NFR that forces the shape;
 - what is deliberately **not** built here and in which task/phase it is (prevents double build);

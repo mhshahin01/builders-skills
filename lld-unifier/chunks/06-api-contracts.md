@@ -9,7 +9,7 @@ PART OF: LLD - [Project Name]
 
 # 9. API Contracts
 
-> **OpenAPI source of truth:** [path to openapi.yaml or generated location]
+> **OpenAPI spec:** [path to openapi.yaml or generated location], generated from or checked against the § 9.2 blocks
 >
 > **Versioning:** URI prefix per CLAUDE.md (`/v1`, `/v2`). Breaking changes require a new version.
 
@@ -27,7 +27,7 @@ PART OF: LLD - [Project Name]
 
 > **Convention:** every write endpoint touching money/wallet/notifications/external-providers requires an `Idempotency-Key` header (CLAUDE.md). The dedup tuple and the TTL are in `09-cross-cutting.md` § 12.2.
 >
-> **API ID:** the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked to its block; `-` for an endpoint no §15 contract covers (for example one only the frontend calls). The owner's 04 file names the controller (provider side) or client (caller side). Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in § 9.3, never in the cell (never `- (<reason>)`).
+> **API ID:** the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked to its block; `-` for an endpoint no §15 contract covers (for example one only the frontend calls). Every row has one block in § 9.2. A call a service makes to a provider is not a § 9.1 row: it is recorded in the § 12.3 Instances table of `09-cross-cutting.md`, and the provider's contract (its SDD §15 entry, or the provider LLD) holds the block. The owner's 04 file names the controller, and a client is the one that the HTTP client rows of `03a-libraries-and-conventions.md` § 6.5.1 give that service: this chunk names none. Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in § 9.3, never in the cell (never `- (<reason>)`).
 
 ### Service: `[service-b]`
 
@@ -35,48 +35,139 @@ PART OF: LLD - [Project Name]
 
 ## 9.2 Request / Response Shapes
 
-> **Source:** from an SDD, each endpoint links its SDD §15 `API-NN` contract and adds only the implementation delta (DTO records, validation, mapping, client and resilience config); the contract body stays in the SDD (`sdd-to-lld.md` § One fact, one home). Write the full shape below only from code with no SDD, or for an endpoint the SDD does not define (flagged `> Confirm:`; hybrid: `🆕 code-only`).
+> **Source:** one block below for every § 9.1 endpoint and every § 9.6 port contract, each with every field of the list that follows. From an SDD, a block is a derived view of the SDD §15 contract its API ID cell links or, for an endpoint with API ID `-`, of the owner's `13x` List of APIs and API Standards. It restates the values the implementer needs, names that source, and adds the implementation delta (records, validation, mapping). A value that differs from the SDD is drift to flag, never a silent local truth (`sdd-to-lld.md` § API contract blocks). The block follows its SDD contract and is the design: the OpenAPI spec must match the blocks, and a difference is a `Contract drift` item, never a silent edit of either. From code, a block is read from the controller, its records, and its controller advice. Request and response bodies are records, as the DTOs row of `03a-libraries-and-conventions.md` § 6.5.1 says. Timeout, retry, circuit breaker, and bulkhead values stay in the `09-cross-cutting.md` § 12.3 instance rows. Hybrid marks follow `hybrid-drift.md` § Section-by-section diff rules: `🆕 code-only` for an endpoint only the code has, `⛔ sdd-only` for one only the SDD has, `⚠ drift` for a field that differs.
 
-### `POST /v1/foo`
+**Block fields:** the one list. A block has every field of its column; none is left out, left blank, or written "standard".
 
-**Request body:**
+| Field | HTTP endpoint (a § 9.1 row) | In-process port (a § 9.6 row) |
+|-------|-----------------------------|-------------------------------|
+| API ID | The SDD §15 `API-NN` the endpoint implements, linked to its contract block; `-` when no §15 contract covers it | The same |
+| Method and path | `Method` and `Path`, as the row writes them | `Type` (`Internal (in-process)`) and `Operation` (`[ProviderPort].[operation]`), as the row writes them |
+| Request headers | Each header beyond the standard ones: name, required, format | Omitted: the call never leaves the process |
+| Path and query parameters | Each parameter: name, where, type, required, constraints | Omitted |
+| Request body | The record, and each field: name, type, required, constraints | The request record, and each field in the same table |
+| Responses | Each success status: meaning, body record, response headers; then each body record's fields | The response record, and each field in the same table |
+| Errors | Each error status of the row that is not a shared error: Problem Details `type`, `errorCode`, when | Each error the operation raises: `errorCode`, when. No status and no `type` |
+| Idempotency | `Required` or `N/A` as the row says, then the key, the dedup window, and what a repeat returns | The key and what a repeated call returns, and `Transaction` as the row says |
+| Authentication, Permission token | The scheme; the SDD §16 token, verbatim | The token, verbatim, checked at the port |
 
-```json
-{
-  "name": "string (required, 1..255)",
-  "amount": "number (required, > 0, 2 dp)",
-  "metadata": {
-    "key": "string"
-  }
-}
-```
+> **Convention:**
+>
+> - **One block per row.** The blocks of a service group follow its § 9.1 rows in order. A block is headed by the row's Method and Path (`POST /v1/foo`), or for a port by its port and operation (`[ProviderPort].[operation]`). A row whose Method and Path read `TBD` is headed by its API ID and operation (`API-02: [Operation]`). A service with no § 9.1 row has no group.
+> - **Equal to the row.** A block's API ID, Method and Path (or Type and Operation), permission token, and idempotency requirement (`Required` or `N/A`) equal the row's cells. Every status of the row's Status Codes cell is a Responses row, an Errors row, a shared error, or covered by a `TBD - external` Responses or Errors field, and no other status appears.
+> - **Nothing blank.** A field with nothing to list says so on one line: `None`, `Standard headers only`, or `Not applicable - <reason>`.
+> - **Values.** A value the SDD states, in its contract or for API ID `-` in its `13x` rows, is written as the SDD writes it, with no flag.
+> - **Flags.** A value no source gives is written as a proposal and flagged: one `> Confirm:` directly under the block heading that names the proposed fields, or one under the group heading when every block of the group has the same gap. Where the SDD carries an open question on the value, the flag is a `> TODO: <best-guess> - verify` that cites it. From code, a field the code does not show is flagged the same way. A field is never invented without its flag.
+> - **Errors.** An error's `type` and `errorCode` equal the owner's 04 § 7.7 row for the exception that raises it, and the `errorCode` is the SDD §15.1 standard code or the contract's domain code, verbatim. A status with an endpoint-specific `errorCode` is the block's own error, even when the status is also a shared error. `VALIDATION_FAILED` carries the `errors[]` extension (`09-cross-cutting.md` § 12.6).
+> - **Idempotency.** `Required` names the key, the dedup window (the SDD's, when it states one; otherwise the default of `09-cross-cutting.md` § 12.2), and what a repeat returns.
+> - **Pagination.** A paginated list endpoint lists its pagination parameters, and each cites § 9.4 in its Constraints cell.
+> - **`TBD - external`.** A field the SDD marks `TBD - external` reads `TBD - external`, except a Method or Path that equals a § 9.1 cell reading `TBD`, which reads `TBD`. The block carries one `> TODO:` that cites the SDD contract and its §15.6 row. Such a field is not a missing field. The fields on our side (idempotency, the tenant rule, the permission token or `-`) are filled from the SDD.
 
-**Response 201:**
+**Standard headers:** every endpoint takes the headers of the SDD [§15.1 Standard headers](../sdd-[sdd-slug]/11-api-contracts.md#standard-headers) table: `Authorization`, `Content-Type`, `Accept`, the correlation header, the tenant header unless the token carries the tenant, `Idempotency-Key` on the writes that table names, and `traceparent`. With no SDD, list them here once. A block lists only the headers it adds, and lists `Idempotency-Key` only when its contract's §15.3 Request headers do (for API ID `-`, when it proposes the header).
 
-```json
-{
-  "id": "uuid",
-  "name": "string",
-  "amount": "number",
-  "status": "ACTIVE",
-  "createdAt": "ISO 8601 UTC"
-}
-```
+**Shared errors:** the statuses the platform raises for any endpoint, each with its SDD [§15.1 Standard error codes](../sdd-[sdd-slug]/11-api-contracts.md#standard-error-codes) `errorCode` and its Problem Details `type`. A block lists only its own errors, and a shared status in a § 9.1 row needs no row in the block. This table is the home of the shared `type` values; a service's own exceptions are in its Error Handling rows (04 § 7.7). With no SDD, the rows are the statuses the code's security chain and global handler return.
 
-**Response 409 (idempotency conflict, RFC 9457):**
+| Status | `errorCode` | Problem Details `type` | Raised by |
+|--------|-------------|------------------------|-----------|
+| 401 | `UNAUTHENTICATED` | `https://errors.example.com/auth/unauthenticated` | The security chain |
+| 403 | `FORBIDDEN` | `https://errors.example.com/auth/forbidden` | The permission check |
+| 429 | `RATE_LIMITED` | `https://errors.example.com/rate-limit/exceeded` | [The gateway or the rate limiter] |
+| 500 | `INTERNAL_ERROR` | `https://errors.example.com/internal/error` | The global `@RestControllerAdvice` |
+| 503 | `UNAVAILABLE` | `https://errors.example.com/[context]/unavailable` | [A downstream dependency is down] |
 
-```json
-{
-  "type": "https://errors.example.com/idempotency/conflict",
-  "title": "Idempotency Conflict",
-  "status": 409,
-  "detail": "Idempotency key K is in flight on another request",
-  "instance": "/v1/foo",
-  "errorCode": "CONFLICT"
-}
-```
+### Service: `[service-a]`
 
-> **Convention:** all error responses follow RFC 9457 ProblemDetails. See `09-cross-cutting.md` § Error Model for the canonical envelope.
+> **Source:** a block with an API ID restates that SDD §15 contract. A block with API ID `-` restates its row of the SDD [§17.X List of APIs](../sdd-[sdd-slug]/13[x]-service-[service-a].md#list-of-apis-swagger-friendly) and the API Standards, and proposes the fields they leave open, flagged. From code with no SDD, this line names the controller.
+
+#### `POST /v1/foo`
+
+<!-- A block with proposed values carries its flag line here: `> Confirm:` naming them. -->
+
+| Field | Value |
+|-------|-------|
+| API ID | [API-01](../sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) |
+| Method | `POST` |
+| Path | `/v1/foo` |
+| Authentication | Bearer JWT, validated as § 9.3 says |
+| Permission token | `foo:write` (SDD §16, verbatim) |
+| Idempotency | Required. The `Idempotency-Key` header; dedup tuple and TTL as `09-cross-cutting.md` § 12.2; a repeat of a finished request returns the stored response |
+
+**Request headers**
+
+| Header | Required | Format | Notes |
+|--------|----------|--------|-------|
+| `Idempotency-Key` | Yes | string, max 64 | One key per logical request |
+
+**Path and query parameters:** None.
+
+<!-- With parameters, a table with the columns Name, In (path or query), Type, Required, Constraints. -->
+
+**Request body** (record `FooDto`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `name` | string | Yes | 1..255 |
+| `amount` | decimal | Yes | > 0, 2 dp |
+| `metadata` | object | No | `metadata.key` is a string |
+
+**Responses**
+
+| Status | Meaning | Body record | Response headers |
+|--------|---------|-------------|------------------|
+| 201 | Created | `FooResponse` | `Location` |
+
+**Response 201 body** (record `FooResponse`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `id` | uuid | Yes | UUIDv7 |
+| `name` | string | Yes | - |
+| `amount` | decimal | Yes | 2 dp |
+| `status` | string | Yes | `ACTIVE` |
+| `createdAt` | string | Yes | ISO 8601 UTC |
+
+**Errors** (RFC 9457 Problem Details; `type` and `errorCode` as the owner's `04-implementation/<service>.md` § 7.7)
+
+| Status | Problem Details `type` | `errorCode` | When |
+|--------|------------------------|-------------|------|
+| 400 | `https://errors.example.com/foo/validation` | `VALIDATION_FAILED` | Bean Validation or a domain rule fails; `errors[]` lists each field |
+| 409 | `https://errors.example.com/idempotency/conflict` | `CONFLICT` | The key is in flight on another request, or was used with a different body |
+| 422 | `https://errors.example.com/foo/[rule]` | `[DOMAIN_CODE]` | [The domain rule the request breaks] |
+
+<!-- Repeat the block for each § 9.1 row of the group, in the row order, and the group for each service. -->
+
+### In-process port contracts (§ 9.6)
+
+<!-- Modular monolith or hybrid core only: one block per § 9.6 row, in its order. With no § 9.6 row, write "Not applicable - no in-process contracts" and drop the block below. -->
+
+#### `[ProviderPort].[operation]`
+
+| Field | Value |
+|-------|-------|
+| API ID | [API-03](../sdd-[sdd-slug]/11-api-contracts.md#[api-03-heading-slug]) |
+| Type | `Internal (in-process)` |
+| Operation | `[ProviderPort].[operation]` |
+| Permission token | `[token]` (SDD §16, verbatim), checked at the port |
+| Idempotency | [The key; what a repeated call returns] |
+| Transaction | [Joins the caller's transaction / Runs in its own] |
+
+**Request** (record `[RequestDto]`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `[field]` | [type] | [Yes / No] | [Constraints] |
+
+**Response** (record `[ResponseDto]`)
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `[field]` | [type] | [Yes / No] | [Constraints] |
+
+**Errors raised** (typed errors carrying the `errorCode`; no status and no `type`)
+
+| Error | `errorCode` | When |
+|-------|-------------|------|
+| `[DomainError]` | `[DOMAIN_CODE]` | [Condition] |
 
 ## 9.3 Authentication & Authorisation
 
@@ -122,7 +213,7 @@ post:
 
 <!--
 Modular monolith or hybrid core only: one row per SDD §15 contract of Type `Internal (in-process)`, a module-to-module call through a port. With no SDD §15 `Internal (in-process)` contract here (a microservices SDD, a separate deployable of a hybrid, or a core whose modules call no port), write "Not applicable - no in-process contracts".
-Names match SDD §15 verbatim and link its contract block; the DTO fields and error list stay in the SDD. Idempotency and Transaction are the contract's Behaviour rows, as SDD §15 writes them. No HTTP method, path, headers, status codes, or resilience config: the call never leaves the process.
+Names match SDD §15 verbatim and link its contract block; the DTO fields and the error list are in the row's § 9.2 block. Idempotency and Transaction are the contract's Behaviour rows, as SDD §15 writes them. No HTTP method, path, headers, status codes, or resilience config: the call never leaves the process.
 -->
 
 | API ID (§15) | Port interface | Operation | Request / response DTO records | Raised errors (`errorCode`) | Idempotency | Transaction | Permission token (SDD §16) | Implementing adapter |

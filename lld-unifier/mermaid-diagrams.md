@@ -1,6 +1,6 @@
 # Mermaid Diagrams (with optional Miro link slots)
 
-LLDs use **inline Mermaid** as the default for sequence, state, ERD, and class diagrams. **Miro links are optional** for whiteboard-richer visuals. This matches the convention across all unifier skills (BRD, SDD, LLD): inline Mermaid is authoritative; Miro boards are produced only on explicit request.
+LLDs use **inline Mermaid** as the default for sequence, state, ERD, and class diagrams. **Miro links are optional** for whiteboard-richer visuals. This matches the convention across all unifier skills (BRD, SDD, LLD). Inline Mermaid is authoritative. Miro boards are produced only on explicit request.
 
 ---
 
@@ -43,8 +43,8 @@ sequenceDiagram
 - Use named participants (`participant X as Long Name`) when shorter aliases improve readability.
 - Annotate alt-paths for error scenarios.
 - Follow every diagram with a 1-2 sentence prose summary (`**Summary:** ...`), so the chunk reads without a renderer.
-- Keep diagrams scoped: no diagram should exceed ~30 lines, except the layered view in `03-architecture.md` § 6.1 Component Topology and an ERD, which shows entities, keys, and relationships only (the columns live in `05-data-model.md` § 8.2). If another diagram does, split it into multiple smaller diagrams (e.g., happy path + error path).
-- In `sequenceDiagram` message and note text, never write `;` (it ends the statement) or `#` (it starts an entity code such as `#59;`): use a comma or a word instead (`retry, then DLQ`, `No. 3`).
+- Keep diagrams scoped: no diagram should exceed ~30 lines. The exceptions are the layered view in `03-architecture.md` § 6.1 Component Topology and an ERD, which shows entities, keys, and relationships only (the columns live in `05-data-model.md` § 8.2). If another diagram does, split it into multiple smaller diagrams (e.g., happy path + error path).
+- In `sequenceDiagram` message and note text, never write `;` (it ends the statement) or `#` (it starts an entity code such as `#59;`). Use a comma or a word instead (`retry, then DLQ`, `No. 3`).
 - Use case IDs inside a diagram are plain keyed IDs, in a quoted label where the syntax needs one (`UC04(("REFUNDS/UC-04"))`, `Note over Client,Controller: REFUNDS/UC-04 step 1`), never links. The links live in the text around the diagram (`sdd-to-lld.md` § Use-case traceability).
 
 ---
@@ -68,101 +68,9 @@ When a diagram has a richer Miro version (e.g., colour-coded ownership, stakehol
 
 ---
 
-## Mermaid syntax quick reference (the dialects we use)
+## Mermaid syntax quick reference
 
-### `sequenceDiagram`
-
-```mermaid
-sequenceDiagram
-  participant A
-  participant B
-  A->>B: synchronous call
-  B-->>A: synchronous response
-  A-)B: asynchronous call (no response expected)
-  B--xA: failed call
-  Note over A,B: Note text
-  alt happy path
-    A->>B: ok
-  else error
-    A--xB: failed
-  end
-```
-
-### `classDiagram`
-
-```mermaid
-classDiagram
-  class FooStrategy {
-    <<interface>>
-    +calculate(input) Result
-  }
-  class BasicStrategy
-  class ProStrategy
-  class FooContext {
-    -Map~Tier, FooStrategy~ strategies
-    +execute(input, tier) Result
-  }
-  FooStrategy <|.. BasicStrategy
-  FooStrategy <|.. ProStrategy
-  FooContext --> FooStrategy
-```
-
-Roles:
-- `<|--` inheritance.
-- `<|..` interface implementation.
-- `--*` composition.
-- `--o` aggregation.
-- `-->` association.
-
-### `stateDiagram-v2`
-
-```mermaid
-stateDiagram-v2
-  [*] --> DRAFT
-  DRAFT --> ACTIVE : activate [required fields present]
-  ACTIVE --> SUSPENDED : suspend
-  SUSPENDED --> ACTIVE : resume
-  ACTIVE --> DELETED : delete
-  DELETED --> [*]
-```
-
-### `erDiagram`
-
-```mermaid
-erDiagram
-  WALLET ||--o{ LEDGER_ENTRY : has
-  WALLET {
-    uuid id PK
-    uuid tenant_id FK
-  }
-  LEDGER_ENTRY {
-    uuid id PK
-    uuid wallet_id FK
-    uuid tenant_id FK
-  }
-```
-
-Cardinalities:
-- `||--||` one-to-one.
-- `||--o{` one-to-many.
-- `}o--o{` many-to-many.
-
-### `graph` / `flowchart`
-
-```mermaid
-graph TB
-  GW[API Gateway] --> SVC_A[Service A]
-  SVC_A --> DB_A[(PostgreSQL)]
-  SVC_A -.publish.-> KAFKA[(Kafka)]
-  KAFKA -.consume.-> SVC_B[Service B]
-```
-
-Node shapes:
-- `[ ]` rectangle.
-- `( )` rounded.
-- `(( ))` circle.
-- `[( )]` cylinder (DB).
-- `{ }` rhombus (decision).
+The cheatsheet for the dialects used here (`sequenceDiagram`, `classDiagram`, `stateDiagram-v2`, `erDiagram`, `flowchart`) is `mermaid-syntax.md` in this skill folder.
 
 ---
 
@@ -181,7 +89,7 @@ The skill leans toward fewer, more meaningful diagrams. A 6-line state machine t
 
 Mermaid syntax errors break the doc. The skill should:
 
-1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in this file and the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
+1. Validate every emitted Mermaid block parses (syntactically) before writing. Use a Mermaid parser when one is available in the session. Otherwise check each block line by line against the examples in `mermaid-syntax.md` and the chunk templates. Without a parser in the session, the line-by-line check is the validation. Never download or install one for it, and never ask whether to.
 2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + a `> TODO: Mermaid syntax error: review and fix.` flag.
 3. Surface the fallback count in the handoff summary.
 

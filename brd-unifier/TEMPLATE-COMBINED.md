@@ -360,7 +360,7 @@ All detailed use cases follow this structure:
 | NFR-04 | Security & Privacy | [e.g., Customer data is visible only to authorised users; regulatory data stays in-country] | [e.g., Access outside the Users & Use Cases Matrix is impossible] |
 | NFR-05 | Usability | [e.g., A new operator completes core tasks without training] | [e.g., Task X completed unaided by a first-time user] |
 
-> The technical realisation of each NFR is defined in the SDD, not here.
+> The Pre-SDD (pre-sdd-unifier) settles the technical targets for each NFR, such as uptime percentages, latency budgets, and capacity, and the SDD designs the architecture that meets them; neither is stated here.
 
 ---
 
@@ -394,7 +394,7 @@ All detailed use cases follow this structure:
 
 ## Technical Inputs for the SDD
 
-<!-- Optional. If the source material states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The sdd-unifier reads this section as input. Remove if the source had none. -->
+<!-- Optional. If the source material states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The Pre-SDD reads this section for shape and for any number it states, and the SDD for products. Remove if the source had none. -->
 
 | Source Statement (verbatim) | Source Location | Relevant To |
 |-----------------------------|-----------------|-------------|
@@ -431,7 +431,7 @@ This section is not a list of `[NEEDS CLARIFICATION: ...]` markers - those stay 
 | **Options** | Concrete choices, each with a one-line tradeoff. At least 2 where a choice exists. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply BRD content. This is what gets injected into the body when accepted. A clarification marker it inserts asks one distinct question that can be answered on its own (SKILL.md principle 8). |
 | **Why** | REQUIRED. One or two lines: the reason the recommended option wins over the alternatives: the evidence behind it (source section, stated business expectation, domain practice, risk avoided) and the tradeoff being accepted. Never empty, never "best option". |
-| **Status** | Open / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
+| **Status** | Open (awaiting your decision) / Decided - pending application (decided on a third-run discovery; the next request applies it) / Accepted - applied / Adjusted - applied / Deferred (with rationale) / Rejected. A status outside this legend counts as `Open`: the gate treats the item as not closed, and the next acceptance loop presents it. |
 Write a closed Status as the literal legend value on its own line. Put the Resolution Log or update pointer on a separate `Resolution` line; rationale and decision metadata also have their own fields.
 
 ## Open Items

@@ -1,0 +1,20 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "add",
+      "row": "REL-03",
+      "label": "Whole platform, zone loss",
+      "scope": "az"
+    },
+    {
+      "op": "add",
+      "row": "REL-04",
+      "label": "All refund and points data, zone loss",
+      "scope": "az"
+    }
+  ]
+}

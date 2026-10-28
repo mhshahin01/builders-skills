@@ -1,0 +1,12 @@
+{
+  "actor": {
+    "type": "policy"
+  },
+  "ops": [
+    {
+      "op": "sign",
+      "role": "product_owner_business_process_owner",
+      "decision": "Approved with conditions"
+    }
+  ]
+}

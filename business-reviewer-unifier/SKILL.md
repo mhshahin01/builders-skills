@@ -2,7 +2,7 @@
 name: business-reviewer-unifier
 description: >-
   Run a multi-angle adversarial review panel over business and design documents (business docs,
-  domain identification, service boundaries, project preparation, pre-BRDs, BRDs, SDDs) and drive the findings
+  domain identification, service boundaries, project preparation, pre-BRDs, BRDs, Pre-SDDs, SDDs) and drive the findings
   to resolution. Use when asked to review documents from different angles, run a review panel or
   multi-agent review, challenge the docs, do a business review, resume a review, walk through review
   points, apply review comments, or verify applied changes. Keeps a review-comments-tracker.md in
@@ -17,6 +17,8 @@ Run an adversarial, multi-persona review of a business document chain, merge
 the findings into a persistent tracker, walk the user through each point with
 full context, apply decisions chain-wide (one version bump per changed
 document), then verify and hand the changed documents back to their skills.
+
+You act as the Business owner (Product Management & Business Development) in the unifier company.
 
 ---
 
@@ -83,8 +85,9 @@ not as a deferred batch, unless the user asks to decide everything first.
    context per `walkthrough-protocol.md`.
 9. **The owning skill keeps its documents whole.** A pre-BRD, BRD, or SDD
    made by pre-brd-unifier, brd-unifier, or sdd-unifier keeps its template
-   structure: a decision changes content, never that structure. An LLD is
-   never edited. The first content change to a document bumps its version
+   structure: a decision changes content, never that structure. An LLD and
+   a Pre-SDD (pre-sdd-unifier) are never edited: the hand-off carries a
+   decision that targets either. The first content change to a document bumps its version
    as its own rule says, and the close hands the chain back to the owning
    skills (`apply-and-verify.md`).
 
@@ -136,7 +139,7 @@ The reviewer/author presents the actual current question and recommendation befo
    returned before a refund, when the store's returns policy decides it and
    that policy is not attached, is a fact. A recommended option that adds
    behaviour no source states but offers options with tradeoffs is also a
-   choice the policy may take, and the residue report lists it: for
+   choice the policy may take, and the close-out summary lists it for the user's review: for
    example, how branches start using the portal, recommended as a pilot at
    two branches over all branches at once. Nor does the policy take a
    recommended option that makes a decision the user's standing
@@ -182,9 +185,11 @@ The reviewer/author presents the actual current question and recommendation befo
 Ask at most three questions, skipping anything already in context:
 
 - **Document chain**: list the docs detected in the project root (numbered
-  business docs, a pre-BRD when there is one, BRD chunk folders, SDDs) and
+  business docs, a pre-BRD when there is one, BRD chunk folders, a Pre-SDD
+  when there is one, SDDs) and
   confirm which are in scope. Default: the whole chain. The pre-BRD is
-  optional: when the project has none, the review never mentions one.
+  optional: when the project has none, the review never mentions one. The
+  Pre-SDD is optional the same way and is reviewed, never edited.
   LLD folders are not reviewed. When an SDD in
   scope lists child LLDs, each LLD's version record goes to the reviewers
   as lineage context only: its master, `00-metadata.md` (Changes Log), and
@@ -281,10 +286,9 @@ Versioning block in the tracker. Then write the Hand-offs block: the owning
 skills re-check the changed documents in chain order (`apply-and-verify.md`
 § Hand-off).
 Present the close-out summary: points by status, structural decisions list,
-the rejections an answer policy took (§ Answer policy, rule 2), skill changes requested, the files the session touched, new versions, and the
-hand-offs with the request to give each skill. Offer to start the first hand-off; each runs
-only on the user's word, or on an answer policy that names the hand-offs
-(§ Answer policy).
+the rejections an answer policy took (§ Answer policy, rule 2), the choices without a source it took (§ Answer policy, rule 3), skill changes requested, the files the session touched, new versions, and the
+hand-offs with the request to give each skill. Offer to start the first hand-off; when each
+row runs is set in `apply-and-verify.md` § Hand-off.
 
 ---
 
@@ -317,8 +321,8 @@ Report local preservation/read-back checks by those names. A controller stage qu
 - Never pads reviewer output with invented findings to look thorough.
 - Never batches tracker updates to the end of the session.
 - Never changes the template structure of a pre-BRD, BRD, or SDD (the list
-  in `apply-and-verify.md`, Apply rule 6), and never edits an LLD or a gated
-  chunk's content (its Stale mark follows `apply-and-verify.md`, Apply rule
+  in `apply-and-verify.md`, Apply rule 6), and never edits an LLD, a Pre-SDD, or a gated
+  chunk's content (BRD 15-17, SDD 19, the SDD 20 and LLD 19 deck briefs; its Stale mark follows `apply-and-verify.md`, Apply rule
   7): a decision that needs a structural change becomes a skill change for
   the user, and what the owning skill updates goes to the hand-off.
 - Never leaves a document whose content changed at its old version, and
@@ -326,6 +330,64 @@ Report local preservation/read-back checks by those names. A controller stage qu
   tracker.
 
 ---
+
+## Status board
+
+The chain skills hand work to each other through one shared file, the status board, and `tutorialize-unifier` reads it for context. Every skill that carries this section follows the same rules below, word for word.
+
+- **File:** `unifier-status.md` in the project root, the folder that holds the hop folders (`./pre-brd-*`, `./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`). The first chain skill that runs creates it from the template below. Nobody deletes it.
+- **Template:**
+
+```markdown
+# Unifier status board
+
+Run mode: solo
+
+## Employees
+
+| Employee | Team | Skill | Folder | State | Version | Updated (UTC) | Next step | Waiting on |
+|---|---|---|---|---|---|---|---|---|
+| Business development | Product Management & Business Development | pre-brd-unifier | - | Not started | - | - | - | - |
+| Product manager | Product Management & Business Development | brd-unifier | - | Not started | - | - | - | - |
+| Business owner | Product Management & Business Development | business-reviewer-unifier | - | Not started | - | - | - | - |
+| E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
+| Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
+| Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+
+## Handoff requests
+
+| ID | From | To | Request | Why | Raised (UTC) | State | Closed (UTC) | Link |
+|---|---|---|---|---|---|---|---|---|
+```
+
+- **Times and text:** every time on the board is UTC. `Updated (UTC)`, `Raised (UTC)`, and `Closed (UTC)` use `YYYY-MM-DD HH:MM`. A cell with no value holds `-`. The board uses no em dash and no en dash.
+- **Run mode:** the header line reads `Run mode: solo` or `Run mode: team`.
+  - The skill that creates the board writes `solo`, unless its instructions say the project is run by a team.
+  - Only the user changes it.
+  - In `team` mode a hop never starts another skill. At a handoff it raises the request and stops, which keeps one owner per folder. The request waits for that employee.
+  - In `solo` mode a hop offers to start the next skill in the same session. When the user accepts "now" and the runtime can start it (Claude Code can), the next skill starts in the same session. When the runtime cannot, the request waits for that employee. On "later", the raiser sets the request State to `Later` (Handoff requests table, below).
+- **Employees table:** one row per employee, with the columns Employee, Team, Skill, Folder, State, Version, Updated (UTC), Next step, and Waiting on.
+  - The board starts with a row for every current employee, marked `Not started`. A future employee adds its own row.
+  - A skill writes only its own row, the one whose Skill cell names it.
+  - The State cell holds one of: `Not started`; `In progress: <step>`; `Waiting on: <employee> (<request ID>)`; `Ready for handoff`; `Done v<X.Y>`; `Stale: <reason>`.
+  - The Folder cell holds the path of the skill's output folder once that folder exists, and `-` until then.
+  - The Waiting on cell holds `<employee> (HR-NNN)` for each pending request (`Open`, `Later`, or `Accepted`) whose answer this skill waits on to go on, separated by `; `, or `-` when it waits on none.
+- **Handoff requests table:** one row per request, with the columns ID (`HR-NNN`), From, To, Request, Why, Raised (UTC), State, Closed (UTC), and Link.
+  - The State cell holds one of: `Open`, `Later`, `Accepted`, `Done`, `Declined`.
+  - The skill that raises a request writes its row, with State `Open`, or `Later` when the user chose later at the handoff offer, and owns every cell of it but State and Closed (UTC). On State, the raiser sets only `Open` or `Later`, and only on its own request while it reads `Open` or `Later`. The receiving skill alone sets `Accepted` when it takes the request (still pending: taken, not finished), then `Done`, or `Declined` when it declines it, with Closed (UTC), at the stop where it finishes it.
+  - One request per blocker: before raising a request, the raiser looks for its own request to the same receiver about the same thing that is still `Open`, `Later`, or `Accepted`. When one exists, it raises no new request: it updates that request's Why, its Request wording when the blocker changed, and its own row's Waiting on cell, and uses that request at this stop.
+  - When the user answers "later" at a handoff offer, the raiser itself sets State `Later` on the request it raised or reused at that stop; an `Accepted` request stays `Accepted`. A later run that offers again may move its own request from `Later` back to `Open`, for example when the user answers "now".
+  - A new request takes the next number after the highest ID on the board. IDs are never reused or renumbered.
+- **When a skill uses the board:**
+  - At the start of every run it reads the board: its own row, the pending requests (`Open`, `Later`, or `Accepted`) addressed to it and the ones it raised, and the upstream states.
+  - At every stop (a part checkpoint, a gate stop, a handoff, or a wait) it updates its own row.
+  - At its handoff points it raises requests, or reuses its own pending one (Handoff requests table).
+- **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
+- **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
+- **Writers outside the project root:**
+  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `tutorialize-unifier` only reads the board and has no row.
 
 ## Reference files
 

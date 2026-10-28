@@ -13,9 +13,9 @@ def folder_kind(d):
 
 KIND = folder_kind(LLD)
 # Size-cap exemptions, one place per folder kind (sdd-unifier / lld-unifier mermaid-diagrams.md):
-# which dialects never hit the ~30-line guideline, and under which headings (SDD: the §8.3 and §24.3 layered views; LLD: the §6.1 Component Topology layered view).
+# which dialects never hit the ~30-line guideline, and under which numbered sections, an unnumbered sub-heading staying inside the section above it (SDD: the §8.3, §8.6, §8.7 and §24.3 layered views; LLD: the §6.1 Component Topology layered view).
 UNCAPPED_KINDS = {"sdd": {"erDiagram"}, "lld": {"erDiagram"}, "other": set()}
-UNCAPPED_HEADS = {"sdd": re.compile(r"^#{1,6}\s*(?:8\.3|24\.3)\b"), "lld": re.compile(r"^#{1,6}\s*6\.1\b"), "other": None}
+UNCAPPED_HEADS = {"sdd": re.compile(r"^#{1,6}\s*(?:8\.3|8\.6|8\.7|24\.3)\b"), "lld": re.compile(r"^#{1,6}\s*6\.1\b"), "other": None}
 issues = []
 count = 0
 for dp, _, fs in os.walk(LLD):
@@ -26,9 +26,24 @@ for dp, _, fs in os.walk(LLD):
         lines = open(p, encoding="utf-8").read().splitlines()
         i = 0
         head = ""
+        section = ""
+        section_depth = 0
+        fenced = None
         while i < len(lines):
-            if re.match(r"^#{1,6}\s", lines[i]):
+            heading = re.match(r"^(#{1,6})\s+(\S*)", lines[i])
+            fence = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", lines[i])
+            if heading and not fenced:
                 head = lines[i]
+                if re.match(r"\d+(?:\.\d+)*\b", heading.group(2)):
+                    section, section_depth = lines[i], len(heading.group(1))
+                elif len(heading.group(1)) <= section_depth:
+                    section, section_depth = "", 0
+            elif fence and lines[i].strip() != "```mermaid":
+                if fenced is None:
+                    if not (fence.group(1)[0] == "`" and "`" in fence.group(2)):
+                        fenced = fence.group(1)
+                elif fence.group(1)[0] == fenced[0] and len(fence.group(1)) >= len(fenced) and not fence.group(2).strip():
+                    fenced = None
             if lines[i].strip() == "```mermaid":
                 j = i + 1
                 block = []
@@ -39,7 +54,7 @@ for dp, _, fs in os.walk(LLD):
                 where = f"{os.path.relpath(p, LLD)}:{i+1} ({kind})"
                 # SDD caps workflows and sequences, not context or other architecture views.
                 capped = KIND != "sdd" or kind == "sequenceDiagram" or bool(re.search(r"\b8\.4(?:\.|\b)|\bWorkflow\b", head, re.I))
-                if capped and len(block) > 34 and kind not in UNCAPPED_KINDS[KIND] and not (UNCAPPED_HEADS[KIND] and UNCAPPED_HEADS[KIND].match(head)):
+                if capped and len(block) > 34 and kind not in UNCAPPED_KINDS[KIND] and not (UNCAPPED_HEADS[KIND] and UNCAPPED_HEADS[KIND].match(section)):
                     issues.append(f"{where}: {len(block)} lines (guideline ~30)")
                 if kind == "sequenceDiagram":
                     depth = 0

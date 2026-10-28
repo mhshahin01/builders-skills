@@ -136,33 +136,33 @@ value means ask.
 | AUTOAPPLY | features/job-manager/brd-chagaf-autoapply/chagaf-autoapply-brd-master.md | tech/sdd-chagaf-platform/03-users-and-use-cases.md#73-… | tech/lld-chagaf-autoapply/chagaf-autoapply-lld-master.md | tech/lld-chagaf-autoapply/04-implementation/autoapply.md | v1.3 / vX / v1.4 | layer |
 ~~~
 
-## `tracking/index.md` (generated — one line per task)
+## `tracking/index.md` (generated - one line per task)
 
 ~~~markdown
 | ID | Title | Phase | Slice | Layer | Status | depends_on | UC | Agent | Updated |
 |---|---|---|---|---|---|---|---|---|---|
-| AUTOAPPLY/T-001 | Flyway: autoapply schema baseline | P1 | — | data | Done | — | — | codex | 2026-10-18 |
-| AUTOAPPLY/T-014 | RoutingServiceImpl.route (Review only) | P2 | — | domain | Planned | T-009, T-011 | UC-23 | — | 2026-10-19 |
+| AUTOAPPLY/T-001 | Flyway: autoapply schema baseline | P1 | - | data | Done | - | - | codex | 2026-10-18 |
+| AUTOAPPLY/T-014 | RoutingServiceImpl.route (Review only) | P2 | - | domain | Planned | T-009, T-011 | UC-23 | - | 2026-10-19 |
 
-Slice is `—` for keys in layer mode. In slice mode, a second table follows: `| Slice | Order | Title | Status | Tasks done / total | Delivered |`.
+Slice is `-` for keys in layer mode. In slice mode, a second table follows: `| Slice | Order | Title | Status | Tasks done / total | Delivered |`.
 ~~~
 
 ## Task card `tracking/AUTOAPPLY/tasks/T-014-routing-service-route.md`
 
 ~~~markdown
-# AUTOAPPLY/T-014 — RoutingServiceImpl.route (Review mode)
+# AUTOAPPLY/T-014 - RoutingServiceImpl.route (Review mode)
 
 | Field | Value |
 |---|---|
 | Status | Planned |
 | Phase / Layer | P2 Review mode / domain |
-| Slice | — (slice mode: `KEY/S-NN` title) |
+| Slice | - (slice mode: `KEY/S-NN` title) |
 | depends_on | AUTOAPPLY/T-009 (CapCalculator), AUTOAPPLY/T-011 (match repository) |
 | Unblocks | AUTOAPPLY/T-017, AUTOAPPLY/T-022 |
 | Size | M (one session) |
 | Risk | high (concurrency: send-record claim) |
-| Agent / started / finished | — |
-| Start commit | — |
+| Agent / started / finished | - |
+| Start commit | - |
 | Layers to touch | api (LLD 6.2) · db (LLD 5.1) · logs (LLD 11.3) |
 
 ## Goal
@@ -180,14 +180,14 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 ## Why this way
 - Chain of Responsibility because the LLD fixes filter order and each filter can stop routing (LLD 7.4).
 - Hybrid/Auto branches are **not** built here: they ship in P5/P6 behind the per-mode release switch
-  (LLD 17-specs Roadmap) — building them now would be built twice.
+  (LLD 17-specs Roadmap) - building them now would be built twice.
 
 ## Owns
 - class `RoutingServiceImpl`, interface `RoutingService`
 - file `autoapply/src/main/java/.../routing/RoutingServiceImpl.java`
 
 ## Touches (files outside Owns this task may change, with the reason)
-- `autoapply-api/pom.xml` — adds the AWS SDK dependency this task needs
+- `autoapply-api/pom.xml` - adds the AWS SDK dependency this task needs
 
 ## Definition of done
 - [ ] Owned items exist; ArchUnit rules pass
@@ -195,11 +195,11 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 - [ ] Commit(s) carry `Task: AUTOAPPLY/T-014`
 
 ## Tests
-- `route_hybridScoreEqualsThreshold_approves` — AUTOAPPLY/UC-23 AC (LLD 16.2)
-- `route_reviewQueueFull_doesNotKeepMatch` — AUTOAPPLY/UC-23 A1
+- `route_hybridScoreEqualsThreshold_approves` - AUTOAPPLY/UC-23 AC (LLD 16.2)
+- `route_reviewQueueFull_doesNotKeepMatch` - AUTOAPPLY/UC-23 A1
 
 ## Lessons that apply (filled by start)
-- [L-004](../../lessons.md#l-004) — links only; the rule and Check live in lessons.md (never copied, so never stale)
+- [L-004](../../lessons.md#l-004) - links only; the rule and Check live in lessons.md (never copied, so never stale)
 
 ## Template bindings (P11: each behaviour binding this task adds to an .html template)
 - `[disabled]="busy()"` → `disablesSaveWhileSaving`
@@ -215,10 +215,10 @@ test is the one that exercises the invariant: for a race or at-most-once rule, t
 neighbour test that happens to fail.
 
 ## Equivalent mutants (only if P10 reports survivors that no test can kill)
-- `RoutingServiceImpl.java:42` `if (score >= threshold) {` ConditionalsBoundary — `>=` and `>` give the same result: the value is never equal here
+- `RoutingServiceImpl.java:42` `if (score >= threshold) {` ConditionalsBoundary - `>=` and `>` give the same result: the value is never equal here
 
 ## Doc updates (DUs this task raised; P15)
-- [AUTOAPPLY/DU-004](../../doc-updates.md#autoapplydu-004) — LLD 7.3 tie-break rule (fill-silence, LLD, Verified)
+- [AUTOAPPLY/DU-004](../../doc-updates.md#autoapplydu-004) - LLD 7.3 tie-break rule (fill-silence, LLD, Verified)
 
 ## Evidence (filled by done/verify)
 | Date | Agent | Commits | Tests | Audit | Note |
@@ -227,7 +227,7 @@ neighbour test that happens to fail.
 ## History
 | Date | Agent | From → To | Reason |
 |---|---|---|---|
-| 2026-10-19 | claude-opus-5-5 | — → Planned | plan AUTOAPPLY/P2 |
+| 2026-10-19 | claude-opus-5-5 | - → Planned | plan AUTOAPPLY/P2 |
 ~~~
 
 ## `tracking/AUTOAPPLY/plan.md`
@@ -236,7 +236,7 @@ neighbour test that happens to fail.
 # AUTOAPPLY implementation plan
 
 **Baseline:** BRD v1.3 · SDD vX · LLD v1.4 · planned 2026-10-19 by <agent>
-**Scope:** P1–P2
+**Scope:** P1-P2
 
 ## Phases
 | Phase | Tasks | UCs | Status |
@@ -264,7 +264,7 @@ flowchart LR
 ## Slice card `tracking/PLATFORM/slices/S-01-create-account-and-sign-in.md`
 
 ~~~markdown
-# PLATFORM/S-01 — Create account and sign in, end to end
+# PLATFORM/S-01 - Create account and sign in, end to end
 
 | Field | Value |
 |---|---|
@@ -273,7 +273,7 @@ flowchart LR
 | Use cases | [RESUME/UC-01](<rel>#uc-01-create-an-account-and-sign-in) |
 | Tasks | PLATFORM/T-001, PLATFORM/T-002, … (n) |
 | E2E specs | `e2e/resume-uc-01-create-an-account-and-sign-in.spec.ts` |
-| Delivered | — |
+| Delivered | - |
 
 ## Demo
 A new visitor creates an account, verifies the email and signs in to the home page.
@@ -293,7 +293,7 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ## `tracking/journal/report-2026-10-21.md` (report)
 
 ~~~markdown
-# Delivery report — 2026-10-21
+# Delivery report - 2026-10-21
 
 **Delivered:** Create account and sign in (2026-10-21): a new visitor creates an account, verifies and signs in.
 **In progress:** Admin portal: first Super Admin and admin sign-in (3 of 5 tasks done).
@@ -306,7 +306,7 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ~~~markdown
 | ID | Type | Severity | Found (date, agent, during) | Where (doc anchor / code) | Description | Owner | Fix task | Status |
 |---|---|---|---|---|---|---|---|---|
-| AUTOAPPLY/GAP-003 | doc-gap | major | 2026-10-19, codex, T-014 | LLD 7.3 route | Tie on score not defined | lld-unifier (DU-004) | — | Open |
+| AUTOAPPLY/GAP-003 | doc-gap | major | 2026-10-19, codex, T-014 | LLD 7.3 route | Tie on score not defined | lld-unifier (DU-004) | - | Open |
 ~~~
 
 ## `tracking/doc-updates.md`
@@ -314,8 +314,8 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ~~~markdown
 | ID | Status | Level | Kind | Task | Gap | Anchors | What (from → to) | Decided by | Docs | Docs commit | Verified | Parent | Updated |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| AUTOAPPLY/DU-004 | Verified | LLD | fill-silence | AUTOAPPLY/T-014 | AUTOAPPLY/GAP-003 | [LLD 7.3 route](<rel>#routingserviceimplroute) | tie on score: undefined → older match first (code `RoutingServiceImpl.java:57`) | LLD silent; code fills it (§ 2) | LLD v1.4 → v1.5 | 9f3e2a1 | PASS 2026-10-20 (5/5 checks) | — | 2026-10-20 |
-| AUTOAPPLY/DU-005 | Waiting-decision | BRD | doc-conflict | AUTOAPPLY/T-022 | AUTOAPPLY/GAP-008 | [BRD UC-23 AC-2](<rel>#uc-23-route-a-new-match) | review queue limit: 50 (BRD) vs 100 (LLD 7.3) | — (BRD mode `ask`) | BRD, LLD | — | — | — | 2026-10-20 |
+| AUTOAPPLY/DU-004 | Verified | LLD | fill-silence | AUTOAPPLY/T-014 | AUTOAPPLY/GAP-003 | [LLD 7.3 route](<rel>#routingserviceimplroute) | tie on score: undefined → older match first (code `RoutingServiceImpl.java:57`) | LLD silent; code fills it (§ 2) | LLD v1.4 → v1.5 | 9f3e2a1 | PASS 2026-10-20 (5/5 checks) | - | 2026-10-20 |
+| AUTOAPPLY/DU-005 | Waiting-decision | BRD | doc-conflict | AUTOAPPLY/T-022 | AUTOAPPLY/GAP-008 | [BRD UC-23 AC-2](<rel>#uc-23-route-a-new-match) | review queue limit: 50 (BRD) vs 100 (LLD 7.3) | - (BRD mode `ask`) | BRD, LLD | - | - | - | 2026-10-20 |
 ~~~
 `Status`: Queued, Running (worker started <time>), Applied, Verified, Waiting-decision, Rejected (<reason>),
 Failed. `Verified`: the verifier's verdict and date. A failed verification appends its findings to `What`.
@@ -336,13 +336,13 @@ Failed. `Verified`: the verifier's verdict and date. A failed verification appen
 # Standup 2026-10-19
 
 ## Done since 2026-10-18
-- AUTOAPPLY/T-009 CapCalculator — codex — 3 commits — unblocked T-014, T-015
+- AUTOAPPLY/T-009 CapCalculator - codex - 3 commits - unblocked T-014, T-015
 
 ## In progress
-- AUTOAPPLY/T-011 — claude-opus-5-5 — since 2026-10-18
+- AUTOAPPLY/T-011 - claude-opus-5-5 - since 2026-10-18
 
 ## Next
-1. AUTOAPPLY/T-014 — critical path, unblocks 2
+1. AUTOAPPLY/T-014 - critical path, unblocks 2
 2. AUTOAPPLY/T-015
 
 ## Blockers
@@ -350,14 +350,14 @@ Failed. `Verified`: the verifier's verdict and date. A failed verification appen
 
 ## Gaps
 - New: AUTOAPPLY/GAP-003 (doc-gap, major) → DU-004
-- Closed: —
+- Closed: -
 
 ## Doc updates
 - Verified: AUTOAPPLY/DU-004 (LLD v1.5)
 - Open: 1 Queued, 0 Running, 1 Waiting-decision
 
 ## Untracked commits
-- a1b2c3d "fix mail parser" — no Task trailer → which task?
+- a1b2c3d "fix mail parser" - no Task trailer → which task?
 
 ## Needs your decision
 - GAP-003: tie-breaking rule on equal scores
@@ -367,13 +367,13 @@ Failed. `Verified`: the verifier's verdict and date. A failed verification appen
 ## `tracking/inventory.md` (generated)
 
 ~~~markdown
-# Code inventory — 2026-10-19 (stack: Spring Boot + Next.js)
+# Code inventory - 2026-10-19 (stack: Spring Boot + Next.js)
 
 | Kind | Name | File:line | First / last commit | Key guess | Claimed by |
 |---|---|---|---|---|---|
 | endpoint | POST /api/autoapply/profile/mode | ProfileController.java:42 | a1b2c3d 2026-09-02 / f4e5d6c 2026-10-01 | AUTOAPPLY | AUTOAPPLY/T-030 (Adopted) |
 | screen | /autoapply/review | web/app/autoapply/review/page.tsx:1 | … | AUTOAPPLY | AUTOAPPLY/T-033 (Partial) |
-| migration | V007__match.sql | db/migration/V007__match.sql | … | AUTOAPPLY | — → GAP-011 untracked-code |
+| migration | V007__match.sql | db/migration/V007__match.sql | … | AUTOAPPLY | - → GAP-011 untracked-code |
 ~~~
 
 ## `tracking/lessons.md`
@@ -395,7 +395,7 @@ Failed. `Verified`: the verifier's verdict and date. A failed verification appen
 ## Audit report `tracking/AUTOAPPLY/audits/T-014-audit-1.md`
 
 ~~~markdown
-# AUTOAPPLY/T-014 audit 1 — FAIL
+# AUTOAPPLY/T-014 audit 1 - FAIL
 
 Auditor: <agent/model> · risk <low|high> · 2026-10-19 · commits <shas> · export <head>
 Time: started <HH:MM> · finished <HH:MM> · <n> min (budget 25; delta 10)
@@ -414,7 +414,7 @@ Tests: <full run in export | reused pre-flight <file> (tree = head) + ran <class
 | Lessons | yes | FAIL | L-004 violated |
 
 ## Trace (UC-23 step 2)
-UI — n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → MatchEntity.java:58 → **migration missing** → log **missing**
+UI - n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → MatchEntity.java:58 → **migration missing** → log **missing**
 
 ## Findings
 | # | Layer | Severity | Expected | Actual | Fix | Gap |

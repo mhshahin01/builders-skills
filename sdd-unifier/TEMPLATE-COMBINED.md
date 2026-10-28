@@ -7,8 +7,9 @@
 **Reviewers:** [Reviewer Name(s)]
 **Approvers:** [Approver Name(s)]
 **Date:** [YYYY-MM-DD]
-**Lineage:** [Document Lineage](#document-lineage) (source BRDs and child LLDs)
+**Lineage:** [Document Lineage](#document-lineage) (source BRDs, source Pre-SDD, and child LLDs)
 **Reconciled:** [Date, checker, request and checked content revision/hash (hash scope and method: SKILL.md step 8b, E4) or explicit final-edit-then-check order]
+**Review passes:** [N of 3 for the current request, N of 2 in a light run (baseline + N-1 application), or 0; only the baseline review and each scoped application pass increment it, a re-dispatch never does (SKILL.md step 7, Review limit)]
 **E2E gate (§24):** [Locked | Open - Up to date | Stale] - [Locked or Stale: each unmet condition E1-E4 with a short reason, if any; nothing follows Open - Up to date, whose evidence is the Reconciled line, the E3 marker inventory, and the E2E basis line]
 **E2E basis:** [chunk 19 version; the Reconciled entry it was written or last verified against; the source revisions/hashes or "direct disk comparison" and date; the faithfulness check: its date and its mismatches by label; None until chunk 19 is written; behind a shut gate, the version and the entry it was written against, marked not verified]
 
@@ -16,7 +17,7 @@
 
 <!-- Row format (COMBINED): link this file's source section anchor, then a colon and the marker's question text, copied verbatim. One classification per distinct question/section; moving a marker requires updating its source pointer. Blocks E3 reads exactly `Yes` or `No: <reason>`: Yes names its dependent claim; No always gives the nonblocking reason. Claims/reasons require human source review. -->
 
-<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell copies the marker's question text (the text after `NEEDS CLARIFICATION: `) verbatim, never paraphrased or shortened, minus a trailing `Owner: ...` sentence, which goes in the Owner column; it adds no qualifier outside the row format (nothing between the link and the colon, and nothing after the question). Step 8b checks every row against its marker before the gate line is written (SKILL.md step 8b, E3). Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
+<!-- Inventory each live NEEDS CLARIFICATION marker in the body after following the references of the E2E claims. Include nonblocking markers with their reason. The question cell copies the marker's question text (the text after `NEEDS CLARIFICATION: `) verbatim, never paraphrased or shortened, minus a trailing `Owner: ...` sentence, which goes in the Owner column; it adds no qualifier outside the row format (nothing between the link and the colon, and nothing after the question). Step 8b checks every row against its marker before the gate line is written (SKILL.md step 8b, E3). Every row names an owner and a next action; a nonblocking row may give None as its next action. An owner may be a role the SDD names; when ownership is itself open, name the interim owners who must settle it. A blocker has an exact question/location, named owner, dependent claim/path and next owner action. File placement does not decide E3. A TBD - EXTERNAL placeholder needs a row only when the black-box exception fails (an E2E claim asserts provider contract fields), and then it blocks; a named black box with API IDs and no provider fields needs none. The Dependent claim and Next action cells follow the use-case linking and keying rule: each use case is a link and each NFR carries its BRD key (`brd-to-sdd.md` § Use-case traceability, Checks, item 6). No markers: say None and name the checked sources. Until step 8 item 6 builds the inventory (SKILL.md), keep this heading and write only "Not built yet (SKILL.md step 8 item 6)." in place of the table. -->
 
 | Marker source / question | Owner | Dependent E2E claim / reference path | Blocks E3 / reason | Next action |
 |---|---|---|---|---|
@@ -37,6 +38,14 @@
 | Key | BRD | Version | Link | Covers |
 |-----|-----|---------|------|--------|
 | [KEY] | [BRD project name] | [X.X] | [[brd-slug]-brd-master.md](./brd-[brd-slug]/[brd-slug]-brd-master.md) | [What this BRD contributes] |
+
+### Source Pre-SDD
+
+<!-- Rules: brd-to-sdd.md § Source Pre-SDD. One row: the G3-signed Pre-SDD this SDD loaded (SKILL.md step 2a), key PSDD; every Pre-SDD ID this SDD cites is PSDD/<ID> with a link. Version and Gate: the version loaded and the gate its master's Gate line showed then (G3 Approved or G3 Approved with conditions). Link: the Pre-SDD master (chunked) or combined file, relative to this file. With none, one row whose Pre-SDD cell reads "None - <reason>" and the other cells "-": not derived from a BRD; declined, with the decision-log.md link; or not yet run, with the open request (HR-NNN). Checked on every run (SKILL.md step 1): a newer signed Pre-SDD version gets one offer. -->
+
+| Key | Pre-SDD | Version | Gate | Link |
+|-----|---------|---------|------|------|
+| PSDD | [Pre-SDD project name] | [X.X] | [G3 Approved / G3 Approved with conditions] | [[pre-sdd-slug]-pre-sdd-master.md](./pre-sdd-[pre-sdd-slug]/[pre-sdd-slug]-pre-sdd-master.md) |
 
 ### Child LLDs (children)
 
@@ -62,7 +71,7 @@
 
 ## Table of Contents
 
-<!-- Auto-generated or manually maintained. Include Figures and Tables indices if the document is large. -->
+<!-- Auto-generated or manually maintained: in CHUNKS mode one entry per chunk, in file-name order (05a follows 05; chunk 20, the deck brief, has no entry: SKILL.md step 8c item 7); in COMBINED mode one entry per numbered section (§8.6 and §8.7 follow §8.5). Include Figures and Tables indices if the document is large. -->
 
 **Figures**
 
@@ -104,7 +113,7 @@ Key technical bets and trade-offs:
 - [Bet 1 and rationale]
 - [Bet 2 and rationale]
 
-**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is]
+**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is; with a loaded Pre-SDD, cite PSDD/HDR-07 (SKILL.md step 3a)]
 
 ---
 
@@ -154,6 +163,7 @@ Key technical bets and trade-offs:
 <!--
 List of technical and architectural risks. Each risk includes likelihood, impact, and a mitigation.
 Owner: who will own the mitigation and the monitoring of the risk.
+With a loaded Pre-SDD, each open condition of its chunk 12 § 12.5 is a risk citing PSDD/COND-NN (brd-to-sdd.md § Pre-SDD inputs (locked)).
 -->
 
 | Risk ID | Description | Likelihood (L/M/H) | Impact (L/M/H) | Mitigation | Owner |
@@ -186,29 +196,32 @@ Owner: who will own the mitigation and the monitoring of the risk.
 <!--
 Summary of the platform-wide technology stack and shared infrastructure that all services in this SDD must conform to.
 This section is the single source of truth for the implementation constitution and planned technology choices.
-SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem selection, the skill first presents the proposed ecosystem (BRD Technical Inputs verbatim > CLAUDE.md defaults > BRD-informed recommendations; in TRANSFORM, the source SDD's named technologies, versions, and topology come first, locked as `source SDD`) for a one-shot accept-all; if not accepted, it walks the user through the items in grouped batches, highlighting the recommended option per item with the BRD evidence that drives it. Record the outcome per row in the Notes column (e.g., "BRD-mandated", "source SDD", "questionnaire", "default", "recommended", "user override - see ADR-NN").
+SELECTION FLOW: this table is never filled silently. SKILL.md step 3c shows the proposed ecosystem, each row Locked with its source or Proposed with its basis, and asks one question: accept all proposed, answer one by one, or import the project's eco-system file (`[project-slug]-eco-system.md` in the project root). The precedence, the import rules, and the label lists are in SKILL.md step 3c.
+STATUS: `Confirmed` or `Proposed` (SKILL.md step 3c item 6). A finished first build has no `Proposed` row, except the one case step 3c item 6 names. A row a later update adds stays `Proposed`, with a [NEEDS CLARIFICATION: ...] marker, until the user confirms it.
+SOURCE: one label per row, from the lists in SKILL.md step 3c items 1 and 6. The evidence behind it goes in Notes: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR. A row a locked Pre-SDD item constrains carries the constraint in its Notes (brd-to-sdd.md § Pre-SDD inputs (locked)).
+A table written before the Status and Source columns keeps its source labels in Notes and is read as it is (SKILL.md step 10).
 -->
 
-| Layer | Technology / Service | Version / Tier | Notes |
-|-------|----------------------|----------------|-------|
-| Architecture Doctrine | [Style and communication model from the architecture questionnaire, e.g., Modular monolith with in-process module ports, or Microservices + EDA backbone; DDD (bounded contexts) + Hexagonal (ports & adapters) in every style] | n/a | [questionnaire (ADR-01), or the source when it did not run, else proposed and flagged] |
-| Compute / Infra | [On-prem Kubernetes / EKS / AKS / GKE] | [vX.Y] | [Cluster topology, node groups, multi-AZ, etc.] |
-| Container Runtime | [containerd / Docker] | [vX.Y] | [Notes] |
-| Service Mesh / Ingress | [Istio / Linkerd / NGINX Ingress / Cloud LB] | [vX.Y] | [mTLS, traffic policies] |
-| Primary RDBMS | [PostgreSQL / other] | [Version] | [HA topology, replicas, backups] |
-| Caching | [Redis / ElastiCache / other] | [Version] | [Cluster mode, persistence, eviction] |
-| Event Broker / Streaming | [Kafka / SNS+SQS / RabbitMQ / ActiveMQ] | [Version] | [Topic strategy, retention, partitions] |
-| Object Storage | [S3 / MinIO / Azure Blob / other] | [Tier] | [Bucket strategy, lifecycle policies] |
-| IAM / AuthN | [Keycloak / Cognito / Auth0 / other] | [Version] | [Realms, federation, OIDC flows] |
-| Secrets Management | [Vault / Secrets Manager / Sealed Secrets] | [Version] | [Rotation policy] |
-| API Gateway | [Kong / API Gateway / Spring Cloud Gateway] | [Version] | [Auth, rate limiting, routing] |
-| CI/CD | [GitHub Actions / GitLab CI / Jenkins / ArgoCD] | [Version] | [Pipeline standards] |
-| Observability: Logging | [Loki / ELK / CloudWatch / other] | [Version] | [Retention, indices] |
-| Observability: Metrics | [Prometheus + Grafana / Datadog / other] | [Version] | [Scrape interval, dashboards] |
-| Observability: Tracing | [OpenTelemetry + Jaeger / Tempo / X-Ray] | [Version] | [Sampling rate] |
-| Backend Runtime | [Language + Framework, e.g., Java 21 / Spring Boot 3.5+] | [Version] | [Layering rules] |
-| Frontend Stack | [Framework + UI lib, e.g., Angular / Tailwind / PrimeNG] | [Version] | [Design system, primary color] |
-| Reporting / BI | [Tool] | [Version] | [Read-replica or warehouse-backed] |
+| Layer | Technology / Service | Version / Tier | Status | Source | Notes |
+|-------|----------------------|----------------|--------|--------|-------|
+| Architecture Doctrine | [Style and communication model from the architecture questionnaire, e.g., Modular monolith with in-process module ports, or Microservices + EDA backbone; DDD (bounded contexts) + Hexagonal (ports & adapters) in every style] | n/a | [Status] | [questionnaire; when it did not run, the source's label, else recommended and flagged in §8.1] | [ADR-01] |
+| Compute / Infra | [On-prem Kubernetes / EKS / AKS / GKE] | [vX.Y] | [Status] | [Source] | [Notes; the regions or sites, clusters, zones, and node pools are in §8.6] |
+| Container Runtime | [containerd / Docker] | [vX.Y] | [Status] | [Source] | [Notes] |
+| Service Mesh / Ingress | [Istio / Linkerd / NGINX Ingress / Cloud LB] | [vX.Y] | [Status] | [Source] | [Notes; the mTLS points and network policies are in §8.7] |
+| Primary RDBMS | [PostgreSQL / other] | [Version] | [Status] | [Source] | [Notes; the HA topology and backups are in §8.6] |
+| Caching | [Redis / ElastiCache / other] | [Version] | [Status] | [Source] | [Eviction and other settings; the cluster mode and persistence are in §8.6] |
+| Event Broker / Streaming | [Kafka / SNS+SQS / RabbitMQ / ActiveMQ] | [Version] | [Status] | [Source] | [Notes; the topics are in §14, their retention and partitions in each §17.X Messaging Infra, and the broker's topology and scale unit in §8.6] |
+| Object Storage | [S3 / MinIO / Azure Blob / other] | [Tier] | [Status] | [Source] | [Bucket strategy, lifecycle policies] |
+| IAM / AuthN | [Keycloak / Cognito / Auth0 / other] | [Version] | [Status] | [Source] | [Realms, federation, OIDC flows] |
+| Secrets Management | [Vault / Secrets Manager / Sealed Secrets] | [Version] | [Status] | [Source] | [Rotation policy] |
+| API Gateway | [Kong / API Gateway / Spring Cloud Gateway] | [Version] | [Status] | [Source] | [Auth, rate limiting, routing] |
+| CI/CD | [GitHub Actions / GitLab CI / Jenkins / ArgoCD] | [Version] | [Status] | [Source] | [Pipeline standards] |
+| Observability: Logging | [Loki / ELK / CloudWatch / other] | [Version] | [Status] | [Source] | [Retention, indices] |
+| Observability: Metrics | [Prometheus + Grafana / Datadog / other] | [Version] | [Status] | [Source] | [Scrape interval, dashboards] |
+| Observability: Tracing | [OpenTelemetry + Jaeger / Tempo / X-Ray] | [Version] | [Status] | [Source] | [Sampling rate] |
+| Backend Runtime | [Language + Framework, e.g., Java 21 / Spring Boot 3.5+] | [Version] | [Status] | [Source] | [Layering rules] |
+| Frontend Stack | [Framework + UI lib, e.g., Angular / Tailwind / PrimeNG] | [Version] | [Status] | [Source] | [Design system; primary color, as its `ui-ux-global-constitution.md` token name when the project has one (SKILL.md principle 19)] |
+| Reporting / BI | [Tool] | [Version] | [Status] | [Source] | [Read-replica or warehouse-backed] |
 
 **Ecosystem-level rules:**
 
@@ -221,6 +234,14 @@ SELECTION FLOW: this table is never filled silently. Per SKILL.md § Ecosystem s
 - [Rule, e.g., ID strategy - UUIDv7 primary keys]
 - [Rule, e.g., service-to-service auth]
 - [Rule, e.g., secrets handling]
+
+**Integration landscape:**
+
+<!-- One row per external system of the eco-system: every system in §12, and every system an imported eco-system file describes in its Part C (SKILL.md step 3c item 8). System: the name §12 uses, else the heading of the file's block. Owner (role): the role that owns the system on its side (the provider, a partner bank, another team), from the eco-system file or the BRD integrations, else a [NEEDS CLARIFICATION: ...] marker. Role in the eco-system: the kind of system it is for the platform, in a few words (payment provider, notification channel, identity provider, record system); the integration's purpose stays in §12. Interface style: how the platform and the system meet (synchronous API, callback, batch file, message channel). Spec source: the eco-system file section as a link, when an imported file describes the system; else another provider document the SDD cites; else `Awaiting`. §12 row: the INT-NN, linked to §12, or `-` when the platform does not integrate with the system in this release. Protocol, auth, timeouts, rate limits, and contract fields stay in §12 and §15: they are linked, never repeated. -->
+
+| System | Owner (role) | Role in the eco-system | Interface style | Spec source | §12 row |
+|--------|--------------|------------------------|-----------------|-------------|---------|
+| [System] | [Owner role] | [Role] | [Interface style] | [[[project-slug]-eco-system.md § [System]](./[project-slug]-eco-system.md#[system-anchor]) / provider document / Awaiting] | [[INT-NN](#12-integrations) / -] |
 
 
 ---
@@ -344,7 +365,7 @@ flowchart TB
 
 **Figure 3: High-Level Architecture**
 
-<!-- Inline Mermaid is the default diagram medium. Show the layers: edge, frontend, services, data plane, async backbone, external, observability. -->
+<!-- Inline Mermaid is the default diagram medium. Show the layers: edge, frontend, services, data plane, async backbone, external, observability. With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §8.3 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
 
 ```mermaid
 flowchart TB
@@ -422,6 +443,205 @@ sequenceDiagram
 ---
 
 
+## 8.6 Infrastructure Architecture
+
+<!--
+Where the system runs (§8.6) and how traffic reaches it and leaves it (§8.7).
+INPUTS: in derive-from-BRD, the derivation inputs are the one list in brd-to-sdd.md § SDD-only sections, §8.6 / §8.7. In TRANSFORM, the inputs are the source SDD's infrastructure and network content (source-transformation.md). In GENERATE, they are the source material.
+PRE-SDD: with a loaded, G3-signed Pre-SDD (SKILL.md step 2a), what its chunk 12 lands in §8.6 and §8.7 (brd-to-sdd.md § Pre-SDD inputs (locked), the §8.6 and §8.7 row) is cited as PSDD/<ID> with a link and is locked: a Source cell names that entry, and §8.6.4 takes its RPO and RTO. Q7 and Q8 keep feeding this section within the lock. A disagreement with a locked value is a §23 open item owned by the E2E Architect, never an edit (SKILL.md principle 20; brd-to-sdd.md § Pre-SDD inputs (locked)).
+ONE FACT, ONE HOME: each fact is linked to its home, never restated. A technology, version, or tier is its §6 row: a cell names a technology by its role (the primary database, the message broker) and links that row, and never restates its name or version, the TLS version (§11.6), or a timeout (§12). The deployment target is the §6 Compute / Infra row (questionnaire Q8), and its ADR when one records it. The deployables follow ADR-01 and §13. The tenancy strategy is §11.2. The deployment, resource, and security defaults are §11.3 and §11.6. The environments are §19 (in part 1, before §19 is written, the §11.3 promotion path). An external system's protocol, auth, and timeouts are its §12 row and its §15 contract. This section and §8.7 add only the topology and the network paths.
+LINKS: a section that a later part writes (§14, §15, §16, §17.X, §18, §19, §20) is named as plain text until it exists, and the back-fill links it (parts-mode.md § What every part does, step 3).
+SOURCE CELLS: a Source cell links the home of its fact: a §6 row, an ADR, a §11 default, a §12 row, §19, a BRD NFR or Technical Input as its keyed link, a locked entry of the loaded Pre-SDD as its PSDD/<ID> link, an eco-system file section, the source SDD section (TRANSFORM), or the source material (GENERATE). A design choice that no source states reads `recommended`, as a §6 basis does, with its evidence stated in the row. An unknown fact is a [NEEDS CLARIFICATION: ...] marker.
+NO INVENTION: never an IP range, CIDR, hostname, or vendor product that no source states (SKILL.md § Things this skill never does). A component the design needs that no source names is written by its role (for example a WAF), never by a product name.
+SIZE: never skipped. When the deployment is simple (for example one deployable on one managed container service), each sub-section is one line or one row, a part that does not apply reads `Not applicable for this release.` with the reason, and both diagrams are still drawn (chunking.md § Skip rules).
+-->
+
+### 8.6.1 Deployment Topology
+
+**Deployment target:** [[§6 Compute / Infra](#6-ecosystem-overview) (questionnaire Q8), and its ADR when one records it ([ADR-NN](#10-architectural-decisions)); the deployables follow ADR-01 and [§13](#13-services-decomposition-summary)]
+
+| Concern | Design | Source |
+|---------|--------|--------|
+| Clusters | [How many clusters, and which environments and deployables each one runs / Not applicable: a managed container service] | [Source] |
+| Regions or sites | [Each cloud region or on-premises site, as a source names it] | [[KEY 12 TI-NN](BRD link) (hosting) / KEY/NFR-NN (data residency) / marker] |
+| Availability zones | [The zones the deployables and data stores spread over, and what keeps running when one zone is lost] | [KEY/NFR-NN (availability) / recommended / marker] |
+| Node pools | [Each pool and what runs on it / Not applicable: a managed container service] | [Source] |
+
+### 8.6.2 Deployables per Environment
+
+<!-- One row per deployable: each §13 row of Type `service`; one row for the single deployable of a modular monolith or hybrid core, with its modules in the second cell; and each other deployable that a §6 row or an ADR names (for example the web frontend), with that row or ADR in the second cell. A cell names where the deployable runs in that environment (its cluster, or the managed service), or `-` when it does not run there. The columns are the environments of §19 (before §19 is written, the §11.3 promotion path). Replicas and the rollout strategy stay in §11.3 and each §17.X Deployment Strategy. -->
+
+| Deployable | §13 rows or source | Dev | SIT | UAT | Prod |
+|------------|--------------------|-----|-----|-----|------|
+| [Deployable] | [[service-name](#13-services-decomposition-summary) / §6 row or ADR] | [Where it runs / -] | [Where it runs / -] | [Where it runs / -] | [Where it runs / -] |
+
+### 8.6.3 Data Stores, Broker, and Storage
+
+<!-- One row per database, cache, broker, and object store that §6 lists; a §6 row that reads Not applicable has no row here. The technology and its version stay in the §6 row. The split into schemas or databases per service or module is §11.1, §11.2, and the data-ownership ADR: link them. -->
+
+| Component | §6 row | Topology | Placement | Used by |
+|-----------|--------|----------|-----------|---------|
+| [Primary database] | [[Primary RDBMS](#6-ecosystem-overview)] | [Instances, replicas, or cluster] | [Zones or site] | [Deployables] |
+
+### 8.6.4 Backup and Disaster Recovery
+
+<!-- One row per component that holds state. RPO and RTO come from the BRD NFRs that state availability, recovery, backup, or data-loss limits (the recovery NFRs): cite the keyed NFR (REFUNDS/NFR-02), and derive a figure only where its business measure allows it. When no BRD NFR states one, the cell holds [NEEDS CLARIFICATION: ...], never an invented figure. With a loaded Pre-SDD, the RPO and RTO come from it, one row per component and failure scope (Primary database, zone loss), each cited as its PSDD/<ID> (brd-to-sdd.md § Pre-SDD inputs (locked)). This table is the home of the RPO and RTO: the §18.5 row of the same NFR links here and holds neither a figure nor a marker of its own. The recovery procedure is §20.1.5 Database Failover (LINKS above). -->
+
+| Component | Backup | RPO | RTO | Recovery | Source |
+|-----------|--------|-----|-----|----------|--------|
+| [Primary database] | [What is backed up, how often, and where the copies are kept] | [Figure / marker] | [Figure / marker] | [How service comes back; procedure §20.1.5, linked once §20 is written] | [KEY/NFR-NN / PSDD/<ID> / marker] |
+
+### 8.6.5 Scaling Model
+
+<!-- How each tier grows. The autoscaling defaults are the §11.3 Resource model and each §17.X Deployment Strategy, the hub topology (topics and fan-out) is §14.2, and the targets are §18: cite them (LINKS above). -->
+
+- **Deployables:** [Horizontal or vertical, and what triggers it]
+- **Data stores:** [Read replicas, partitions, or a tenant split per §11.2]
+- **Broker:** [The scale unit / Not applicable: no broker]
+- **Limits:** [What does not scale out, such as a singleton job, and how it is protected]
+
+### 8.6.6 Deployment Diagram
+
+**Figure [N]: Infrastructure Deployment**
+
+<!-- Inline Mermaid flowchart with subgraphs: one per region or site, nested ones per zone, cluster, or managed service, holding the deployables and data stores of the tables above. Edges are runtime connections. The diagram names only what those rows name. No line cap (mermaid-diagrams.md § Block conventions). -->
+
+```mermaid
+flowchart TB
+  %% Replace with the real deployment topology
+  subgraph SITE[Region or site]
+    subgraph CLUSTER[Cluster or managed service]
+      D1[Deployable 1]
+      D2[Deployable 2]
+    end
+    subgraph STORES[Data stores]
+      DB[(Primary database)]
+      BR[(Broker)]
+    end
+  end
+  D1 --> DB
+  D2 --> DB
+  D1 -.-> BR
+  BR -.-> D2
+```
+
+**Summary:** [1-2 sentences: where each deployable and data store runs, and how the topology meets the availability and recovery rows above.]
+
+## 8.7 Network Architecture
+
+<!-- The rules under §8.6 apply here too. The minimum TLS version, the certificate management, and the service-to-service auth mechanism are §11.6. The DNS naming convention and the per-environment access rules are §19. This section states where traffic flows and where it is checked. -->
+
+### 8.7.1 Network Zones
+
+<!-- One row per zone. A zone the design does not need reads `Not applicable for this release.` with the reason, for example no DMZ when the managed service's load balancer is the only entry. -->
+
+| Zone | Holds | Reached from | Source |
+|------|-------|--------------|--------|
+| Public | [For example DNS, and a CDN or WAF] | [Internet] | [Source] |
+| DMZ | [For example the load balancer and the API gateway] | [Public] | [Source] |
+| Application | [The deployables of §8.6.2] | [DMZ] | [Source] |
+| Data | [The data stores of §8.6.3] | [Application] | [Source] |
+| Management | [For example administrative access, CI/CD, and observability] | [The path of §8.7.6] | [Source] |
+
+### 8.7.2 Ingress Path
+
+<!-- The hops a client request takes, in order. Each hop names its component by its §6 row (API Gateway, Service Mesh / Ingress) or by its role. A provider callback (an External inbound contract in §15.2) takes this path too; an allow-list of the provider's addresses is cited from its source, never invented. A deployable that serves clients directly, such as a web frontend (§8.6.2), gets its own row, which names the hop it is reached from. -->
+
+| # | Hop | Component | Zone | Source |
+|---|-----|-----------|------|--------|
+| 1 | DNS | [Role or §6 row] | Public | [Source] |
+| 2 | CDN or WAF | [Role or §6 row / Not applicable] | Public | [Source] |
+| 3 | Load balancer | [Role or §6 row] | DMZ | [Source] |
+| 4 | API gateway | [[§6 API Gateway](#6-ecosystem-overview) / Not applicable] | DMZ | [Source] |
+| 5 | Service | [A deployable of §8.6.2] | Application | [Source] |
+| 6 | Frontend | [The web frontend of §8.6.2, reached from hop [N] / Not applicable] | [Zone] | [Source] |
+
+### 8.7.3 Egress to External Systems
+
+<!-- One row per §12 row. Egress path: NAT, IP allow-list, VPN, or private link, as the provider requires. A system that only calls the platform reads `None: inbound only (§8.7.2)`, and a §12 system inside the platform's own network reads `None: internal (§8.7.7)`. The provider's requirement comes from the Network access field of an imported eco-system file's Part C block (SKILL.md step 3c item 8) or another provider document, else a marker. The protocol, auth, and timeouts stay in the §12 row and its §15 contract. -->
+
+| §12 row | System | Egress path | Provider requirement | Source |
+|---------|--------|-------------|----------------------|--------|
+| [[INT-NN](#12-integrations)] | [System] | [NAT / IP allow-list / VPN / private link / None: inbound only (§8.7.2) / None: internal (§8.7.7)] | [What the provider requires / marker] | [[[project-slug]-eco-system.md § [System]](./[project-slug]-eco-system.md#[system-anchor]) / provider document / marker] |
+
+### 8.7.4 TLS Termination and mTLS
+
+<!-- One row per kind of connection: where its TLS ends and whether both sides authenticate (mTLS). The TLS version and the certificates are §11.6. -->
+
+| Connection | TLS ends at | mTLS | Source |
+|------------|-------------|------|--------|
+| Client to platform | [Load balancer / API gateway] | [No] | [[§11.6](#116-security-default)] |
+| Service to service | [Each deployable / Not applicable: one deployable] | [Yes, by the service mesh / No] | [[§6 Service Mesh / Ingress](#6-ecosystem-overview), §11.6] |
+| Service to data store | [The data store] | [Yes / No] | [Source] |
+| Platform to external system | [The provider's endpoint] | [As the provider requires] | [[INT-NN](#12-integrations)] |
+
+### 8.7.5 Service-to-Service Network Policies
+
+<!-- The policy model, stated once. Each allowed flow is a row of §8.7.7. In a single deployable, the policies cover only its data stores and its egress. -->
+
+- **Default:** [Deny all; allow only the flows of §8.7.7]
+- **Enforced by:** [Role or §6 row / marker]
+- **Tenant isolation:** [Network separation per §11.2 / None: isolation is in the application, §11.2]
+
+### 8.7.6 Administrative Access
+
+<!-- How operators reach the management zone and the data stores. The roles are the platform-plane roles of §16.4.3 (LINKS above); the per-environment access rules are §19. -->
+
+- **Path:** [For example a bastion, a VPN, or the provider's console, by role / marker]
+- **Who:** [The platform-plane roles of §16.4.3, linked once §16 is written]
+- **Grant and audit:** [How access is granted, limited in time, and logged]
+
+### 8.7.7 Ports and Protocols
+
+<!-- One row per allowed flow that crosses a zone or links two deployables: the hops of §8.7.2, the egress of §8.7.3, the synchronous calls between deployables (their API-NN in §15.2), and each deployable's data stores and broker. A port a source states is cited. A protocol a source fixes takes its registered port (for example HTTPS on 443), with Source `registered port`. Any other port is a marker. -->
+
+| From | To | Port | Protocol | Purpose | Source |
+|------|----|------|----------|---------|--------|
+| [Zone or component] | [Zone or component] | [Port] | [Protocol] | [Purpose, or the API-NN it carries] | [Source] |
+
+### 8.7.8 Network Diagram
+
+**Figure [N+1]: Network Architecture**
+
+<!-- Inline Mermaid flowchart with one subgraph per zone of §8.7.1, the ingress hops of §8.7.2, each egress of §8.7.3, and the administrative path of §8.7.6. Label each edge that crosses a zone with its protocol. The diagram names only what those rows name. No line cap (mermaid-diagrams.md § Block conventions). -->
+
+```mermaid
+flowchart LR
+  %% Replace with the real zones and flows
+  CLIENT([Clients])
+  subgraph PUB[Public]
+    EDGE[CDN or WAF]
+  end
+  subgraph DMZ[DMZ]
+    LB[Load balancer]
+    GW[API gateway]
+  end
+  subgraph APP[Application]
+    SVC[Deployables]
+  end
+  subgraph DATA[Data]
+    DB[(Data stores)]
+  end
+  subgraph MGMT[Management]
+    ADM[Administrative access]
+  end
+  EXT([External system])
+  CLIENT -->|HTTPS| EDGE
+  EDGE -->|protocol| LB
+  LB --> GW
+  GW -->|protocol| SVC
+  SVC -->|protocol| DB
+  SVC -->|protocol| EXT
+  ADM -.protocol.-> SVC
+  ADM -.protocol.-> DB
+```
+
+**Summary:** [1-2 sentences: the zones, the ingress path, the egress to each external system, and where TLS ends.]
+
+
+---
+
+
 ---
 
 
@@ -475,6 +695,7 @@ For deeper, individual ADRs, link to a separate ADR repository / folder.
 <!--
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
 (§17 Detailed Service Specs below) and the override must be justified there.
+With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)).
 -->
 
 ## 11.1 DB Modeling (Default)
@@ -482,6 +703,7 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Engine:** [Engine + version]
 - **PK strategy:** [Strategy]
 - **Auditing columns on every table:** [List]
+- **Table format:** Every table of a service's Tables Design follows the one format defined there, in each service's DB Modeling (§17.X).
 - **Soft delete:** [Approach]
 - **Migrations:** [Tool + workflow]
 - **Naming:** [Convention]
@@ -495,6 +717,7 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Tenant context:** [How resolved + propagated]
 - **Isolation enforcement:** [How enforced]
 - **Cross-tenant access:** [Policy]
+- **Index rule (shared-schema tables only):** [Every secondary index and unique key leads with `tenant_id`; the UUIDv7 primary key `id` is exempt, being globally unique; a project file may tighten this. Not applicable for schema-per-tenant or DB-per-tenant]
 
 ## 11.3 Deployment (Default)
 
@@ -540,6 +763,8 @@ Each concern in this section is the platform-wide default. Individual services m
 # 12. Integrations
 
 <!-- High-level table of all external integrations. One row per integrated system. Every synchronous domain or provider integration also has an API contract in §15 (standard operational infrastructure is not one: SKILL.md step 6a); name its API-NN in Notes. External contracts stay `TBD - external` there until the user supplies the provider documentation. -->
+
+<!-- An imported eco-system file is a source document for this table (SKILL.md step 3c item 8). A row whose system has a Part C block takes from it: How (protocol and style, data formats), Auth (auth scheme and credential type), Rate Limit (rate limits and quotas), and the provider timeouts, which bound the Timeout cell (our timeout stays within them). The row's Notes cite the block: [[project-slug]-eco-system.md § [System]](./[project-slug]-eco-system.md#[system-anchor]). A field the block does not state is filled as it would be without the file. -->
 
 | Integration ID | What (System) | Purpose | How (Protocol / Mode) | When (Trigger) | Auth | Timeout | Rate Limit | Retries & Backoff | Fallback | Notes |
 |----------------|---------------|---------|------------------------|----------------|------|---------|------------|--------------------|-----------| ------|
@@ -976,6 +1201,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Rate limit | [Limit per caller] |
 | Pagination | [Not applicable / cursor-based] |
 | Fallback when unavailable | [Behaviour] |
+| Source document | [Not applicable for an internal contract. A Defined external contract: link the provider's API documentation, or the eco-system file section the fields were filled from] |
 
 ---
 
@@ -999,7 +1225,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 | Credentials storage | [From §6 secrets row, e.g., secret per tenant in the secrets manager] |
 | Timeout, retries, circuit breaker | [From §12 INT-NN] |
 | Fallback when unavailable | [From §12 INT-NN] |
-| Source document | TBD (link the provider's API documentation once supplied) |
+| Source document | TBD (link the provider's API documentation, or the eco-system file section the fields were filled from, once supplied) |
 
 ---
 
@@ -1070,7 +1296,7 @@ API-NN covers domain/provider integrations, including internal business ports. S
 
 ## 15.6 External Contracts Awaiting the User
 
-<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. -->
+<!-- A view of the TBD - external contracts, so the user knows what to supply. Derived from §15.2 Status; the contract blocks stay the single home of the fields. A contract that an eco-system file filled in part lists only the fields still TBD. -->
 
 | API ID | Provider | Fields still TBD | Document needed from the user |
 |--------|----------|------------------|-------------------------------|
@@ -1344,10 +1570,28 @@ erDiagram
 
 #### Tables Design
 
-| Table | Column | Type | Constraints | Notes |
-|-------|--------|------|-------------|-------|
-| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
-| `[table_name]` | `[column]` | [Type] | [Constraints] | [Notes] |
+<!-- The one table format: a block per table, for every table this service owns, in the order of the ERD. §11.1 points here and does not restate it. Required means the column does not accept null; Optional means it does. A unique key, index, or check that the design fixes is stated in the Description of the column it covers, with its `tenant_id` lead where the table is shared-schema; the implementation constraints and indexes are added in the LLD. -->
+
+**Table name:** `[table_name]`
+
+**Table purpose:** [Why the table exists, in one sentence.]
+
+**Column details:**
+
+| Column name | Data type | Required or optional | Description |
+|-------------|-----------|----------------------|-------------|
+| `[column_name]` | [Data type] | [Required / Optional] | [Short description; add any unique key, index, or check the design fixes on this column] |
+| `[column_name]` | [Data type] | [Required / Optional] | [Short description; add any unique key, index, or check the design fixes on this column] |
+
+**Table name:** `[table_name]`
+
+**Table purpose:** [Why the table exists, in one sentence.]
+
+**Column details:**
+
+| Column name | Data type | Required or optional | Description |
+|-------------|-----------|----------------------|-------------|
+| `[column_name]` | [Data type] | [Required / Optional] | [Short description; add any unique key, index, or check the design fixes on this column] |
 
 #### Migration Strategy
 
@@ -1540,6 +1784,8 @@ sequenceDiagram
 
 # 18. Performance & Capacity Planning
 
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), §18 cites its calculations as PSDD/CALC-NN with a link and never recomputes them: the load, throughput, latency budgets, growth, payload sizes, storage, and bandwidth are the Pre-SDD's, and this section adds what the Pre-SDD leaves to it: the per-service breakdown, sizing per deployable, caching, and the §18.4 stress testing strategy. It sizes within PSDD/INT-03 and PSDD/CAP-03, and measures its latency targets where PSDD/CAP-08 says (brd-to-sdd.md § Pre-SDD inputs (locked), the §18 and §18.5 row). Each §18.5 row cites the Pre-SDD entry that settles its NFR's target (brd-to-sdd.md § Pre-SDD inputs (locked)). A disagreement with one is a §23 open item owned by the E2E Architect, never an edit (SKILL.md principle 20). -->
+
 ## 18.1 Load Estimates
 
 | Dimension | Year 1 | Year 2 | Year 3 | Notes |
@@ -1572,7 +1818,7 @@ sequenceDiagram
 
 ## 18.5 NFR Targets
 
-<!-- Derive-from-BRD: one row per NFR of every source BRD, keyed (REFUNDS/NFR-02), with the technical target it is quantified into and where the design realises it (a §18 row, a §11 default, an ADR, or a §17.X section). A target the BRD does not imply is a [NEEDS CLARIFICATION: ...], never invented. -->
+<!-- Derive-from-BRD: one row per NFR of every source BRD, keyed (REFUNDS/NFR-02), with the technical target it is quantified into and where the design realises it (a §18 row, a §11 default, an ADR, or a §17.X section). A target the BRD does not imply is a [NEEDS CLARIFICATION: ...], never invented. The RPO and RTO of a recovery NFR live in §8.6.4: its row links there and holds neither a figure nor a marker of its own. -->
 
 | BRD NFR | Technical target | Realised in |
 |---------|------------------|-------------|
@@ -1586,6 +1832,8 @@ sequenceDiagram
 
 
 # 19. Environments
+
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §19 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
 
 | Environment | Purpose | Data | Access | Promotion Source |
 |-------------|---------|------|--------|------------------|
@@ -1612,7 +1860,7 @@ sequenceDiagram
 
 # 20. Operations Runbook
 
-<!-- Living document. Each procedure should be runnable by an on-call engineer who did not write the service. -->
+<!-- Living document. Each procedure should be runnable by an on-call engineer who did not write the service. With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §20 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
 
 ## 20.1 Common Operations
 
@@ -1748,6 +1996,7 @@ sequenceDiagram
 | **ID** | OI-NN. Stable across revisions. |
 | **Where** | Section number (e.g., §6, §17.1), service name, or "global" if cross-cutting. |
 | **Type** | Architecture gap / Missing scenario / Corner case / Ambiguity / Risk / Inconsistency / NFR shortfall / ADR needed / Contract mismatch (topic, event, payload, consumer list, or role/permission divergence across chunks) / Duplication (BRD content or another chunk's content restated instead of referenced). |
+| **Owner** | Only on an item that disagrees with a locked item of the loaded Pre-SDD (SKILL.md principle 20): `E2E Architect (pre-sdd-unifier)`. The item cites the locked item as `PSDD/<ID>` and names its handoff request (`HR-NNN`). It is shown in the acceptance loop but not decided there; it stays `Open`, and keeps the gate shut like any other open item, until the E2E Architect answers ("Pre-SDD has a new version", SKILL.md step 10). Other items have no Owner line. |
 | **Concern** | One paragraph. What was missed and why it matters for downstream LLD or implementation. |
 | **Options** | At least 2 concrete choices, each with a one-line tradeoff. |
 | **Recommended Answer** | The reviewer's concrete proposed resolution, written as ready-to-apply SDD content (the exact row, decision, sub-section, or wording that would close the item). This is what gets injected into the body when accepted. |
@@ -1784,6 +2033,23 @@ Write a closed Status as the literal legend value on its own line. Put the Resol
   - **B.** [...] - [...].
 - **Recommended Answer:** [...]
 - **Why:** [...]
+- **Status:** Open
+
+---
+
+### OI-03: [Short title of a disagreement with a locked Pre-SDD item]
+
+<!-- The Pre-SDD case (SKILL.md principle 20): the SDD never edits the locked item or the Pre-SDD. -->
+
+- **Where:** [§N where the locked item lands, e.g. §18 or the §6 row]
+- **Type:** [Inconsistency | NFR shortfall | Risk]
+- **Owner:** E2E Architect (pre-sdd-unifier)
+- **Concern:** [Which locked item, cited as [PSDD/<ID>](link), and why it is wrong or conflicts with a source, a project file, or a design need. Handoff request: HR-NNN.]
+- **Options:**
+  - **A.** [Change the locked item in a new Pre-SDD version] - [one-line tradeoff].
+  - **B.** [Keep the locked item; the SDD design adapts] - [one-line tradeoff].
+- **Recommended Answer:** [The change the E2E Architect is asked to decide, ready to read in the Pre-SDD's terms; the SDD applies the new version's value when it arrives.]
+- **Why:** [The evidence behind the request.]
 - **Status:** Open
 
 ---

@@ -1,0 +1,30 @@
+{
+  "actor": {
+    "type": "agent",
+    "name": "pre-sdd-unifier"
+  },
+  "ops": [
+    {
+      "op": "set-option",
+      "name": "One primary region with a pilot-light recovery region",
+      "shape": {
+        "hosting": "cloud",
+        "topology": "regional",
+        "dr": "pilot",
+        "network": "public",
+        "data": "relational, strongly consistent; synchronous inside the primary region, asynchronous to the recovery region"
+      }
+    },
+    {
+      "op": "set-option",
+      "name": "One primary region with a warm-standby recovery region",
+      "shape": {
+        "hosting": "cloud",
+        "topology": "regional",
+        "dr": "warm",
+        "network": "public",
+        "data": "relational, strongly consistent; synchronous inside the primary region, asynchronous to the recovery region"
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "set", "entry": "ECO-01.1", "value": "One-time budget 250,000 EUR; run cost up to 12,000 EUR a month" },
+    { "op": "confirm", "entry": "ECO-01.1" },
+    { "op": "set-factor", "entry": "ECO-01.1", "factor": "budgetPressure", "value": "balanced" },
+    { "op": "confirm", "entry": "ECO-01.1", "factor": "budgetPressure" }
+  ]
+}

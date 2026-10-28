@@ -14,11 +14,13 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 
 | Template section | Diagram | Mermaid dialect |
 |---|---|---|
-| §7.2 Use Case Diagram | Actors → use-case clusters (carry the keyed UC IDs as plain quoted labels, e.g. `UC04(("REFUNDS/UC-04"))`; the links to the BRD live in the text around the diagram, its Summary, and in §7.3: `brd-to-sdd.md` § The link, item 6) | `flowchart LR` |
+| §7.2 Use Case Diagram | Actors → use-case clusters (carry the keyed UC IDs as plain quoted labels, e.g. `UC04(("REFUNDS/UC-04"))`). The links to the BRD live in the text around the diagram, its Summary, and in §7.3 (`brd-to-sdd.md` § The link, item 6) | `flowchart LR` |
 | §8.2 Context Diagram | System in the middle, externals around it, edges labelled protocol + purpose | `flowchart TB` |
 | §8.3 High-Level Architecture | Layers (edge, frontend, services, data, async backbone, external, observability) | `flowchart TB` with `subgraph` |
 | §8.4 Workflow Diagrams | One per critical end-to-end flow | `flowchart TD` |
 | §8.5 Sequence Diagrams | One per critical interaction (sync + async) | `sequenceDiagram` |
+| §8.6 Infrastructure Architecture | Deployment diagram: regions or sites, then zones, clusters, or the managed service as nested subgraphs, holding the deployables and data stores | `flowchart TB` with `subgraph` |
+| §8.7 Network Architecture | Network diagram: one subgraph per network zone, the ingress path, the egress to each external system, the administrative path; edges that cross a zone labelled with their protocol | `flowchart LR` with `subgraph` |
 | §12 Integrations | Integration topology, edges labelled with protocol/mechanism | `flowchart LR` |
 | §14.2 Event hub (chunk 10) | Async backbone mechanism + hub fan-out landscape | `flowchart LR` |
 | §17.X DB Modeling | ERD per service | `erDiagram` |
@@ -29,7 +31,7 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 
 **Do not** draw a diagram for:
 - Glossary, Assumptions, Risks, Ecosystem Overview, Principles/ADRs, Environments (tabular/list content).
-- Services whose logic fits in 3–6 bullets with no state machine.
+- Services whose logic fits in 3 to 6 bullets with no state machine.
 - Stateless services (no state machine) and one-step workflows.
 
 Fewer, more meaningful diagrams beat decorative ones.
@@ -55,19 +57,19 @@ sequenceDiagram
 - Always use the `mermaid` language hint on the fence.
 - The **Summary** line after every diagram is mandatory: it is the no-renderer fallback.
 - Use named participants / meaningful node ids; annotate alt-paths for error scenarios.
-- In sequence diagrams, a synchronous call is `->>` and its reply `-->>`; an asynchronous message (an event or a queued job) is `-)`. Never put `;` or `#` in a sequence message: `;` ends a Mermaid statement, and `#` can start an entity code.
-- Keep diagrams scoped. A workflow or sequence diagram beyond about 30 lines is split into a happy-path and an error-path diagram. Layered views (§8.3, §24.3) and ERDs have no line cap; an ERD shows entities, keys (PK, FK), and relationships only, and the other columns stay in Tables Design.
-- Figure numbering is sequential across the whole SDD (not per chunk); every figure gets a row in chunk 00's Figures index with its chunk + section.
+- In sequence diagrams, a synchronous call is `->>` and its reply `-->>`; an asynchronous message (an event or a queued job) is `-)`. Never put `;` or `#` in a sequence message. `;` ends a Mermaid statement, and `#` can start an entity code.
+- Keep diagrams scoped. A workflow or sequence diagram beyond about 30 lines is split into a happy-path and an error-path diagram. Layered views (§8.3, §24.3), the infrastructure and network views (§8.6, §8.7), and ERDs have no line cap. An ERD shows entities, keys (PK, FK), and relationships only. The other columns stay in Tables Design.
+- Figure numbering is sequential across the whole SDD (not per chunk). Every diagram that carries a `Figure N` label gets a row in chunk 00's Figures index with its chunk + section. The templates label the §7.2, §8.2, §8.3, §8.6.6, and §8.7.8 diagrams. Every other diagram is named by its section and has no Figure label and no index row.
 
 ## Render-fail mitigation
 
-1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
+1. Validate every emitted Mermaid block parses (syntactically) before writing. Use a Mermaid parser when one is available in the session. Otherwise check each block line by line against the examples in the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
 2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + `[NEEDS CLARIFICATION: Mermaid syntax error: review and fix]`.
 3. Surface the fallback count in the handoff summary.
 
 ## Syntax quick reference
 
-The rules above do not depend on another skill. When `../lld-unifier/mermaid-diagrams.md` exists (lld-unifier installed next to this skill), its § Mermaid syntax quick reference has a cheatsheet for the dialects used here (`sequenceDiagram`, `classDiagram`, `stateDiagram-v2`, `erDiagram`, `flowchart`).
+The cheatsheet for the dialects used here (`sequenceDiagram`, `classDiagram`, `stateDiagram-v2`, `erDiagram`, `flowchart`) is `mermaid-syntax.md` in this skill folder.
 
 ---
 
@@ -76,7 +78,7 @@ The rules above do not depend on another skill. When `../lld-unifier/mermaid-dia
 A light run makes no board, even on request (SKILL.md § Light run). Otherwise, if, and only if, the user asks for a Miro board ("put the diagrams on Miro", "create a board"):
 
 1. Load Miro tools via ToolSearch (they are deferred).
-2. Create or reuse a board named `SDD - [Project Name] - Diagrams` (`Miro:context_explore` to check; ask for the URL when updating an existing SDD: don't guess).
+2. Create or reuse a board named `SDD - [Project Name] - Diagrams` (`Miro:context_explore` to check). Ask for the URL when updating an existing SDD: don't guess.
 3. Author the requested figures with `Miro:diagram_get_dsl` → `Miro:diagram_create`; frame names mirror the SDD figure titles (`Figure 1: System Context`, …).
 4. Append the link BELOW the corresponding inline Mermaid block (additive, never a replacement):
 

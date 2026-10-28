@@ -9,6 +9,8 @@ PART OF: SDD - [Project Name]
 
 # 19. Environments
 
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §19 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
+
 | Environment | Purpose | Data | Access | Promotion Source |
 |-------------|---------|------|--------|------------------|
 | **Dev** | [Purpose] | [Data] | [Access] | [Source] |

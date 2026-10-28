@@ -23,7 +23,7 @@ Any of these writes a gap **and** its DU row in the same step (SKILL.md rule 1a,
 | `plan` coverage check | an in-scope UC/AC/spec has no LLD unit | `plan-gap` |
 | `discover` / `sync` | adopted code does something no doc describes and the user kept it | `doc-update` |
 
-A gap whose Owner is brd-, sdd- or lld-unifier always has a DU. A gap without a DU is a lint FAIL (P15).
+A gap whose Owner is brd-, pre-sdd-, sdd- or lld-unifier always has a DU. A gap without a DU is a lint FAIL (P15).
 
 ## 2. Who is right: code or doc (decided before any queue row)
 
@@ -36,7 +36,7 @@ code is fixed by a task.
 | Two docs contradict | the higher doc wins (SoW > BRD > SDD > LLD); the lower one is updated | `doc-conflict` |
 | A decider exists: user quote in chat, a CHG row, an accepted audit finding (`accepted by user`) | doc follows the decider | `direction` |
 | A contract the code needs is missing from the LLD (plan-gap) | LLD gets the field; the task waits for it | `contract` |
-| The code contradicts the doc, no decider | **not a DU**: `code-drift`, fix the code | — |
+| The code contradicts the doc, no decider | **not a DU**: `code-drift`, fix the code | - |
 
 Never queue a DU whose only reason is "the code already does it this way". That turns the spec into a
 description of the code.
@@ -88,7 +88,7 @@ Template: templates.md § Doc updates. One row per DU, written in the same step 
 `Rejected` (user or § 2 says no; reason required), `Failed` (2 failed verifications; a gap to the user).
 
 Rules: never renumber, never delete; one DU per point (dedup by doc anchor: a second point on the same
-anchor joins the open DU's What column); every DU links its gap and its task (or `—` with the reason).
+anchor joins the open DU's What column); every DU links its gap and its task (or `-` with the reason).
 
 ## 6. Dispatch: one background doc worker
 
@@ -106,7 +106,7 @@ anchor joins the open DU's What column); every DU links its gap and its task (or
 ```
 You are the doc worker for <KEY>. Apply only these doc updates, nothing else: <DU rows: ID, level, kind,
 anchors, What from -> to, Decided by>.
-Docs root: <path>. Owning skills: load brd-unifier / sdd-unifier / lld-unifier for the doc you edit when
+Docs root: <path>. Owning skills: load brd-unifier / pre-sdd-unifier / sdd-unifier / lld-unifier for the doc you edit when
 installed; otherwise follow the doc's own format exactly (heading style, keyed IDs, tables).
 Rules:
 - Edit only the listed anchors and the higher anchors listed with them. Never rename or delete a heading

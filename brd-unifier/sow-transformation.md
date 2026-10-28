@@ -1,6 +1,6 @@
 # Source Transformation: SoW, pre-BRD, Existing BRD, or Loose Spec → Unified BRD
 
-This file defines how to translate a source document into the unified BRD template, regardless of whether the source is a SoW, a pre-BRD from `pre-brd-unifier`, an existing BRD in another format, or a loose product spec.
+This file defines how to translate a source document into the unified BRD template. The source can be a SoW, a pre-BRD from `pre-brd-unifier`, an existing BRD in another format, or a loose product spec.
 
 It exists because the field mapping is not always obvious, and getting it wrong produces a BRD that looks structured but is semantically empty.
 
@@ -13,7 +13,7 @@ For deciding **whether** transformation is the right intent, see `transform-dete
 1. **Read the source in full before writing anything.** The BRD sections are interdependent; you need the whole picture before you can populate Glossary, Assumptions, and Scope coherently.
 2. **Classify each source paragraph into a BRD target section.** Keep a running map: "paragraph 3 → Business Objectives; paragraph 4 → Assumptions item 2; paragraph 5 → UC-02 Main Flow".
 3. **Paraphrase, don't copy.** Source docs are often written for procurement, legal, or vendor audiences. The BRD is written for the delivery team. Same facts, different voice.
-4. **Business language only.** The BRD states the WHAT. Any technical mandate in the source (named technologies, protocols, architecture rules, concrete technical targets) is parked **verbatim** in Appendix § Technical Inputs for the SDD, never spread into the body, never dropped.
+4. **Business language only.** The BRD states the WHAT. Any technical mandate in the source (named technologies, protocols, architecture rules, concrete technical targets) is parked **verbatim** in Appendix § Technical Inputs for the SDD. It is never spread into the body and never dropped.
 5. **Flag gaps immediately.** Every gap becomes a `**[NEEDS CLARIFICATION: <specific question>]**` marker, never an invented plausible value.
 6. **Preserve commitments verbatim.** Numbers, dates, percentages, named integration points are carried across exactly. "11 source systems currently in SIT" stays "11 source systems currently in SIT", not "approximately a dozen".
 7. **Never pick a side silently.** When two parts of the source disagree on something the BRD takes, use the version from the part this file maps to that BRD home, as a proposal that names the other part: `**[NEEDS CLARIFICATION: proposed <version> (<part>); <other part> says <other version>; confirm or replace]**`. When neither part maps to that home, flag both versions and propose neither.
@@ -50,7 +50,7 @@ Source docs often mix assumptions and constraints. The template combines them in
 
 → **Dependencies** table.
 
-Classify each as Hard (blocks delivery) or Soft (affects quality but not blocking). Name the owner team or system where stated. Fill `Needed before` (the build of a use case, BAT sign-off, or go-live) as the source states it; when the source does not say, flag it with a clarification marker.
+Classify each as Hard (blocks delivery) or Soft (affects quality but not blocking). Name the owner team or system where stated. Fill `Needed before` (the build of a use case, BAT sign-off, or go-live) as the source states it. When the source does not say, flag it with a clarification marker.
 
 ### "Scope"
 
@@ -70,13 +70,13 @@ The third row is the substantive work (see "Use case extraction" below).
 
 Rules:
 
-1. **One UC per distinct user goal**, not one UC per paragraph. A source paragraph may contain 3 capabilities; they become 3 use cases. A capability with no identifiable actor is a red flag: identify who triggers it or flag `[NEEDS CLARIFICATION: which user performs this?]`.
+1. **One UC per distinct user goal**, not one UC per paragraph. A source paragraph may contain 3 capabilities. They become 3 use cases. A capability with no identifiable actor is a red flag: identify who triggers it or flag `[NEEDS CLARIFICATION: which user performs this?]`.
 2. **Assign every UC to a persona.** The persona owns it in its detailed chunk (`06a`, `06b`, …) and gets a `Yes` in the Users & Use Cases Matrix. If the source doesn't say who, write the persona its role references point to as a proposal (`**[NEEDS CLARIFICATION: proposed <persona> as Primary Actor; confirm or replace]**`), or flag it when nothing points to one.
 3. **For each UC**, populate all blocks per the template. Expanding what the source itself states into detailed steps stays unmarked. Any behaviour the source does not state (an inferred persona, rule, step, or exception flow) is written as a proposal with the clarification marker, `**[NEEDS CLARIFICATION: proposed <behaviour>; confirm or replace]**`, so the to-do collects it for the user to decide. Example: "Users can request refunds" becomes detailed request steps with no marker, but a refund window, an approval path, or a failure rule the source does not state is a proposal. Per block:
    - **Actor & Goal**: primary/supporting actors, one-sentence goal, business trigger.
    - **Why**: if the source gives rationale, paraphrase it. If not, write the value it serves, taken from the Business Objectives, as a proposal, or flag `[NEEDS CLARIFICATION: business value of UC-NN]`.
    - **Preconditions**: what must hold before step 1, as the source states it. A precondition the source does not state is a proposal; write `None.` when nothing must hold.
-   - **Main Flow**: expand the source's bullets into detailed numbered steps alternating actor action and system response, in business terms. A step that adds behaviour the source does not state is a proposal; where the source is too vague to propose a step, flag the gap.
+   - **Main Flow**: expand the source's bullets into detailed numbered steps alternating actor action and system response, in business terms. A step that adds behaviour the source does not state is a proposal. Where the source is too vague to propose a step, flag the gap.
    - **Alternate & Exception Flows**: branches and failures as the user experiences them. Carry across the ones the source states. Sources rarely state these: write each other branch or failure as a proposal, and flag the ones you cannot propose.
    - **Business Rules & Constraints**: rules, limits, eligibility conditions specific to this UC. A rule or limit the source does not state is a proposal.
    - **Acceptance Criteria**: testable conditions ("Given X, when Y, then Z").
@@ -91,19 +91,19 @@ See `use-case-quality.md` for what a substantive use-case block looks like.
 
 → **Appendix § Technical Inputs for the SDD**, verbatim, with the source location.
 
-These do NOT go into the BRD body. The BRD is business-language only; technical mandates (named technologies, architecture principles, integration standards, protocols) are parked verbatim in the Appendix table so `sdd-unifier` can consume them without loss. Exception: if a source "technical" statement is actually a business expectation in disguise ("the system must keep working if a partner is down": that's an NFR; "reports must be exportable to Excel": that's Reporting), translate it into the right business section AND keep the original in the parking table if it carried technical specifics.
+These do NOT go into the BRD body. The BRD is business-language only. Technical mandates (named technologies, architecture principles, integration standards, protocols) are parked verbatim in the Appendix table so `sdd-unifier` can consume them without loss. Exception: if a source "technical" statement is actually a business expectation in disguise ("the system must keep working if a partner is down": that's an NFR; "reports must be exportable to Excel": that's Reporting), translate it into the right business section AND keep the original in the parking table if it carried technical specifics.
 
 ### "Non-Functional Requirements" / "Performance" / "Availability" / "Security"
 
 → **Non-Functional Requirements** table, in business language.
 
-Convert each NFR into a row: `NFR-NN | <quality> | <business expectation> | <business measure>`. State the WHAT ("highly available: customers are never blocked from paying"), and express the measure in terms the business can verify ("no more than X minutes of disruption per month"). Carry business-verifiable commitments verbatim. Technical targets in the source (uptime percentages, latency budgets, throughput numbers) are parked in Appendix § Technical Inputs for the SDD and referenced: the SDD owns the technical realisation. If the source names a quality without any measure ("the system shall be highly available"), flag it: `NFR-NN | Availability | Highly available | [NEEDS CLARIFICATION: how much disruption per month is tolerable to the business?]`.
+Convert each NFR into a row: `NFR-NN | <quality> | <business expectation> | <business measure>`. State the WHAT ("highly available: customers are never blocked from paying"), and express the measure in terms the business can verify ("no more than X minutes of disruption per month"). Carry business-verifiable commitments verbatim. Technical targets in the source (uptime percentages, latency budgets, throughput numbers) are parked in Appendix § Technical Inputs for the SDD and referenced. The SDD owns the technical realisation. If the source names a quality without any measure ("the system shall be highly available"), flag it: `NFR-NN | Availability | Highly available | [NEEDS CLARIFICATION: how much disruption per month is tolerable to the business?]`.
 
 ### "Integrations" / "Interfaces" / "Connected systems"
 
 → **Integrations** section, business-level.
 
-List every business system or partner the product must exchange information with: business purpose, information exchanged (in business terms), direction (we send / we receive / both ways), criticality, and provider/owner. Integration mechanisms stated in the source (protocols, endpoints, file formats, auth, SLAs) are parked verbatim in Appendix § Technical Inputs for the SDD: the SDD owns them.
+List every business system or partner the product must exchange information with: business purpose, information exchanged (in business terms), direction (we send / we receive / both ways), criticality, and provider/owner. Integration mechanisms stated in the source (protocols, endpoints, file formats, auth, SLAs) are parked verbatim in Appendix § Technical Inputs for the SDD. The SDD owns them.
 
 ### "Reporting" / "Dashboards" / "Analytics"
 
@@ -119,7 +119,7 @@ If not named explicitly, infer from role references scattered across the text ("
 
 ### "Timeline" / "Milestones" / "Phases"
 
-Timelines typically do **not** go into the BRD: the BRD describes the system, not the programme plan. Exception: if a phase fundamentally changes system behaviour (e.g., "in Phase 2, multi-tenancy is enabled"), that's a use case or domain concept. A phase-based BRD also labels each scope item with its phase and keeps the roadmap period when the source has one (SKILL.md § Phase-based BRD); the rest of the plan (dates, milestones, tasks) still stays out.
+Timelines typically do **not** go into the BRD: the BRD describes the system, not the programme plan. Exception: if a phase fundamentally changes system behaviour (e.g., "in Phase 2, multi-tenancy is enabled"), that's a use case or domain concept. A phase-based BRD also labels each scope item with its phase and keeps the roadmap period when the source has one (SKILL.md § Phase-based BRD). The rest of the plan (dates, milestones, tasks) still stays out.
 
 ### "Commercial" / "Pricing" / "Payment terms"
 
@@ -171,7 +171,7 @@ When the source has no clear structure (Notion brain-dump, single-page brief, sc
 
 ## pre-BRD (pre-brd-unifier output) to BRD
 
-A pre-BRD answers "is this worth building?". It holds discovery analysis, not requirements. Take from it the idea, the users, the scope, and the priorities, and write the requirements in this template. Market figures and scores stay in the pre-BRD: cite them with a link, never copy them (one fact, one home). The verdict word (`Go`, `Conditional Go`, or `No-Go`) is named next to its link, as the 22-23 row says: that is a citation, not a copy.
+A pre-BRD answers "is this worth building?". It holds discovery analysis, not requirements. Take from it the idea, the users, the scope, and the priorities, and write the requirements in this template. Market figures and scores stay in the pre-BRD: cite them with a link, never copy them (one fact, one home). The verdict word (`Go`, `Conditional Go`, or `No-Go`) is named next to its link, as the 22-23 row says. That is a citation, not a copy.
 
 | pre-BRD chunks | BRD home | How |
 |---|---|---|
@@ -180,7 +180,7 @@ A pre-BRD answers "is this worth building?". It holds discovery analysis, not re
 | 06-12 Market and competition (Market Comparison, Market Sizing, PESTLE, Porter's Five Forces, EFAS, IFAS, SWOT) | 01 Background and Context; 02 Assumptions / Constraints, Facts and Challenges; 10 NFRs (candidates) | One short paragraph of market context plus a link; the figures stay in the pre-BRD. Every regulatory point in 08 PESTLE becomes a numbered 02 constraint, whichever of its six rows holds it, not only Legal. A regulatory point is a law, a licence, or a rule of a regulator, an operator, or a platform that the product must follow. A point with several obligations gives one constraint per obligation (licensed message sending and licensed hosting, for example). A constraint that sets a quality is also an NFR candidate in 10. |
 | 13 RICE, 14 MoSCoW | 04 Project Scope; 12 Wishlist | MoSCoW decides scope: Must and Should items go in scope, whatever their roadmap phase; Could and Won't items go out of scope or to the wishlist. Their priority orders the use case list in part 1 (in a phase-based BRD, the current phase's list: SKILL.md § Phase-based BRD). |
 | 16-20 Strategy (BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle) | None: context only | Read for context. A strategy statement never becomes a requirement. |
-| 21 Roadmap and Project Plan | 04 Project Scope; 12 Wishlist | Each scope item is labelled with its roadmap phase (in a phase-based BRD, `Phase N` numbered from these rows, plus the roadmap period: SKILL.md § Phase-based BRD). MoSCoW decides scope, not the phase (the 13-14 row), so a later phase sends only its Could and Won't items to the wishlist. Its Must and Should items that change system behaviour become scope items or use cases (§ "Timeline" / "Milestones" / "Phases"); in a phase-based BRD, a later phase's items get their use cases when that phase starts. |
+| 21 Roadmap and Project Plan | 04 Project Scope; 12 Wishlist | Each scope item is labelled with its roadmap phase (in a phase-based BRD, `Phase N` numbered from these rows, plus the roadmap period: SKILL.md § Phase-based BRD). MoSCoW decides scope, not the phase (the 13-14 row), so a later phase sends only its Could and Won't items to the wishlist. Its Must and Should items that change system behaviour become scope items or use cases (§ "Timeline" / "Milestones" / "Phases"). In a phase-based BRD, a later phase's items get their use cases when that phase starts. |
 | 22 Executive Summary Scoreboard, 23 Investor Assessment | 01 Background and Context | Cite the verdict (`Go`, `Conditional Go`, or `No-Go`) with a link; never restate the scores. |
 | 24 Open Items and Assumptions Log | 02 Assumptions; clarification markers | An assumption in the log that BRD content rests on (a persona, a scope item, a rule, a measure, or an objective the BRD took) becomes a numbered 02 assumption that cites its row (`pre-BRD 24, A-NN`). The log has no validation mark, so each one counts as not confirmed: it is an `Assumption to validate` row in the to-do when its falsity would change a use-case flow, an acceptance criterion, or an NFR measure (`delivery-chunks.md` § Step 1). An assumption that only supports the analysis (market sizing, scores, the verdict) stays in the pre-BRD. An open item whose Recommended Answer settles a choice the BRD can state becomes a proposal marker (SKILL.md principle 8) in each BRD home that took the content the item is about, placed where that content sits (for a persona, its row in the Personas table). The proposal is a full statement that names its subject, and `pre-BRD 24` is linked like any cited pre-BRD chunk (Rules, below), for example `[NEEDS CLARIFICATION: proposed: the Support Agent is a separate persona ([pre-BRD 24](../pre-brd-[slug]/24-open-items-and-assumptions-log.md), OI-05); confirm or replace]`. An open item that asks for a figure or a fact only its owner can supply stays a plain `[NEEDS CLARIFICATION: ...]` marker at each such home. A marker asks one distinct question (SKILL.md principle 8): an item about two things gives two markers, each at the home of its own content. Only the part of a chunk that the item concerns counts, not every home fed by a chunk its Where names: an item on one 15 OKRs key result marks only the business objective made from that key result. An item about content the BRD only links or cites (market figures, scores, the verdict word) stays in the pre-BRD, as an inline marker on such content does (Rules, below). |
 
@@ -213,7 +213,12 @@ Then apply the plain-language style (`writing-style.md`): sources written for pr
 
 ## Gap inventory
 
-At the end of any transformation, count the `[NEEDS CLARIFICATION: ...]` markers by question (the measure is clarification questions, not text occurrences or lines; a marker repeated for one question counts once; the same marker words used for two different things, two flows or two rules, count as two questions) in two groups and surface both totals in the handoff summary: **gaps** (the source does not say, and nothing is proposed) and **proposals** (`[NEEDS CLARIFICATION: proposed ...]`, behaviour the skill proposed for the user to confirm, a pre-BRD open item's Recommended Answer included: § pre-BRD, the 24 row). Both kinds go to the to-do and keep gate condition G1 shut until they are resolved.
+At the end of any transformation, count the `[NEEDS CLARIFICATION: ...]` markers by question, in two groups, and surface both totals in the handoff summary. The measure is clarification questions, not text occurrences or lines. A marker repeated for one question counts once. The same marker words used for two different things (two flows or two rules) count as two questions. The two groups are:
+
+- **gaps** (the source does not say, and nothing is proposed);
+- **proposals** (`[NEEDS CLARIFICATION: proposed ...]`, behaviour the skill proposed for the user to confirm, a pre-BRD open item's Recommended Answer included: § pre-BRD, the 24 row).
+
+Both kinds go to the to-do and keep gate condition G1 shut until they are resolved.
 
 Thresholds apply to gap markers only, because only they measure the source; proposals are reported as "to confirm":
 
@@ -243,7 +248,7 @@ Only the system-behaviour scope of the RFP transfers.
 Before declaring the transformation done, verify:
 
 - [ ] Every UC has all required sub-sections (`Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX`).
-- [ ] Every UC is assigned to a persona; the Users & Use Cases Matrix covers every persona × every UC and matches each UC's persona actors both ways (external parties are never columns).
+- [ ] Every UC is assigned to a persona. The Users & Use Cases Matrix covers every persona × every UC and matches each UC's persona actors both ways (external parties are never columns).
 - [ ] No technical language in the body: technology names, protocols, and technical targets from the source sit verbatim in Appendix § Technical Inputs for the SDD.
 - [ ] NFRs and Integrations read as business statements (the what); no mechanism or technical target rows remain.
 - [ ] The Glossary covers every acronym used in the BRD (business terms only).

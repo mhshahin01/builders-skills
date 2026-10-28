@@ -1,0 +1,9 @@
+| Rule | Title | Trigger | Assessment | Verification | Rows |
+|---|---|---|---|---|---|
+| ARCH-01 | Classification & hosting | change=greenfield; target=cloud | Route to GF-CL; migration is a separate overlay. | Confirm target-hosting responsibility and hard platform restrictions. | HDR-07, HDR-08 |
+| DR-03@region | Independent region/provider failure | failure scope=region | Assess independent recovery locations plus identity, data, DNS, networks and application dependencies. | Prove full service recovery and RPO after the specified failure scenario. | REL-03, REL-04, REL-05 |
+| LOAD-04 | Workload-based capacity planning | peak=0.07 TPS; 0.23 API RPS | Size and benchmark at sustained peak with headroom and failure-mode capacity. | Obtain peak duration, load profile, per-instance P99 throughput, storage IOPS and growth. | CAP-01, CAP-04 |
+| DATA-08@az | Near-real-time recovery data | RPO=5 s | Measure replication lag/backup point age against scoped dataset and failure. | Exercise writer failure and measure committed-record recovery point. | REL-04 |
+| DB-10 | Per-workload data architecture | type=relational; consistency=strong | Recommend logical data-store pattern; compare provider products and failover semantics. | Validate operations, constraints and benchmarks per workload. | DAT-01, DAT-05 |
+| SEC-11 | Data sensitivity/residency | classification=sensitive; geographic restrictions=yes | Cloud regions, DR copies, data transfers, encryption and access must satisfy applicable controls. | Obtain compliance authority, permitted locations, data lineage and control evidence. | DAT-03, DAT-04 |
+| SLO-15@region | One outage can consume SLO budget | RTO=4 h; 30-day budget=43.2 min | One full-length, user-visible outage in the measurement window may exceed the availability allowance; not inherently contradictory. | Clarify measurement exclusions and design impact on customer journeys. | REL-01, REL-03 |

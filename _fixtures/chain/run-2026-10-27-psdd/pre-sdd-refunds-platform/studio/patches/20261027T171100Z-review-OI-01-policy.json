@@ -1,0 +1,7 @@
+{
+  "actor": { "type": "policy" },
+  "ops": [
+    { "op": "set-option", "option": "OPT-01", "shape": { "hosting": "cloud", "topology": "regional", "dr": "pilot", "network": "public", "data": "relational, strongly consistent; asynchronous to the zone standby and to the recovery region" } },
+    { "op": "set-option", "option": "OPT-02", "shape": { "hosting": "cloud", "topology": "regional", "dr": "warm", "network": "public", "data": "relational, strongly consistent; asynchronous to the zone standby and to the recovery region" } }
+  ]
+}

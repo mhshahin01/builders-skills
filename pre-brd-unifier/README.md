@@ -1,6 +1,6 @@
 # Pre-BRD Unifier
 
-The discovery and validation layer of the Product Documentation Skill Suite: it answers "is this worth building?" before any requirements are written (stage 1, Discovery). See the repo-root `README.md` for the full lifecycle.
+The discovery and validation layer of the Product Documentation Skill Suite: it answers "is this worth building?" before any requirements are written (stage 1, Discovery). In the unifier company it acts as the Business development (Product Management & Business Development) employee. The chain runs pre-BRD, then BRD, then Pre-SDD, then SDD: a G3-signed Pre-SDD is required for every new SDD built from BRDs (`sdd-unifier` step 2a). See the repo-root `README.md` for the full lifecycle.
 
 ---
 
@@ -15,7 +15,7 @@ The five tiers:
 | 1. Idea definition | 01-05 | Concept Sheet, Product Charter, Lean Canvas, Value Proposition Canvas, Empathy Map |
 | 2. Market and competition | 06-12 | Market Comparison, Market Sizing, PESTLE, Porter's Five Forces, EFAS, IFAS, SWOT |
 | 3. Prioritization | 13-15 | RICE, MoSCoW, OKRs |
-| 4. Strategy and planning | 16-21 | BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle, Roadmap and Project Plan |
+| 4. Strategy and planning | 16-21 | BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle, Roadmap, Project Plan and Go-To-Market |
 | 5. Synthesis | 22 | Executive Summary Scoreboard with composite score and go/no-go thresholds |
 
 Output is Markdown, either as a chunked folder (the default) or one combined file. A styled `.xlsx` export is produced only on explicit request, after the user approves the Markdown.
@@ -60,7 +60,7 @@ Invocation prefix depends on the agent: `/pre-brd-unifier chunks` in Claude Code
 4. **Fill the 22 frameworks.** Tier by tier from the research bundle, using `chunks/*.md` as authoritative skeletons. Answer cells only; guidance stays read-only; gaps are flagged with `[NEEDS CLARIFICATION: ...]`.
 5. **Investor assessment pass.** A dedicated skeptical-investor agent reads chunks 01-22 and authors chunk 23: seven aspects scored out of 10 with cited rationales, a computed weighted composite, and a decisive Go/No-Go reconciled with the Scoreboard.
 6. **Reviewer pass.** A cleared-context reviewer reviews chunks 01-23 and writes chunk 24: findings with Where, Type, Concern, Options, a concrete Recommended Answer, a mandatory Why, and the Assumptions Log.
-7. **Present and stop.** The Markdown deliverable with an inventory: chunks, clarification count, open-items count, source count, and the investor verdict, plus, when they apply, a light run's skipped frameworks, a zero-finding review, and an answer policy's answers. Verify live uncertainty propagation and first-use markers for unanswered reserved intake values, including brand color; report live occurrences separately from unique questions and exclude examples/skip notes. No Excel yet.
+7. **Present and stop.** The Markdown deliverable with an inventory: chunks, clarification count, open-items count, source count, and the investor verdict, plus, when they apply, a light run's skipped frameworks, a zero-finding review, and an answer policy's answers. Verify live uncertainty propagation and first-use markers for unanswered reserved intake values, including brand color; report live occurrences separately from unique questions and exclude examples/skip notes. It then names the next hop, BRD (Product manager), and raises the handoff request `Hand-off: pre-BRD <slug> is ready` on the status board (`SKILL.md` § Status board); on a Conditional or No-Go verdict it waits for the owner's decision first. No Excel yet.
 8. **Export on approval.** Only on explicit request, run the `.xlsx` export per `xlsx-export.md`.
 
 ### Outputs
@@ -68,12 +68,14 @@ Invocation prefix depends on the agent: `/pre-brd-unifier chunks` in Claude Code
 - CHUNKS: `./pre-brd-[project-slug]/` containing `00-pre-brd-master.md` plus chunks `01-*.md` through `24-*.md`.
 - COMBINED: `./PRE-BRD-[ProjectName]-v1.1.md` with a table of contents.
 - On approval only: `./PRE-BRD-[ProjectName]-v1.1.xlsx`, cloned from the reference workbook.
+- Status board: `unifier-status.md` in the project root, shared by every chain skill. This skill writes only its own row (Business development) and its handoff request (`SKILL.md` § Status board).
 - Feeds into the BRD: a validated pre-BRD supplies the problem statement, target users, market context, and prioritized scope for `brd-unifier` (stage 2, Requirements).
 
 ### Reference files
 
 | File | Contents |
 | ---- | -------- |
+| `SKILL.md` | The skill itself: arguments, the workflow steps (1 to 8), principles, light run, answer policy, the investor and reviewer passes, output conventions, and the Status board |
 | `modes.md` | Chunks vs combined output modes and cross-mode conversion |
 | `transform-detection.md` | Generate vs transform intent detection and transform procedure |
 | `frameworks.md` | Fill contract, framework classification, formula catalog, Tier-5 propagation |

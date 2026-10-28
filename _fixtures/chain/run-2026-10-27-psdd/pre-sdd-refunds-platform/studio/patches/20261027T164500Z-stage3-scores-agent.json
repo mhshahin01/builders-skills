@@ -1,0 +1,120 @@
+{
+  "actor": {
+    "type": "agent",
+    "name": "pre-sdd-unifier"
+  },
+  "ops": [
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "nfr_fit",
+      "value": 4,
+      "reason": "Pilot light is the engine strategy for scope region at REL-03.1 and REL-04.1, and local HA covers scope az; it meets the targets with less margin than a running standby."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "one_time_cost",
+      "value": 4,
+      "reason": "Only the data copy and a minimal recovery footprint are built in the recovery region, fewer standby parts than a warm standby."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "recurring_tco",
+      "value": 4,
+      "reason": "The recovery region runs only the data copy until it is needed, so the monthly run cost stays low."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "delivery_time",
+      "value": 4,
+      "reason": "A minimal recovery footprint and its scale-up runbook are quicker to build than a second running environment."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "operability",
+      "value": 3,
+      "reason": "Recovery needs the recovery footprint scaled up by runbook within REL-03.1, which the operations team must practise."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "security_compliance",
+      "value": 4,
+      "reason": "Both regions sit within the European Union as DAT-04.1 requires, under the same SEC-04.1 controls."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "reversibility",
+      "value": 4,
+      "reason": "It can step up to a warm standby later without changing the primary region."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-01",
+      "criterion": "uncertainty",
+      "value": 3,
+      "reason": "That the scale-up fits inside REL-03.1 is not yet proven; it needs a recovery drill (REL-09)."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "nfr_fit",
+      "value": 5,
+      "reason": "A running standby recovers scope region well inside REL-03.1 and REL-04.1, and local HA covers scope az."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "one_time_cost",
+      "value": 3,
+      "reason": "A second running environment in the recovery region is built up front."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "recurring_tco",
+      "value": 2,
+      "reason": "The standby environment runs every month, so the monthly run cost is the higher of the two shapes."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "delivery_time",
+      "value": 3,
+      "reason": "Two running environments take longer to build and test than a minimal recovery footprint."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "operability",
+      "value": 3,
+      "reason": "Failover is simpler, but two running environments must be kept in step and patched."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "security_compliance",
+      "value": 4,
+      "reason": "Both regions sit within the European Union as DAT-04.1 requires, under the same SEC-04.1 controls."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "reversibility",
+      "value": 3,
+      "reason": "A running standby is a larger standing commitment to step back from."
+    },
+    {
+      "op": "set-score",
+      "option": "OPT-02",
+      "criterion": "uncertainty",
+      "value": 4,
+      "reason": "A running standby is exercised all the time, so recovery inside REL-03.1 rests on more evidence."
+    }
+  ]
+}

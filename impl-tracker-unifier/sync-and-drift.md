@@ -8,7 +8,7 @@
 5. Untracked code: new classes under feature packages, new migrations, new routes not in
    `ownership.md` → `untracked-code`.
 6. Commits since last sync without `Task:` → listed in next standup.
-7. Ask the user once whether to move the baseline to the new versions (re-plan) — direction-level. A bump
+7. Ask the user once whether to move the baseline to the new versions (re-plan) - direction-level. A bump
    whose changelog rows all name a `Verified` DU is already decided: move the baseline without asking and
    note the DU IDs; the task that raised each DU is not marked Stale by it (doc-impact-rules.md § 8).
 8. Re-run the code inventory and diff it with the previous one (discovery-rules.md § 5).

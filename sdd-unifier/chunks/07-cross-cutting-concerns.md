@@ -12,6 +12,7 @@ PART OF: SDD - [Project Name]
 <!--
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
 (§17.X, chunks 13x) and the override must be justified there.
+With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)).
 -->
 
 ## 11.1 DB Modeling (Default)
@@ -19,6 +20,7 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Engine:** [Engine + version]
 - **PK strategy:** [Strategy]
 - **Auditing columns on every table:** [List]
+- **Table format:** Every table of a service's Tables Design follows the one format defined there, in each service's DB Modeling (§17.X).
 - **Soft delete:** [Approach]
 - **Migrations:** [Tool + workflow]
 - **Naming:** [Convention]
@@ -32,6 +34,7 @@ Each concern in this section is the platform-wide default. Individual services m
 - **Tenant context:** [How resolved + propagated]
 - **Isolation enforcement:** [How enforced]
 - **Cross-tenant access:** [Policy]
+- **Index rule (shared-schema tables only):** [Every secondary index and unique key leads with `tenant_id`; the UUIDv7 primary key `id` is exempt, being globally unique; a project file may tighten this. Not applicable for schema-per-tenant or DB-per-tenant]
 
 ## 11.3 Deployment (Default)
 

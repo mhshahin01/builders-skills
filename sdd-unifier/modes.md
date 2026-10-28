@@ -20,6 +20,7 @@ sdd-[project-slug]/
 ├── 03-users-and-use-cases.md
 ├── 04-architecture-style-and-diagrams.md
 ├── 05-workflows-and-sequences.md
+├── 05a-infrastructure-and-network.md
 ├── 06-principles-and-decisions.md
 ├── 07-cross-cutting-concerns.md
 ├── 08-integrations.md
@@ -36,6 +37,7 @@ sdd-[project-slug]/
 ├── 17-appendix-and-wishlist.md
 ├── 18-open-items-and-clarifications.md   # reviewer output (post-generation)
 ├── 19-e2e-system-design.md         # end-to-end system map (gated: written only after 18 is cleared)
+├── 20-for-ppt.md                   # architecture deck brief (derived; written only on request once the e2e gate is open; never merged)
 ├── decision-log.md                 # decision register (companion file; created on first use; never merged)
 └── [project-slug]-sdd-master.md                   # master index + Generation Progress (regenerated per project)
 ```
@@ -73,7 +75,7 @@ See `chunking.md` for chunking strategy and merge handling.
 
 **Skeleton source:** `TEMPLATE-COMBINED.md` (embedded in this skill folder).
 
-**Structure follows the template top-to-bottom (sections 1–24; §24 is appended only once the e2e gate is open):**
+**Structure follows the template top-to-bottom (sections 1 to 24; §24 is appended only once the e2e gate is open):**
 
 1. Executive Summary
 2. Scope (In / Out)
@@ -82,7 +84,7 @@ See `chunking.md` for chunking strategy and merge handling.
 5. Glossary
 6. Ecosystem Overview (incl. Architecture Doctrine: EDA + DDD + Hexagonal)
 7. System Users & Use Cases (Actors + Use Case Diagram + Use Case Traceability)
-8. System Design / High-Level Architecture (Style, Context, HL Arch, Workflow, Sequence diagrams)
+8. System Design / High-Level Architecture (Style, Context, HL Arch, Workflow, Sequence diagrams, Infrastructure Architecture, Network Architecture)
 9. Architecture Principles
 10. Architectural Decisions (ADR summary table)
 11. Cross-Cutting Concerns (DB, Multi-tenancy, Deployment, Observability, Config, Security defaults)
@@ -104,6 +106,8 @@ See `chunking.md` for chunking strategy and merge handling.
 
 **Always `whole`.** A combined SDD is written in one run; `combined parts` is not available. The decision register still lives outside the file, at `./sdd-[project-slug]/decision-log.md`.
 
+**Never inside the combined file:** the architecture deck brief and the decision register. In COMBINED mode they are separate files in `./sdd-[project-slug]/` (create the folder if needed): `decision-log.md` on first use, and `20-for-ppt.md` only on request, once the e2e gate is open. The deck's links to the SDD target `../SDD-[ProjectName]-v[X.X].md` with the same anchors, and there is no master: its status line holds its state. Details: SKILL.md step 8c.
+
 **When to prefer:**
 
 - Single-service systems (1 bounded context).
@@ -121,14 +125,14 @@ The two modes are reversible.
 
 When the user says "merge", "consolidate", "single file", "full doc" after a chunks-mode generation:
 
-1. Read all `sdd-[project-slug]/NN-*.md` files in file-sort order (00 … 09, 10, 11, 12, 13a, 13b, …, 14 … 18, then 19 if it exists).
+1. Read all `sdd-[project-slug]/NN-*.md` files in file-sort order (00 … 05, 05a, 06 … 09, 10, 11, 12, 13a, 13b, …, 14 … 18, then 19 if it exists). Skip `20-for-ppt.md` (header `MERGE: Excluded`): it is never part of the merged SDD.
 2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block and its `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
 3. Concatenate with a single blank line between chunks.
-4. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first). Keep every §17.X number as published, in chunk-letter order (13a → §17.1, 13b → §17.2, …); never renumber or close a gap left by a merged or removed service.
-5. Copy the master's **Reconciled:**, **E2E gate (chunk 19):**, and **E2E basis:** lines into the cover, unchanged (the gate line as **E2E gate (§24):**), and its E3 marker inventory, with each source link rebased to its heading's anchor in the merged file. A merge never reopens or refreshes the gate: a `Stale` gate stays `Stale`, and that line is the warning on §24.
+4. Deduplicate the repeated `# 17. Detailed Service Specs` parent heading (keep only the first). Keep every §17.X number as published, in chunk-letter order (13a → §17.1, 13b → §17.2, …). Never renumber or close a gap left by a merged or removed service.
+5. Copy the master's **Reconciled:**, **E2E gate (chunk 19):**, and **E2E basis:** lines into the cover, unchanged (the gate line as **E2E gate (§24):**), and its E3 marker inventory, with each source link rebased to its heading's anchor in the merged file. A merge never reopens or refreshes the gate. A `Stale` gate stays `Stale`, and that line is the warning on §24. The master's Deck brief line is not copied: the deck's state stays on the status line of `20-for-ppt.md`.
 6. Regenerate the Table of Contents in the cover section against the merged heading outline.
 7. Regenerate the Figures and Tables indices.
-8. Write to `./sdd-[project-slug]/SDD-[ProjectName]-v[X.X]-MERGED.md` (alongside the chunks). `[project-slug]-sdd-master.md` and `decision-log.md` are never merged.
+8. Write to `./sdd-[project-slug]/SDD-[ProjectName]-v[X.X]-MERGED.md` (alongside the chunks). `[project-slug]-sdd-master.md`, `decision-log.md`, and `20-for-ppt.md` are never merged.
 9. Keep the original chunks.
 
 ### Combined → Chunks (re-chunk)
@@ -139,10 +143,13 @@ When the user says "split into chunks", "chunk this SDD", "re-chunk this":
 2. Identify section boundaries by `# `, `## ` headings matching the template structure.
 3. Group sections per the canonical chunk map (see `chunking.md`).
 4. For section 17 (Detailed Service Specs), each `## 17.X` block becomes its own chunk file (`13a-service-*.md`).
-5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer. Its VERSION is the combined file's version for chunk 00, and for any other chunk the version of the newest Changes Log row whose `Chunks:` list names it or one of its sections, else the version of the earliest Changes Log row; when no row has a `Chunks:` list (an SDD older than that rule), the combined file's version, noted in the handoff (SKILL.md § Output conventions, Versions).
-6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed). Links are rebased: a link to a BRD or LLD (`./brd-…`, `./BRD-…`, `./lld-…`, `./LLD-…`) gains `../`, and an in-file anchor (`#171-…`, `#841-…`) becomes a link to the chunk that now holds that heading (`./13a-service-[slug].md#171-…`).
-7. Write each chunk file (plus a regenerated `[project-slug]-sdd-master.md` index, which takes over the cover's Reconciled, E2E gate, and E2E basis lines and its E3 marker inventory, each inventory source link rebased to the chunk that now holds its heading).
-8. Keep the original combined file.
+5. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer. Its VERSION is set as follows:
+   - Chunk 00 takes the combined file's version.
+   - Any other chunk takes the version of the newest Changes Log row whose `Chunks:` list names it or one of its sections, else the version of the earliest Changes Log row.
+   - When no row has a `Chunks:` list (an SDD older than that rule), the VERSION is the combined file's version, noted in the handoff (SKILL.md § Output conventions, Versions).
+6. Heading levels stay as-is (the template uses absolute numbering like `# 1.`, `## 1.1`, so no demotion is needed). Links are rebased. A link to a BRD or LLD (`./brd-…`, `./BRD-…`, `./lld-…`, `./LLD-…`), or to the project's eco-system file (`./[project-slug]-eco-system.md`), gains `../`. An in-file anchor (`#171-…`, `#841-…`) becomes a link to the chunk that now holds that heading (`./13a-service-[slug].md#171-…`).
+7. Write each chunk file, plus a regenerated `[project-slug]-sdd-master.md` index. The master takes over the cover's Reconciled, Review passes, E2E gate, and E2E basis lines and its E3 marker inventory. Each inventory source link is rebased to the chunk that now holds its heading. The master's Deck brief line reads the state on the status line of `20-for-ppt.md` when that file exists, else `Locked - not written`.
+8. Keep the original combined file. Keep `20-for-ppt.md` where it is if it exists, with its links repointed from the combined file to the new chunk files (`chunking.md` § Re-chunk handling).
 
 ---
 
@@ -152,7 +159,7 @@ Mode (CHUNKS / COMBINED) describes the **output format**. Intent (GENERATE / TRA
 
 |  | GENERATE | TRANSFORM | DERIVE-FROM-BRD |
 |---|---|---|---|
-| **CHUNKS** | Author fresh SDD as 19+ chunked files. | Re-shape source SDD into 19+ chunked files. | Generate skeleton SDD from BRD as 19+ chunked files; SDD-only sections are stubs with `[NEEDS CLARIFICATION: ...]`. |
-| **COMBINED** | Author fresh SDD as a single file. | Re-shape source SDD into a single file. | Generate skeleton SDD from BRD as a single file; same flagging behaviour. |
+| **CHUNKS** | No SDD written yet: a BRD first, then a G3-signed Pre-SDD, then the SDD is derived as 20+ chunked files (SKILL.md step 2). | Re-shape source SDD into 20+ chunked files. | Generate skeleton SDD from BRD as 20+ chunked files; SDD-only sections are stubs with `[NEEDS CLARIFICATION: ...]`. |
+| **COMBINED** | No SDD written yet: a BRD first, then a G3-signed Pre-SDD, then the SDD is derived as a single file (SKILL.md step 2). | Re-shape source SDD into a single file. | Generate skeleton SDD from BRD as a single file; same flagging behaviour. |
 
 See `transform-detection.md` for how to decide intent.

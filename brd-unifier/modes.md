@@ -10,7 +10,7 @@ This file describes what each mode is, when to prefer which, and how the modes r
 
 **Output:** A folder of `.md` files, one per logical template-section grouping, written to `./brd-[project-slug]/`.
 
-**Skeleton source:** `chunks/*.md` (embedded in this skill folder). Each file in `chunks/` is a section-scoped template skeleton: copy its structure, fill it with project-specific content, and save it in the output folder under its output name from the `chunking.md` map (`06a-use-cases-detailed.md` becomes one `06a-use-cases-[persona-slug].md` per persona; `brd-master.md` becomes `[project-slug]-brd-master.md`).
+**Skeleton source:** `chunks/*.md` (embedded in this skill folder). Each file in `chunks/` is a section-scoped template skeleton: copy its structure, fill it with project-specific content, and save it in the output folder under its output name from the `chunking.md` map. `06a-use-cases-detailed.md` becomes one `06a-use-cases-[persona-slug].md` per persona, and `brd-master.md` becomes `[project-slug]-brd-master.md`.
 
 **File list (canonical):**
 
@@ -122,7 +122,7 @@ When the user says "merge", "consolidate", "single file", "full doc" after a chu
 
 1. Read all `brd-[slug]/NN-*.md` files in numeric order (00, 01, 02, 03, 03a, 03b, 04, 05, 06a, 06b, …, 07, 08, 09, 10, 11, 12, 13, then 15 and 16 when they exist). **Skip `14-todo.md` and `17-for-ppt.md`** (header `MERGE: Excluded`); they are never part of the merged BRD.
 2. Strip each chunk's `<!-- CHUNK: ... -->` HTML comment block and its `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer comment.
-3. Apply `chunking.md` § Heading map (chunks and combined): the `06*` chunks become `### Use Cases - [Persona]` groups under one `## Detailed Use Cases` section, with every other heading demoted by two levels; links between merged chunks become same-file anchors. All other headings stay as they are.
+3. Apply `chunking.md` § Heading map (chunks and combined): the `06*` chunks become `### Use Cases - [Persona]` groups under one `## Detailed Use Cases` section, with every other heading demoted by two levels. Links between merged chunks become same-file anchors. All other headings stay as they are.
 4. Concatenate with a single blank line between chunks, and a `---` line before each chunk that starts with a `# ` heading (`chunking.md` § Merge handling).
 5. Regenerate the Table of Contents in the cover section against the merged heading outline.
 6. Regenerate the Figures and Tables indices.
@@ -137,8 +137,8 @@ When the user says "split into chunks", "chunk this BRD", "re-chunk this" (a sum
 2. Identify section boundaries by the `# ` headings of the template, and split `## Detailed Use Cases` at each `### Use Cases - [Persona]` heading (one `06*` chunk per persona).
 3. Group sections per the canonical chunk map (see `chunking.md`).
 4. For each chunk, prepend the `<!-- CHUNK: ... -->` comment block and append the `<!-- MASTER: ... | PREV: ... | NEXT: ... -->` footer.
-5. Apply `chunking.md` § Heading map (chunks and combined): headings keep their level and text, except that each `06*` chunk gets back its title and structure list and promotes every other heading by two levels, and chunk 16 gets back its project-name title. Same-file anchors that point at another chunk become file links again.
-6. Write each chunk file to `./brd-[slug]/NN-*.md`, and write `[project-slug]-brd-master.md` from `chunks/brd-master.md`. The `# Implementation Plan` and `# UAT/BAT Test Cases` sections become `15-implementation.md` and `16-uat-bat-test-cases.md`; the existing `14-todo.md` and `17-for-ppt.md` stay where they are, with their BRD links repointed to the chunk files.
+5. Apply `chunking.md` § Heading map (chunks and combined): headings keep their level and text. There are two exceptions: each `06*` chunk gets back its title and structure list and promotes every other heading by two levels, and chunk 16 gets back its project-name title. Same-file anchors that point at another chunk become file links again.
+6. Write each chunk file to `./brd-[slug]/NN-*.md`, and write `[project-slug]-brd-master.md` from `chunks/brd-master.md`. The `# Implementation Plan` and `# UAT/BAT Test Cases` sections become `15-implementation.md` and `16-uat-bat-test-cases.md`. The existing `14-todo.md` and `17-for-ppt.md` stay where they are, with their BRD links repointed to the chunk files.
 7. Keep the original combined file alongside the chunks.
 
 ---

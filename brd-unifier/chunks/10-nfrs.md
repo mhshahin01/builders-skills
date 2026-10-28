@@ -20,6 +20,6 @@ LANGUAGE: Business language only. State WHAT quality the business expects (highl
 | NFR-04 | Security & Privacy | [e.g., Customer data is visible only to authorised users; regulatory data stays in-country] | [e.g., Access outside the Users & Use Cases Matrix is impossible] |
 | NFR-05 | Usability | [e.g., A new operator completes core tasks without training] | [e.g., Task X completed unaided by a first-time user] |
 
-> The technical realisation of each NFR (targets like uptime percentages, latency budgets, capacity plans, and the architecture that achieves them) is defined in the SDD, not here.
+> The Pre-SDD (pre-sdd-unifier) settles the technical targets for each NFR, such as uptime percentages, latency budgets, and capacity, and the SDD designs the architecture that meets them; neither is stated here.
 
 <!-- MASTER: [project-slug]-brd-master.md | PREV: 09-reporting-and-analytics.md | NEXT: 11-summary-and-uiux.md -->

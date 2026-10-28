@@ -1,0 +1,13 @@
+{
+  "actor": { "type": "fixture", "name": "Product Owner stand-in" },
+  "ops": [
+    { "op": "set", "entry": "HDR-07.1", "value": "greenfield" },
+    { "op": "confirm", "entry": "HDR-07.1" },
+    { "op": "set", "entry": "HDR-08.1", "value": "cloud", "evidence": "provider-hosted public cloud; no provider is a hard constraint" },
+    { "op": "confirm", "entry": "HDR-08.1" },
+    { "op": "set", "entry": "CAP-01.1", "label": "Points movement (earned on a branch purchase, or taken back after a refund)", "value": 2000 },
+    { "op": "confirm", "entry": "CAP-01.1" },
+    { "op": "set", "entry": "CAP-01.2", "label": "Refund request", "value": 40 },
+    { "op": "confirm", "entry": "CAP-01.2" }
+  ]
+}

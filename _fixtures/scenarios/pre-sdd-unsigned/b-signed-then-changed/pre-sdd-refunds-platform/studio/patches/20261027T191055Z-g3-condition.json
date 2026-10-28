@@ -1,0 +1,14 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "add-condition",
+      "text": "CardPay Ltd confirms in writing that it refunds branch card purchases to the original card, before the SDD fixes the payout integration.",
+      "owner": "Refunds and Loyalty Product Owner",
+      "due": "2026-12-15"
+    }
+  ]
+}

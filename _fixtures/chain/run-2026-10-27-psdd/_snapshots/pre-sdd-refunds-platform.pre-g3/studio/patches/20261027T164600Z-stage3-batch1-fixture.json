@@ -1,0 +1,129 @@
+{
+  "actor": {
+    "type": "fixture",
+    "name": "Product Owner stand-in"
+  },
+  "ops": [
+    {
+      "op": "set-cost",
+      "option": "OPT-01",
+      "cost": "one_time",
+      "value": 180000
+    },
+    {
+      "op": "set-cost",
+      "option": "OPT-01",
+      "cost": "monthly",
+      "value": 6500
+    },
+    {
+      "op": "set-cost",
+      "option": "OPT-02",
+      "cost": "one_time",
+      "value": 210000
+    },
+    {
+      "op": "set-cost",
+      "option": "OPT-02",
+      "cost": "monthly",
+      "value": 9800
+    },
+    {
+      "op": "set-horizon",
+      "value": 36
+    },
+    {
+      "op": "set-weights",
+      "values": {
+        "nfr_fit": 3,
+        "one_time_cost": 1,
+        "recurring_tco": 2,
+        "delivery_time": 1,
+        "operability": 2,
+        "security_compliance": 2,
+        "reversibility": 1,
+        "uncertainty": 1
+      }
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "nfr_fit"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "one_time_cost"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "recurring_tco"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "delivery_time"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "operability"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "security_compliance"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "reversibility"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-01",
+      "criterion": "uncertainty"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "nfr_fit"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "one_time_cost"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "recurring_tco"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "delivery_time"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "operability"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "security_compliance"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "reversibility"
+    },
+    {
+      "op": "confirm",
+      "option": "OPT-02",
+      "criterion": "uncertainty"
+    }
+  ]
+}

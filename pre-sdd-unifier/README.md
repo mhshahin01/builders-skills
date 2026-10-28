@@ -196,8 +196,8 @@ node --test "<skill>/studio/tests/*.test.mjs"
 The decisions live in three places:
 
 - [studio/CHANGELOG.md § Builder decisions (Phase 2)](studio/CHANGELOG.md#builder-decisions-phase-2): the 22 engine and CLI decisions, one line each.
-- The design, `docs/superpowers/specs/2026-10-23-pre-sdd-unifier-design.md`: [§ 2 Decided with the owner](../docs/superpowers/specs/2026-10-23-pre-sdd-unifier-design.md#2-decided-with-the-owner) and [§ 11 Calls I made](../docs/superpowers/specs/2026-10-23-pre-sdd-unifier-design.md#11-calls-i-made-please-check).
-- The plan, [docs/superpowers/plans/2026-10-23-pre-sdd-unifier-plan.md](../docs/superpowers/plans/2026-10-23-pre-sdd-unifier-plan.md): its sections "Two questions to settle before Task 0.1" and "Builder decisions".
+- The design, `docs/superpowers/specs/2026-10-23-pre-sdd-unifier-design.md`: § 2 Decided with the owner and § 11 Calls I made. It is a local design record in the owner's checkout, not published in this repository.
+- The plan, `docs/superpowers/plans/2026-10-23-pre-sdd-unifier-plan.md`: its sections "Two questions to settle before Task 0.1" and "Builder decisions". It is a local record too, not published.
 
 Know these before you change code:
 

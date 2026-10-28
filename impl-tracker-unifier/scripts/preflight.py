@@ -32,15 +32,24 @@ Checks per task (rows: PASS / FAIL / INFO / SKIPPED; any FAIL fails the run):
   P12 migrations     a migration the task adds has a version above every version present at its start (L-014),
                      and no test line still pins the schema's previous highest version
   P13 bean types     a bean the task declares is not a second bean of a single-instance type (L-061)
-  P14 removals       a card with `## Design check` has `## Removals`, and a --removals report for the current
-                     code shows every guard killed by its named test
+  P14 removals       a card with `## Design check` has `## Removals`, and a --removals report shows every guard
+                     the card lists killed by its named test, with no production code, build file or named test
+                     changed since (other test files keep the report)
+  P16 neighbours     INFO: test classes that name a table the task's added migrations write or alter (seed rows,
+                     columns); --quick runs them, and the full run runs them first
+  P15 doc updates    every DU the task raised (doc-updates.md, Task column) is listed under the card's
+                     `## Doc updates` and exists; none is Failed or Rejected without a reason; a `contract` DU is
+                     Verified; every doc-owned gap of the task has a DU (doc-impact-rules.md § 9)
 P10 targets the covering tests only (PIT -DtargetTests): the task's own test classes plus every test class that
 names a changed class or an interface it implements, or sits in its package; none found -> the suite default.
 Reuse: a full run stores its suite rows and raw mutation survivors in tracking/preflight-cache.json; a later full
 run whose code (everything outside tracking/, docs and binaries excluded: NON_CODE) is unchanged reuses both and re-judges the survivors against the
 current cards, in seconds. --mutate runs mutation on the task's changed classes (uncommitted work included)
 against the task's own test classes only (PIT -DtargetTests), prints survivors with their code, writes nothing.
-Required suites run in parallel; each suite row ends with its time in seconds.
+Required suites run in parallel; each suite row ends with its time in seconds. Beside them, in private copies of the
+Maven module (two Maven runs in one module clash on target/): the related tests (own, always-run, migration
+neighbours, covering), which stop the suites when they fail, and each Maven mutation suite. --removals runs its guards
+in up to --jobs module copies at once and never edits the working tree.
 The report is printed and, outside --audit-mode and --lint, written to tracking/<KEY>/preflight/<T-NNN>-<short task head>.md.
 The task head is the task's own last code `Task:` commit (repo HEAD for Adopted, which has no own commits, so
 its counts match by definition); line 1 carries its full sha
@@ -53,13 +62,17 @@ import argparse
 import datetime
 import fnmatch
 import glob
+import html
 import json
 import os
+import queue
 import re
+import shutil
 import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 
@@ -71,6 +84,26 @@ NON_CODE = ("*.md", "*.pdf", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.svg", "*.do
 def code_spec(rel_tracking):
     """git pathspec for code only: everything outside tracking/ except docs and binaries (NON_CODE)."""
     return [".", ":(exclude)%s" % rel_tracking] + [":(exclude,glob)**/%s" % p for p in NON_CODE]
+
+
+def worktree_tree(code_root, rel_tracking):
+    """The git tree of the code as it is on disk now, uncommitted and untracked work included, written through a
+    temporary index so the real index is never touched. `git diff --quiet <tree> <commit> -- code` then tells whether
+    a later commit holds exactly this code. '' when git fails."""
+    fd, idx = tempfile.mkstemp(prefix="preflight-index-")
+    os.close(fd)
+    os.remove(idx)  # git creates the index file itself
+    env = dict(os.environ, GIT_INDEX_FILE=idx)
+    run = lambda *args: subprocess.run(["git"] + list(args), cwd=code_root, env=env, capture_output=True, text=True,
+                                       encoding="utf-8", errors="replace")
+    try:
+        if run("read-tree", "HEAD").returncode or run("add", "-A", "--", *code_spec(rel_tracking)).returncode:
+            return ""
+        out = run("write-tree")
+        return out.stdout.strip() if out.returncode == 0 else ""
+    finally:
+        if os.path.exists(idx):
+            os.remove(idx)
 SKIP_DIRS = ("node_modules", "target", "dist", ".angular", ".git", ".stryker-tmp", "reports")
 GREP_EXCLUDES = " ".join("--exclude-dir=" + d for d in SKIP_DIRS)
 RISK_PATTERNS = (r"Cipher|_enc\b|encrypt|decrypt|KmsClient|@RequiresPermission|@PreAuthorize|authorize\(|"
@@ -106,19 +139,33 @@ def find_bash():
 BASH = find_bash()
 
 
-def kill_tree(p):
+def kill_tree(p, cwd=None, since=None):
+    """Kills the process tree. On Windows a JVM started from Git Bash hangs under an MSYS stub that has already
+    exited, so taskkill /T from bash never reaches it: the java.exe processes started after `since` whose command
+    line names `cwd` (Maven writes -Dmaven.multiModuleProjectDirectory=C:/x/module) are killed with their own tree
+    (cmd, the surefire fork, PIT minions). Nothing older and nothing outside that folder is touched."""
     try:
         if os.name == "nt":
             subprocess.run(["taskkill", "/T", "/F", "/PID", str(p.pid)], capture_output=True)
+            if cwd and since:
+                path = os.path.abspath(cwd)
+                ps = ("$t=[datetime]::Parse('%s'); $a=[Management.Automation.WildcardPattern]::Escape('%s'); "
+                      "$b=[Management.Automation.WildcardPattern]::Escape('%s'); "
+                      "Get-CimInstance Win32_Process -Filter \"Name='java.exe'\" | Where-Object { $_.CreationDate -ge $t "
+                      "-and ($_.CommandLine -like ('*' + $a + '*') -or $_.CommandLine -like ('*' + $b + '*')) } | "
+                      "ForEach-Object { taskkill /T /F /PID $_.ProcessId | Out-Null }") % (
+                    since.isoformat(), path.replace("\\", "/"), path.replace("/", "\\"))
+                subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command", ps], capture_output=True,
+                               timeout=60)
         else:
             os.killpg(p.pid, signal.SIGKILL)
-    except OSError:
+    except (OSError, subprocess.TimeoutExpired):
         pass
 
 
-def sh(cmd, cwd, timeout=1800):
+def sh(cmd, cwd, timeout=1800, cancel=None):
     """Runs bash on a temp script file (no quoting games, no profile/rc, stdin closed, pipefail on). On
-    timeout the whole process tree is killed. Returns (exit, output)."""
+    timeout, or when the `cancel` event is set, the whole process tree is killed. Returns (exit, output)."""
     fd, script = tempfile.mkstemp(suffix=".sh", prefix="preflight-")
     with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("set -o pipefail\n" + cmd + "\n")
@@ -128,13 +175,20 @@ def sh(cmd, cwd, timeout=1800):
         p = subprocess.Popen([BASH, "--noprofile", "--norc", script], cwd=cwd, stdin=subprocess.DEVNULL,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8",
                              errors="replace", **kwargs)
-        try:
-            out, _ = p.communicate(timeout=timeout)
-            return p.returncode, out or ""
-        except subprocess.TimeoutExpired:
-            kill_tree(p)
-            p.communicate()
-            return 124, "timeout after %ss (process tree killed)" % timeout
+        deadline, since = time.time() + timeout, datetime.datetime.now()
+        while True:
+            try:
+                out, _ = p.communicate(timeout=2)  # a timed-out communicate keeps its output for the next call
+                return p.returncode, out or ""
+            except subprocess.TimeoutExpired:
+                if cancel is not None and cancel.is_set():
+                    kill_tree(p, cwd, since)
+                    out, _ = p.communicate()
+                    return 130, (out or "")[-400:] + "\ncancelled (process tree killed)"
+                if time.time() > deadline:
+                    kill_tree(p, cwd, since)
+                    p.communicate()
+                    return 124, "timeout after %ss (process tree killed)" % timeout
     finally:
         try:
             os.remove(script)
@@ -150,6 +204,67 @@ def git(args, cwd):
 
 def sh_quote(s):
     return "'" + s.replace("'", "'\\''") + "'"
+
+
+# ----------------------------------------------------------------------------- private module copies
+def maven_module(cmd, code_root):
+    """The Maven module a `cd <dir> && mvn ...` command builds, when that module can be copied alone: it has a
+    pom.xml and the code root has no aggregator pom (a module with an on-disk parent needs its siblings). Else ''."""
+    m = re.match(r"\s*cd\s+([\w./-]+)\s*&&\s*mvn\b", cmd or "")
+    if not m or os.path.exists(os.path.join(code_root, "pom.xml")):
+        return ""
+    d = m.group(1).strip("/")
+    return d if os.path.isfile(os.path.join(code_root, d, "pom.xml")) else ""
+
+
+def link_dir(src, dst):
+    """A directory link that needs no admin rights (a junction on Windows)."""
+    if os.name == "nt":
+        subprocess.run(["cmd", "/c", "mklink", "/J", dst, src], capture_output=True)
+    else:
+        os.symlink(src, dst)
+
+
+def is_link(path):
+    return os.path.islink(path) or getattr(os.path, "isjunction", lambda p: False)(path)
+
+
+def module_copy(code_root, module, label):
+    """A private copy of one Maven module, its build dir included so the build stays incremental. Two Maven runs in
+    one module dir clash on target/ (the backend suite starts with `clean`), so every run beside another one, and
+    every guard removal, runs in its own copy; the working tree is never edited. The copy keeps the module's place:
+    the code root's other folders and the folders beside the code root are linked in, so a test that reads
+    `../../tech/...` (the docs next to the code) reads the real file. Returns the copy's code root: commands that
+    start with `cd <module> &&` run there unchanged."""
+    root = os.path.abspath(code_root)
+    base = tempfile.mkdtemp(prefix="preflight-%s-" % label)
+    dest = os.path.join(base, os.path.basename(root))
+    os.makedirs(dest)
+    for outer, inner, skip in ((os.path.dirname(root), base, {os.path.basename(root), ".git"}),
+                               (root, dest, {module.split("/")[0], ".git"})):
+        for e in os.listdir(outer):
+            if e not in skip and os.path.isdir(os.path.join(outer, e)):
+                link_dir(os.path.join(outer, e), os.path.join(inner, e))
+    shutil.copytree(os.path.join(root, module), os.path.join(dest, module), symlinks=True,
+                    ignore=shutil.ignore_patterns("surefire-reports", "pit-reports", "failsafe-reports"))
+    return dest
+
+
+def drop_copy(dest):
+    """Removes a module_copy: the links first (never their targets), then the copied files. A file still held by a
+    dying JVM stays in the temp dir; harmless."""
+    base = os.path.dirname(dest)
+    for d in (base, dest):
+        for e in os.listdir(d) if os.path.isdir(d) else []:
+            p = os.path.join(d, e)
+            if is_link(p):
+                try:
+                    os.rmdir(p) if os.name == "nt" else os.unlink(p)
+                except OSError:
+                    pass
+    if any(is_link(os.path.join(d, e)) for d in (base, dest) if os.path.isdir(d) for e in os.listdir(d)):
+        return  # a link could not be removed: leave the temp dir rather than risk deleting through it
+    shutil.rmtree(base, ignore_errors=True)
 
 
 # ----------------------------------------------------------------------------- markdown helpers
@@ -297,15 +412,17 @@ def suite_required(s, changed, owned):
     return True
 
 
-def run_suite(s, code_root, counts, accept_reason, tree):
+def run_suite(s, code_root, counts, accept_reason, tree, cancel=None):
     for f in glob.glob(os.path.join(code_root, s["reports"])):
         try:
             os.remove(f)
         except OSError as e:
             return FAIL, "cannot remove stale report %s (%s)" % (f, e), None
     t0 = time.time()
-    rc, out = sh(s["cmd"], code_root)
+    rc, out = sh(s["cmd"], code_root, cancel=cancel)
     took = " · %ds" % (time.time() - t0)
+    if rc == 130 and cancel is not None and cancel.is_set():
+        return FAIL, "stopped: the related tests failed first (see P5 related tests)" + took, None
     files = glob.glob(os.path.join(code_root, s["reports"]))
     total, bad = 0, []
     for f in files:
@@ -316,13 +433,40 @@ def run_suite(s, code_root, counts, accept_reason, tree):
                 bad.append("%d %s in %s" % (x.count(tag), tag[1:], os.path.basename(f)))
     last = counts.get(s["name"], 0)
     if rc != 0 or bad or total == 0:
-        return FAIL, "exit %s; tests=%d; tree %s; %s; tail: %s" % (
-            rc, total, tree, "; ".join(bad) or ("0 testcases" if total == 0 else "-"), out.strip()[-400:]) + took, None
+        first = failing_cases(files)
+        return FAIL, "exit %s; tests=%d; tree %s; %s; %s" % (
+            rc, total, tree, "; ".join(bad) or ("0 testcases" if total == 0 else "-"),
+            ("failing: " + " | ".join(first)) if first else "tail: " + out.strip()[-400:]) + took, None
     if total < last and not accept_reason:
         return FAIL, ("%d testcases, fewer than the last passing run (%d); re-run with --accept-count "
                       "\"<reason>\" if tests were removed on purpose") % (total, last) + took, None
     note = " (fewer than %d accepted: %s)" % (last, accept_reason) if total < last else ""
     return OK, "tests=%d failures=0 errors=0 skipped=0 · exit 0 · tree %s%s%s" % (total, tree, note, took), total
+
+
+def failing_cases(report_files, limit=3):
+    """`Class#method: first message line` for the first failing or erroring test cases of JUnit XML reports, read
+    from the copy the suite ran in (SHAREDKERNEL/T-011: the row showed Maven boilerplate only)."""
+    out = []
+    for f in report_files:
+        try:
+            x = open(f, encoding="utf-8", errors="replace").read()
+        except OSError:
+            continue
+        for m in re.finditer(r"<testcase\b([^>]*?)(?:/>|>(.*?)</testcase>)", x, re.S):
+            attrs, body = m.group(1), m.group(2) or ""
+            fm = re.search(r"<(failure|error)\b([^>]*?)(?:/>|>(.*?)</\1>)", body, re.S)
+            if not fm:
+                continue
+            name = (re.search(r'\bname="([^"]*)"', attrs) or [None, "?"])[1]
+            cls = (re.search(r'\bclassname="([^"]*)"', attrs) or [None, "?"])[1]
+            msg = re.search(r'\bmessage="([^"]*)"', fm.group(2) or "")
+            text = html.unescape(msg.group(1) if msg else (fm.group(3) or ""))
+            line = next((l.strip() for l in text.splitlines() if l.strip()), fm.group(1))
+            out.append("%s#%s: %s" % (cls.rsplit(".", 1)[-1], name, line[:160]))
+            if len(out) >= limit:
+                return out
+    return out
 
 
 # ----------------------------------------------------------------------------- P10 mutation
@@ -438,30 +582,33 @@ def is_equivalent(m, entries):
     return any(base == f and (line == n or (code and norm_code(text) == code)) for f, n, code in entries)
 
 
-def run_mutation(s, code_root, changed, extra_args=""):
+def run_mutation(s, code_root, changed, extra_args="", run_root=None, cancel=None):
     """Mutation run on the lines this task changed (changed = {file: line numbers}). Returns (SKIP|FAIL, detail) when
     nothing ran, else (None, raw): raw holds every surviving mutant on those lines with its code, judged later by
     judge_mutation, so a cached raw run can be re-judged without running again. Code the task did not touch is never
-    mutated or reported."""
+    mutated or reported. run_root: a private module copy to run in (beside the suites), else code_root."""
+    run_root = run_root or code_root
     tooling = re.compile(r"(^|/)(stryker|vitest|karma|jest|playwright)[\w.-]*$|\.config\.\w+$|(^|/)index\.ts$")
     files = sorted(f for f in changed if f.startswith(s["prefix"]) and f.endswith(s["ext"]) and not tooling.search(f)
                    and changed[f] and not no_logic(f, s["exclude"]))
     if not files:
         return SKIP, "no changed %s lines under %s" % (s["ext"], s["prefix"])
-    for f in glob.glob(os.path.join(code_root, s["report"])):
+    for f in glob.glob(os.path.join(run_root, s["report"])):
         os.remove(f)
     # Stryker takes file:first-last ranges; PIT takes classes and its survivors are filtered by line below
     rel = ["%s:%d-%d" % (f[len(s["prefix"]):], a, b) for f in files for a, b in ranges(changed[f])]
     cmd = s["cmd"].replace("{classes}", ",".join(filter(None, map(java_class, files)))).replace("{files}", ",".join(rel))
     t0 = time.time()
-    rc, out = sh(cmd + extra_args, code_root)
+    rc, out = sh(cmd + extra_args, run_root, cancel=cancel)
     took = int(time.time() - t0)
-    if not glob.glob(os.path.join(code_root, s["report"])):
+    if rc == 130 and cancel is not None and cancel.is_set():
+        return FAIL, "stopped: the related tests failed first · %ds" % took
+    if not glob.glob(os.path.join(run_root, s["report"])):
         return FAIL, "no report (exit %s): %s · %ds" % (rc, out.strip()[-300:], took)
     mine = {(os.path.basename(f), str(n)) for f in files for n in changed[f]}
     path_of = {os.path.basename(f): f for f in files}
     found = []
-    for m in survivors(s["report"], code_root):
+    for m in survivors(s["report"], run_root):
         if (m[0], m[1]) not in mine:
             continue
         path = path_of.get(m[0], m[0])
@@ -490,6 +637,23 @@ def bean_return(code_root, path, line, mutator):
         if re.match(r"\s*(?:(?:public|protected|private|static|final)\s+)*[\w.<>,\s]+\s+\w+\s*\(", lines[i])                 and not lines[i].strip().startswith(("return", "if", "for", "while", "new ")):
             return any("@Bean" in lines[j] for j in range(max(0, i - 4), i))
     return False
+
+
+def mutate_reusable(local, head_full, code_root, rel_tracking):
+    """A --mutate result stands for the full run while no production file and none of the test classes it ran changed
+    since its tree: a fix to another test (a neighbour's poll, a pinned count) keeps it (SHAREDKERNEL/T-011 re-mutated
+    for 168 s after a test-only fix). A cache entry without its test list needs the whole code unchanged."""
+    rc, out, _ = git(["diff", "--name-only", local["tree"], head_full, "--"] + code_spec(rel_tracking), code_root)
+    if rc != 0:
+        return False
+    changed = [l.strip() for l in out.splitlines() if l.strip()]
+    if not changed:
+        return True
+    if "tests" not in local:
+        return False
+    test_like = re.compile(r"(^|/)src/test/|(^|/)e2e/|\.spec\.ts$|\.test\.ts$")
+    ran = set(local["tests"])
+    return all(test_like.search(f) and os.path.splitext(os.path.basename(f))[0] not in ran for f in changed)
 
 
 def judge_mutation(raw, entries, reused=""):
@@ -551,69 +715,161 @@ def local_mutation(cfg, tracking, code_root, rel_tracking, repo_prefix, tasks, e
                 for g, ls in changed_lines(start, [f], code_root).items():
                     prod.setdefault(g, set()).update(ls)
     tests.discard("")
-    entries, failed = equivalent_entries(cards), False
+    entries, failed, raws = equivalent_entries(cards), False, {}
     print("# Local mutation (L-060) · tests: %s" % (", ".join(sorted(tests)) or "suite default"))
     for s in msuites:
         extra = " -DtargetTests=%s" % ",".join(sorted(tests)) if tests and "pitest" in s["cmd"] else ""
         r, raw = run_mutation(s, code_root, prod, extra)
         if r is None:
+            raws[s["name"]] = dict(raw, tests="%d own test classes (--mutate)" % len(tests) if tests else "suite default")
             r, raw = judge_mutation(raw, entries)
         failed |= r == FAIL
-        note = ""
-        print("| %s | P10 mutation %s (local) | %s%s |" % (r, s["name"], raw, note))
+        print("| %s | P10 mutation %s (local) | %s |" % (r, s["name"], raw))
+    # The raw survivors are kept with a tree of the code they ran on (uncommitted work included): the full run reuses
+    # them while its code equals that tree. Its covering tests are a superset of the task's own tests, and more tests
+    # only kill more mutants, so a pass here is a pass there.
+    tree = worktree_tree(code_root, rel_tracking)
+    if raws and tree:
+        cache_path = os.path.join(tracking, "preflight-cache.json")
+        cache = json.load(open(cache_path, encoding="utf-8")) if os.path.exists(cache_path) else {}
+        cache["local-mutation:" + "|".join(sorted(tasks))] = {
+            "tree": tree, "mutation": raws, "tests": sorted(t.rsplit(".", 1)[-1] for t in tests)}
+        json.dump(cache, open(cache_path, "w", encoding="utf-8"), indent=1)
+        print("kept for the full run: code tree %s (reused while the code is unchanged)" % tree[:7])
     print("\nMUTATE: %s" % ("FAIL" if failed else "PASS"))
     return 1 if failed else 0
 
 
-def quick_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, tasks, extra_tests):
-    """--quick: the test classes the task added or changed (uncommitted included) plus config.md
-    '## Always-run tests' (first column: a test class name), one run per build module. The cheapest gate that finds
-    a broken module rule or a pinned version before --removals and the full run spend minutes on it (L-060)."""
+WRITE_SQL = re.compile(r"\b(?:insert\s+into|update|alter\s+table(?:\s+if\s+exists)?|delete\s+from)\s+(?:only\s+)?"
+                       r"([a-z_]\w*(?:\.[a-z_]\w*)?)", re.I)
+CREATE_SQL = re.compile(r"\bcreate\s+table\s+(?:if\s+not\s+exists\s+)?([a-z_]\w*(?:\.[a-z_]\w*)?)", re.I)
+SQL_WORDS = {"set", "cascade", "restrict", "no", "nothing", "only"}
+
+
+def migration_neighbours(start, files, code_root, repo_prefix):
+    """{test FQCN: schema.table}: test classes naming a table that a migration the task adds writes or alters but did
+    not create (seed rows, a new column). They count or pin that table's rows and break without any change to their
+    files (PLATFORM/T-029: V1_009 seeded an eighth config_setting row; ConfigurationControllerIT pinned seven). A
+    table name without an underscore must appear schema-qualified, so a plain word never matches."""
+    tables = set()
+    for f in sorted(files):
+        if not MIGRATION.search(f) or not os.path.isfile(os.path.join(code_root, f)):
+            continue
+        if start and git(["cat-file", "-e", "%s:%s%s" % (start, repo_prefix, f)], code_root)[0] == 0:
+            continue
+        schema = f.split("/")[-2].lower()
+        sql = re.sub(r"--[^\n]*", "", open(os.path.join(code_root, f), encoding="utf-8", errors="replace").read())
+        created = {t.split(".")[-1].lower() for t in CREATE_SQL.findall(sql)}
+        for t in WRITE_SQL.findall(sql):
+            bare = t.split(".")[-1].lower()
+            if bare not in created and bare not in SQL_WORDS:
+                tables.add((t.split(".")[0].lower() if "." in t else schema, bare))
+    out = {}
+    for fq, (_, text) in sorted(test_sources(code_root).items()) if tables else []:
+        for schema, bare in sorted(tables):
+            if re.search(r"\b%s\.%s\b" % (schema, bare) if "_" not in bare else r"\b%s\b" % bare, text):
+                out[fq] = "%s.%s" % (schema, bare)
+                break
+    return out
+
+
+def task_names(start, code_root):
+    """Files the task changed since its start commit, uncommitted and untracked work included (code-root relative)."""
+    names = set(git(["diff", "--name-only", "--relative", start, "--", "."], code_root)[1].split())
+    names |= set(git(["ls-files", "--others", "--exclude-standard", "--", "."], code_root)[1].split())
+    return {f for f in names if os.path.isfile(os.path.join(code_root, f))}
+
+
+def related_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, tasks, extra_tests):
+    """The tests a task can break, cheapest first: its own test classes, config.md '## Always-run tests', the test
+    classes that name a table its migrations write (migration_neighbours), and the covering tests of its changed
+    production classes (covering_tests). Returns ({test command: {simple class name}}, {reason: count}) or
+    (None, error)."""
     always = [r[0].strip().strip("`") for r in table_rows(section(cfg, "Always-run tests")) if r and r[0].strip()]
-    tests = set(t for t in extra_tests.split(",") if t)
+    paths = {fq: rel for fq, (rel, _) in test_sources(code_root).items()}
+    picked, why = {}, {}
+
+    def add(ref, reason):
+        if ref and ref not in picked:
+            picked[ref] = reason
+            why[reason] = why.get(reason, 0) + 1
+    for t in extra_tests.split(","):
+        add(t.strip(), "--tests")
     for full in tasks:
         key, tid = full.split("/")
         found = glob.glob(os.path.join(tracking, key, "tasks", tid + "-*.md"))
         card = open(found[0], encoding="utf-8").read() if found else ""
         start = ((table_value(card, "Start commit") or "").split() or [""])[0]
         if not re.fullmatch(r"[0-9a-f]{7,40}", start):
-            print("QUICK: %s has no start commit" % full)
-            return 1
-        names = set(git(["diff", "--name-only", "--relative", start, "--", "."], code_root)[1].split())
-        names |= set(git(["ls-files", "--others", "--exclude-standard", "--", "."], code_root)[1].split())
-        for f in names:
-            if "/src/test/" in "/" + f and f.endswith((".java", ".kt")) and os.path.isfile(os.path.join(code_root, f)):
-                tests.add(f)
+            return None, "%s has no start commit" % full
+        names = {f for f in task_names(start, code_root) if not f.startswith(rel_tracking + "/")}
+        for f in sorted(names):
+            if "/src/test/" in "/" + f and f.endswith((".java", ".kt")):
+                add(f, "own")
+        for t in always:
+            add(t, "always-run")
+        for fq in migration_neighbours(start, names, code_root, repo_prefix):
+            add(paths.get(fq, fq), "migration neighbour")
+        prod = [f for f in names if f.endswith((".java", ".kt")) and "/src/main/" in "/" + f]
+        for fq in sorted(covering_tests(code_root, prod, set())):
+            add(paths.get(fq, fq), "covering")
+        for fq in sorted(neighbour_scan_tests(card, paths)):
+            add(paths.get(fq, fq), "design-check neighbour")
+        for fq in sorted(covering_tests(code_root, list_consumers(code_root, prod), set())):
+            add(paths.get(fq, fq), "list consumer")
     by_cmd = {}
-    for f in sorted(tests):
-        cls = os.path.splitext(os.path.basename(f))[0] if "/" in f else f.rsplit(".", 1)[-1]
-        by_cmd.setdefault(removal_command(cfg, code_root, f) if "/" in f else "", set()).add(cls)
+    for ref in picked:
+        cls = os.path.splitext(os.path.basename(ref))[0] if "/" in ref else ref.rsplit(".", 1)[-1]
+        if not java_test_class(ref) and "/" in ref:
+            continue  # a support file under src/test (no Test/IT suffix) is not a test class
+        by_cmd.setdefault(removal_command(cfg, code_root, ref) if "/" in ref else "", set()).add(cls)
     default = next((c for c in by_cmd if c), "")
     if not default:
         for d in sorted(glob.glob(os.path.join(code_root, "*", "pom.xml"))):
             default = removal_command(cfg, code_root, os.path.relpath(d, code_root).replace("\\", "/"))
             break
-    by_cmd.setdefault(default, set()).update(always)
-    by_cmd[default] |= by_cmd.pop("", set())
-    failed = False
+    by_cmd.setdefault(default, set()).update(by_cmd.pop("", set()))
+    return {c: v for c, v in by_cmd.items() if c and v}, why
+
+
+def run_related(by_cmd, code_root, cancel=None, run_root=None):
+    """Runs each command of related_tests; returns [(result, command dir, detail)]."""
+    rows = []
     for cmd, classes in by_cmd.items():
-        if not cmd or not classes:
-            continue
-        run = cmd.replace("{tests}", ",".join(sorted(classes)))
-        t0 = datetime.datetime.now()
-        rc, out = sh(run, code_root, timeout=1800)
-        secs = int((datetime.datetime.now() - t0).total_seconds())
-        tail = " ".join(l.strip() for l in out.splitlines() if re.match(r"\[(?:INFO|ERROR)\] +(?:Tests run: \d+, F|\S+\.\S+ .*<<<)", l.strip()))[-600:]
-        failed |= rc != 0
-        print("| %s | quick %s | %d classes · %ss · %s |" % (OK if rc == 0 else FAIL, cmd.split("&&")[0].strip(),
-                                                       len(classes), secs, tail or "exit %d" % rc))
+        t0 = time.time()
+        rc, out = sh(cmd.replace("{tests}", ",".join(sorted(classes))), run_root or code_root, 1800, cancel)
+        tail = " ".join(l.strip() for l in out.splitlines() if re.match(
+            r"\[(?:INFO|ERROR)\] +(?:Tests run: \d+, F|\S+\.\S+ .*<<<)", l.strip()))[-600:]
+        rows.append((OK if rc == 0 else FAIL, cmd.split("&&")[0].strip(), "%d classes · %ds · %s" % (
+            len(classes), time.time() - t0, tail or "exit %d" % rc)))
+    return rows
+
+
+def quick_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, tasks, extra_tests):
+    """--quick: related_tests (own, always-run, migration neighbours, covering), uncommitted work included, one run
+    per build module. The cheapest gate that finds a broken module rule, a pinned version or a pinned row count
+    before --removals and the full run spend minutes on it (L-060)."""
+    by_cmd, why = related_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, tasks, extra_tests)
+    if by_cmd is None:
+        print("QUICK: %s" % why)
+        return 1
+    print("# Quick tests · %s" % ", ".join("%s %d" % kv for kv in why.items()))
+    rows = run_related(by_cmd, code_root)
+    for r, where, detail in rows:
+        print("| %s | quick %s | %s |" % (r, where, detail))
+    failed = any(r == FAIL for r, _, _ in rows)
     print("\nQUICK: %s" % ("FAIL" if failed else "PASS"))
     return 1 if failed else 0
 
 
+_TEST_SOURCES = {}
+
+
 def test_sources(code_root):
-    """{test class FQCN: (path, text)} for every Java/Kotlin test class under src/test."""
-    out = {}
+    """{test class FQCN: (path, text)} for every Java/Kotlin test class under src/test (read once per run)."""
+    if code_root in _TEST_SOURCES:
+        return _TEST_SOURCES[code_root]
+    out = _TEST_SOURCES[code_root] = {}
     for dirpath, dirnames, files in os.walk(code_root):
         dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
         norm = dirpath.replace("\\", "/")
@@ -655,11 +911,123 @@ def covering_tests(code_root, prod_files, own_tests):
     return found
 
 
+def neighbour_scan_tests(card, paths):
+    """Test classes the card's Design check names in its neighbour scan (SHAREDKERNEL/T-011: a neighbour named there
+    but never run failed only in the full suite). Matched by simple name against the test sources."""
+    m = re.search(r"Neighbour scan\**\s*:?(.*?)(?:\n\s*\n|\Z)", section(card, "Design check"), re.S)
+    if not m:
+        return set()
+    names = set(re.findall(r"\b([A-Z]\w*(?:Test|IT|Tests))\b", m.group(1)))
+    return {fq for fq in paths if fq.rsplit(".", 1)[-1] in names}
+
+
+def list_consumers(code_root, prod_files):
+    """Production files that take a List<X> (Collection, Set, Iterable, ObjectProvider) by injection, for each type X
+    a changed class implements or a @Bean method in it returns: one more X changes what they see (a schedule, a job
+    type, a handler). SHAREDKERNEL/T-011: a new RecurringSchedule bean filled RecurringSchedulerRaceTest's poll."""
+    types = set()
+    for f in prod_files:
+        try:
+            text = open(os.path.join(code_root, f), encoding="utf-8", errors="replace").read()
+        except OSError:
+            continue
+        for m in re.finditer(r"\bimplements\s+([\w.,\s<>]+?)\s*\{", text):
+            types.update(re.sub(r"<[^>]*>", "", n).strip().split(".")[-1] for n in m.group(1).split(",") if n.strip())
+        types.update(re.findall(r"@Bean\b(?:\s*@\w+(?:\([^)]*\))?)*\s+(?:public\s+|static\s+)*([A-Z]\w*)(?:<[^>]*>)?\s+\w+\s*\(",
+                                text))
+    types.discard("")
+    if not types:
+        return []
+    pattern = re.compile(r"\b(?:List|Collection|Set|Iterable|ObjectProvider)<\s*(?:%s)\b" % "|".join(
+        sorted(map(re.escape, types))))
+    out = []
+    for d in glob.glob(os.path.join(code_root, "*", "src", "main")) + glob.glob(os.path.join(code_root, "src", "main")):
+        for root, _, files in os.walk(d):
+            for n in files:
+                if not n.endswith((".java", ".kt")):
+                    continue
+                full = os.path.join(root, n)
+                rel = os.path.relpath(full, code_root).replace("\\", "/")
+                if rel in prod_files:
+                    continue
+                try:
+                    if pattern.search(open(full, encoding="utf-8", errors="replace").read()):
+                        out.append(rel)
+                except OSError:
+                    pass
+    return out
+
+
+# `- I7: no guard line: <reason>` -- an invariant with nothing to delete (a "never" kept by absence, a log rule)
+NO_GUARD = re.compile(r"^\s*-\s*\*{0,2}(I\d+(?:\s*,\s*I\d+)*)\*{0,2}\s*:\s*no guard\b[^:]*:\s*\S", re.I)
+INVARIANT = re.compile(r"^\s*-\s*\*{0,2}(I\d+)\b", re.M)
+
+
+def invariant_gaps(card):
+    """Invariants of the Design check with no `## Removals` guard tagged `(In)` and no `- In: no guard line: <reason>`
+    bullet. An invariant with no guard proven by a removal is how a test that passes with the mechanism removed
+    reached the audit (SHAREDKERNEL/T-008, T-009, PLATFORM/T-029 audit 1: the at-most-once guard was listed against
+    a test that did not exercise the race)."""
+    declared = INVARIANT.findall(section(card, "Design check"))
+    covered = set()
+    for bullet in section(card, "Removals").splitlines():
+        m = NO_GUARD.match(bullet)
+        if m:
+            covered.update(re.findall(r"I\d+", m.group(1)))
+        elif bullet.strip().startswith("-"):
+            covered.update(re.findall(r"\bI\d+\b", re.sub(r"`[^`]*`", "", bullet)))
+    return [i for i in dict.fromkeys(declared) if i not in covered]
+
+
+def lone_guard_problem(code_root, path, code):
+    """A text check (no build) for guard lines whose deletion cannot compile: the only statement of a block that
+    must return, or the last element of an argument list (the line before it then ends with a comma)."""
+    m = re.match(r"(.*?)\s+@(\d+)$", code)
+    code, nth = (m.group(1), int(m.group(2))) if m else (code, 1)
+    try:
+        lines = open(os.path.join(code_root, path), encoding="utf-8").read().splitlines()
+    except OSError:
+        return None
+    hits = [i for i, l in enumerate(lines) if code.strip() in l]
+    if len(hits) < nth:
+        return None
+    i = hits[nth - 1]
+    prev = next((lines[j].strip() for j in range(i - 1, -1, -1) if lines[j].strip()), "")
+    nxt = next((lines[j].strip() for j in range(i + 1, len(lines)) if lines[j].strip()), "")
+    line = lines[i].strip()
+    label = "%s:%d" % (os.path.basename(path), i + 1)
+    if re.match(r"\)+;", line.split("//")[0].strip()[-2:]) and prev.endswith(","):
+        return label + " ends an argument list"
+    signature = re.match(r"^(?:(?:public|protected|private|static|final|synchronized|abstract|default)\s+)*"
+                         r"(?!(?:if|for|while|switch|catch|return|new|else)\b)[\w<>\[\],.? ]+\s+\w+\([^;]*\)\s*"
+                         r"(?:throws\s+[\w., ]+)?\{$", prev)
+    if line.startswith(("return ", "throw ")) and signature and nxt.startswith("}") and not re.search(r"\bvoid\b", prev):
+        return label + " is its method's only statement"
+    return None
+
+
+def guard_match_problem(code_root, path, code):
+    """The --removals match rule (norm_code; ` @N` inside the code quote picks the Nth match) as a seconds-long text
+    check for --lint, so an ambiguous guard is fixed before a removals run (SHAREDKERNEL/T-011 lost two runs)."""
+    try:
+        lines = open(os.path.join(code_root, path), encoding="utf-8", errors="replace").read().splitlines()
+    except OSError:
+        return "%s: file not found" % path
+    nth = re.search(r"\s@(\d+)$", code)
+    bare = code[:nth.start()] if nth else code
+    hits = [i for i, l in enumerate(lines) if norm_code(bare) in norm_code(l)]
+    if nth:
+        k = int(nth.group(1))
+        return None if 1 <= k <= len(hits) else "%s matches %d lines, none is match %d" % (
+            removal_label(path, code), len(hits), k)
+    return None if len(hits) == 1 else "%s matches %d lines" % (removal_label(path, code), len(hits))
+
+
 def removal_entries(card):
     """(file, code, tests) per `## Removals` bullet: `path/File.java` `guard code` → `TestClass#method[, ...]`."""
     out, bad = [], []
     for bullet in section(card, "Removals").splitlines():
-        if not bullet.strip().startswith("-"):
+        if not bullet.strip().startswith("-") or NO_GUARD.match(bullet):
             continue
         ticks = re.findall(r"`([^`]+)`", bullet)
         if len(ticks) < 3:
@@ -683,10 +1051,16 @@ def removal_command(cfg, code_root, path):
     return ""
 
 
-def run_removals(cfg, tracking, code_root, rel_tracking, full, head_full, stamp):
+def removal_label(f, code):
+    return "%s `%s`" % (os.path.basename(f), norm_code(code)[:80])
+
+
+def run_removals(cfg, tracking, code_root, rel_tracking, full, head_full, stamp, jobs=4):
     """--removals: for each `## Removals` guard, delete its line, run its named tests (they must fail), restore the
-    file byte for byte. A positive control first: the named tests pass on the unchanged code. Writes
-    tracking/<KEY>/preflight/<T-NNN>-removals.md (with the code tree it ran on) and returns the exit code."""
+    file byte for byte. A positive control: the named tests pass on the unchanged code. A guard in a Maven module
+    that can be copied alone (maven_module) runs in a private module copy, up to `jobs` copies side by side with the
+    positive control among them, so the working tree is never edited; anything else runs in place, one at a time.
+    Writes tracking/<KEY>/preflight/<T-NNN>-removals.md (with the code tree it ran on) and returns the exit code."""
     key, tid = full.split("/")
     found = glob.glob(os.path.join(tracking, key, "tasks", tid + "-*.md"))
     card = open(found[0], encoding="utf-8").read() if found else ""
@@ -697,19 +1071,15 @@ def run_removals(cfg, tracking, code_root, rel_tracking, full, head_full, stamp)
     groups = {}
     for f, code, tests in entries:
         groups.setdefault(removal_command(cfg, code_root, f), set()).update(tests)
+    items = []  # (label, cmd, file or None, line index, original bytes, tests)
     for cmd, tests in groups.items():
         if not cmd:
             rows.append((FAIL, "positive control", "no test command for: " + ", ".join(sorted(tests))))
             continue
-        rc, out = sh(cmd.replace("{tests}", ",".join(sorted(tests))), code_root)
-        rows.append((OK if rc == 0 else FAIL, "positive control",
-                     "named tests pass on the unchanged code" if rc == 0 else "named tests fail before any removal "
-                     "(exit %s): %s" % (rc, out.strip()[-300:])))
-    if any(r == FAIL for r, _, _ in rows):
-        entries = []
+        items.append(("positive control", cmd.replace("{tests}", ",".join(sorted(tests))), None, None, None, tests))
     for f, code, tests in entries:
         path = os.path.join(code_root, f)
-        label = "%s `%s`" % (os.path.basename(f), norm_code(code)[:80])
+        label = removal_label(f, code)
         try:
             original = open(path, "rb").read()
         except OSError:
@@ -722,28 +1092,89 @@ def run_removals(cfg, tracking, code_root, rel_tracking, full, head_full, stamp)
         if nth and 1 <= int(nth.group(1)) <= len(hits):
             hits = [hits[int(nth.group(1)) - 1]]
         if len(hits) != 1:
-            rows.append((FAIL, label, "guard code matches %d lines; quote more of it, or add ` @N` for the Nth match"
-                         % len(hits)))
+            rows.append((FAIL, label, "guard code matches %d lines; quote more of it, or put ` @N` inside the "
+                         "backticks for the Nth match, e.g. `ctx.extendLease(d); @2`" % len(hits)))
             continue
-        cmd = removal_command(cfg, code_root, f).replace("{tests}", ",".join(tests))
+        items.append((label, removal_command(cfg, code_root, f).replace("{tests}", ",".join(tests)), f, hits[0],
+                      original, tests))
+    if any(r == FAIL for r, _, _ in rows):
+        items = [i for i in items if i[2] is None]  # a broken card: only the positive control still runs
+
+    def judge(item, rc, out, took):
+        label, _, f, n, _, tests = item
+        if f is None:
+            return (OK if rc == 0 else FAIL, label, "named tests pass on the unchanged code" if rc == 0 else
+                    "named tests fail before any removal (exit %s): %s" % (rc, out.strip()[-300:]))
+        if re.search(r"COMPILATION ERROR|compilation failed|cannot find symbol", out):
+            return FAIL, label, "removing line %d does not compile; name a guard line that can go alone%s" % (n + 1, took)
+        if rc == 0:
+            return FAIL, label, "line %d removed and %s still pass: the guard is untested%s" % (
+                n + 1, ", ".join(tests), took)
+        return OK, label, "line %d removed: %s failed (killed)%s" % (n + 1, ", ".join(tests), took)
+
+    def run_in(root, item):
+        """Deletes the guard line in root, runs the tests, restores the file; (rc, out, took, restored)."""
+        label, cmd, f, n, original, _ = item
+        if root != code_root:
+            # a copy has new absolute paths, so Maven's incremental compiler would rebuild the whole module on each
+            # copy's first run; timestamp staleness (mtimes kept by the copy) recompiles only the edited file
+            cmd += " -Dmaven.compiler.useIncrementalCompilation=false"
         t0 = time.time()
+        if f is None:
+            rc, out = sh(cmd, root)
+            return rc, out, " · %ds" % (time.time() - t0), True
+        path = os.path.join(root, f)
+        lines = original.decode("utf-8", errors="replace").splitlines(keepends=True)
         try:
-            open(path, "wb").write("".join(lines[:hits[0]] + lines[hits[0] + 1:]).encode("utf-8"))
-            rc, out = sh(cmd, code_root)
+            open(path, "wb").write("".join(lines[:n] + lines[n + 1:]).encode("utf-8"))
+            rc, out = sh(cmd, root)
         finally:
             open(path, "wb").write(original)
-        if open(path, "rb").read() != original:
-            rows.append((FAIL, label, "file not restored: restore %s from git now" % f))
-            break
-        took = " · %ds" % (time.time() - t0)
-        if re.search(r"COMPILATION ERROR|compilation failed|cannot find symbol", out):
-            rows.append((FAIL, label, "removing line %d does not compile; name a guard line that can go alone%s"
-                         % (hits[0] + 1, took)))
-        elif rc == 0:
-            rows.append((FAIL, label, "line %d removed and %s still pass: the guard is untested%s"
-                         % (hits[0] + 1, ", ".join(tests), took)))
-        else:
-            rows.append((OK, label, "line %d removed: %s failed (killed)%s" % (hits[0] + 1, ", ".join(tests), took)))
+        return rc, out, " · %ds" % (time.time() - t0), open(path, "rb").read() == original
+
+    modules = {maven_module(i[1], code_root) for i in items}
+    results = {}
+    if items and "" not in modules and len(modules) == 1 and jobs > 1:
+        module, work = modules.pop(), queue.Queue()
+        for i, item in enumerate(items):
+            work.put(i)
+        workers = min(jobs, len(items))
+        t_all = time.time()
+        copies = [module_copy(code_root, module, "removals%d" % w) for w in range(workers)]
+
+        def worker(root):
+            while True:
+                try:
+                    i = work.get_nowait()
+                except queue.Empty:
+                    return
+                rc, out, took, restored = run_in(root, items[i])
+                results[i] = judge(items[i], rc, out, took) if restored else (
+                    FAIL, items[i][0], "file not restored in the private copy %s" % root)
+        threads = [threading.Thread(target=worker, args=(c,)) for c in copies]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        for c in copies:
+            drop_copy(c)
+        rows.append((INFO, "parallel", "%d items in %d private copies of %s · %ds (the working tree was not edited)"
+                     % (len(items), workers, module, time.time() - t_all)))
+    else:
+        for i, item in enumerate(items):
+            if any(r == FAIL for r, l, _ in results.values() if l == "positive control"):
+                break  # in place, guards wait for a green positive control
+            rc, out, took, restored = run_in(code_root, item)
+            if not restored:
+                results[i] = (FAIL, item[0], "file not restored: restore %s from git now" % item[2])
+                break
+            results[i] = judge(item, rc, out, took)
+    control_failed = any(results[i][0] == FAIL for i in results if items[i][2] is None)
+    for i in sorted(results):
+        r, l, d = results[i]
+        if control_failed and items[i][2] is not None:
+            r, d = FAIL, "not judged: the positive control failed · " + d
+        rows.append((r, l, d))
     verdict = "FAIL" if any(r == FAIL for r, _, _ in rows) else "PASS"
     text = "# Removals %s · code %s · %s · %s\n\n| Result | Guard | Detail |\n|---|---|---|\n" % (
         full, head_full, stamp, verdict) + "".join("| %s | %s | %s |\n" % (r, l, d.replace("|", "\\|").replace(
@@ -756,25 +1187,131 @@ def run_removals(cfg, tracking, code_root, rel_tracking, full, head_full, stamp)
     return 1 if verdict == "FAIL" else 0
 
 
+def removals_stale(report_sha, head_full, entries, code_root, rel_tracking):
+    """Files changed since the removals report that can change its result: production code and build files (anything
+    not under a test tree), and the test classes the guards name. Other test files (a neighbour test's pinned count,
+    shared test support) never make a guard live or dead, so they keep the report (PLATFORM/T-029 re-ran it twice
+    for a test-only change). The working tree counts too, so --lint sees uncommitted changes."""
+    named = {t.split("#")[0].strip().rsplit(".", 1)[-1] for _, _, tests in entries for t in tests}
+    test_like = re.compile(r"(^|/)src/test/|(^|/)e2e/|\.spec\.ts$|\.test\.ts$")
+    changed = set(git(["diff", "--name-only", "--relative", report_sha, "--"] + code_spec(rel_tracking),
+                      code_root)[1].split())
+    changed |= set(git(["ls-files", "--others", "--exclude-standard", "--"] + code_spec(rel_tracking),
+                       code_root)[1].split())
+    if head_full:
+        changed |= set(git(["diff", "--name-only", "--relative", report_sha, head_full, "--"] + code_spec(rel_tracking),
+                           code_root)[1].split())
+    return sorted(f for f in changed if not test_like.search(f)
+                  or os.path.splitext(os.path.basename(f))[0] in named)
+
+
 def removals_row(tracking, card, full, head_full, code_root, rel_tracking):
-    """P14: a card with `## Design check` lists `## Removals`, and the last --removals report ran on the current code
-    (only tracking/ changed since) and killed every guard."""
+    """P14: a card with `## Design check` lists `## Removals`, and the last --removals report killed every guard the
+    card lists now, with no production code or named test changed since it ran (removals_stale)."""
     if "## Design check" not in card:
         return INFO, "P14 removals", "no Design check on the card"
-    if not removal_entries(card)[0]:
+    entries = removal_entries(card)[0]
+    if not entries:
         return FAIL, "P14 removals", ("Design check without `## Removals`: list each guard as `file` `guard code` → "
-                                      "`Test#method`, then run --removals (L-046)")
+                                      "`Test#method` (In), then run --removals (L-046)")
+    gaps = invariant_gaps(card)
+    if gaps:
+        return FAIL, "P14 removals", ("invariants with no guard: %s. Tag each guard bullet with the invariant it keeps, "
+                                      "`file` `guard code` → `Test#method` (I4), naming the test that exercises it (for "
+                                      "a race: the interleaving test); or add `- I7: no guard line: <reason>`"
+                                      % ", ".join(gaps))
+    ambiguous = [p for f, code, _ in entries for p in [guard_match_problem(code_root, f, code)] if p]
+    if ambiguous:
+        return FAIL, "P14 removals", ("guard code must match exactly one line (quote more of it, or put ` @N` inside "
+                                      "the backticks for the Nth match, e.g. `ctx.extendLease(d); @2`): %s"
+                                      % "; ".join(ambiguous))
+    lone = [p for f, code, _ in entries for p in [lone_guard_problem(code_root, f, code)] if p]
+    if lone:
+        return FAIL, "P14 removals", ("guard lines that cannot go alone (deleting them does not compile; name another "
+                                      "line or write `- In: no guard line: <reason>`): %s" % "; ".join(lone))
     key, tid = full.split("/")
     path = os.path.join(tracking, key, "preflight", "%s-removals.md" % tid)
     if not os.path.exists(path):
         return FAIL, "P14 removals", "no removals report: run --removals"
-    first = open(path, encoding="utf-8").readline()
-    m = re.search(r"code ([0-9a-f]{40}) .* (PASS|FAIL)\s*$", first)
+    report = open(path, encoding="utf-8").read()
+    m = re.search(r"code ([0-9a-f]{40}) .* (PASS|FAIL)\s*$", report.splitlines()[0] if report else "")
     if not m or m.group(2) != "PASS":
         return FAIL, "P14 removals", "the last --removals run failed: fix and re-run it"
+    killed = {l for r, l, _ in (split_row(x) for x in report.splitlines() if x.startswith("| PASS |"))}
+    missing = [removal_label(f, c) for f, c, _ in entries if removal_label(f, c) not in killed]
+    if missing:
+        return FAIL, "P14 removals", "guards not in the report %s: re-run --removals (%s)" % (
+            m.group(1)[:7], "; ".join(missing[:5]))
+    stale = removals_stale(m.group(1), head_full, entries, code_root, rel_tracking)
+    if stale:
+        return FAIL, "P14 removals", "production code or a named test changed since the removals report %s: re-run " \
+                                     "--removals (%s)" % (m.group(1)[:7], ", ".join(stale[:6]))
     same = git(["diff", "--quiet", m.group(1), head_full, "--"] + code_spec(rel_tracking), code_root)[0] == 0
-    return ((OK, "P14 removals", "every guard killed (report on %s, no code change since)" % m.group(1)[:7]) if same
-            else (FAIL, "P14 removals", "code changed since the removals report %s: re-run --removals" % m.group(1)[:7]))
+    return OK, "P14 removals", "every guard killed (report on %s, %s)" % (
+        m.group(1)[:7], "no code change since" if same else "only other test files changed since")
+
+
+DU_ID = re.compile(r"\b[A-Z][A-Z0-9_]*/DU-\d+\b")
+DOC_GAP_TYPES = ("doc-gap", "doc-update", "doc-changed")
+
+
+def header_col(text, name, default):
+    first = next((l for l in text.splitlines() if l.strip().startswith("|")), "")
+    header = split_row(first)
+    return header.index(name) if name in header else default
+
+
+def cell(cells, i):
+    return cells[i] if i < len(cells) else ""
+
+
+def doc_updates_row(tracking, card, full, lint):
+    """P15: the task's doc updates are listed, exist, and none is left Failed (doc-impact-rules.md § 9)."""
+    tid = full.split("/")[1]
+    listed = set(DU_ID.findall(section(card, "Doc updates")))
+    path = os.path.join(tracking, "doc-updates.md")
+    text = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    c_status, c_kind, c_task = (header_col(text, "Status", 1), header_col(text, "Kind", 3),
+                                header_col(text, "Task", 4))
+    known, mine = set(), {}
+    for cells in table_rows(text):
+        m = DU_ID.search(cells[0]) if cells else None
+        if not m:
+            continue
+        known.add(m.group(0))
+        if re.search(r"\b" + re.escape(full) + r"\b", cell(cells, c_task)):
+            mine[m.group(0)] = (cell(cells, c_status), cell(cells, c_kind))
+    bad, waiting = [], []
+    bad += ["%s not listed under ## Doc updates" % d for d in sorted(set(mine) - listed)]
+    bad += ["%s missing from doc-updates.md" % d for d in sorted(listed - known)]
+    for d, (status, kind) in sorted(mine.items()):
+        if status.startswith("Failed"):
+            bad.append("%s Failed: settle it with the user (docs approve / reject)" % d)
+        elif status.strip() == "Rejected":
+            bad.append("%s Rejected without a reason" % d)
+        elif kind.strip() == "contract" and not status.startswith(("Verified", "Rejected")):
+            (waiting if lint else bad).append("%s is a contract DU, %s: it must be Verified before Done"
+                                              % (d, status or "no status"))
+    gpath = os.path.join(tracking, "gaps.md")
+    gtext = open(gpath, encoding="utf-8").read() if os.path.exists(gpath) else ""
+    g_type, g_found, g_owner, g_status = (header_col(gtext, "Type", 1), header_col(gtext, "Found (date, agent, during)", 3),
+                                          header_col(gtext, "Owner", 6), header_col(gtext, "Status", 8))
+    key = full.split("/")[0]
+    for cells in table_rows(gtext):
+        # a bare T-NNN names this task only on a gap of the same key (AUTOAPPLY/T-010 is not SHAREDKERNEL/T-010)
+        own_key = bool(cells) and cells[0].strip().startswith(key + "/")
+        pattern = (re.escape(full) + "|(?<!/)" + re.escape(tid)) if own_key else re.escape(full)
+        if (cell(cells, g_type).strip() in DOC_GAP_TYPES and not cell(cells, g_status).startswith("Closed")
+                and re.search(r"\b(" + pattern + r")\b", cell(cells, g_found))
+                and not DU_ID.search(cell(cells, g_owner)) and "DU-" not in cell(cells, g_owner)):
+            bad.append("%s (%s) has no DU: queue it (doc-impact-rules.md § 1)" % (cells[0], cell(cells, g_type)))
+    if bad:
+        return FAIL, "P15 doc updates", "; ".join(bad)
+    if waiting:
+        return INFO, "P15 doc updates", "lint: " + "; ".join(waiting)
+    return ((OK, "P15 doc updates", "%d DU(s) raised, all listed: %s" % (len(mine), ", ".join(
+        "%s %s" % (d, v[0].split(" (")[0]) for d, v in sorted(mine.items())))) if mine
+            else (OK, "P15 doc updates", "no doc updates raised"))
 
 
 # single-instance types: a second bean of one makes every by-type injection ambiguous (L-061)
@@ -998,6 +1535,14 @@ def task_commits(start, code_root, rel_tracking):
     return commits, None
 
 
+def docs_only_with_wave(tracking):
+    """config.md § Delivery has a `Docs-only commits` row saying they are pushed with the wave (user decision)."""
+    path = os.path.join(tracking, "config.md")
+    text = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    m = re.search(r"^\|\s*Docs-only commits\s*\|([^\n]*)", text, re.M | re.I)
+    return bool(m and re.search(r"pushed with the wave", m.group(1), re.I))
+
+
 def push_check(tracking, code_root):
     """PASS only when every code commit to be pushed carries exactly one Task trailer of a Done task. A commit that
     changes only tracking files never blocks (it holds no code): it carries a `Tracking:` trailer or its task's `Task:`
@@ -1023,6 +1568,10 @@ def push_check(tracking, code_root):
         if tracking_only:  # holds no code: never blocks, whatever task it names
             if not tasks and not tracking_trailer.strip():
                 warn.append("%s %s: tracking-only commit without a Task or Tracking trailer" % (sha, subject[:50]))
+            continue
+        if not tasks and docs_only_with_wave(tracking) and files and all(
+                f.startswith(("tech/", "features/")) or f.startswith(("../tech/", "../features/")) for f in files):
+            warn.append("%s %s: docs-only commit, pushed with the wave (config.md § Delivery)" % (sha, subject[:50]))
             continue
         if len(tasks) != 1:
             bad.append("%s %s: %d Task trailers" % (sha, subject[:50], len(tasks)))
@@ -1107,6 +1656,8 @@ def main():
                     "run it before --removals, --mutate and the full run; writes nothing")
     ap.add_argument("--removals", action="store_true", help="delete each `## Removals` guard line, run its named "
                     "tests (they must fail), restore the file; writes <T-NNN>-removals.md")
+    ap.add_argument("--jobs", type=int, default=4, help="--removals: private module copies run side by side "
+                    "(default 4; 1 = in place, one at a time)")
     ap.add_argument("--history", action="store_true", help="rebuild tracking/history.md from git and the reports")
     ap.add_argument("--history-start", default="", help="stamp the start clock of KEY/T-NNN (run at `start`)")
     a = ap.parse_args()
@@ -1115,6 +1666,10 @@ def main():
     except AttributeError:
         pass
     tracking = os.path.abspath(a.tracking)
+    # run from a git hook (post-commit lint), git exports GIT_DIR / GIT_INDEX_FILE for the hook's own repo; in a linked
+    # worktree they point every git call here at the wrong index and status turns into a list of every file
+    for v in ("GIT_DIR", "GIT_INDEX_FILE", "GIT_WORK_TREE", "GIT_PREFIX"):
+        os.environ.pop(v, None)
     if a.history_start or a.history:
         import history
         cfg = open(os.path.join(tracking, "config.md"), encoding="utf-8").read()
@@ -1159,7 +1714,7 @@ def main():
     if a.mutate:
         sys.exit(local_mutation(cfg, tracking, code_root, rel_tracking, repo_prefix, a.task, a.tests))
     if a.removals:
-        sys.exit(max(run_removals(cfg, tracking, code_root, rel_tracking, t, head_full, stamp) for t in a.task))
+        sys.exit(max(run_removals(cfg, tracking, code_root, rel_tracking, t, head_full, stamp, a.jobs) for t in a.task))
     test_like = re.compile(r"(^|/)src/test/|(^|/)e2e/|\.spec\.ts$|\.test\.ts$|(^|/)playwright\.config\.ts$")
 
     per_task, all_changed, all_owned, cards_seen, task_starts = {}, set(), set(), [], []
@@ -1250,6 +1805,12 @@ def main():
             rows.append((FAIL if bad_mig else OK, "P12 migrations", "; ".join(bad_mig) if bad_mig else
                          "%d added migration(s), each above the versions present at start"
                          % sum(1 for f in mine if MIGRATION.search(f))))
+            neighbours = migration_neighbours(start, mine, code_root, repo_prefix)
+            if neighbours:
+                rows.append((INFO, "P16 migration neighbours", "test classes naming a table this task's migrations "
+                             "write; list them in the design check's neighbour scan (--quick and the full run run "
+                             "them first): " + ", ".join("%s (%s)" % (fq.rsplit(".", 1)[-1], t)
+                                                         for fq, t in sorted(neighbours.items()))))
         java_mine = [f for f in mine if f.endswith((".java", ".kt")) and "/src/main/" in "/" + f]
         if java_mine:
             beans = bean_types(code_root)
@@ -1260,6 +1821,7 @@ def main():
                           + "; ".join(dup)) if dup else "no second bean of a single-instance type"))
         if not adopted:
             rows.append(removals_row(tracking, card, full, head_full, code_root, rel_tracking))
+        rows.append(doc_updates_row(tracking, card, full, a.lint))
         all_changed |= mine
         task_starts.append((start, sorted(mine)))
         all_owned |= owned
@@ -1371,12 +1933,79 @@ def main():
         # independent suites run side by side (config.md: no two suites share a build dir or report file)
         required = [s for s in cfg_suites if suite_required(s, all_changed, all_owned)]
         cached_suites = cached.get("suites", {}) if same_code else {}
+        cached_mut = cached.get("mutation", {}) if same_code else {}
+        entries = equivalent_entries(open(p, encoding="utf-8").read() for p in cards_seen)
+        # a passing --mutate on exactly this code stands for the full run's mutation (rule 8c): the full run's covering
+        # tests include the task's own, so they kill at least every mutant those killed
+        local = cache.get("local-mutation:" + cache_key) or {}
+        mut_note = {}
+        if local.get("tree") and mutate_reusable(local, head_full, code_root, rel_tracking):
+            for name, raw in local.get("mutation", {}).items():
+                if name not in cached_mut and judge_mutation(raw, entries)[0] == OK:
+                    cached_mut[name] = raw
+                    mut_note[name] = " · reused from --mutate (code tree %s, same code)" % local["tree"][:7]
+        # mutation inputs come first: a Maven mutation suite runs beside the test suites, not after them
+        prod = {}
+        for t_start, t_files in task_starts:
+            for f, ls in changed_lines(t_start, [f for f in t_files if not test_like.search(f)], code_root).items():
+                prod.setdefault(f, set()).update(ls)
+        msuites = mutation_suites(cfg)
+        own_tests = {java_test_class(f) for _, t_files in task_starts for f in t_files}
+        cover = covering_tests(code_root, [f for f in prod if f.endswith((".java", ".kt"))], own_tests)
+        cover.discard("")
+
+        def mutate(s, run_root=None, cancel=None):
+            if s["name"] in cached_mut:
+                return None, cached_mut[s["name"]], mut_note.get(s["name"], reused)
+            # covering tests only: minutes instead of the whole suite's coverage pass (rule 8c)
+            extra = " -DtargetTests=%s" % ",".join(sorted(cover)) if cover and "pitest" in s["cmd"] else ""
+            r, raw = run_mutation(s, code_root, prod, extra, run_root, cancel)
+            if r is not None:
+                return r, raw, ""
+            raw["tests"] = "%d covering classes" % len(cover) if extra else "suite default"
+            return None, raw, ""
+        mut_done = {}
         if required and all(cached_suites.get(s["name"], [FAIL])[0] == OK for s in required):
             done = {n: (r, d + reused, t) for n, (r, d, t) in cached_suites.items()}
         else:
-            with ThreadPoolExecutor(max_workers=max(1, len(required))) as pool:
-                done = dict(zip([s["name"] for s in required],
-                                pool.map(lambda s: run_suite(s, code_root, counts, a.accept_count, head_full), required)))
+            # Three things at once, each in its own build dir: the suites in the tree; the related tests (own,
+            # always-run, migration neighbours, covering) in a private module copy, which stop the suites when they
+            # fail; each Maven mutation suite in its own copy (the backend suite starts with `clean`). A failing
+            # pre-flight ends at the related tests' time; a passing one costs the slowest of the three.
+            cancel, copies, beside = threading.Event(), [], {}
+            by_cmd, why = related_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, a.task, "") \
+                if required else ({}, {})
+            rel_mods = {maven_module(c, code_root) for c in by_cmd or {}}
+            related_root = None
+            if by_cmd and len(rel_mods) == 1 and "" not in rel_mods:
+                related_root = module_copy(code_root, next(iter(rel_mods)), "related")
+                copies.append(related_root)
+            for s in msuites if required and prod else []:
+                mod = maven_module(s["cmd"], code_root)
+                if mod and s["name"] not in cached_mut:
+                    beside[s["name"]] = module_copy(code_root, mod, "mutation")
+                    copies.append(beside[s["name"]])
+            try:
+                with ThreadPoolExecutor(max_workers=max(1, len(required) + len(beside))) as pool:
+                    suite_f = {s["name"]: pool.submit(run_suite, s, code_root, counts, a.accept_count, head_full,
+                                                      cancel) for s in required}
+                    mut_f = {s["name"]: pool.submit(mutate, s, beside[s["name"]], cancel)
+                             for s in msuites if s["name"] in beside}
+                    if related_root:
+                        rel_rows = run_related(by_cmd, code_root, cancel, related_root)
+                        rel_fail = any(r == FAIL for r, _, _ in rel_rows)
+                        if rel_fail:
+                            cancel.set()
+                        tests.append((FAIL if rel_fail else OK, "P5 related tests", "%s · %s" % (
+                            ", ".join("%s %d" % kv for kv in why.items()),
+                            "; ".join("%s: %s" % (w, d) for _, w, d in rel_rows))))
+                    elif by_cmd:
+                        tests.append((INFO, "P5 related tests", "not run first: the module cannot be copied alone"))
+                    done = {n: f.result() for n, f in suite_f.items()}
+                    mut_done = {n: f.result() for n, f in mut_f.items()}
+            finally:
+                for c in copies:
+                    drop_copy(c)
             cached = {"head": head_full, "suites": {}, "mutation": {}}
         cached["suites"] = {n: [r, d.split(" · reused from ")[0], t] for n, (r, d, t) in done.items()}
         for s in cfg_suites:
@@ -1390,37 +2019,17 @@ def main():
         if all(t[0] != FAIL for t in tests):
             json.dump(counts, open(counts_path, "w", encoding="utf-8"), indent=2)
         stack = (lambda r: (r[0], "P6 local stack", r[1]))(check_stack(cfg, code_root))
-        # P10 runs only on green tests: a mutant run over failing tests says nothing
+        # P10 is judged only on green tests: a mutant run over failing tests says nothing
         if all(t[0] != FAIL for t in tests):
-            prod = {}
-            for t_start, t_files in task_starts:
-                for f, ls in changed_lines(t_start, [f for f in t_files if not test_like.search(f)], code_root).items():
-                    prod.setdefault(f, set()).update(ls)
-            entries = equivalent_entries(open(p, encoding="utf-8").read() for p in cards_seen)
-            msuites = mutation_suites(cfg)
             if not msuites:
                 tests.append((INFO, "P10 mutation", "config.md has no '## Mutation suites' table"))
-            cached_mut = cached.get("mutation", {}) if same_code else {}
-
-            own_tests = {java_test_class(f) for _, t_files in task_starts for f in t_files}
-            cover = covering_tests(code_root, [f for f in prod if f.endswith((".java", ".kt"))], own_tests)
-            cover.discard("")
-
-            def mutate(s):
-                if s["name"] in cached_mut:
-                    return None, cached_mut[s["name"]], reused
-                # covering tests only: minutes instead of the whole suite's coverage pass (rule 8c)
-                extra = " -DtargetTests=%s" % ",".join(sorted(cover)) if cover and "pitest" in s["cmd"] else ""
-                r, raw = run_mutation(s, code_root, prod, extra)
-                if r is not None:
-                    return r, raw, ""
-                raw["tests"] = "%d covering classes" % len(cover) if extra else "suite default"
-                return None, raw, ""
-            # backend and frontend mutation runs share nothing, so they run side by side
-            with ThreadPoolExecutor(max_workers=max(1, len(msuites))) as pool:
-                results = list(pool.map(mutate, msuites))
+            # the rest (cached, or not a copyable Maven module, e.g. Stryker) run now, side by side
+            rest = [s for s in msuites if s["name"] not in mut_done]
+            with ThreadPoolExecutor(max_workers=max(1, len(rest))) as pool:
+                mut_done.update(zip([s["name"] for s in rest], pool.map(mutate, rest)))
             cached["mutation"] = {}
-            for s, (r, raw, note) in zip(msuites, results):
+            for s in msuites:
+                r, raw, note = mut_done[s["name"]]
                 if r is None:
                     cached["mutation"][s["name"]] = raw
                     r, raw = judge_mutation(raw, entries, note)

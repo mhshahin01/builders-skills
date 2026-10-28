@@ -43,8 +43,10 @@ their own rows so they run side by side.
 
 ## Always-run tests
 
-Run by `preflight.py --quick` with the task's own test classes: cross-cutting rules a task can break without
-touching their files (module/architecture rules, schema version gates, full table or index lists).
+Run by `preflight.py --quick` (and first in the full pre-flight) with the task's own test classes, the test
+classes that name a table the task's migrations write (P16), and the covering tests of its changed classes:
+cross-cutting rules a task can break without touching their files (module/architecture rules, schema version
+gates, full table or index lists). List here only what those three cannot find.
 
 | Test class | Why |
 |---|---|
@@ -102,6 +104,16 @@ Copy `tracking/<KEY>/preflight/<T-NNN>-<sha>.md` back into the main tracking fol
 | Item | Value |
 |---|---|
 | Push after Done | ask, or `auto (user: "<quote>", <date>)`: push once after each wave's last Done task, only when `--push-check` passes |
+
+## Doc updates (doc-impact-rules.md § 4)
+
+| Item | Value |
+|---|---|
+| LLD | auto |
+| SDD | auto |
+| BRD | ask, or `auto (user: "<quote>", <date>)` |
+| SoW | ask |
+| Docs repo | ../chagaf-platform (the worker commits there with `Docs: KEY/DU-NNN`; never pushes) |
 
 ## Slices (slice mode only)
 
@@ -193,11 +205,20 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 - `[disabled]="busy()"` → `disablesSaveWhileSaving`
 - `(click)="pickOpen.set(true)"` → `opensPickerOnPick`
 
-## Removals (risk high: every Design check guard; run `preflight.py --removals`)
-- `api/src/main/java/.../RoutingServiceImpl.java` `requireOwner(account, offer);` → `RoutingServiceTest#refusesAnotherAccountsOffer`
+## Removals (risk high: every Design check guard, tagged with its invariant; run `preflight.py --removals`)
+- `api/src/main/java/.../RoutingServiceImpl.java` `requireOwner(account, offer);` → `RoutingServiceTest#refusesAnotherAccountsOffer` (I1)
+- `api/src/main/java/.../OfferJob.java` `ON CONFLICT (day) DO NOTHING` → `OfferJobIT#twoRunsAtOnceTheSecondSendsNothing` (I4)
+- I6: no guard line: kept by absence (the job writes no other table; diff review)
+
+Every `I<n>` of the Design check has a tagged guard or a `no guard line: <reason>` bullet (P14). The named
+test is the one that exercises the invariant: for a race or at-most-once rule, the interleaving test, never a
+neighbour test that happens to fail.
 
 ## Equivalent mutants (only if P10 reports survivors that no test can kill)
 - `RoutingServiceImpl.java:42` `if (score >= threshold) {` ConditionalsBoundary — `>=` and `>` give the same result: the value is never equal here
+
+## Doc updates (DUs this task raised; P15)
+- [AUTOAPPLY/DU-004](../../doc-updates.md#autoapplydu-004) — LLD 7.3 tie-break rule (fill-silence, LLD, Verified)
 
 ## Evidence (filled by done/verify)
 | Date | Agent | Commits | Tests | Audit | Note |
@@ -285,8 +306,19 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ~~~markdown
 | ID | Type | Severity | Found (date, agent, during) | Where (doc anchor / code) | Description | Owner | Fix task | Status |
 |---|---|---|---|---|---|---|---|---|
-| AUTOAPPLY/GAP-003 | doc-gap | major | 2026-10-19, codex, T-014 | LLD 7.3 route | Tie on score not defined | lld-unifier | — | Open |
+| AUTOAPPLY/GAP-003 | doc-gap | major | 2026-10-19, codex, T-014 | LLD 7.3 route | Tie on score not defined | lld-unifier (DU-004) | — | Open |
 ~~~
+
+## `tracking/doc-updates.md`
+
+~~~markdown
+| ID | Status | Level | Kind | Task | Gap | Anchors | What (from → to) | Decided by | Docs | Docs commit | Verified | Parent | Updated |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| AUTOAPPLY/DU-004 | Verified | LLD | fill-silence | AUTOAPPLY/T-014 | AUTOAPPLY/GAP-003 | [LLD 7.3 route](<rel>#routingserviceimplroute) | tie on score: undefined → older match first (code `RoutingServiceImpl.java:57`) | LLD silent; code fills it (§ 2) | LLD v1.4 → v1.5 | 9f3e2a1 | PASS 2026-10-20 (5/5 checks) | — | 2026-10-20 |
+| AUTOAPPLY/DU-005 | Waiting-decision | BRD | doc-conflict | AUTOAPPLY/T-022 | AUTOAPPLY/GAP-008 | [BRD UC-23 AC-2](<rel>#uc-23-route-a-new-match) | review queue limit: 50 (BRD) vs 100 (LLD 7.3) | — (BRD mode `ask`) | BRD, LLD | — | — | — | 2026-10-20 |
+~~~
+`Status`: Queued, Running (worker started <time>), Applied, Verified, Waiting-decision, Rejected (<reason>),
+Failed. `Verified`: the verifier's verdict and date. A failed verification appends its findings to `What`.
 
 ## `tracking/ownership.md` (generated)
 
@@ -317,14 +349,19 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 - T-020 waits on T-011 (in progress)
 
 ## Gaps
-- New: AUTOAPPLY/GAP-003 (doc-gap, major) → lld-unifier
+- New: AUTOAPPLY/GAP-003 (doc-gap, major) → DU-004
 - Closed: —
+
+## Doc updates
+- Verified: AUTOAPPLY/DU-004 (LLD v1.5)
+- Open: 1 Queued, 0 Running, 1 Waiting-decision
 
 ## Untracked commits
 - a1b2c3d "fix mail parser" — no Task trailer → which task?
 
 ## Needs your decision
 - GAP-003: tie-breaking rule on equal scores
+- DU-005 (BRD): review queue limit 50 or 100 → `docs approve AUTOAPPLY/DU-005` or `docs reject …`
 ~~~
 
 ## `tracking/inventory.md` (generated)
@@ -352,7 +389,7 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 ~~~markdown
 | ID | Date | What changed (from → to) | Decided by | Why | Affected | Supersedes | Follow-up | Status |
 |---|---|---|---|---|---|---|---|---|
-| CHG-002 | 2026-10-19 | Score threshold per user → per mode | user: "make it per mode" | Hybrid needs its own bar | T-014 (Done-stale), table autoapply.profile | Plan decision #3, L-002 | T-041 rework; GAP-007 → lld-unifier | Active |
+| CHG-002 | 2026-10-19 | Score threshold per user → per mode | user: "make it per mode" | Hybrid needs its own bar | T-014 (Done-stale), table autoapply.profile | Plan decision #3, L-002 | T-041 rework; GAP-007 → DU-006 (direction, BRD) | Active |
 ~~~
 
 ## Audit report `tracking/AUTOAPPLY/audits/T-014-audit-1.md`
@@ -406,7 +443,8 @@ UI — n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → Match
   passes.
 - The user corrects you or changes direction → `impl-tracker-unifier lesson` / `change` before continuing.
 - Finished → `impl-tracker-unifier done <id>`. Found a bug, missing rule, or doc conflict →
-  `impl-tracker-unifier gap`. Never edit BRD/SDD/LLD to make code fit.
+  `impl-tracker-unifier gap`; the tracker queues the doc update and a background doc worker applies it.
+  Never edit BRD/SDD/LLD yourself, and never to make code fit.
 ~~~
 
 ## `tracking/checks.json` (every Active lesson needs an entry; pre-flight runs them)

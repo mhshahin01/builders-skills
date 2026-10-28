@@ -11,14 +11,15 @@ flowchart LR
     lld --> trk["6. impl-tracker-unifier<br/>plan · next · start · done · audit<br/>gap · lesson · change · discover · standup · sync"]
     trk --> code(["code + commits"])
     code -. "drift, bugs, missing deps" .-> trk
-    trk -. "doc gaps handed back (never edits docs)" .-> brd
+    trk -. "doc updates via the background doc worker (DU queue)" .-> brd
     trk -.-> sdd
     trk -.-> lld
 ```
 
-**Summary:** the tracker is the sixth stage. It reads the BRD, SDD and LLD, never edits them, and owns
-only `./tracking/`. Gaps it finds in the docs go back to the owning skill as gap rows, the same way the
-review panel hands points to the authoring skills.
+**Summary:** the tracker is the sixth stage. It reads the BRD, SDD and LLD, never edits them itself, and owns
+only `./tracking/`. Every doc point it finds becomes a gap row and a doc update (DU): triaged to the docs it
+affects (LLD only, or SDD, BRD, SoW too), applied in the background by a separate doc worker, checked by a
+fresh verifier, then synced, so the docs stay consistent with the code (doc-impact-rules.md).
 
 ## Why a custom skill instead of Spec Kit / Task Master / Backlog.md
 

@@ -67,6 +67,8 @@ The auditor never works in the repository's working tree:
 
 1. Tracker: `git worktree add --detach <short path> <task head commit>` (preferred: short path, avoids
    Windows path limits) or `git archive <head> | tar -x -C <short path>`. The prompt names that folder.
+   A stale export at that path is removed with `git worktree remove --force <path>` (then `git worktree prune`),
+   never `rm -rf`: the safety check blocks it and the turn stops. After the report, `git worktree remove <path>`.
    Frontend code needs `npm ci` there before its tests.
    **Reuse per wave:** create one export per wave (one per parallel auditor slot) and, for the next task
    or a re-audit, `git -C <export> checkout --detach <head>` + `git -C <export> clean -ffdx -e '**/node_modules'`
@@ -202,7 +204,8 @@ real defect in a past audit):
 
 Everything else is **minor** (a gap, never a FAIL): card text, wrong commit cited, missing History or
 clause → method rows, lesson lines on the card, ownership.md wording, a decision that fills an LLD silence
-without contradicting it (the tracker routes it through lld-unifier before setting Done, per L-045), naming,
+without contradicting it (the tracker queues it as a `fill-silence` DU before setting Done, per L-045 and
+doc-impact-rules.md § 1), naming,
 log level, an extra test that would be nice. Code that **contradicts** the LLD is never paperwork: that is
 big point 3.
 
@@ -214,7 +217,12 @@ mode, a limit) is not a starting value but behaviour, and an untested one is maj
 **Test strength comes from P10, not hand mutants.** When `config.md` has § Mutation suites, the auditor
 reads the P10 rows of the pre-flight report and the `<T-NNN>-removals.md` report (P14; it may re-run
 `--removals` in the export as its probe), and checks each `## Equivalent mutants` reason; it does not
-build its own mutant sweep. A claim on the card that P10 cannot reach (UI focus, timing, config wiring) gets
+build its own mutant sweep. A P10 row `reused from --mutate` is valid (the full run's covering tests include
+the task's own). **The invariant map is the probe list:** P14 has already checked that every Design check
+invariant has a `(I<n>)`-tagged guard or a `no guard line` reason. The auditor judges the map: does the named
+test exercise that invariant (for a race or at-most-once rule, the interleaving test, not a neighbour), and is
+each `no guard line` reason true? A wrong test or reason is major (big point 6). Its hands-on probe targets the
+weakest pair in that map. A claim on the card that P10 cannot reach (UI focus, timing, config wiring) gets
 **one** hands-on probe; a surviving probe is major. Without § Mutation suites, at most 5 hand probes, the
 ones most likely to break a cited AC.
 
@@ -276,7 +284,9 @@ resolve against `projects/<app>/src`, e.g. `../../../libs/...`); a run with 0 te
 Design check (risk high): verify the code keeps every invariant in the card's ## Design check and that the
 specs model the real rule each invariant depends on (L-035).
 Test strength: read the pre-flight P10 (mutation) and P11 (template bindings) rows and judge each
-## Equivalent mutants reason; do not build your own mutant sweep. Blocker/major only for the 7 big points
+## Equivalent mutants reason; do not build your own mutant sweep. Judge the card's ## Removals invariant map
+(each `(I<n>)` guard → the test that exercises it; each `no guard line` reason): your probe goes to the
+weakest pair. Blocker/major only for the 7 big points
 (audit-rules.md § 4); everything else is minor. Budget 15-25 min (§ 1d); write start and finish time.
 Re-audit: grade only the claims fixed at audit 1; new issues in unchanged code are minor unless security,
 data loss or a broken cited AC (§ 1c Frozen scope).

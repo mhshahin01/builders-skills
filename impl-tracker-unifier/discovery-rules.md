@@ -53,7 +53,7 @@ Then compare shape, not just name: endpoint fields/status codes vs `06-api-contr
 | **Match** | exact/normalized name and shape agrees | `Adopted` — Evidence pre-filled with files and commits; audit required |
 | **Partial** | exists but a layer or field is missing/different (e.g. endpoint without migration, screen without error state, no log) | `In progress` — DoD lists exactly what is missing; `layer-miss`/`code-drift` gap per difference |
 | **Missing** | nothing found | `Planned` (normal) |
-| **Not in LLD** | inventory item no LLD unit claims | gap `untracked-code`; user decides: adopt into a task, route to lld-unifier as `doc-gap`, or remove |
+| **Not in LLD** | inventory item no LLD unit claims | gap `untracked-code`; user decides: adopt into a task, queue it as a `doc-update` DU (doc-impact-rules.md), or remove |
 | **Conflict** | two items claim one unit, or one item fits two units | gap `double-build`; ask |
 
 Confidence: `high` (exact + shape agrees), `medium` (normalized), `low` (semantic). Low is never

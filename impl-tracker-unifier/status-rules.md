@@ -26,7 +26,8 @@
 status never changes because of its slice.
 
 **Gate (start):** all depends_on ∈ {Done, Verified}; not Stale; no open blocker gap linked;
-no other task In progress that owns an overlapping item.
+no other task In progress that owns an overlapping item; no open DU on a cited anchor that
+doc-impact-rules.md § 9 says the task must wait for.
 
 **Override:** only if the user says so in their own words in chat. Record a gap
 `forced-start` (major) quoting the reason, list the unmet dependencies, and add a DoD item

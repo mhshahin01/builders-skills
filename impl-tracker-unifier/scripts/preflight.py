@@ -845,6 +845,33 @@ def run_related(by_cmd, code_root, cancel=None, run_root=None):
     return rows
 
 
+DEFER_BLOCKERS = re.compile(r"(^|/)(db/migration|migration)/|\.sql$|(^|/)application[^/]*\.(ya?ml|properties)$|"
+                            r"(^|/)(pom\.xml|build\.gradle(\.kts)?|package(-lock)?\.json|angular\.json)$")
+
+
+def defer_blockers(code_root, changed, tracking, cache_key, head_full, rel_tracking):
+    """Why --defer-suites cannot stand in for the full suites here (rule 8f); empty = it can."""
+    why = [f for f in changed if DEFER_BLOCKERS.search(f)]
+    for f in changed:
+        if f.endswith((".java", ".kt")) and "/src/main/" in f:
+            try:
+                if re.search(r"@(Component|Service|Repository|Configuration|Bean|RestController|Controller)\b",
+                             open(os.path.join(code_root, f), encoding="utf-8").read()):
+                    why.append(f + " (bean wiring)")
+            except OSError:
+                pass
+    try:
+        local = json.load(open(os.path.join(tracking, "preflight-cache.json"), encoding="utf-8")).get(
+            "local-mutation:" + cache_key, {})
+    except (OSError, ValueError):
+        local = {}
+    if not (local.get("tree") and mutate_reusable(local, head_full, code_root, rel_tracking)):
+        why.append("no passing --mutate on this code")
+    if why:
+        print("# --defer-suites not allowed (full suites run): " + "; ".join(why[:5]))
+    return why
+
+
 def quick_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, tasks, extra_tests):
     """--quick: related_tests (own, always-run, migration neighbours, covering), uncommitted work included, one run
     per build module. The cheapest gate that finds a broken module rule, a pinned version or a pinned row count
@@ -959,7 +986,7 @@ def list_consumers(code_root, prod_files):
 
 
 # `- I7: no guard line: <reason>` -- an invariant with nothing to delete (a "never" kept by absence, a log rule)
-NO_GUARD = re.compile(r"^\s*-\s*\*{0,2}(I\d+(?:\s*,\s*I\d+)*)\*{0,2}\s*:\s*no guard\b[^:]*:\s*\S", re.I)
+NO_GUARD = re.compile(r"^\s*-\s*\*{0,2}(I\d+(?:\s*,\s*I\d+)*)\*{0,2}[^:`\n]*:\s*no guard\b[^:]*:\s*\S", re.I)
 INVARIANT = re.compile(r"^\s*-\s*\*{0,2}(I\d+)\b", re.M)
 
 
@@ -1003,6 +1030,8 @@ def lone_guard_problem(code_root, path, code):
                          r"(?:throws\s+[\w., ]+)?\{$", prev)
     if line.startswith(("return ", "throw ")) and signature and nxt.startswith("}") and not re.search(r"\bvoid\b", prev):
         return label + " is its method's only statement"
+    if line.startswith(("return ", "throw ")) and re.match(r"^\}?\s*catch\s*\(.*\)\s*\{$", prev) and nxt.startswith("}"):
+        return label + " is its catch block's only statement (the try's variable is then unassigned; use a no guard line)"
     return None
 
 
@@ -1660,6 +1689,17 @@ def main():
                     "(default 4; 1 = in place, one at a time)")
     ap.add_argument("--history", action="store_true", help="rebuild tracking/history.md from git and the reports")
     ap.add_argument("--history-start", default="", help="stamp the start clock of KEY/T-NNN (run at `start`)")
+    ap.add_argument("--verbose", action="store_true", help="print every row; default prints FAIL/WARN rows and a "
+                    "count of the rest (the report file always holds every row)")
+    ap.add_argument("--defer-suites", action="store_true", help="per-task run: replace the full suites with the "
+                    "related tests when the task adds no migration, bean wiring, config or build file and a passing "
+                    "--mutate covers its code; the full suites run once at the wave or slice end (rule 8f)")
+    ap.add_argument("--set-status", nargs=3, metavar=("KEY/T-NNN", "STATE", "REASON"),
+                    help="paired write (rule 1a): card Status + History row + index row")
+    ap.add_argument("--gap-du", nargs=3, metavar=("KEY/T-NNN", "GAP", "DU"),
+                    help="paired write (rule 1a): GAP = 'type|severity|anchor|text|owner', "
+                    "DU = 'level|kind|anchors|what|decided' (DU '-' = gap only)")
+    ap.add_argument("--agent", default="claude-opus-5-5", help="--set-status / --gap-du attribution")
     a = ap.parse_args()
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -1670,6 +1710,13 @@ def main():
     # worktree they point every git call here at the wrong index and status turns into a list of every file
     for v in ("GIT_DIR", "GIT_INDEX_FILE", "GIT_WORK_TREE", "GIT_PREFIX"):
         os.environ.pop(v, None)
+    if a.set_status or a.gap_du:
+        import paperwork
+        if a.set_status:
+            paperwork.set_status(tracking, *a.set_status, agent=a.agent)
+        else:
+            paperwork.gap_du(tracking, *a.gap_du, agent=a.agent)
+        sys.exit(0)
     if a.history_start or a.history:
         import history
         cfg = open(os.path.join(tracking, "config.md"), encoding="utf-8").read()
@@ -1730,7 +1777,7 @@ def main():
         start = ((table_value(card, "Start commit") or "").split() or [""])[0]
         adopted = status.startswith("Adopted")
 
-        rc, out, err = git(["status", "--porcelain", "--", ".", ":(exclude)%s" % rel_tracking], code_root)
+        rc, out, err = git(["status", "--porcelain", "-uall", "--", ".", ":(exclude)%s" % rel_tracking], code_root)
         dirty = out.rstrip()  # keep the leading space of " M path": the path starts at column 3
         if a.lint:
             loose = [l[3:].strip() for l in dirty.splitlines()
@@ -1916,6 +1963,21 @@ def main():
         tests = [(FAIL, "P5 tests", "not run: fix the FAIL rows above (or the doctor rows) first; `--lint` "
                   "re-checks them in seconds")]
         stack = (INFO, "P6 local stack", "not run (fail fast)")
+    elif a.defer_suites and not defer_blockers(code_root, all_changed, tracking, "|".join(sorted(a.task)),
+                                                 head_full, rel_tracking):
+        by_cmd, why = related_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, a.task, "")
+        tests = [(r, "P5 related tests", "%s: %s" % (where, d)) for r, where, d in run_related(by_cmd or {}, code_root)]
+        if not tests:
+            tests = [(FAIL, "P5 related tests", "no related test found: run without --defer-suites")]
+        tests.append((INFO, "P5 suites", "deferred to the wave or slice end (--defer-suites, rule 8f): no migration, "
+                      "bean wiring, config or build file in the diff"))
+        local = json.load(open(os.path.join(tracking, "preflight-cache.json"), encoding="utf-8")).get(
+            "local-mutation:" + "|".join(sorted(a.task)), {})
+        entries = equivalent_entries(open(p, encoding="utf-8").read() for p in cards_seen)
+        for name, raw in local.get("mutation", {}).items():
+            r, d = judge_mutation(raw, entries, " · reused from --mutate (code tree %s)" % local["tree"][:7])
+            tests.append((r, "P10 mutation %s" % name, d))
+        stack = (lambda r: (r[0], "P6 local stack", r[1]))(check_stack(cfg, code_root))
     else:
         counts_path = os.path.join(tracking, "preflight-counts.json")
         counts = json.load(open(counts_path, encoding="utf-8")) if os.path.exists(counts_path) else {}
@@ -2054,7 +2116,12 @@ def main():
                  "", "| Result | Check | Detail |", "|---|---|---|"]
         lines += ["| %s | %s | %s |" % (r, l, d.replace("\n", " ").replace("|", "\\|")) for r, l, d in rows]
         text = "\n".join(lines) + "\n"
-        print("\n" + text)
+        if a.verbose:
+            print("\n" + text)
+        else:
+            shown = [l for l in lines[4:] if l.startswith(("| FAIL", "| WARN"))]
+            print("\n" + "\n".join(lines[:4] + shown))
+            print("(%d other rows PASS/INFO/SKIPPED; --verbose or the report file shows them)" % (len(lines) - 4 - len(shown)))
         # a fail-fast run (suites not run) writes no report, so it never replaces a real run's report
         fast = any(l == "P5 tests" and d.startswith("not run") for _, l, d in rows)
         if not (a.audit_mode or a.lint or fast):

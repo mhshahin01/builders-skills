@@ -20,6 +20,7 @@ before a phase is closed).
   |---|---|---|
   | `high` (or missing/unclear) | strongest available (`opus`) | full prompt, § 6 |
   | `low` | faster model (`sonnet`) | focused prompt, § 6a: same matrix, same evidence and verdict rules |
+  | `high`, size S/M, no I/O (no endpoint, migration, UI, event, external call or job in the diff) | strongest (`opus`) | focused prompt, § 6a, 10-minute budget, plus one hands-on probe of a Design check invariant |
 
   A low-risk auditor that finds anything on the task-splitting.md § Risk `high` list (§ 6a repeats it) in
   the diff or, for Adopted and Partial tasks, in the Owns files, returns `RISK: high` instead of a
@@ -67,6 +68,9 @@ The auditor never works in the repository's working tree:
 
 1. Tracker: `git worktree add --detach <short path> <task head commit>` (preferred: short path, avoids
    Windows path limits) or `git archive <head> | tar -x -C <short path>`. The prompt names that folder.
+   When the code root is a subfolder of the git root (here `implement-chagaf/` under `chagaf-platform`), the
+   export holds the whole repository: the prompt names `<export>/<code root relative to the git root>` as the
+   work folder (`git rev-parse --show-prefix` in the code root gives it).
    A stale export at that path is removed with `git worktree remove --force <path>` (then `git worktree prune`),
    never `rm -rf`: the safety check blocks it and the turn stops. After the report, `git worktree remove <path>`.
    Frontend code needs `npm ci` there before its tests.

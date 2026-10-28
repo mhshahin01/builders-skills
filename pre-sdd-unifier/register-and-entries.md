@@ -311,7 +311,7 @@ Every engine command reads the project state through one gate before it computes
    - every row of the catalogue;
    - `options` with its `list` and each option's `shape` and `scores`;
    - `decisions` with its `dr_overrides`;
-   - `gate` with its `checklist`, `signoffs`, `conditions`, and `exceptions`;
+   - `gate` with its `checklist` (an object) and its `signoffs`, `conditions`, and `exceptions` (each a list, which may be empty);
    - `unknowns`, `history`, and `ui`.
 
    One line names every missing part. Compare the file with `studio/schema/project-state.schema.json`.

@@ -33,7 +33,7 @@ Switching the overlay off keeps its entries; the gates then ignore them. Switchi
 The overlay holds a list of workloads, each with an ID `WL-NN` and a name. A new Pre-SDD holds `WL-01` with no name.
 
 - `add-workload` adds the next `WL-NN` (never reused) and gives every OVL row its entry for it. `rename-workload` changes a name. `remove-workload` removes a workload and its entries. Any actor may add, rename, or remove one, since a workload label changes no value and a removal is refused while the workload holds an answer.
-- The engine refuses `remove-workload` while any of that workload's OVL entries holds a value or a factor value or is `Confirmed` or `N/A` (mark them `N/A` instead).
+- The engine refuses `remove-workload` while any of that workload's OVL entries holds a value or a factor value or is `Confirmed` or `N/A` (keep the workload and mark them `N/A` instead).
 - The engine never removes `WL-01`, which holds the primary entries of the OVL rows. Rename it instead.
 - The engine refuses to remove the last workload, overlay on or off. Switch the overlay off with `set-overlay` instead.
 - Name one workload per component or group the Standard treats as one migration decision: a business capability with its hosts, stores, jobs, integrations, and identity and network dependencies (OVL-03).

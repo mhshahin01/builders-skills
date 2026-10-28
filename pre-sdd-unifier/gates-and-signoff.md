@@ -53,7 +53,7 @@ The Pre-SDD is authorized for the SDD only when G3 reads `Approved` or `Approved
 
 ## Decision rules DT-01 to DT-15
 
-The Standard's decision rules apply with their STOP and BLOCK outcomes (Standard § 9.3). The engine checks five of them. A hit on one of these five is a validation blocker with the ID shown. G2 then reads `blocker` and G3 `Blocked` until it is fixed, or lifted by a valid exception where the table says one can. The engine supports the others with its numbers or does not check them. The skill applies them in the write-up and the reviewer checks them. Chunk 09's decision tree lists every rule with what fired, its evidence, and the response, citing the engine's IDs.
+The Standard's decision rules apply with their STOP and BLOCK outcomes (Standard § 9.3). The engine checks five of them: DT-01, DT-02, DT-03, DT-11, and DT-15. A hit on one of these five is a validation blocker with the ID shown. G2 then reads `blocker` and G3 `Blocked` until it is fixed, or lifted by a valid exception where the table says one can. The engine supports the others with its numbers (DT-04 in part, through the options' hard filter and the `RESIDENCY-region` blocker, which carry no DT ID) or does not check them. The skill applies them in the write-up and the reviewer checks them. Chunk 09's decision tree lists every rule with what fired, its evidence, and the response, citing the engine's IDs.
 
 | Rule | Observable condition | Standard outcome | Engine |
 |---|---|---|---|

@@ -124,7 +124,7 @@ The owner code (`B`, `E`, `D`, `Sec`, `Ops`, `Fin`, `Legal`) comes from the cata
 **After every answered batch and every save**, the skill writes where the run stands, in three places, naming the next stage and group:
 
 1. **The project state:** the `set-run` op with `stage` (1 to 4) and `group` (`HDR`, `BUS` to `ECO`, `OVL`, or `null` when the next step works on no group), in a patch of its own with the skill's agent actor. Any actor may write the pointer.
-2. **The master's progress table** (stage, group, gate, write-up, review, handoff), in `./pre-sdd-[slug]/[slug]-pre-sdd-master.md`, or in COMBINED mode the combined file's cover. The gate column holds the engine's gate label.
+2. **The master's progress table** (stage, status, group, gate, write-up, review, handoff), in `./pre-sdd-[slug]/[slug]-pre-sdd-master.md`, or in COMBINED mode the combined file's cover. The gate column holds the engine's gate label.
 3. **The board row** in `unifier-status.md`, for example `In progress: stage 2, group DAT` (SKILL.md § Status board).
 
 The same three are updated at every stop: the G1 and G2 review stops, the G3 sign-off stop, and while the run waits for a person.

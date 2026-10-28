@@ -95,7 +95,7 @@ When SKILL.md step 2a loaded a G3-signed Pre-SDD, its chunk 12 lock list arrives
 | Q8 Deployment target | The hosting target: cloud, on-prem, or hybrid, and a named provider only when the Pre-SDD records it as a hard constraint | The hosting target is shown locked, with source `Pre-SDD` (`PSDD/<ID>`), and is not asked. The runtime option (Kubernetes, a managed container service, or a simple container or VM setup) stays this SDD's choice, recommended within that target. |
 
 - **Q1, Q2, Q4, Q5, and Q6 are unchanged.** The Pre-SDD gives their drivers at most, never their answers.
-- **Q7 and Q8 keep feeding §8.6 and §8.7** (§ Effect on the SDD). With a loaded Pre-SDD, those sections also cite the topology, the HA, the DR strategy per failure scope, the RPO and RTO, and the connectivity it locks (`brd-to-sdd.md` § Pre-SDD inputs (locked)).
+- **Q7 and Q8 keep feeding §8.6 and §8.7** (§ Effect on the SDD). With a loaded Pre-SDD, those sections also cite what its chunk 12 lands in §8.6 and §8.7 (`brd-to-sdd.md` § Pre-SDD inputs (locked), the §8.6 and §8.7 row).
 - **An answer outside a locked value is not applied.** It becomes an open item owned by the E2E Architect (SKILL.md principle 20), and the locked value stands.
 
 ---

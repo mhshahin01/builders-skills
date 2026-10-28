@@ -113,7 +113,7 @@ Key technical bets and trade-offs:
 - [Bet 1 and rationale]
 - [Bet 2 and rationale]
 
-**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is]
+**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is; with a loaded Pre-SDD, cite PSDD/HDR-07 (SKILL.md step 3a)]
 
 ---
 
@@ -163,6 +163,7 @@ Key technical bets and trade-offs:
 <!--
 List of technical and architectural risks. Each risk includes likelihood, impact, and a mitigation.
 Owner: who will own the mitigation and the monitoring of the risk.
+With a loaded Pre-SDD, each open condition of its chunk 12 § 12.5 is a risk citing PSDD/COND-NN (brd-to-sdd.md § Pre-SDD inputs (locked)).
 -->
 
 | Risk ID | Description | Likelihood (L/M/H) | Impact (L/M/H) | Mitigation | Owner |
@@ -197,7 +198,7 @@ Summary of the platform-wide technology stack and shared infrastructure that all
 This section is the single source of truth for the implementation constitution and planned technology choices.
 SELECTION FLOW: this table is never filled silently. SKILL.md step 3c shows the proposed ecosystem, each row Locked with its source or Proposed with its basis, and asks one question: accept all proposed, answer one by one, or import the project's eco-system file (`[project-slug]-eco-system.md` in the project root). The precedence, the import rules, and the label lists are in SKILL.md step 3c.
 STATUS: `Confirmed` or `Proposed` (SKILL.md step 3c item 6). A finished first build has no `Proposed` row, except the one case step 3c item 6 names. A row a later update adds stays `Proposed`, with a [NEEDS CLARIFICATION: ...] marker, until the user confirms it.
-SOURCE: one label per row, from the lists in SKILL.md step 3c items 1 and 6. The evidence behind it goes in Notes: the BRD Technical Input as a keyed link, the eco-system file section, or the ADR.
+SOURCE: one label per row, from the lists in SKILL.md step 3c items 1 and 6. The evidence behind it goes in Notes: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR. A row a locked Pre-SDD item constrains carries the constraint in its Notes (brd-to-sdd.md § Pre-SDD inputs (locked)).
 A table written before the Status and Source columns keeps its source labels in Notes and is read as it is (SKILL.md step 10).
 -->
 
@@ -364,7 +365,7 @@ flowchart TB
 
 **Figure 3: High-Level Architecture**
 
-<!-- Inline Mermaid is the default diagram medium. Show the layers: edge, frontend, services, data plane, async backbone, external, observability. -->
+<!-- Inline Mermaid is the default diagram medium. Show the layers: edge, frontend, services, data plane, async backbone, external, observability. With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §8.3 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
 
 ```mermaid
 flowchart TB
@@ -447,7 +448,7 @@ sequenceDiagram
 <!--
 Where the system runs (§8.6) and how traffic reaches it and leaves it (§8.7).
 INPUTS: in derive-from-BRD, the derivation inputs are the one list in brd-to-sdd.md § SDD-only sections, §8.6 / §8.7. In TRANSFORM, the inputs are the source SDD's infrastructure and network content (source-transformation.md). In GENERATE, they are the source material.
-PRE-SDD: with a loaded, G3-signed Pre-SDD (SKILL.md step 2a), the topology, the HA, the DR strategy per failure scope, the RPO and RTO, and the connectivity shape it settles cite it as PSDD/<ID> with a link and are locked: a Source cell names that entry, and §8.6.4 takes its RPO and RTO. Q7 and Q8 keep feeding this section within the lock. A disagreement with a locked value is a chunk 18 open item owned by the E2E Architect, never an edit (SKILL.md principle 20; brd-to-sdd.md § Pre-SDD inputs (locked)).
+PRE-SDD: with a loaded, G3-signed Pre-SDD (SKILL.md step 2a), what its chunk 12 lands in §8.6 and §8.7 (brd-to-sdd.md § Pre-SDD inputs (locked), the §8.6 and §8.7 row) is cited as PSDD/<ID> with a link and is locked: a Source cell names that entry, and §8.6.4 takes its RPO and RTO. Q7 and Q8 keep feeding this section within the lock. A disagreement with a locked value is a §23 open item owned by the E2E Architect, never an edit (SKILL.md principle 20; brd-to-sdd.md § Pre-SDD inputs (locked)).
 ONE FACT, ONE HOME: each fact is linked to its home, never restated. A technology, version, or tier is its §6 row: a cell names a technology by its role (the primary database, the message broker) and links that row, and never restates its name or version, the TLS version (§11.6), or a timeout (§12). The deployment target is the §6 Compute / Infra row (questionnaire Q8), and its ADR when one records it. The deployables follow ADR-01 and §13. The tenancy strategy is §11.2. The deployment, resource, and security defaults are §11.3 and §11.6. The environments are §19 (in part 1, before §19 is written, the §11.3 promotion path). An external system's protocol, auth, and timeouts are its §12 row and its §15 contract. This section and §8.7 add only the topology and the network paths.
 LINKS: a section that a later part writes (§14, §15, §16, §17.X, §18, §19, §20) is named as plain text until it exists, and the back-fill links it (parts-mode.md § What every part does, step 3).
 SOURCE CELLS: a Source cell links the home of its fact: a §6 row, an ADR, a §11 default, a §12 row, §19, a BRD NFR or Technical Input as its keyed link, a locked entry of the loaded Pre-SDD as its PSDD/<ID> link, an eco-system file section, the source SDD section (TRANSFORM), or the source material (GENERATE). A design choice that no source states reads `recommended`, as a §6 basis does, with its evidence stated in the row. An unknown fact is a [NEEDS CLARIFICATION: ...] marker.
@@ -484,11 +485,11 @@ SIZE: never skipped. When the deployment is simple (for example one deployable o
 
 ### 8.6.4 Backup and Disaster Recovery
 
-<!-- One row per component that holds state. RPO and RTO come from the BRD NFRs that state availability, recovery, backup, or data-loss limits (the recovery NFRs): cite the keyed NFR (REFUNDS/NFR-02), and derive a figure only where its business measure allows it. When no BRD NFR states one, the cell holds [NEEDS CLARIFICATION: ...], never an invented figure. This table is the home of the RPO and RTO: the §18.5 row of the same NFR links here and holds neither a figure nor a marker of its own. The recovery procedure is §20.1.5 Database Failover (LINKS above). -->
+<!-- One row per component that holds state. RPO and RTO come from the BRD NFRs that state availability, recovery, backup, or data-loss limits (the recovery NFRs): cite the keyed NFR (REFUNDS/NFR-02), and derive a figure only where its business measure allows it. When no BRD NFR states one, the cell holds [NEEDS CLARIFICATION: ...], never an invented figure. With a loaded Pre-SDD, the RPO and RTO come from it, one row per component and failure scope (Primary database, zone loss), each cited as its PSDD/<ID> (brd-to-sdd.md § Pre-SDD inputs (locked)). This table is the home of the RPO and RTO: the §18.5 row of the same NFR links here and holds neither a figure nor a marker of its own. The recovery procedure is §20.1.5 Database Failover (LINKS above). -->
 
 | Component | Backup | RPO | RTO | Recovery | Source |
 |-----------|--------|-----|-----|----------|--------|
-| [Primary database] | [What is backed up, how often, and where the copies are kept] | [Figure / marker] | [Figure / marker] | [How service comes back; procedure §20.1.5, linked once §20 is written] | [KEY/NFR-NN / marker] |
+| [Primary database] | [What is backed up, how often, and where the copies are kept] | [Figure / marker] | [Figure / marker] | [How service comes back; procedure §20.1.5, linked once §20 is written] | [KEY/NFR-NN / PSDD/<ID> / marker] |
 
 ### 8.6.5 Scaling Model
 
@@ -694,6 +695,7 @@ For deeper, individual ADRs, link to a separate ADR repository / folder.
 <!--
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
 (§17 Detailed Service Specs below) and the override must be justified there.
+With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)).
 -->
 
 ## 11.1 DB Modeling (Default)
@@ -1782,7 +1784,7 @@ sequenceDiagram
 
 # 18. Performance & Capacity Planning
 
-<!-- With a loaded Pre-SDD (SKILL.md step 2a), §18 cites its calculations as PSDD/CALC-NN with a link and never recomputes them: the load, throughput, latency budgets, growth, payload sizes, storage, and bandwidth are the Pre-SDD's, and this section adds what the Pre-SDD leaves to it: the per-service breakdown, sizing per deployable, caching, and the §18.4 stress testing strategy. Each §18.5 row cites the Pre-SDD entry that settles its NFR's target (brd-to-sdd.md § Pre-SDD inputs (locked)). A disagreement with one is a §23 open item owned by the E2E Architect, never an edit (SKILL.md principle 20). -->
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), §18 cites its calculations as PSDD/CALC-NN with a link and never recomputes them: the load, throughput, latency budgets, growth, payload sizes, storage, and bandwidth are the Pre-SDD's, and this section adds what the Pre-SDD leaves to it: the per-service breakdown, sizing per deployable, caching, and the §18.4 stress testing strategy. It sizes within PSDD/INT-03 and PSDD/CAP-03, and measures its latency targets where PSDD/CAP-08 says (brd-to-sdd.md § Pre-SDD inputs (locked), the §18 and §18.5 row). Each §18.5 row cites the Pre-SDD entry that settles its NFR's target (brd-to-sdd.md § Pre-SDD inputs (locked)). A disagreement with one is a §23 open item owned by the E2E Architect, never an edit (SKILL.md principle 20). -->
 
 ## 18.1 Load Estimates
 
@@ -1831,6 +1833,8 @@ sequenceDiagram
 
 # 19. Environments
 
+<!-- With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §19 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
+
 | Environment | Purpose | Data | Access | Promotion Source |
 |-------------|---------|------|--------|------------------|
 | **Dev** | [Purpose] | [Data] | [Access] | [Source] |
@@ -1856,7 +1860,7 @@ sequenceDiagram
 
 # 20. Operations Runbook
 
-<!-- Living document. Each procedure should be runnable by an on-call engineer who did not write the service. -->
+<!-- Living document. Each procedure should be runnable by an on-call engineer who did not write the service. With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §20 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
 
 ## 20.1 Common Operations
 

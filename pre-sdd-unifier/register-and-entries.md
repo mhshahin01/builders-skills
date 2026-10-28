@@ -190,7 +190,7 @@ A number outside its valid range (for example a negative TPS) is a blocker too, 
 
 Only four rows take a proposal: **REL-01** (availability), **REL-03** (RTO), **REL-04** (RPO), and **CAP-07** (P99 latency) (§ 6.4, decision 12).
 
-- **Only the skill proposes,** as the E2E Architect, and only beside an `Open` entry. A proposal holds a value in the row's unit and its reason, tied to the BRD where it can be (for example a monthly disruption limit from BRD chunk 10, or a journey's priority from chunk 05).
+- **Only the skill proposes,** as the E2E Architect, and only beside an `Open` entry. A proposal holds a value in the row's unit and its reason, tied to the BRD where it can be (for example a monthly disruption limit from BRD chunk 10, or a journey's priority from chunk 05 or 04, when the BRD states one).
 - **The entry stays `Open`** until a person or an answer policy picks the proposal (`accept-proposal`). Picking it sets the value, makes the entry `Confirmed`, and writes the source `Answer: <name>, <date> (proposal accepted)`, or the policy's label.
 - **A person's own value replaces a proposal:** setting a value clears it.
 - **A proposal beside an entry a person left open** may still be made, because a proposal helps exactly when the person does not know the value. Only a person picks it there; an answer policy does not.

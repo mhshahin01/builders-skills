@@ -54,7 +54,7 @@ flowchart TB
 
 **Figure 3: High-Level Architecture**
 
-<!-- Inline Mermaid is the default diagram medium. Show the layers: edge, frontend, services, data plane, async backbone, external, observability. -->
+<!-- Inline Mermaid is the default diagram medium. Show the layers: edge, frontend, services, data plane, async backbone, external, observability. With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §8.3 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)). -->
 
 ```mermaid
 flowchart TB

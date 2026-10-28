@@ -35,7 +35,7 @@ Every value in chunk 12 comes from an engine fragment or the master; none is res
 
 ## The lock
 
-Once G3 is signed (`Approved` or `Approved with conditions`, and the master's gate line does not read `Review`), the SDD loads the Pre-SDD and locks every item the lock list names. A Pre-SDD that exists but is not signed makes the SDD stop, wait, and raise a request that lists what G3 still needs. A content change after G3 sends G3 back to `Review`; until every applicable role signs again, the SDD treats the Pre-SDD as not signed.
+Once G3 is signed (`Approved` or `Approved with conditions`, and the master's gate line does not read `Review`), the SDD loads the Pre-SDD and locks every item the lock list names. A Pre-SDD that exists but is not signed makes the SDD stop, wait, and raise a request that lists what G3 still needs. A content change after G3 sends G3 back to `Review`; until every applicable role signs again, the SDD treats the new version as not signed, and an SDD that loaded an earlier signed version keeps that version locked.
 
 **The lock is on numbers and shape, never on the SDD's own questions.** The SDD keeps its Project Type question, its questionnaire (Q1 to Q8), its ecosystem selection, and its design. The Pre-SDD's items arrive as locked evidence and constraints in those places.
 

@@ -31,7 +31,7 @@ Key technical bets and trade-offs:
 - [Bet 1 and rationale]
 - [Bet 2 and rationale]
 
-**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is]
+**Project Type:** [Greenfield | Brownfield] - [one-line justification; brownfield: where the existing codebase is; with a loaded Pre-SDD, cite PSDD/HDR-07 (SKILL.md step 3a)]
 
 ---
 
@@ -69,6 +69,7 @@ Key technical bets and trade-offs:
 <!--
 List of technical and architectural risks. Each risk includes likelihood, impact, and a mitigation.
 Owner: who will own the mitigation and the monitoring of the risk.
+With a loaded Pre-SDD, each open condition of its chunk 12 § 12.5 is a risk citing PSDD/COND-NN (brd-to-sdd.md § Pre-SDD inputs (locked)).
 -->
 
 | Risk ID | Description | Likelihood (L/M/H) | Impact (L/M/H) | Mitigation | Owner |

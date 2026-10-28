@@ -67,7 +67,7 @@ Which BRD chunks each row reads, and what the engine or a default gives. BRD chu
 
 Every pre-filled value cites `BRD: <KEY>/<ID>` (for example `BRD: REFUNDS/NFR-03`) or the chunk (`BRD: REFUNDS 10`), with status `Estimated`.
 
-**The BRD chunks named above** (the `brd-unifier` output in `./brd-[slug]/`):
+**The BRD chunks named above** (the `brd-unifier` output in `./brd-[slug]/`). The skeletons have no field for some of these facts (owner, failure handling, volumes, deadlines, priority, geography): a BRD holds one only when its source states it, and a fact the BRD does not state stays `Open`:
 
 | Chunk | Holds |
 |---|---|

@@ -1503,7 +1503,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 ## 11.1 Gate Result
 
-<!-- The engine renders the gate from the project state (fragment `11-gate.md`): G0, G1, and G2 with what each still misses; the G3 status (Not signed, Blocked, Review, Approved, or Approved with conditions) and every problem it names; the G3 checklist G3-01 to G3-14, each Done or N/A with its reason, or Open, with who ticked it and when; the sign-off register, one row per applicable role (the migration owner only with the overlay), each with its signer, decision, and UTC time, or not applicable with the reason, a stand-in marked as one; the conditions COND-NN with owner and due date; and the exceptions EXC-NN with the entry, who granted it, the reason, the expiry, and the review date. Paste it unchanged between the markers. -->
+<!-- The engine renders the gate from the project state (fragment `11-gate.md`): G0, G1, and G2 with what each still misses; the G3 status (Not signed, Blocked, Review, Approved, or Approved with conditions) and every problem it names; the gate label and whether the SDD is authorized to start; the G3 checklist G3-01 to G3-14, each Done or N/A with its reason, or Open, with who ticked it and when; the sign-off register, one row per applicable role (the migration owner only with the overlay), each with its signer, decision, and UTC time, or not applicable with the reason, or Not signed, and whether it counts, a stand-in marked as one; the conditions COND-NN with owner and due date; and the exceptions EXC-NN with the entry, who granted it, the reason, the expiry, and the review date. Paste it unchanged between the markers. -->
 
 <!-- ENGINE-FRAGMENT: 11-gate.md -->
 | Gate | Result | Missing |
@@ -1515,6 +1515,8 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 **Gate label:** [Draft / G0 / G1 / G2 / Blocked / G3 Approved / G3 Approved with conditions]
 
+**Authorized to start the SDD:** [Yes / No]
+
 **G3 checklist**
 
 | Line | Text | Status | Reason (N/A) | Ticked by | At |
@@ -1525,7 +1527,7 @@ The sizing factors that refine a row (for example the calls per transaction unde
 
 | Role | Name | Decision | At | Comments |
 |------|------|----------|----|----------|
-| Business sponsor | [Name, or Stand-in: Approver (policy, set by name, date)] | [Approved / Approved with conditions / Rejected / Not applicable: reason] | [UTC] | [Comments] |
+| Business sponsor | [Name, or Stand-in: Approver (policy, set by name, date)] | [Approved / Approved with conditions / Rejected / Not applicable: reason / Not signed] | [UTC] | [Counted / Not counted][, stand-in] |
 
 **Conditions**
 
@@ -1573,8 +1575,8 @@ The sizing factors that refine a row (for example the calls per transaction unde
 **How the SDD reads this gate:**
 
 - **G3 Approved or Approved with conditions** (authorized `Yes`, and the cover's gate line does not read `Review`): load this Pre-SDD and lock every item in § 12.2.
-- **Any other G3 status** (`Not signed`, `Blocked`, or `Review`): the Pre-SDD is not signed. Do not load it. Stop, and raise a handoff request to the E2E Architect (`pre-sdd-unifier`) on `unifier-status.md` that lists what G3 still needs (chunk 11 § 11.1).
-- A content change after G3 sends G3 back to `Review` until every applicable role signs again; until then the SDD treats the Pre-SDD as not signed.
+- **Any other G3 status** (`Not signed`, `Blocked`, or `Review`): the Pre-SDD is not signed. Do not load it. Stop, and raise a handoff request to the E2E Architect (`pre-sdd-unifier`) on `unifier-status.md` that lists what G3 still needs (§ 11.1).
+- A content change after G3 sends G3 back to `Review` until every applicable role signs again; until then the SDD treats the new version as not signed: a new SDD waits, and an SDD that loaded an earlier signed version keeps that version locked.
 
 ## 12.2 Locked Items
 

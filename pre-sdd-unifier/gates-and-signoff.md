@@ -195,9 +195,9 @@ Each sign-off stores the content hash of the state its signer reviewed. G3 goes 
 - **the project state changes.** The hash covers the project (its name, slug, and BRDs), the register, the options, the decisions, the checklist, the conditions, the exceptions, and the unknowns. Any change there gives a new hash, and every earlier sign-off reads as given on other content.
 - **a chunk's content changes outside the state.** The skill marks it with the `reopen` op and its reason (for example, the chunk whose prose changed). Every sign-off given before that time reads as given before the reopening.
 
-Outside the hash: the run fields, the sign-off records themselves, the reopen mark, the history, and the Pre-SDD version number. So writing signatures into chunks 11, 12, and 00, updating gate and status lines, and bumping the version reopen nothing.
+Outside the hash: the run fields, the sign-off records themselves, the reopen mark, the history, and the Pre-SDD version number. So writing signatures into chunks 11, 12, and 00, updating gate and status lines, filling chunk 00's Consuming SDD row, and bumping the version reopen nothing.
 
-After a change, every applicable role signs again on the new content, at the G3 stop (step 13); a role marked not applicable is marked again too. The update bumps the version once (`SKILL.md` § Later requests). Until G3 is signed again, the label no longer reads approved and the SDD treats the Pre-SDD as not signed.
+After a change, every applicable role signs again on the new content, at the G3 stop (step 13); a role marked not applicable is marked again too. The update bumps the version once (`SKILL.md` § Later requests). Until G3 is signed again, the label no longer reads approved and the SDD treats the new version as not signed, and an SDD that loaded an earlier signed version keeps that version locked.
 
 A change after G3 rewrites, from the new fragments after `compute`: the master's and chunk 00's gate lines (G3 `Review`, SDD authorized `No`), chunk 11, chunk 12 § 12.1, and every chunk region whose fragment the change touches (for a value: its register chunk, chunk 12 § 12.2, and chunks 04 and 10 when their fragments change). The SDD stops on the gate line and § 12.1, so both must read `Review` before the signers sign again. The full procedure is the update tail in `SKILL.md` § Later requests.
 

@@ -123,3 +123,155 @@ Read from `progress.md`, rulings that say "final review":
 - Task 7.4 step 1 minors: the mode prompt is still asked before the stop (its record is held back); brd-to-sdd.md:32 (a BRD not Approved) has no stated place relative to step 2a; the `<KEY list>` names no separator.
 - Earlier sign-offs after Review live only in the state history and `decision-log.md` (Task 7.4 step 2, gap 4).
 - The header rows' owner reads "TBD" (Task 7.0d concern 2), and the HDR example wording (review minor 2).
+
+## Verification
+
+Task 10.2, the plan's design section 10 verification list, run on 2026-10-27 between 23:44 and 23:56 UTC on the worktree at head 02bbeaf with its uncommitted edits (39 changed files at the start). Node v24.22.1, Python 3 with PyYAML 6.0.3. `studio` is `pre-sdd-unifier/studio`, `TOOLS` is the session scratchpad tools folder named in the Task 3.5 record. Nothing was committed and no test was written. If a file changes under another agent, a count below can move by one rerun.
+
+### One row per design section 10 line
+
+| Section 10 line | Result | Evidence |
+|---|---|---|
+| Golden: the two v2.2 example ZIPs and the demo export | PASS, 3 cases | `golden-fields.test.mjs` 7 of 7. The cases are `regional-zero` (16 calculations, 8 rules, 37 components, 36 connections, conflict `CONFLICT-rpo0`), `local-zero` (16, 8, 32, 30, no conflict) and `demo` (16, 5, 32, 29, no conflict), the demo being `examples/studio-v2.2-export`. `compute_importedGolden_matchesV22ComputedFields` loops the three and compares calculations, topology, DR strategy, rule IDs (with the two renames), components, connections and conflicts; the same fields hold with two options set. Ledger: Task 1.1 and Task 2.3 (`progress.md` lines 87 and 187; parity exact at 99, 88 and 84 values). |
+| Unit: every CALC and rule, DR boundaries 30, 60, 900, 3600, 14400 s | PASS | See the coverage tables below. Ledger: Tasks 1.1, 2.4, 2.6, 2.7 (lines 87, 231, 296, 325). |
+| Per scope: one strategy per scope, conflict when the shape fails a scope | PASS | `scopes.test.mjs` 23 of 23, plus the scope cases in `options.test.mjs` (27 of 27). Ledger: Task 2.5 (line 250). |
+| Gate: each G3 outcome, condition, exception | PASS | `gate.test.mjs` 31 of 31 and `state-gate.test.mjs` 27 of 27. Ledger: Task 2.8 (line 357). |
+| Derivation: every rule | PASS | `defaults.test.mjs` 37 of 37. Ledger: Task 2.4 (line 231). |
+| Build: engine.js byte for byte | PASS | `node build.mjs` wrote `pre-sdd-studio.html` and `git status` shows it unchanged from the committed file. A direct compare: the page text contains `src/engine.js` (256,480 bytes) as a substring, true; page 390,138 bytes. `build.test.mjs` 5 of 5, including `buildStudio_blank_embedsEngineByteForByte` and `buildStudio_committedHtml_isUpToDate`. Ledger: Task 1.2 (line 112). |
+| Schema: `validate_handoff.py` on every test blueprint | PASS, 38 blueprints, 3 expected FAIL | `handoffBlueprint_everyTestBlueprint_validates` audits every blueprint the suite builds (38 in this run, counted in a scratch copy; the test asserts at least 30) through the real `validate_handoff.py` audit: 0 failures each, plus the schema check on the first. `blueprint.test.mjs` 25 of 25 also holds the tampered cases, each failing for its expected reason, and the unreadable file exits 3. On disk: the two golden blueprints and the demo export blueprint are v2.2 files and fail the 3.0 schema as expected, each with `FAIL: SCHEMA: 'options' is a required property at []`, exit 2 (the 3.0 schema requires the options section). Ledger: Task 2.9 (line 507). |
+| Studio: manual check in a browser | Done in headless Chrome; the owner's own browser check is pending the owner | By the controller's rule no agent used the Playwright MCP or claude-in-chrome. `node TOOLS\p3_smoke.mjs` (headless Chrome DevTools harness): 111 checks, 0 failed, 0 console errors, exit 0 (23:53 UTC). `studio/tests/MANUAL-CHECK.md` exists (Task 3.5, run 2026-10-27T14:03:13Z to 14:03:34Z, Chrome 156.0.8078.48 headless): 13 checks, 13 PASS, 0 FAIL (open filled, stage rows, name gate, blank RPO shows TBD, availability fix message, accept proposal, confirm group, keyboard focus ring, console, save, `validate --pick`, re-import parity, `compute` and `diff` parity). Firefox and Edge, and the owner's own browser check: pending the owner (C3). Ledger: Task 3.5 (line 624). |
+| Skill: fixture runs | PASS | The runs in this file: Tasks 7.1 to 7.4 (chain run `run-2026-10-27b-psdd`, scenarios `pre-sdd-missing-rerun` and `pre-sdd-unsigned`), with their checks in the Checks table above. Ledger: Task 7.3 complete (line 786). |
+| Skill: description at most 1024 characters, YAML parses | PASS, all eight | See the table below. |
+| Skill: dash scan | PASS | `check_chain_skills.py` below, 0 problems (it scans for the en and em dash with the Q1 exemptions as excludes). |
+| Skill: headless Codex and Kimi listings | pending Task 11.3 | `codex exec -s read-only "List the names and SKILL.md paths of the skills you can load."` and `kimi -p "List the names and SKILL.md paths of the skills you can load."` are not run here. Both must list `pre-sdd-unifier` with its path. |
+| Chain: identical board section, README anchors resolve | PASS | `check_chain_skills.py` and `check_shared.py` below, 0 problems each. Ledger: Tasks 5.1 and 10.1. |
+
+### node --test, by file
+
+Run from `studio`: 474 tests, 474 pass, 0 fail, 0 cancelled, 0 skipped, 0 todo (23:44 to 23:48 UTC). The per-file runs sum to the same 474.
+
+| File | Tests | File | Tests |
+|---|---|---|---|
+| blueprint | 25 | options | 27 |
+| build | 5 | scopes | 23 |
+| catalogue | 23 | sources | 3 |
+| cli | 27 | state | 78 |
+| decisions | 38 | state-gate | 27 |
+| defaults | 37 | status-rules | 2 |
+| engine-v22 | 6 | style | 6 |
+| fragments | 15 | validation | 51 |
+| gate | 31 | value-rules | 5 |
+| golden-fields | 7 | view | 13 |
+| import | 22 | import-page | 3 |
+
+### Checks outside node
+
+| Check | Result |
+|---|---|
+| Checker suites (`_fixtures/checkers/tests`, `py -3 -B -m unittest tests.<file>` from `_fixtures/checkers`) | 351 tests, all OK: chain_skills 53, presdd 64, shared 22, status_board 37, todo 20, checker_review_regressions 13, chk_regressions 30, e2e_gate_inventory 36, repeated_reconciled 7, rx_checker_regressions 21, sdd_lld_enhancements 48. The total equals the 351 recorded at Task 7.1. `regression_tests.py` and `e2e_dynamic_tests.py` were not run. |
+| `check_refs.py lld-unifier sdd-unifier` | problems: 0 |
+| `check_shared.py .` | copies checked: 7, markdown files scanned: 231, problems: 0 |
+| `check_chain_skills.py . --exclude 'pre-sdd-unifier/reference/*' 'pre-sdd-unifier/examples/*' 'pre-sdd-unifier/studio/tests/golden/*'` | 0 problems (identical status board section, role lines, README anchors, description limits, dash scan) |
+| `validate_handoff.py` on the 3 on-disk blueprints | expected FAIL x 3 (v2.2 files, 3.0 schema), see the schema row above |
+
+### SKILL.md descriptions (PyYAML parse of every front matter, `py -3 -I`)
+
+| Skill | Description characters | Front matter keys | YAML |
+|---|---|---|---|
+| brd-unifier | 842 | name, description | parses |
+| business-reviewer-unifier | 758 | name, description | parses |
+| impl-tracker-unifier | 1008 | name, description | parses |
+| lld-unifier | 895 | name, description | parses |
+| pre-brd-unifier | 793 | name, description | parses |
+| pre-sdd-unifier | 976 | name, description | parses |
+| sdd-unifier | 912 | name, description | parses |
+| tutorialize-unifier | 260 | name, description | parses |
+
+All eight are at most 1024 characters. The tightest is impl-tracker-unifier at 1008.
+
+### Coverage table
+
+Files are in `pre-sdd-unifier/studio/tests/`. "Parity" is `compute_importedGolden_matchesV22ComputedFields` (the three golden cases, calculations 01 to 16) and `compute_importedFullRecord_matchesV22Blueprint` (a digest of all 20 base calculation rows, rules, topology, DR, components and connections for the full record), both in `golden-fields.test.mjs`. The inputs test is `fragments_calculations_inputsAreTheRowsRead` in `fragments.test.mjs`.
+
+#### CALC-01 to CALC-22
+
+| ID | Test and file |
+|---|---|
+| CALC-01 | Parity; `calculations_blankDailyTxn_chainIsNull` (engine-v22) |
+| CALC-02 | Parity; `calculations_blankDailyTxn_chainIsNull` (engine-v22) |
+| CALC-03 | Parity; `derive_cap01AndDefaults_setsCap02To165` (defaults); inputs test |
+| CALC-04 | Parity; `calculations_blankDailyTxn_chainIsNull` (engine-v22); inputs test |
+| CALC-05 | Parity; inputs test |
+| CALC-06 | Parity; inputs test |
+| CALC-07 | Parity; inputs test |
+| CALC-08 | Parity only (no test names it) |
+| CALC-09 | Parity only (no test names it) |
+| CALC-10 | Parity; `derive_dat02_fromCap01AndStoredKb` (defaults); inputs test |
+| CALC-11 | Parity; inputs test |
+| CALC-12 | Parity; inputs test |
+| CALC-13 | Parity; inputs test |
+| CALC-14 | Parity only (no test names it) |
+| CALC-15 | Parity; `calculations_zeroRpo_exposureIsZero` (engine-v22); inputs test |
+| CALC-16 | Parity only (no test names it) |
+| CALC-17 | Full-record parity (the golden cases do not reach it); inputs test (with and without the overlay) |
+| CALC-18 | Full-record parity; inputs test |
+| CALC-19 | Full-record parity; inputs test |
+| CALC-20 | Full-record parity; `writers_importedFullRecord_listTwentyBaseCalculations` (blueprint) lists CALC-01 to CALC-20 in the blueprint and fragment |
+| CALC-21 | `computeOptions_costsAndHorizon_tco280000`, `computeOptions_calcRows_cite21And22` (options); `handoffBlueprint_options_carryTheirRows` (blueprint) |
+| CALC-22 | `computeOptions_approvedWeights_weighted3point2`, `computeOptions_calcRows_cite21And22` (options); `handoffBlueprint_options_carryTheirRows` (blueprint) |
+
+No CALC row reads `no test`. CALC-08, 09, 14, 16 and 20 have value coverage through the parity digests only; no test names them.
+
+#### Rule IDs
+
+`rules_everyRuleId_hasTriggerCase` (validation.test.mjs) reads the rule IDs out of `decisionRules` and demands one trigger case per ID in code order, each firing exactly once in the v2.2 rules and in the 3.0 rules. `compute_importedV22Grid_rulesAndAdvisoriesMatchV22` (validation.test.mjs) runs 3,444 imported states and checks that every rule and every carried warning fires and that the rules and advisories equal the v2.2 output.
+
+| Group | IDs | Test and file |
+|---|---|---|
+| Decision rules (19) | ARCH-01, HA-02, DR-03, LOAD-04 (v2.2 CAP-04), PERF-05, DR-06, DR-ZERO-01, DR-ZERO-02, DATA-07, DATA-08, DB-09, DB-10, DB-READ-17 (v2.2 DB-READ-11), SEC-11, NET-12, MIG-13, MIG-14, SLO-15, ADR-16 | `rules_everyRuleId_hasTriggerCase`, `compute_importedV22Grid_rulesAndAdvisoriesMatchV22`, `ruleIds_neverEqualItemIds`, `decisionRules_readPercentKnown_emitsDbRead17` (validation); the renames in Parity (golden-fields) |
+| Per scope rules | DR-03, DR-06, DR-ZERO-01, DR-ZERO-02, DATA-07, DATA-08, SLO-15 with the `@scope` suffix | `rules_twoScopes_drFamilySuffixed`, `rules_twoScopes_ha02TriggerListsScopes`, `rules_drOverrideOnSecondScope_adr16Fires`, `rules_emptyExtraScopeEntry_idsUnchanged` (validation) |
+| Carried warnings (12) | OPEN-01, DB-atomicity, DR-zeroRTO-unverified, DR-zero-scope, DATA-commit-protocol, DR-restore, DR-location, OVERRIDE-review, MIG-transfer, BF-inventory, DB-mixed, REL-test | `compute_importedV22Grid_rulesAndAdvisoriesMatchV22` (every one fires; the list equals the v2.2 list minus the two dropped); `validateState_twoScopes_drAdvisoriesSuffixed` (validation) |
+| Carried blockers | OVERRIDE-reason, OPEN-migration-source, RESIDENCY-region | `compute_importedV22Grid_rulesAndAdvisoriesMatchV22` (each fires and stays quiet); `validateState_overrideWithoutReason_blocker`, `validateState_migrationSourceUnknown_blocker`, `validateState_residencyWithoutLocation_blocker` (validation) |
+| Primary-only advisory | PRIMARY-ONLY-<row> | `validateState_secondJourneyStricter_primaryOnlyAdvisory`, `validateState_openOverlayEntryWithFactor_primaryOnlyAdvisory` (validation) |
+| Conflicts | CONFLICT-region, CONFLICT-zone, CONFLICT-site, CONFLICT-active-dr, CONFLICT-provider (and CONFLICT-rpo0) | `conflictsFor_everyCombination_matchesV22ButRpo0RemoteOnly`, `targetShape_rpoZeroRegion_synchronousAndConflict`, `targetShape_overrideMultiAzWithRegion_conflictAtRegion` (scopes); the option hard checks in `computeOptions_topologyConflictsWithRegionScope_hardPassFalse` and `computeOptions_providerScopeHybridOption_noProviderConflict` (options); `CONFLICT-rpo0` in Parity |
+| G3 checklist (14) | G3-01 to G3-14 | `G3_CHECKLIST_matchStandardLines` (catalogue); every line ticked and checked in `applyPatch_newOps_outputPassesGate` (decisions) and `gateStatus_checklistLineNotDone_notSigned` (gate) |
+
+No rule ID reads `no test`.
+
+#### DR thresholds
+
+`defaultDR_thresholds_matchV22` (engine-v22.test.mjs) puts a case on each side of every threshold, and `assessScopes_boundaries_followThresholds` (scopes.test.mjs, 19 cases, each through the full scope assessment) repeats them.
+
+| Threshold | Cases |
+|---|---|
+| 30 s | RTO 30 gives Active-Active, RTO 31 gives Warm Standby |
+| 60 s | provider scope: RTO 60 gives Active-Active, RTO 61 gives Warm Standby (cyber scope RTO 60 gives Backup) |
+| 900 s | RTO 900 and 901 with RPO 900 give Warm Standby; RTO 901 with RPO 901 gives Pilot Light |
+| 3600 s | RTO 3600 with RPO 900 gives Warm Standby, RTO 3601 gives Pilot Light |
+| 14400 s | tight budget, RPO 3600: RTO 14400 gives Pilot Light, RTO 14401 gives Backup; RPO 3599 or a balanced budget stays Pilot Light |
+
+#### Per scope, gate and derivation cases
+
+| Area | Cases and tests |
+|---|---|
+| Per scope | `assessScopes_azAndRegion_localHaAndWarm`, `assessScopes_twoRegionRtos_usesSmallest`, `assessScopes_unscopedEntry_appliesToEveryScope`, `assessScopes_scopeWithoutRto_unresolved`, `assessScopes_duplicateScope_blocker`, `assessScopes_emptyExtraEntry_notAScope`, `assessScopes_primaryNa_noScopes`, `assessScopes_drOverride_replacesThatScopeOnly`, `assessScopes_boundaries_followThresholds`; the shape: `targetShape_azAndRegion_topologyRegional`, `targetShape_everyCandidatePair_strongestInOrder`, `targetShape_blankState_undeterminedWithoutSource`, `targetShape_overrideMultiAzWithRegion_conflictAtRegion`, `targetShape_rpoZeroRegion_synchronousAndConflict`, `targetShape_openFailureScope_keyedUnknownNoConflict`, `targetShape_localScopeRpoZero_noRpo0Conflict`; the conflicts when a shape fails a scope: the five `conflictsFor_*` tests; the option side: `computeOptions_topologyConflictsWithRegionScope_hardPassFalse`, `computeOptions_localHaWithRegionScope_hardPassFalse`, `computeOptions_optionDr_appliesToRemoteScopesOnly` (scopes.test.mjs and options.test.mjs) |
+| Gate outcomes | Approved: `gateStatus_allRolesApproved_approvedAndAuthorized`. Approved with conditions: `gateStatus_conditionWithOwnerDue_approvedWithConditions`. Not signed: `gateStatus_noSignoffs_notSigned`, `gateStatus_missingApplicableRole_notSigned`, `gateStatus_checklistLineNotDone_notSigned`, `gateStatus_criticalEntryEstimated_notSigned`, `gateStatus_criticalFactorEstimated_notSigned`, `gateStatus_g2NoPassingOption_incompleteAndG3NotSigned`. Blocked: `gateStatus_rejectedRole_blocked`, `gateStatus_conditionWithoutDue_blocked`, `gateStatus_g2Blocker_labelBlockedOnceG0MetDraftBefore`. Review: `gateStatus_editAfterSign_backToReview`, `gateStatus_reopened_backToReview`, `gateStatus_reviewBeatsNotSigned_precedence`. Draft and Discovery: `gateStatus_g0NotMet_labelDraftAheadOfBlocked`, `gateStatus_noGateMet_labelDraft`, `gateStatus_quickMode_labelDiscovery` (gate.test.mjs) |
+| Gate conditions | `gateStatus_conditionalApprovalWithoutConditions_notAuthorized`, `gateStatus_conditionWithoutDue_blocked`, `gateStatus_g1OpenWithoutDue_notMet` (gate.test.mjs) |
+| Gate exceptions | `gateStatus_namedException_hardOpenPasses`, `gateStatus_criticalOpenWithValidException_passes` (gate.test.mjs); `applyPatch_revokeException_entryBlocksAgain` (decisions.test.mjs) |
+| Stand-ins, roles, policy | `gateStatus_standInWithoutPolicy_notSigned`, `gateStatus_standInWithPolicy_approved`, `gateStatus_staleStandInPolicy_notCounted`, `gateStatus_standInWithOtherProblem_notCounted`, `gateStatus_migrationOwnerNoOverlay_notRequired`, `gateStatus_roleNotApplicableWithReason_notRequired`, `sign_policyOverPersonSignoff_refused`, `sign_personOverStandIn_replacesRecord`, `check_policyOverPersonTick_refused` (gate.test.mjs) |
+| Derivation: CAP-02 from CAP-01 (CALC-03) | `derive_cap01AndDefaults_setsCap02To165`, `derive_answeredCap02_notOverwritten`, `derive_missingCap01_leavesCap02OpenAndTbd`, `derive_cap01Changed_refreshesDerivedCap02`, `derive_cap01Cleared_returnsDerivedCap02ToOpen`, `derive_personClearsDerivedCap02_leavesItOpen` (defaults.test.mjs) |
+| Derivation: DAT-02 from CAP-01 (CALC-10) | `derive_dat02_fromCap01AndStoredKb`, `derive_inputMissing_restoresRowDefaultKind` (defaults.test.mjs) |
+| Derivation: defaults | `applyDefaults_newState_fillsSevenFactorsEstimated`, `applyDefaults_projectDefaults_onlyOps04AndCap08`, `applyDefaults_rel05SiteRegionOrProvider_addsDrToOps04`, `applyDefaults_confirmedFactor_untouched`, `applyDefaults_answeredOps04_untouched`, `applyDefaults_naEntry_skipsItsFactors`, `applyDefaults_newAppendixVersion_refreshesUnconfirmedOwnFactors`, `APPENDIX_values_matchPolicyAppendixFile` (defaults.test.mjs) |
+
+No per-scope, gate or derivation case reads `no test`.
+
+### Coverage gaps
+
+- None reads `no test` in the CALC, rule, DR threshold, per-scope, gate or derivation tables.
+- Weaker spots, not gaps: CALC-08, 09, 14, 16 and 20 are checked only through the parity digests (values against the v2.2 output), and no test names them; CALC-17 to CALC-20 are not reached by the three golden cases, only by the full-record case.
+- The Studio browser check is headless (MANUAL-CHECK.md and `p3_smoke.mjs`); Firefox, Edge and the owner's own browser check are pending the owner at C3.
+- The headless Codex and Kimi skill listings are pending Task 11.3.
+
+### Stop
+
+Stop C9 (proposal: `chore: consistency fixes and the pre-SDD build verification record`). Nothing is committed.

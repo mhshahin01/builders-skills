@@ -13,7 +13,7 @@ PART OF: Pre-SDD - [Project Name]
 
 ## 11.1 Gate Result
 
-<!-- The engine renders the gate from the project state (fragment `11-gate.md`): G0, G1, and G2 with what each still misses; the G3 status (Not signed, Blocked, Review, Approved, or Approved with conditions) and every problem it names; the G3 checklist G3-01 to G3-14, each Done or N/A with its reason, or Open, with who ticked it and when; the sign-off register, one row per applicable role (the migration owner only with the overlay), each with its signer, decision, and UTC time, or not applicable with the reason, a stand-in marked as one; the conditions COND-NN with owner and due date; and the exceptions EXC-NN with the entry, who granted it, the reason, the expiry, and the review date. Paste it unchanged between the markers. -->
+<!-- The engine renders the gate from the project state (fragment `11-gate.md`): G0, G1, and G2 with what each still misses; the G3 status (Not signed, Blocked, Review, Approved, or Approved with conditions) and every problem it names; the gate label and whether the SDD is authorized to start; the G3 checklist G3-01 to G3-14, each Done or N/A with its reason, or Open, with who ticked it and when; the sign-off register, one row per applicable role (the migration owner only with the overlay), each with its signer, decision, and UTC time, or not applicable with the reason, or Not signed, and whether it counts, a stand-in marked as one; the conditions COND-NN with owner and due date; and the exceptions EXC-NN with the entry, who granted it, the reason, the expiry, and the review date. Paste it unchanged between the markers. -->
 
 <!-- ENGINE-FRAGMENT: 11-gate.md -->
 | Gate | Result | Missing |
@@ -25,6 +25,8 @@ PART OF: Pre-SDD - [Project Name]
 
 **Gate label:** [Draft / G0 / G1 / G2 / Blocked / G3 Approved / G3 Approved with conditions]
 
+**Authorized to start the SDD:** [Yes / No]
+
 **G3 checklist**
 
 | Line | Text | Status | Reason (N/A) | Ticked by | At |
@@ -35,7 +37,7 @@ PART OF: Pre-SDD - [Project Name]
 
 | Role | Name | Decision | At | Comments |
 |------|------|----------|----|----------|
-| Business sponsor | [Name, or Stand-in: Approver (policy, set by name, date)] | [Approved / Approved with conditions / Rejected / Not applicable: reason] | [UTC] | [Comments] |
+| Business sponsor | [Name, or Stand-in: Approver (policy, set by name, date)] | [Approved / Approved with conditions / Rejected / Not applicable: reason / Not signed] | [UTC] | [Counted / Not counted][, stand-in] |
 
 **Conditions**
 

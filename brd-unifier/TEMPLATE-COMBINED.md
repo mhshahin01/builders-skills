@@ -394,7 +394,7 @@ All detailed use cases follow this structure:
 
 ## Technical Inputs for the SDD
 
-<!-- Optional. If the source material states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The Pre-SDD reads this section for shape and the SDD for products. Remove if the source had none. -->
+<!-- Optional. If the source material states technical mandates - named technologies, protocols, architecture rules, concrete performance targets - park them here VERBATIM so nothing is lost. The Pre-SDD reads this section for shape and for any number it states, and the SDD for products. Remove if the source had none. -->
 
 | Source Statement (verbatim) | Source Location | Relevant To |
 |-----------------------------|-----------------|-------------|

@@ -32,7 +32,7 @@ AUDIENCE: sdd-unifier (the Software Architect). It reads this chunk first, then 
 
 - **G3 Approved or Approved with conditions** (authorized `Yes`, and the master's gate line does not read `Review`): load this Pre-SDD and lock every item in § 12.2.
 - **Any other G3 status** (`Not signed`, `Blocked`, or `Review`): the Pre-SDD is not signed. Do not load it. Stop, and raise a handoff request to the E2E Architect (`pre-sdd-unifier`) on `unifier-status.md` that lists what G3 still needs (chunk 11 § 11.1).
-- A content change after G3 sends G3 back to `Review` until every applicable role signs again; until then the SDD treats the Pre-SDD as not signed.
+- A content change after G3 sends G3 back to `Review` until every applicable role signs again; until then the SDD treats the new version as not signed: a new SDD waits, and an SDD that loaded an earlier signed version keeps that version locked.
 
 ## 12.2 Locked Items
 

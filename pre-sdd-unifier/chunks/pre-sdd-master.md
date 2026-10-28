@@ -148,7 +148,7 @@ MAINTENANCE: Written at setup (SKILL.md step 5), right after `cli.mjs new`, with
 | [[KEY] 04 - Scope & Personas](../brd-[brd-slug]/04-scope-and-personas.md) | [01 - Business Brief](./01-business-brief.md), [03a](./03a-register-business.md) | Scope and personas pre-fill BUS-02, BUS-03, BUS-06 |
 | [[KEY] 08 - Integrations](../brd-[brd-slug]/08-integrations.md) | [03f - Integration](./03f-register-integration.md) | Partners and purpose pre-fill the INT rows |
 | [[KEY] 10 - NFRs](../brd-[brd-slug]/10-nfrs.md) | [03b](./03b-register-capacity.md), [03c](./03c-register-reliability.md), [04](./04-targets-and-calculations.md) | Business expectations become settled targets and calculations |
-| [[KEY] 12 - Technical Inputs for the SDD](../brd-[brd-slug]/12-appendix-and-wishlist.md) | [02](./02-classification-and-path.md), [03a-03h](./03a-register-business.md) | Technical mandates pre-fill the classification and the register, for shape only |
+| [[KEY] 12 - Technical Inputs for the SDD](../brd-[brd-slug]/12-appendix-and-wishlist.md) | [02](./02-classification-and-path.md), [03a-03h](./03a-register-business.md) | Technical mandates pre-fill the classification and the register, for shape and for any number they state, never for products |
 
 | Pre-SDD Chunk | SDD Chunk(s) | Relationship |
 |---------------|--------------|--------------|

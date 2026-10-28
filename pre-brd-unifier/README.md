@@ -15,7 +15,7 @@ The five tiers:
 | 1. Idea definition | 01-05 | Concept Sheet, Product Charter, Lean Canvas, Value Proposition Canvas, Empathy Map |
 | 2. Market and competition | 06-12 | Market Comparison, Market Sizing, PESTLE, Porter's Five Forces, EFAS, IFAS, SWOT |
 | 3. Prioritization | 13-15 | RICE, MoSCoW, OKRs |
-| 4. Strategy and planning | 16-21 | BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle, Roadmap and Project Plan |
+| 4. Strategy and planning | 16-21 | BCG Matrix, Ansoff Matrix, VRIO, Product Strategy Canvas, Product Lifecycle, Roadmap, Project Plan and Go-To-Market |
 | 5. Synthesis | 22 | Executive Summary Scoreboard with composite score and go/no-go thresholds |
 
 Output is Markdown, either as a chunked folder (the default) or one combined file. A styled `.xlsx` export is produced only on explicit request, after the user approves the Markdown.

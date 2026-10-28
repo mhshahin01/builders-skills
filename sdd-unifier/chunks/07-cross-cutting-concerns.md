@@ -12,6 +12,7 @@ PART OF: SDD - [Project Name]
 <!--
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
 (§17.X, chunks 13x) and the override must be justified there.
+With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)).
 -->
 
 ## 11.1 DB Modeling (Default)

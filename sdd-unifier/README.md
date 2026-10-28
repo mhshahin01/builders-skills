@@ -78,7 +78,7 @@ Invocation prefix depends on the agent: `/sdd-unifier chunks` in Claude Code, `$
 - Combined mode: `./SDD-[ProjectName]-v[X.X].md` matching `TEMPLATE-COMBINED.md`.
 - Optional: `SDD-[ProjectName]-v[X.X]-MERGED.md` alongside the chunks when the user asks to merge.
 - On request, once the e2e gate is open: `20-for-ppt.md` in `./sdd-[project-slug]/` (also in combined mode), the architecture deck brief. It is never merged, and the master's Deck brief line (chunks mode) holds its state.
-- `decision-log.md` in `./sdd-[project-slug]/`: the decision register (architecture questionnaire, ecosystem walkthrough, clarification Q&A, settled markers, business review points, who decided what and when). Created on first use, never merged; the chunks and ADRs carry only the settled design.
+- `decision-log.md` in `./sdd-[project-slug]/`: the decision register (architecture questionnaire, ecosystem walkthrough, the Pre-SDD record, clarification Q&A, settled markers, business review points, who decided what and when). Created on first use, never merged; the chunks and ADRs carry only the settled design.
 - All diagrams are inline Mermaid with a short prose summary; a Miro board is created via the Miro MCP only on explicit request, never in a light run, and its link is additive.
 
 ### Reference files

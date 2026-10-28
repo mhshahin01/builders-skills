@@ -21,8 +21,8 @@ This README is for a maintainer of the skill: how it is built, where its version
 | Engine 3.0, `studio/src/engine.js` | Complete: register and entries, patches, the state gate, defaults and derivations, calculations, DR per failure scope, options, validation, gates, blueprint 2.0.0, fragments, save and preview files, and the helpers the page reads |
 | CLI, `studio/cli.mjs` | Complete: `new`, `derive`, `compute`, `validate`, `unwrap`, `diff`, `embed`, `--version` |
 | Studio 3.0 page, `studio/src/ui.js`, `shell.html`, `style.css` | Complete (Phase 3): stages 1 to 4 on the register; it opens filled from the embedded state; Import reads a save file, a 3.0 project state, a preview ZIP, or a Studio v2.2 project file or ZIP; Save writes the save file; the preview ZIP is labelled not of record. The v2.2 layer is gone from the engine. Checked by hand in `studio/tests/MANUAL-CHECK.md` |
-| `## Status board` section of SKILL.md | Not yet added (it lands with the status board work, Task 5.1) |
-| Phases 5 and onward | Not yet done: the status board and role lines, the changes to the other chain skills, the fixtures, the root README, the company files, the final checks, and the merge |
+| `## Status board` section of SKILL.md | Complete (Task 5.1): the same section as in the other seven chain skills |
+| Phases 8 and onward | Not yet done: the company files, the final checks, and the merge |
 
 **Known limitation** (accepted by the owner at stop C2): a zero RTO on `az` beside a remote failure scope over-reports `CONFLICT-zeroRTO-topology@az`, because the topology order ranks regional above multi-AZ active. A topology override of `active`, or a relaxed `az` RTO, clears it.
 

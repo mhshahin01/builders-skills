@@ -64,11 +64,11 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 ## Pre-SDD record
 
-[One entry per Pre-SDD event, newest last (SKILL.md step 2a and step 10): a version loaded, an offer made, an offer declined, a request raised to the E2E Architect. The Source Pre-SDD row of chunk 00 carries the current state; this section keeps how it got there.]
+[One entry per Pre-SDD event, newest last (SKILL.md step 2a and step 10): a version loaded, an offer made, an offer declined, a request raised to the E2E Architect, an answer from it. The Source Pre-SDD row of chunk 00 carries the current state; this section keeps how it got there.]
 
-**[Loaded | Offered | Declined | Requested], [YYYY-MM-DD]:** [For a load: `PSDD v[X.X]`, the gate its master showed (`G3 Approved` or `G3 Approved with conditions`), the signers, and what the load changed (the locked items applied by SDD place, the conditions turned into §4 risks, the open items raised to the E2E Architect by OI ID); for a new version, the version it replaces. For an offer: the version offered and why (an SDD built before the Pre-SDD check, or a newer version). For a decline: who answered and the date; the offer is not repeated (§ Companion file rules). For a request: its HR-NNN, its kind (create, sign, or a disagreement with a locked item), and the blockers or the open item it names.]
+**[Loaded | Offered | Declined | Requested | Answered], [YYYY-MM-DD]:** [For a load: `PSDD v[X.X]`, the gate its master showed (`G3 Approved` or `G3 Approved with conditions`), the signers, and what the load changed (the locked items applied by SDD place, the conditions turned into §4 risks, the open items raised to the E2E Architect by OI ID); for a new version, the version it replaces. For an offer: the version offered and why (an SDD built before the Pre-SDD check, or a newer version). For a decline: who answered and the date; the offer is not repeated (§ Companion file rules). For a request: its HR-NNN, its kind (create, sign, or a disagreement with a locked item), and the blockers or the open item it names. For an answer: its HR-NNN, the open items it names, and the E2E Architect's decision (a new version, recorded as Loaded; or the item kept, with the reason).]
 
-**Rule home:** [[00 § Document Lineage](./00-cover-and-changelog.md#document-lineage), for a load; none for an offer, a decline, or a request]
+**Rule home:** [[00 § Document Lineage](./00-cover-and-changelog.md#document-lineage), for a load; none for an offer, a decline, a request, or an answer]
 
 ## Clarification register
 

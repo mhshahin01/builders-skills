@@ -46,7 +46,7 @@ flowchart LR
 | 3. Pre-solution design | `pre-sdd-unifier` | Which numbers and shape must the design meet? | One or more finished BRDs of one system, and optionally a Studio v2.2 project file or ZIP to import | `./pre-sdd-[slug]/`: master, chunks 00-13 with 03a-03h (06 only for a brownfield or mixed change, 08 only with the migration overlay), `decision-log.md`, and `studio/` (project state, Studio page, blueprint, fragments, diagrams); a `quick` run writes 00, 01, 02, 03a-03h, and 10 | The input path (web or prompt) and the output mode; each register group, with one confirm per group; the G1 and G2 review stops; on every open item; at the G3 sign-off, where only people sign, per role |
 | 4. Solution design | `sdd-unifier` | How does the whole system work? | One or more finished BRDs with their G3-signed Pre-SDD, or an SDD to reshape | `./sdd-[slug]/`: master, chunks 00-18 (with 05a, infrastructure and network), one `13x` chunk per service or module; 19 once unlocked; 20 (deck brief) on request once 19 exists | Before any chunk, until a G3-signed Pre-SDD of its BRDs exists; project type, architecture, and ecosystem choices; after parts 1 and 2; on every open item; at the e2e gate (E1-E4) |
 | 5. Detailed design | `lld-unifier` | How is each service built? | An SDD, a codebase, or both | `./lld-[slug]/`: master, chunks 00-18 with 03a (14 only with a UI), one `04-implementation/<service>.md` per service; 19 (deck brief) on request once 18 is cleared | The direction question (from-sdd, from-code, hybrid), always asked; the stack approval; after parts 1 and 2 of a first build; on an existing LLD, one refresh offer for SDD and BRD changes |
-| Review | `business-reviewer-unifier` | Does the document chain hold up? | The documents to challenge | `review-comments-tracker.md` and `review-panel-findings.md` in the project root, plus the decided changes in the reviewed documents | On every review point, one at a time |
+| 6. Review | `business-reviewer-unifier` | Does the document chain hold up? | The documents to challenge | `review-comments-tracker.md` and `review-panel-findings.md` in the project root, plus the decided changes in the reviewed documents | On every review point, one at a time |
 | 7. Implementation | `impl-tracker-unifier` | Does the code match the documents, task by task? | An approved LLD with its SDD and BRDs, and the code repository | `./tracking/` in the code repo: config and baseline, task index, plans, task and slice cards, gaps, ownership, lessons, changes, journal, pre-flight and audit reports | Before writing a plan and before each wave; on a dependency override (only your own words count) or a double-build clash; on a contract or direction change; before moving the doc baseline; before a push, unless you set delivery to `auto` |
 
 ---
@@ -85,7 +85,7 @@ The six document skills (stages 1-6) share a house style, with these output and 
   | Developer / software engineer | Software Development & Delivery | `impl-tracker-unifier` |
   | Mentor / assistant | Software Development & Delivery | `tutorialize-unifier` |
 
-- **The status board.** `unifier-status.md` in the project root (the folder that holds `./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`) is the one shared file for handoffs. The first chain skill that runs creates it, and nobody deletes it. It holds a `Run mode:` line, an Employees table (one row per employee: folder, state, version, next step, and what it waits on), and a Handoff requests table (`HR-NNN`, from, to, request, why, state, link, with UTC times). Each skill writes only its own row and the requests it raises; the receiver alone sets a request `Accepted`, `Done`, or `Declined`. One request stands per blocker: a raiser reuses its own pending request instead of raising a second one. In `solo` mode a hop offers to start the next skill in the same session ("now" or "later"); in `team` mode it raises the request and stops. Only the user changes the run mode. The rules are one `## Status board` section, word for word the same in every chain skill's `SKILL.md`; `impl-tracker-unifier` writes its row from the code repo through the docs root it records, and `tutorialize-unifier` only reads the board.
+- **The status board.** `unifier-status.md` in the project root (the folder that holds `./pre-brd-*`, `./brd-*`, `./pre-sdd-*`, `./sdd-*`, `./lld-*`) is the one shared file for handoffs. The first chain skill that runs creates it, and nobody deletes it. It holds a `Run mode:` line, an Employees table (one row per employee: folder, state, version, next step, and what it waits on), and a Handoff requests table (`HR-NNN`, from, to, request, why, state, link, with UTC times). Each skill writes only its own row and the requests it raises; the receiver alone sets a request `Accepted`, `Done`, or `Declined`. One request stands per blocker: a raiser reuses its own pending request instead of raising a second one. In `solo` mode a hop offers to start the next skill in the same session ("now" or "later"); in `team` mode it raises the request and stops. Only the user changes the run mode. The rules are one `## Status board` section, word for word the same in every chain skill's `SKILL.md`; `impl-tracker-unifier` writes its row from the code repo through the docs root it records, and `tutorialize-unifier` only reads the board.
 
 ---
 
@@ -456,7 +456,7 @@ flowchart LR
 | 09 | `09-decisions.md` | Requirement-to-consequence trace, decision tree (`DT-01` to `DT-15`), rule trace, the Pre-SDD ADRs, the SDD ADRs it drives | Full |
 | 10 | `10-validation-risks-unknowns.md` | Blockers, conflicts, advisories, unknowns (`QD-NN`) with owner and due date, risks (`R-NN`), the hard entries still `Open` with their exceptions | Quick and full |
 | 11 | `11-gate-and-sign-off.md` | G0 to G3, the G3 checklist (`G3-01` to `G3-14`), the sign-off register per role, conditions, exceptions, "SDD initiation authorized by" | Full |
-| 12 | `12-sdd-handoff-guide.md` | The contract `sdd-unifier` reads: version, gate, and signers; the lock list (each locked entry with what it measures, its value, its owner, and its SDD landings), the calculations §18 cites, and the landing table; what is left to the SDD; conditions, exceptions, and unknowns; the open-item rule; the `PSDD/<ID>` citation format | Full |
+| 12 | `12-sdd-handoff-guide.md` | The contract `sdd-unifier` reads: version, gate, and signers; the lock list (each locked entry with what it measures, its value, its status, its owner, and its SDD landings), the calculations §18 cites, and the landing table; what is left to the SDD; conditions, exceptions, and unknowns; the open-item rule; the `PSDD/<ID>` citation format | Full |
 | 13 | `13-open-items-and-clarifications.md` | Reviewer findings `OI-NN`, each with options, a Recommended Answer that an engine operation can apply, and the Why | Full, reviewer |
 | - | `decision-log.md` | Proposal record; Clarification, Marker, and Business review registers; walkthrough and delegation history; Sign-off record (companion file, never merged) | As needed |
 | - | `studio/` | `project-state.json` (the project state of record), `pre-sdd-studio.html` (the Studio with this project inside), and the engine's output: `model.json`, `blueprint.json` and `blueprint.yaml`, `fragments/`, `diagrams/` | From setup |
@@ -515,7 +515,7 @@ flowchart LR
 
 | # | File | Sections | Content | Written |
 | - | ---- | -------- | ------- | ------- |
-| 00 | `00-cover-and-changelog.md` | Cover | Title block, Document Lineage (source BRDs with keys; child LLDs with the SDD version each reflects), Changes Log, indexes | Part 1 |
+| 00 | `00-cover-and-changelog.md` | Cover | Title block, Document Lineage (source BRDs with keys; the source Pre-SDD, key `PSDD`; child LLDs with the SDD version each reflects), Changes Log, indexes | Part 1 |
 | 01 | `01-executive-summary-scope-risks.md` | §1-§5 | Executive summary (with Project Type), scope, assumptions, risks, glossary | Part 1 |
 | 02 | `02-ecosystem-overview.md` | §6 | Full platform stack and ecosystem-level rules, from the ecosystem selection, each row with its Status and Source, plus the Integration landscape of the external systems | Part 1 |
 | 03 | `03-users-and-use-cases.md` | §7 | Actors, use case diagram, §7.3 Use Case Traceability (one row per BRD use case) | Part 1 (§7.3 columns completed in part 2) |
@@ -650,7 +650,7 @@ flowchart LR
 
 **Reference files:** `chunking.md`, `modes.md`, `parts-mode.md`, `transform-detection.md`, `sdd-to-lld.md`, `code-extraction.md`, `hybrid-drift.md`, `pattern-rules.md`, `confidence-rules.md`, `lld-quality.md`, `mermaid-diagrams.md`, `mermaid-syntax.md`, `agent-orchestration.md`, `decision-log.md`, `eco-system-template.md`, `deck-brief-rules.md`, `TEMPLATE-COMBINED.md`.
 
-**Feeds into:** implementation, including SpecKit-driven and Claude Code-assisted builds.
+**Feeds into:** implementation, including SpecKit-driven and Claude Code-assisted builds; the Tech Lead raises `Start or sync the implementation tracker for LLD <slug> vX.X` to the Developer (`impl-tracker-unifier`).
 
 ---
 
@@ -708,7 +708,7 @@ A changed BRD or SDD gets one minor version bump and one Changes Log row for the
 
 | File | Holds |
 | ---- | ----- |
-| `config.md` | Doc paths, feature keys, the version baseline, audit and pre-flight commands, delivery mode, slice order, standing rules from promoted lessons |
+| `config.md` | Doc paths, the status board path, feature keys, the version baseline, audit and pre-flight commands, delivery mode, slice order, standing rules from promoted lessons |
 | `index.md` | One generated line per task, with its status; `next`, `status`, and the Stop hook read it |
 | `KEY/plan.md`, `KEY/tasks/`, `KEY/slices/` | The plan (phases or slices, dependency graph, coverage, planning decisions), one card per task, one card per slice |
 | `gaps.md`, `ownership.md` | The gap register (`KEY/GAP-NNN`, typed and routed to an owner) and the ownership index |

@@ -219,11 +219,11 @@ Markdown with `<!-- target: ... -->` tags. The skill walks the output, splits by
 
 Once both agents have returned, the skill:
 
-1. **Validates Phase 1 output structure**: checks that every ask briefed has its section (all 17 in a full run; sections 14-17 may read "None found"). A targeted run, such as ask 17 alone to add chunk 03a to an existing LLD (SKILL.md step 9), briefs and checks only the asks it needs. If any are missing, re-dispatches with a follow-up prompt.
+1. **Validates Phase 1 output structure**: checks that every ask briefed has its section. In a full run, that is all 17 sections. Sections 14-17 may read "None found". A targeted run, such as ask 17 alone to add chunk 03a to an existing LLD (SKILL.md step 9), briefs and checks only the asks it needs. If any are missing, it re-dispatches with a follow-up prompt.
 2. **Validates Phase 2 output tags**: every block has a `<!-- target: ... -->` tag. Untagged blocks are dropped with a warning.
 3. **Routes Phase 2 blocks into chunks**: splits by tag, walks the chunk files, inserts content at the matching `## section` heading.
 4. **Applies confidence flags**: per `confidence-rules.md`. If Phase 2 already flagged a block, carry the flag. If Phase 2 missed flagging a low-confidence block, the skill applies its own based on the source-of-evidence heuristics.
-5. **Traces to BRD use cases** when an SDD was given: matches entry points, routes, specs, and use-case markers per `code-extraction.md` § Tracing to BRD use cases, then runs SKILL.md step 6a, and registers in the SDD per step 6c.
+5. **Traces to BRD use cases** when an SDD was given. In that case, it matches entry points, routes, specs, and use-case markers per `code-extraction.md` § Tracing to BRD use cases. Then it runs SKILL.md step 6a and registers in the SDD per step 6c.
 6. **Generates `15-open-questions.md`**: walks all chunks, greps for `> Confirm:`, `> TODO:`, and `⚠ policy` markers (hybrid: also `⚠ drift`, `🆕 code-only`, `⛔ sdd-only`), and indexes each in its § 18.x table.
 7. **Runs SKILL.md steps 6b (Specs) and 7 (cleared-context review)**, then surfaces the handoff summary.
 

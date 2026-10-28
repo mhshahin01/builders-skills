@@ -1,6 +1,6 @@
 # Decision Log - the decision record companion file
 
-`decision-log.md` is the single home for the decision story behind an LLD: the stack approval and its overrides, the clarification answers, which option was chosen, who decided, when, what was delegated, and what was superseded. The content chunks and the service files hold only the settled design in plain present tense; this file holds why and how it was decided.
+`decision-log.md` is the single home for the decision story behind an LLD: the stack approval and its overrides, the clarification answers, which option was chosen, who decided, when, what was delegated, and what was superseded. The content chunks and the service files hold only the settled design in plain present tense. This file holds why and how it was decided.
 
 This file is the reference for the log: its structure and its rules. The log the skill writes is a separate file, `./lld-[project-slug]/decision-log.md`, in the LLD folder.
 
@@ -9,15 +9,15 @@ This file is the reference for the log: its structure and its rules. The log the
 ## Companion file rules
 
 - Lives in `./lld-[project-slug]/`, next to `[project-slug]-lld-master.md`. In COMBINED mode it is still written to `./lld-[project-slug]/decision-log.md` (the folder is created for it), and the handoff names its path.
-- Created on first use: when the first decision is recorded (the table below). Every stack approval is such a decision, an Approve all included: its Outcome line creates the log, so a later run finds the rows it confirmed (SKILL.md step 3a). On a first build, a record made before the LLD is written (the stack approval, an answer policy's delegation record) is held and written with the LLD's first files. Do not write an empty log.
+- Created on first use: when the first decision is recorded (the table below). Every stack approval is such a decision, including Approve all. Its Outcome line creates the log, so a later run finds the rows it confirmed (SKILL.md step 3a). On a first build, a record made before the LLD is written is held and written with the LLD's first files. Examples are the stack approval and an answer policy's delegation record. Do not write an empty log.
 - An LLD written before this file existed has no log and stays valid. The first request that records a decision creates it, links it from the master, and names it in the handoff. Nothing earlier is back-filled: earlier answers stay in the chunk 18 Resolution Log and the Changes Log.
-- The header comment `TYPE: Decision Log` identifies the log. A file of the same name without it (for example a hand-kept run record) is not this log: the skill never overwrites it or appends to it, and asks the user where the log should go.
+- The header comment `TYPE: Decision Log` identifies the log. A file of the same name without it (for example a hand-kept run record) is not this log. The skill never overwrites that file or appends to it, and asks the user where the log should go.
 - Linked from `[project-slug]-lld-master.md` once it exists.
 - Never merged into the merged or combined LLD (`chunking.md` § Merge handling). It is decision history, not design text.
 - Entries are append-only in spirit: a superseded decision keeps its record, and the later record says it supersedes the earlier one.
 - Writing a record is not a content change (SKILL.md § Output conventions, Versions). On any rewrite, the `VERSION` header carries the current LLD version.
 - Every record that settled a design point carries a `Rule home:` link to the section that now states it. The anchor must work. In COMBINED mode the link points into the combined file (`../LLD-[ProjectName]-v[X.X].md#anchor`).
-- Every BRD ID carries its key and every use case is a link to its BRD heading, as in the chunks (`sdd-to-lld.md` § Use-case traceability › The link). Links are written from this file's location: `../sdd-[sdd-slug]/...` for the SDD, `../brd-[brd-slug]/...` for a BRD, `./NN-name.md` for a chunk, and `./04-implementation/[service-slug].md` for a service file. A flag quoted in a record is written in backticks, so the flag count (SKILL.md step 8) never counts it.
+- Every BRD ID carries its key and every use case is a link to its BRD heading, as in the chunks (`sdd-to-lld.md` § Use-case traceability › The link). Links are written from this file's location. Use `../sdd-[sdd-slug]/...` for the SDD, `../brd-[brd-slug]/...` for a BRD, `./NN-name.md` for a chunk, and `./04-implementation/[service-slug].md` for a service file. A flag quoted in a record is written in backticks, so the flag count (SKILL.md step 8) never counts it.
 
 **What is recorded, and where.**
 
@@ -35,13 +35,21 @@ Which items get no register entry, and so keep only their chunk 18 entry, is sta
 
 ## Relationship with design rationale (one fact, one home)
 
-The SDD's ADRs stay in the SDD. The LLD cites them by link and never restates them (SKILL.md principle 13). A rationale that the chunks already carry (a pattern's rationale in a service file's § 7.4, a Source cell) is design content: it stays in the chunk, in present tense. When a decision produced such text, the record states only the process (the question, the options offered, who chose, when, what it supersedes) and links the text as its `Rule home:`, so the reason lives in the chunk only. When no chunk line carries the reason (a stack override, an accepted open item), the reason is written in the record.
+The SDD's ADRs stay in the SDD. The LLD cites them by link and never restates them (SKILL.md principle 13). A rationale that the chunks already carry (a pattern's rationale in a service file's § 7.4, a Source cell) is design content: it stays in the chunk, in present tense. When a decision produced such text, the record states only the process and links the text as its `Rule home:`. The process is the question, the options offered, who chose, when, and what it supersedes. In that case the reason lives in the chunk only. When no chunk line carries the reason (a stack override, an accepted open item), the reason is written in the record.
 
 ## What never goes here
 
-Current-state design (the chunks and the service files), SDD content and ADR text (cited from the SDD), open items and their statuses (chunk 18), flags still open and questions still waiting for their owner (chunk 15), drift markers and policy findings (chunk 15), the Changes Log (chunk 00), and the upstream state the trace was built from (16 § 19.1). The log records decisions and process; the chunks state the outcome.
+- Current-state design (the chunks and the service files).
+- SDD content and ADR text (cited from the SDD).
+- Open items and their statuses (chunk 18).
+- Flags still open and questions still waiting for their owner (chunk 15).
+- Drift markers and policy findings (chunk 15).
+- The Changes Log (chunk 00).
+- The upstream state the trace was built from (16 § 19.1).
 
-For a partial answer, record the applied part and the exact open remainder with its named owner and location. The flag is narrowed to the remainder. A fact only a person or a provider can give stays explicit until answered; a partial acceptance is not authority to remove the whole flag.
+The log records decisions and process; the chunks state the outcome.
+
+For a partial answer, record the applied part and the exact open remainder with its named owner and location. The flag is narrowed to the remainder. A fact only a person or a provider can give stays explicit until answered. A partial acceptance is not authority to remove the whole flag.
 
 ---
 
@@ -126,8 +134,8 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 ## Interaction with the chunks
 
-- Applying a decision updates the chunk text as plain design in present tense ("Refund events are published through the transactional outbox") and removes the `> Confirm:` or `> TODO:` flag it settles; a partial answer narrows the flag to its open remainder instead. The chunk never keeps a "resolved on [date]" stamp, an option letter, or a progress note (SKILL.md step 7, Answers in the same update).
+- Applying a decision updates the chunk text as plain design in present tense ("Refund events are published through the transactional outbox") and removes the `> Confirm:` or `> TODO:` flag it settles. A partial answer narrows the flag to its open remainder instead. The chunk never keeps a "resolved on [date]" stamp, an option letter, or a progress note (SKILL.md step 7, Answers in the same update).
 - Compact references to stable IDs (OI-NN, OQ-NN, and a use case as its keyed link `[KEY/UC-NN](...)`: `sdd-to-lld.md` § Use-case traceability › The link) inside design text and table cells are allowed in the chunks; storytelling is not.
-- A §6.3 or §6.5.1 Source cell keeps its provenance label, one from the one list in `chunks/03-architecture.md` § 6.3 Runtime Stack (its Convention); a default nothing has confirmed reads `LLD default`. That label is current-state provenance, not narrative, and stays in the chunk.
+- A §6.3 or §6.5.1 Source cell keeps its provenance label, one from the one list in `chunks/03-architecture.md` § 6.3 Runtime Stack (its Convention). A default nothing has confirmed reads `LLD default`. That label is current-state provenance, not narrative, and stays in the chunk.
 - Chunk 18 keeps each item's current status line and its Resolution Log row, which give the outcome and where it was applied. The decision record behind them, who decided what and why, is kept here.
 - `[project-slug]-lld-master.md` links this log; it does not duplicate its records.

@@ -1,8 +1,8 @@
 # Handoff Guide: chunk 12, the contract the SDD reads
 
-Chunk 12 (`12-sdd-handoff-guide.md`) is the contract between this Pre-SDD and the SDD that builds on it. `sdd-unifier` (the Software Architect) reads chunk 12 first, then the master's gate line, then chunk 11, and nothing else of this skill: never these rule files. So chunk 12 is self-contained. Everything the SDD needs to load, lock, cite, and challenge the Pre-SDD is in it, in words a reader who has never seen this skill understands.
+Chunk 12 (`12-sdd-handoff-guide.md`) is the contract between this Pre-SDD and the SDD that builds on it. `sdd-unifier` (the Software Architect) reads chunk 12 first, then the master's gate line, then chunk 11. It reads nothing else of this skill, never these rule files. So chunk 12 is self-contained. Everything the SDD needs to load, lock, cite, and challenge the Pre-SDD is in it. It is written in words a reader who has never seen this skill understands.
 
-The template is `chunks/12-sdd-handoff-guide.md`; in COMBINED mode, the § 12 section of `TEMPLATE-COMBINED.md`.
+The template is `chunks/12-sdd-handoff-guide.md`. In COMBINED mode, it is the § 12 section of `TEMPLATE-COMBINED.md`.
 
 ---
 
@@ -29,19 +29,19 @@ The template is `chunks/12-sdd-handoff-guide.md`; in COMBINED mode, the § 12 se
 | 12.6 When the SDD Disagrees | The open-item rule | The template |
 | 12.7 Citing This Pre-SDD | `PSDD/<ID>` with a link, per kind of ID | The template, with this Pre-SDD's slug |
 
-Every value in chunk 12 comes from an engine fragment or the master; none is restated from memory or worked out by hand. The Gate row in § 12.1 holds the engine's gate label only, as the master's gate line opens with it; the G3 status and the authorization have their own rows, and the master keeps the full gate line (label, G3 status, and authorization).
+Every value in chunk 12 comes from an engine fragment or the master. None is restated from memory or worked out by hand. The Gate row in § 12.1 holds the engine's gate label only, as the master's gate line opens with it. The G3 status and the authorization have their own rows. The master keeps the full gate line (label, G3 status, and authorization).
 
 ---
 
 ## The lock
 
-Once G3 is signed (`Approved` or `Approved with conditions`, and the master's gate line does not read `Review`), the SDD loads the Pre-SDD and locks every item the lock list names. A Pre-SDD that exists but is not signed makes the SDD stop, wait, and raise a request that lists what G3 still needs. A content change after G3 sends G3 back to `Review`; until every applicable role signs again, the SDD treats the new version as not signed, and an SDD that loaded an earlier signed version keeps that version locked.
+Once G3 is signed (`Approved` or `Approved with conditions`, and the master's gate line does not read `Review`), the SDD loads the Pre-SDD and locks every item the lock list names. A Pre-SDD that exists but is not signed makes the SDD stop, wait, and raise a request that lists what G3 still needs. A content change after G3 sends G3 back to `Review`. Until every applicable role signs again, the SDD treats the new version as not signed, and an SDD that loaded an earlier signed version keeps that version locked.
 
 **The lock is on numbers and shape, never on the SDD's own questions.** The SDD keeps its Project Type question, its questionnaire (Q1 to Q8), its ecosystem selection, and its design. The Pre-SDD's items arrive as locked evidence and constraints in those places.
 
 ### The landing map
 
-The engine's landing map (`LANDINGS` in `studio/src/engine.js`) says which rows are locked and where each lands. The locked-items fragment renders it twice in § 12.2: per entry (its "Lands in the SDD" column), and as the landing table, each SDD place with the rows that land there. So neither this file nor chunk 12 copies the rows by hand; § 12.3 keeps only how the SDD applies each place, and the reviewer checks that it names each place of the fragment's landing table (`review-and-open-items.md`):
+The engine's landing map (`LANDINGS` in `studio/src/engine.js`) says which rows are locked and where each lands. The locked-items fragment renders it twice in § 12.2: per entry (its "Lands in the SDD" column), and as the landing table, each SDD place with the rows that land there. So neither this file nor chunk 12 copies the rows by hand. § 12.3 keeps only how the SDD applies each place. The reviewer checks that it names each place of the fragment's landing table (`review-and-open-items.md`):
 
 | SDD place | How the SDD applies it |
 |---|---|
@@ -49,12 +49,12 @@ The engine's landing map (`LANDINGS` in `studio/src/engine.js`) says which rows 
 | Q3 | The evidence for Q3 (load and availability), cited as `PSDD/<ID>`. Q3 stays the SDD's choice. |
 | Q7 | Q7 (multi-tenancy model) is chosen within the isolation level (below). |
 | Q8 | The hosting target is locked: cloud, on-prem, or hybrid, and a provider only when the business made it a hard constraint. The runtime option is the SDD's. |
-| §6 Notes | Each affected ecosystem row carries the constraint in its Notes; the data-store row carries the store kind of each data workload (DAT-01), and the product stays the SDD's. A product that breaks one becomes an open item. |
+| §6 Notes | Each affected ecosystem row carries the constraint in its Notes. The data-store row carries the store kind of each data workload (DAT-01), and the product stays the SDD's. A product that breaks one becomes an open item. |
 | §8.3 | The high-level architecture follows the hosting, data, integration, and network shape: the data workloads and their store kind (DAT-01), and the external dependencies with the partner quotas, latencies, SLAs, maintenance windows, and rate limits they impose (INT-03). |
-| §8.6 | The infrastructure architecture follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations. §8.6.4 is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity; the §18.5 row of a recovery NFR links there and restates neither figure. The storage redundancy and replication meet the durability and correctness targets (REL-10). |
+| §8.6 | The infrastructure architecture follows the hosting target, the topology, the availability targets, the failure scopes, the residency, and the client and edge locations. §8.6.4 is the home of the RTO and RPO per failure scope, with the DR strategy of each scope and the restore granularity. The §18.5 row of a recovery NFR links there and restates neither figure. The storage redundancy and replication meet the durability and correctness targets (REL-10). |
 | §8.7 | The network architecture follows the network constraints: address ranges and private connectivity, allow-lists, firewall, DNS and proxy dependencies, client and edge locations, where residency lets data flow, the threat posture, encryption in transit, and privileged access. |
 | §11 | The cross-cutting defaults follow the DR strategy, the classification, residency, retention, the isolation level, the security obligations, the business prohibitions and obligations (BUS-07, BUS-08), and the durability and correctness targets (REL-10). |
-| §18 | §18 cites the `PSDD/CALC-NN` values from the calculations table of § 12.2, each linked to its chunk 04 anchor, and never recomputes them. It sizes within the partner quotas and latencies (INT-03) and for the peak simultaneously active users (CAP-03), which no calculation reads, and its latency targets are measured where CAP-08 says, with what counts as a failure. |
+| §18 | §18 cites the `PSDD/CALC-NN` values from the calculations table of § 12.2, each linked to its chunk 04 anchor, and never recomputes them. It sizes within the partner quotas and latencies (INT-03) and for the peak simultaneously active users (CAP-03), which no calculation reads. Its latency targets are measured where CAP-08 says, with what counts as a failure. |
 | §18.5 | The settled targets for the BRD NFRs. A latency target states its measurement point and what counts as a failure (CAP-08); a durability or correctness NFR takes its target from REL-10. |
 | §19 | The environments follow the DR strategy and the environment list. |
 | §20 | The runbook follows the DR strategy, the recovery sequence, the failover authority, and the restore granularity. |
@@ -89,7 +89,7 @@ DAT-07 holds one of five isolation levels. Each allows these SDD Q7 options:
 | Network | The connectivity shape, address constraints | Network design, firewall rules, routes |
 | Cost | Budget envelope, TCO horizon, option comparison with approved weights | Cost per component |
 
-The Standard's ADR set splits the same way. ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are Pre-SDD decisions (chunk 09 § 9.4), locked with the rest; so is ADR-MIG-001 (workload 7R and transition) when the migration overlay applies, and it does not exist otherwise. ADR-PERF-001, ADR-INT-001, and ADR-IAM-001 are SDD ADRs: chunk 09 § 9.5 names the answers that drive them, and the SDD writes them, citing those answers as `PSDD/<ID>`.
+The Standard's ADR set splits the same way. ADR-DR-001, ADR-DATA-001, and the hosting part of ADR-PLATFORM-001 are Pre-SDD decisions (chunk 09 § 9.4), locked with the rest. So is ADR-MIG-001 (workload 7R and transition) when the migration overlay applies. It does not exist otherwise. ADR-PERF-001, ADR-INT-001, and ADR-IAM-001 are SDD ADRs. Chunk 09 § 9.5 names the answers that drive them. The SDD writes them, citing those answers as `PSDD/<ID>`.
 
 Chunk 12 never names a product, a version, or the architecture style, and never pre-decides an SDD question.
 
@@ -101,7 +101,7 @@ Chunk 12 never names a product, a version, or the architecture style, and never 
 - **Exceptions** (`EXC-NN`): only a named person grants one, never a stand-in, an answer policy, a fixture owner, or the skill. Chunk 12 lists each with its entry, who granted it, its expiry, and its review date. An expired exception no longer lifts its entry, and the engine's gate shows it.
 - **Unknowns** (`QD-NN`): every open unknown that did not block G3, with its question, its entry, its owner, and its due date. The SDD carries each as an open question and never fills it.
 
-An entry the lock list shows as `TBD` or `Open` is locked as open: the lock list says what it measures and names its owner, and the SDD designs around it, links it to its register row through its `PSDD/<ID>` link (where its due date stands), and never invents a value for it.
+An entry the lock list shows as `TBD` or `Open` is locked as open. For such an entry, the lock list says what it measures and names its owner. The SDD designs around such an entry, links it to its register row through its `PSDD/<ID>` link (where its due date stands), and never invents a value for it.
 
 ---
 
@@ -112,7 +112,7 @@ The SDD never edits a locked item and never edits the Pre-SDD. A disagreement (a
 1. an open item in the SDD's chunk 18, with `Owner: E2E Architect (pre-sdd-unifier)`, citing the item as `PSDD/<ID>`; the SDD's e2e gate treats it like any other open item;
 2. a handoff request to the E2E Architect on `unifier-status.md`, naming the open item.
 
-This skill answers it through SKILL.md § Later requests: the E2E Architect decides with the owner, a change runs one update (new version, delta review, G3 again), and a request goes back to the Software Architect, "Pre-SDD has a new version", naming the open item or the decision to keep the item with its reason. The SDD closes its item on its next run.
+This skill answers it through SKILL.md § Later requests. The E2E Architect decides with the owner. A change runs one update (new version, delta review, G3 again). A request goes back to the Software Architect, "Pre-SDD has a new version", naming the open item or the decision to keep the item with its reason. The SDD closes its item on its next run.
 
 ---
 

@@ -37,7 +37,17 @@ See `confidence-rules.md` for the structural-vs-semantic weighting.
 - Confidence rules (paste from `confidence-rules.md`).
 - Pattern rules (paste from `pattern-rules.md`).
 
-**Explicit asks:** the asks of the Phase 2 dispatch template in `agent-orchestration.md` (Agent 2), their single home: per-service responsibility, pseudocode for non-trivial methods, design-pattern subsections, use-case workflow narratives (headed `### KEY/UC-NN: Title` only when § Tracing to BRD use cases matched an SDD §7.3 entry point, otherwise `### Workflow: [name]`), cross-service sagas, the §5.4 dependency view, and the §6.4 operationalised style, with its confidence rules. Brief them unchanged.
+**Explicit asks:** the asks of the Phase 2 dispatch template in `agent-orchestration.md` (Agent 2), their single home. They are:
+
+- Per-service responsibility.
+- Pseudocode for non-trivial methods.
+- Design-pattern subsections.
+- Use-case workflow narratives, headed `### KEY/UC-NN: Title` only when § Tracing to BRD use cases matched an SDD §7.3 entry point, otherwise `### Workflow: [name]`.
+- Cross-service sagas.
+- The §5.4 dependency view.
+- The §6.4 operationalised style, with its confidence rules.
+
+Brief them unchanged.
 
 **Output format expected from the agent:** Markdown blocks tagged `<!-- target: <chunk>:<section> -->`, as that template defines.
 
@@ -49,7 +59,7 @@ The skill takes Phase 1 + Phase 2 outputs and routes them into the chunks:
 
 - **Structural facts** (call graph, schema, topic names, method signatures) → routed verbatim from Phase 1, no flags (high confidence).
 - **Per-service narrative** (responsibility, business logic, pattern rationale) → routed from Phase 2 with `> Confirm:` if Phase 2 flagged the inference.
-- **Pseudocode** → routed from Phase 2 verbatim. Pseudocode is medium confidence and carries `> Confirm:`. A file:line citation records where it came from, not that it is right; the flag drops only under the upgrade rules in `confidence-rules.md` (a straight-line method of 10 lines or fewer, or a passing test that exercises it).
+- **Pseudocode** → routed from Phase 2 verbatim. Pseudocode is medium confidence and carries `> Confirm:`. A file:line citation records where it came from, not that it is right. The flag drops only under the upgrade rules in `confidence-rules.md` (a straight-line method of 10 lines or fewer, or a passing test that exercises it).
 - **Diagrams** → Mermaid blocks from Phase 2, embedded inline in the chunks per `mermaid-diagrams.md`.
 
 For sections the agents cannot fill from code alone:
@@ -63,24 +73,31 @@ For sections the agents cannot fill from code alone:
 
 ## Libraries and conventions in use (03a § 6.5)
 
-Phase 1 ask 17 reports the HTTP clients in use (each client class, with file:line), the DTO style (how many DTO types are records and how many are classes), the libraries of the concerns that `03a-libraries-and-conventions.md` § 6.5.1 lists, and every other direct dependency that a service's own code calls, as the dependency manifests and call sites show them. They are structural claims: high confidence, no flag.
+Phase 1 ask 17 reports the following:
 
-1. **Fill § 6.5.1 from them.** A row's Scope names the services that use its `Use` library. Its Source cites the manifest (`manifest (<file>)`) for a dependency, and the declarations or call sites (`code (<file>:<line>)`) for a row no manifest shows: the DTOs row, and the `RestClient` row of a Spring MVC service. A direct dependency that a service's own code calls, for a concern that no row of § 6.3 or § 6.5.1 covers, gets a row of its own in § 6.5.1, with `-` in Instead of; a transitive dependency never does. Status follows the Convention under § 6.5.1.
-2. **The standard is not rewritten to match the code.** A service that uses what an `Approved` row's Instead of column names (a `RestTemplate` call, a DTO class), or that contradicts a § 6.5.2 rule, is a `⚠ policy` finding in `15-open-questions.md` § 18.6 (`pattern-rules.md` § Anti-patterns to flag); in hybrid, a row sourced from SDD §6 is `⚠ drift` instead (`hybrid-drift.md` § Section-by-section diff rules). It is a § 6.5.3 row instead when a source states the reason (an SDD section, or a decision in `decision-log.md`). The code alone never supplies a reason.
+- The HTTP clients in use (each client class, with file:line).
+- The DTO style (how many DTO types are records and how many are classes).
+- The libraries of the concerns that `03a-libraries-and-conventions.md` § 6.5.1 lists.
+- Every other direct dependency that a service's own code calls, as the dependency manifests and call sites show them.
+
+They are structural claims: high confidence, no flag.
+
+1. **Fill § 6.5.1 from them.** A row's Scope names the services that use its `Use` library. Its Source cites the manifest (`manifest (<file>)`) for a dependency. Its Source cites the declarations or call sites (`code (<file>:<line>)`) for a row no manifest shows: the DTOs row, and the `RestClient` row of a Spring MVC service. A direct dependency that a service's own code calls, for a concern that no row of § 6.3 or § 6.5.1 covers, gets a row of its own in § 6.5.1, with `-` in Instead of. A transitive dependency never does. Status follows the Convention under § 6.5.1.
+2. **The standard is not rewritten to match the code.** A service that uses what an `Approved` row's Instead of column names (a `RestTemplate` call, a DTO class), or that contradicts a § 6.5.2 rule, is a `⚠ policy` finding in `15-open-questions.md` § 18.6 (`pattern-rules.md` § Anti-patterns to flag). In hybrid, a row sourced from SDD §6 is `⚠ drift` instead (`hybrid-drift.md` § Section-by-section diff rules). It is a § 6.5.3 row instead when a source states the reason (an SDD section, or a decision in `decision-log.md`). The code alone never supplies a reason.
 3. **No approval runs in from-code.** The rules come from the project instruction file, and from the SDD when one is given (SKILL.md step 3a, item 9).
 
 ---
 
 ## Tracing to BRD use cases (only with an SDD)
 
-Code carries no BRD use case IDs of its own, so a pure from-code LLD has no use-case trace: every trace slot reads `Not applicable - no source SDD`, and workflows are headed `### Workflow: [name]`. When an SDD path is given for cross-reference (and in hybrid), match the code to SDD §7.3 and the BRD, then apply `sdd-to-lld.md` § Use-case traceability to what matched.
+Code carries no BRD use case IDs of its own, so a pure from-code LLD has no use-case trace. In such an LLD, every trace slot reads `Not applicable - no source SDD`, and workflows are headed `### Workflow: [name]`. When an SDD path is given for cross-reference (and in hybrid), match the code to SDD §7.3 and the BRD, then apply `sdd-to-lld.md` § Use-case traceability to what matched.
 
-1. **Entry points.** Match each discovered entry point to a §7.3 Entry points cell by its service, HTTP method, and normalized path. The service is the one whose code exposes the entry point, and it must be the service §7.3 names for it: the Owner, or the service the cell names when it is not the owner. For the path, combine class-level and method-level mappings, then compare segment by segment, treating any `{param}` as equal to any other `{param}` (parameter names are ignored). Event listeners match `Event: [EVENT_NAME]` by service and event name, and scheduled jobs match `Schedule: [name]` by service and name. A full match gives the use case(s) and the owner; it is high confidence (both sides are stated facts). A match on everything but the service, or one whose exposing service cannot be determined, is medium confidence: `> Confirm: [entry point] in [service] matches [KEY/UC-NN] except for the service; §7.3 names [service]` (hybrid: `⚠ drift`).
+1. **Entry points.** Match each discovered entry point to a §7.3 Entry points cell by its service, HTTP method, and normalized path. The service is the one whose code exposes the entry point. It must be the service §7.3 names for it: the Owner, or the service the cell names when it is not the owner. For the path, combine class-level and method-level mappings, then compare segment by segment, treating any `{param}` as equal to any other `{param}` (parameter names are ignored). Event listeners match `Event: [EVENT_NAME]` by service and event name, and scheduled jobs match `Schedule: [name]` by service and name. A full match gives the use case(s) and the owner. It is high confidence (both sides are stated facts). A match on everything but the service, or one whose exposing service cannot be determined, is medium confidence: `> Confirm: [entry point] in [service] matches [KEY/UC-NN] except for the service; §7.3 names [service]` (hybrid: `⚠ drift`).
 2. **Unmatched entry points.** A platform endpoint (health, actuator, sign-in, admin tooling) carries no use case. Any other unmatched endpoint that does what the BRD or SDD asks for (a job, a BRD chunk 09 report, an NFR-driven process) gets the `No BRD use case - realises [link]` line of `sdd-to-lld.md` § Use-case traceability, Behaviour no use case covers. The rest get `> Confirm: [METHOD] [path] matches no SDD §7.3 entry point; platform endpoint, or behaviour no BRD use case covers?` They are open questions, never a new UC.
 3. **Unmatched §7.3 entry points.** An active in-scope use case whose entry point the code does not have: from-code notes it in chunk 15 (`> Confirm:`); hybrid marks it `⛔ sdd-only` (`hybrid-drift.md` § Use-case trace drift).
-4. **Routes to screens.** A route whose `data.screen` names a BRD screen reference (a chunk 14 row's ID, or a screen ID the BRD text carries) maps to it (high confidence), cited as `sdd-to-lld.md` § The link, Targets, says (the chunk 14 row wins). Otherwise match by name against the screen or flow names of the BRD chunk 14 rows (medium confidence, `> Confirm:`). A route with no match is a platform page or gets `> Confirm: no BRD screen for route [path]`. The route's use cases are then read from the BRD for that screen, never taken from the code alone.
+4. **Routes to screens.** A route whose `data.screen` names a BRD screen reference (a chunk 14 row's ID, or a screen ID the BRD text carries) maps to it (high confidence). Cite it as `sdd-to-lld.md` § The link, Targets, says (the chunk 14 row wins). Otherwise match by name against the screen or flow names of the BRD chunk 14 rows (medium confidence, `> Confirm:`). A route with no match is a platform page or gets `> Confirm: no BRD screen for route [path]`. The route's use cases are then read from the BRD for that screen, never taken from the code alone.
 5. **Specs.** Existing tags that name BRD IDs fill 13 § 16.8. A tag naming an ID the BRD does not have gets `> Confirm:` (hybrid: `⚠ drift`).
-6. **Existing use-case markers.** An `@UseCase` value, `use_case` MDC key, or route `data.useCases` that disagrees with §7.3 or the BRD is `> Confirm:` (hybrid: `⚠ drift`), and the LLD cites the upstream value. A missing marker is a `> Confirm:` in every direction: the code has not adopted the LLD convention yet.
+6. **Existing use-case markers.** An `@UseCase` value, `use_case` MDC key, or route `data.useCases` that disagrees with §7.3 or the BRD is `> Confirm:` (hybrid: `⚠ drift`). In that case, the LLD cites the upstream value. A missing marker is a `> Confirm:` in every direction: the code has not adopted the LLD convention yet.
 
 ---
 

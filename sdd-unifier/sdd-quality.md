@@ -224,7 +224,7 @@ The platform catalogues are only useful if they are **reconciled**: a catalogue 
 
 Traceability is only useful if a reader can follow it both ways without searching.
 
-**Test:** pick any BRD use case. Its ID in the SDD names its source BRD (the key) and one click opens its heading in that BRD. From its §7.3 row you reach the owner's `13x` chunk, the endpoint that starts it, the diagram that shows it, and the API contracts and events it drives, and each of those places cites the same keyed use case. Then pick any service in 09: every use case in its `Use cases (BRD)` cell has a §7.3 row naming that service, and its Business Logic cites each one with the steps it realises.
+**Test:** pick any BRD use case. Its ID in the SDD names its source BRD (the key) and one click opens its heading in that BRD. From its §7.3 row you reach these places: the owner's `13x` chunk, the endpoint that starts it, the diagram that shows it, and the API contracts and events it drives. Each of those places cites the same keyed use case. Then pick any service in 09: every use case in its `Use cases (BRD)` cell has a §7.3 row naming that service, and its Business Logic cites each one with the steps it realises.
 
 **Good rows:**
 
@@ -247,7 +247,7 @@ Traceability is only useful if a reader can follow it both ways without searchin
 
 A reader must see at a glance which stack rows are settled and where each one came from.
 
-**Test:** pick any §6 row. Does it carry a Status and a Source (SKILL.md step 3c items 1 and 6; a table written before those columns keeps the label in its Notes and is read as it is, SKILL.md step 10), and do its Notes hold the evidence the Source names: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR? In a finished first build, is every `Proposed` row the one exception step 3c item 6 allows, with its marker (a table written before those columns is read as it is)? Then pick any system in §12: does the Integration landscape have its row, and does that row link §12 instead of repeating its protocol, auth, or timeouts?
+**Test:** pick any §6 row. Does it carry a Status and a Source (SKILL.md step 3c items 1 and 6)? A table written before those columns keeps the label in its Notes and is read as it is (SKILL.md step 10). Do its Notes hold the evidence the Source names: the BRD Technical Input as a keyed link, the eco-system file section, the locked Pre-SDD entry as its PSDD/<ID> link, or the ADR? In a finished first build, is every `Proposed` row the one exception step 3c item 6 allows, with its marker (a table written before those columns is read as it is)? Then pick any system in §12: does the Integration landscape have its row, and does that row link §12 instead of repeating its protocol, auth, or timeouts?
 
 **Good rows:**
 
@@ -290,6 +290,6 @@ A rule in a project file (`AGENTS.md`, `CLAUDE.md`, `ui-ux-global-constitution.m
 
 ## When to defer to flags vs to write
 
-If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. The architecture questionnaire settles §8.1 and the ADRs it covers, which meet the bar above; the decisions still open come out as `[NEEDS CLARIFICATION: ...]` markers, *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
+If the SDD is being **derived from a BRD** (per `brd-to-sdd.md`), the architect hasn't yet made many of the decisions these sections require. In that case, the architecture questionnaire settles §8.1 and the ADRs it covers, which meet the bar above. The decisions still open come out as `[NEEDS CLARIFICATION: ...]` markers, *not* as low-quality filler. Empty-with-flag is correct; thin-with-words is not.
 
 If the SDD is being **transformed from another SDD format**, or is an SDD generated without a BRD before every new SDD needed one (SKILL.md step 2), the quality bar above applies in full.

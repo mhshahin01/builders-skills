@@ -1,6 +1,6 @@
 # Transform vs Generate: Intent Detection
 
-The skill produces output in either GENERATE intent (author a BRD from scratch / from conversation / from raw notes) or TRANSFORM intent (re-shape an existing document, a SoW included, into this template). This file gives the rules for deciding which.
+The skill produces output in either GENERATE intent or TRANSFORM intent. GENERATE intent means authoring a BRD from scratch, from conversation, or from raw notes. TRANSFORM intent means re-shaping an existing document, a SoW included, into this template. This file gives the rules for deciding which.
 
 The user almost never says "I want you to transform this" or "I want you to generate this" explicitly. The skill must infer intent from the input.
 
@@ -38,7 +38,7 @@ Is there a source document attached, pasted, or referenced by path?
 Signs:
 
 - Has section headings matching `Executive Summary`, `Business Objectives`, `Glossary`, `User Journeys & Use Cases`, `Users & Use Cases Matrix`, `Non-Functional Requirements`, etc., in the order the template defines.
-- Use-case blocks use the `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX` structure. (An older revision of this template used FR blocks with `What / Why / How / Constraints / Future Enhancements / UI/UX`: treat that as "stale, template evolved" and migrate to use cases.)
+- Use-case blocks use the `Actor & Goal / Why / Preconditions / Main Flow / Alternate & Exception Flows / Business Rules & Constraints / Acceptance Criteria / Future Enhancements / UI/UX` structure. (An older revision of this template used FR blocks with `What / Why / How / Constraints / Future Enhancements / UI/UX`. Treat that as "stale, template evolved" and migrate to use cases.)
 - Has a Changes Log.
 - Has tables for Glossary, Dependencies, Integrations, NFRs, and the Users & Use Cases Matrix.
 
@@ -127,7 +127,7 @@ Treat as TRANSFORM with targeted regeneration:
 - Identify which sections the user wants changed.
 - Regenerate only those (chunks: rewrite the affected chunk files; combined: rewrite the affected sections in place).
 - Bump the version in the Changes Log with a one-line description of what changed (one update, one version: `delivery-chunks.md` § Refresh triggers, Version).
-- Rerun the consistency check (SKILL.md step 7, On an update). Refresh `14-todo.md` per `delivery-chunks.md` § Refresh triggers, keeping every identifier stable. If chunks 15-17 exist and their source meaning changed, mark them `Stale` (`delivery-chunks.md` § The delivery gate, Re-lock); they are refreshed only while the delivery gate is open (SKILL.md step 8c). If the BRD predates the delivery chunks, generate `14-todo.md` (step 8a); a BRD with no chunk 13 gets the reviewer pass first (steps 7-8).
+- Rerun the consistency check (SKILL.md step 7, On an update). Refresh `14-todo.md` per `delivery-chunks.md` § Refresh triggers, keeping every identifier stable. If chunks 15-17 exist and their source meaning changed, mark them `Stale` (`delivery-chunks.md` § The delivery gate, Re-lock). They are refreshed only while the delivery gate is open (SKILL.md step 8c). If the BRD predates the delivery chunks, generate `14-todo.md` (step 8a); a BRD with no chunk 13 gets the reviewer pass first (steps 7-8).
 
 ### "Combine these into one BRD" (multiple source docs)
 

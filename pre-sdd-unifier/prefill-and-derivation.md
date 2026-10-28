@@ -1,6 +1,13 @@
 # Pre-fill and derivation
 
-This file defines how the register is pre-filled before anyone is asked a question: the order of trust, the never-guess rule, which row comes from which BRD chunk, formula, or default, and how the skill writes the pre-fill through the engine. Read it at step 6 of [SKILL.md](SKILL.md).
+This file defines how the register is pre-filled before anyone is asked a question. It covers:
+
+- the order of trust;
+- the never-guess rule;
+- which row comes from which BRD chunk, formula, or default;
+- how the skill writes the pre-fill through the engine.
+
+Read it at step 6 of [SKILL.md](SKILL.md).
 
 Nobody faces 70 empty items. Whatever the BRDs, earlier answers, the engine, or the defaults can give arrives pre-filled with its source, as `Estimated`, for a person to keep or change. Whatever they cannot give stays `Open`, and the engine shows it as TBD. The register's fields, statuses, and source texts: [register-and-entries.md](register-and-entries.md).
 
@@ -20,7 +27,7 @@ A lower source never replaces a higher one:
 - **An answer stays.** A value a person answered or confirmed is protected: the skill, the engine, and an answer policy never overwrite it. On an update, a new BRD value for an answered item goes into the update offer for that person to decide (SKILL.md § Later requests).
 - **The engine maintains only its own values.** A derivation or a default fills an entry that is `Open` and unprotected, and updates only a value it wrote under its own source text. A BRD value, an answer, or a confirmation is never replaced by a formula or a default.
 - **A cleared value stays cleared.** When a person clears a pre-filled value, the entry stays `Open` ("left open"), and the engine does not fill it again. To get the default or derived value back, the person reopens the entry (`open`), and the next `derive` fills it.
-- **A person's own kind stops the upkeep.** Once a person sets a kind of their own on a pre-filled entry, the engine stops filling or updating its value, and clears it for the person when the inputs change.
+- **A person's own kind stops the upkeep.** Once a person sets a kind of their own on a pre-filled entry, the engine stops filling or updating its value. In that case it clears the value for the person when the inputs change.
 
 ---
 
@@ -30,7 +37,11 @@ A lower source never replaces a higher one:
 2. **A vague word is not a number.** "Fast", "always available", "near real-time", or "high volume" leaves the entry `Open`. Where the row takes a proposal (REL-01, REL-03, REL-04, CAP-07), the skill proposes a value beside it, with its reason tied to the BRD wording (§ Proposals in `register-and-entries.md`). Elsewhere, the BRD wording goes into the entry's `evidence`, and the question goes to the person in its stage.
 3. **No other source is a source.** Never fill a value from a worked example in `examples/`, a typical value, another project, or the Quick Discovery Guide's illustrations. The appendix gives only its seven factors and two project rules.
 4. **A unit change is not a derivation.** A stated value in another unit is written in the row's unit (an RTO of 15 minutes is 900 s; an RPO of 1 hour is 3600 s), with the BRD's own wording in `evidence`. A value that needs another number to convert is not stated for this row: a peak of 50 TPS is not a daily transaction count, because the peak factor is a separate item (CAP-04). Leave such an entry `Open`, put the BRD wording in `evidence`, and ask the person.
-5. **Two sources that disagree settle nothing.** When two BRDs, or two places in one BRD, give different values for the same entry, leave it `Open`, cite both in `evidence`, and raise the question: to the person in its stage, and to the BRD owner as a request to `brd-unifier` when only the BRD owner can settle it.
+5. **Two sources that disagree settle nothing.** When two BRDs, or two places in one BRD, give different values for the same entry:
+   - leave it `Open`;
+   - cite both in `evidence`;
+   - raise the question to the person in its stage;
+   - also raise it to the BRD owner as a request to `brd-unifier`, when only the BRD owner can settle it.
 6. **TBD is never zero.** An `Open` value is `null`, and every calculation that needs it reads TBD. Zero is written only when the BRD states zero (an RPO of 0).
 7. **Facts only a person gives** (the list is in `register-and-entries.md` § Who confirms) are pre-filled only from a BRD that states them, and never proposed.
 8. **Owner names and due dates are never pre-filled.** They come from a person (`stages-and-input.md`); the engine refuses them from the skill.
@@ -67,7 +78,7 @@ Which BRD chunks each row reads, and what the engine or a default gives. BRD chu
 
 Every pre-filled value cites `BRD: <KEY>/<ID>` (for example `BRD: REFUNDS/NFR-03`) or the chunk (`BRD: REFUNDS 10`), with status `Estimated`.
 
-**The BRD chunks named above** (the `brd-unifier` output in `./brd-[slug]/`). The skeletons have no field for some of these facts (owner, failure handling, volumes, deadlines, priority, geography): a BRD holds one only when its source states it, and a fact the BRD does not state stays `Open`:
+**The BRD chunks named above** (the `brd-unifier` output in `./brd-[slug]/`). The skeletons have no field for some of these facts (owner, failure handling, volumes, deadlines, priority, geography). A BRD holds one only when its source states it. A fact the BRD does not state stays `Open`:
 
 | Chunk | Holds |
 |---|---|
@@ -87,9 +98,18 @@ Every pre-filled value cites `BRD: <KEY>/<ID>` (for example `BRD: REFUNDS/NFR-03
 
 A combined BRD holds the same content in one file; cite the BRD's own IDs wherever they exist.
 
-**The rows that repeat** get one entry per item the BRDs name: per journey (BUS-02, CAP-07, REL-01), transaction type (CAP-01), scope (REL-03, REL-04, REL-05), dataset, data workload (DAT-01, DAT-05), or external system (INT-01, INT-03). Put the item to size for in the primary entry (`register-and-entries.md` § Entries).
+**The rows that repeat** get one entry per item the BRDs name. The items are:
 
-**The classification rows.** HDR-07 (change type) and HDR-08 (intended target) are pre-filled only when the BRD states them, for example a Technical Input that names on-prem hosting as a constraint, or a scope that replaces an existing system. Classification rules: `classification-and-paths.md`.
+- journey (BUS-02, CAP-07, REL-01);
+- transaction type (CAP-01);
+- scope (REL-03, REL-04, REL-05);
+- dataset;
+- data workload (DAT-01, DAT-05);
+- external system (INT-01, INT-03).
+
+Put the item to size for in the primary entry (`register-and-entries.md` § Entries).
+
+**The classification rows.** HDR-07 (change type) and HDR-08 (intended target) are pre-filled only when the BRD states them. Examples: a Technical Input that names on-prem hosting as a constraint, or a scope that replaces an existing system. Classification rules: `classification-and-paths.md`.
 
 ---
 
@@ -110,7 +130,15 @@ The engine applies these itself, on `new` and on every `derive`, and recomputes 
 
 Every other calculation (`CALC-01` to `CALC-20`, and `CALC-21` and `CALC-22` per option) gives its result in chunk 04 or chunk 07 through the engine's fragments, and writes no register row.
 
-**Appendix factors** (assumptions, decision 11, though a factor holds no `kind` field of its own; on the primary entry of their row, from [reference/policy-appendix.md](reference/policy-appendix.md)): `utilization` 0.65 on CAP-04, `networkOverhead` 1.2 on CAP-06, `indexFactor` 1.4 and `copies` 2 on DAT-02, `meanLatencyMs` 120 on CAP-07, `callsPerTxn` 3 and `requestFactor` 1.1 on CAP-02. A factor on an entry marked `N/A` is not filled. A new appendix version updates the factors nobody has confirmed.
+**Appendix factors** are assumptions (decision 11), though a factor holds no `kind` field of its own. They sit on the primary entry of their row and come from [reference/policy-appendix.md](reference/policy-appendix.md). The factors are:
+
+- `utilization` 0.65 on CAP-04;
+- `networkOverhead` 1.2 on CAP-06;
+- `indexFactor` 1.4 and `copies` 2 on DAT-02;
+- `meanLatencyMs` 120 on CAP-07;
+- `callsPerTxn` 3 and `requestFactor` 1.1 on CAP-02.
+
+A factor on an entry marked `N/A` is not filled. A new appendix version updates the factors nobody has confirmed.
 
 **Project defaults** (kind assumption):
 
@@ -119,15 +147,15 @@ Every other calculation (`CALC-01` to `CALC-20`, and `CALC-21` and `CALC-22` per
 | OPS-04 | `dev, test, stage, prod`, plus `dr` while a REL-05 entry holds `site`, `region`, or `provider` |
 | CAP-08 | `Ingress edge; successful and failed requests measured separately` |
 
-A person confirms the derived values, the factors, and the defaults with their group (the factors with the Capacity and Data groups, OPS-04 with Operations, CAP-08 with Capacity), or replaces any of them with the project's own value.
+A person confirms the derived values, the factors, and the defaults with their group, or replaces any of them with the project's own value. The factors go with the Capacity and Data groups, OPS-04 with Operations, and CAP-08 with Capacity.
 
 ---
 
 ## Writing the pre-fill
 
-The pre-fill and the proposals go into the project state as patches with an agent actor, through `node "<skill>/studio/cli.mjs" derive "<state>" --apply "<patch>"` (patch format and ops: `engine-and-studio.md`). The engine keeps every value the skill writes `Estimated` or `Open`, and refuses a value without a source.
+The pre-fill and the proposals go into the project state as patches with an agent actor. They go in through `node "<skill>/studio/cli.mjs" derive "<state>" --apply "<patch>"` (patch format and ops: `engine-and-studio.md`). The engine keeps every value the skill writes `Estimated` or `Open`, and refuses a value without a source.
 
-1. **Add the entries first.** For each repeating row, one `add` per extra journey, scope, dataset, workload, or external system, each with its `label` (and its `scope` on REL-03 and REL-04), in a patch of their own. `derive` prints each change with the entry ID the engine gave; use those IDs in the next patch, never a guessed number.
+1. **Add the entries first.** For each repeating row, one `add` per extra journey, scope, dataset, workload, or external system, each with its `label` (and its `scope` on REL-03 and REL-04), in a patch of their own. `derive` prints each change with the entry ID the engine gave. Use those IDs in the next patch, never a guessed number.
 2. **Set the values.** One `set` per entry, with `value` in the row's unit and `source: { "type": "brd", "text": "BRD: <KEY>/<ID>" }`. Add the record fields the BRD states: `window`, `measured_at`, `priority` (from the BRD's MoSCoW), `verification`, and `evidence` (the BRD wording, especially after a unit change). Set the sizing factors the BRD states with `set-factor`, with the same kind of source.
 3. **Kinds.** Keep the row's default kind unless the BRD states otherwise: for example, a legal or contractual obligation or a stated prohibition makes an entry a hard guardrail. Then set `kind` with a reason that cites the BRD.
 4. **Proposals.** For each `Open` entry of REL-01, REL-03, REL-04, and CAP-07, one `propose` with the value and its reason, after the sets.

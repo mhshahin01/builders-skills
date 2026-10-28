@@ -1,8 +1,20 @@
 # Register and entries
 
-This file defines the Pre-SDD register: its row families, the entries a row holds, each entry's record fields and allowed values, the statuses and sources, proposals, who confirms, the unknowns, the IDs and citations, and the rules the engine applies when it reads a project state. Read it before step 6 of [SKILL.md](SKILL.md).
+This file defines the Pre-SDD register. It covers:
 
-The register lives in the project state, `./pre-sdd-[slug]/studio/project-state.json`. Its catalogue (the rows, their owner codes, value types, units, default kinds, and factors) is in the engine, `studio/src/engine.js`, and its shape is in `studio/schema/project-state.schema.json`. The skill changes the register only through engine ops (`engine-and-studio.md`), never by editing the file.
+- its row families;
+- the entries a row holds;
+- each entry's record fields and allowed values;
+- the statuses and sources;
+- proposals;
+- who confirms;
+- the unknowns;
+- the IDs and citations;
+- the rules the engine applies when it reads a project state.
+
+Read it before step 6 of [SKILL.md](SKILL.md).
+
+The register lives in the project state, `./pre-sdd-[slug]/studio/project-state.json`. Its catalogue (the rows, their owner codes, value types, units, default kinds, and factors) is in the engine, `studio/src/engine.js`. Its shape is in `studio/schema/project-state.schema.json`. The skill changes the register only through engine ops (`engine-and-studio.md`), never by editing the file.
 
 ---
 
@@ -32,7 +44,7 @@ The chunk letters follow the group's place in the catalogue. The order in which 
 
 **Header rows:** HDR-01 solution name, HDR-02 business sponsor, HDR-03 product owner, HDR-04 lead architect, HDR-05 architecture review authority, HDR-06 business budget owner, HDR-07 change type, HDR-08 intended target, HDR-09 source platforms, HDR-10 migration direction. The Standard gives them no owner codes, so their `owner` field is empty.
 
-**Overlay rows** OVL-01 to OVL-12 hold one entry per migration workload. The workloads are listed in the project state under the overlay (`WL-01` first); `add-workload` adds one and gives every OVL row its entry for it. The overlay switch says whether these rows count: while it is off, the gates, the validation, and the blueprint ignore them, and their entries stay as they are. Rows, workloads, and the 7R rules: `migration-overlay.md`.
+**Overlay rows** OVL-01 to OVL-12 hold one entry per migration workload. The workloads are listed in the project state under the overlay (`WL-01` first); `add-workload` adds one and gives every OVL row its entry for it. The overlay switch says whether these rows count. While it is off, the gates, the validation, and the blueprint ignore them, and their entries stay as they are. Rows, workloads, and the 7R rules: `migration-overlay.md`.
 
 **Sizing factors.** The calculator's inputs that refine an item sit on that item's entries as named factors. Each factor holds a value, a status, a source, and who confirmed it and when.
 
@@ -82,11 +94,15 @@ Every other row holds exactly one entry. `add` works only on the repeating rows,
 
 **What the engine reads from a repeating row:**
 
-- **REL-05, REL-03, and REL-04 are read per failure scope.** Each REL-05 entry names one failure scope (`host`, `az`, `site`, `region`, `provider`, or `cyber`), and the engine picks a DR strategy for each. For a scope it takes the smallest RTO among the REL-03 entries whose `scope` field names that scope or is blank, and the smallest RPO among the REL-04 entries the same way. Keep one REL-05 entry per failure scope: two entries with the same scope are a blocker (`DUPLICATE-SCOPE@<scope>`).
+- **REL-05, REL-03, and REL-04 are read per failure scope.** Each REL-05 entry names one failure scope (`host`, `az`, `site`, `region`, `provider`, or `cyber`), and the engine picks a DR strategy for each. For a scope it takes two minimums:
+  - the smallest RTO among the REL-03 entries whose `scope` field names that scope or is blank;
+  - the smallest RPO among the REL-04 entries, chosen the same way.
+
+  Keep one REL-05 entry per failure scope. Two entries with the same scope are a blocker (`DUPLICATE-SCOPE@<scope>`).
 - **DAT-01 and DAT-05 are read per data workload:** entry 2 onwards of both rows describe the extra workloads, matched by entry number.
-- **CAP-01, CAP-07, and REL-01 are read through their primary entry**, and so are DAT-05's factor `transactionNeed` and the OVL-07, OVL-08, and OVL-09 factors (`migrationGB`, `linkMbps`, `cutoverHours`), which the transfer math reads only from the primary entry, the first workload's. The calculations and rules size for the primary entry. When another entry holds a different value, the engine raises the advisory `PRIMARY-ONLY-<row>`, which names the entries it did not read. So make the primary entry the one to size for (the busiest transaction type, the strictest journey), and let the others carry their own values to the chunks and the SDD.
+- **CAP-01, CAP-07, and REL-01 are read through their primary entry**. So are DAT-05's factor `transactionNeed` and the OVL-07, OVL-08, and OVL-09 factors (`migrationGB`, `linkMbps`, `cutoverHours`). The transfer math reads the OVL factors only from the primary entry, the first workload's. The calculations and rules size for the primary entry. When another entry holds a different value, the engine raises the advisory `PRIMARY-ONLY-<row>`, which names the entries it did not read. So make the primary entry the one to size for (the busiest transaction type, the strictest journey), and let the others carry their own values to the chunks and the SDD.
 - **BUS-02, INT-01, and INT-03 feed no calculation.** Their entries carry their values to the chunks and the SDD.
-- **CAP-03 feeds no calculation either.** No calculation of engine 3.0 reads CAP-03, the peak simultaneously active users (a stage 1 row), so its value feeds no `CALC-NN`: it is locked and lands in the SDD for the SDD's sizing, in §18 (concurrency and session sizing) and as evidence for Q3 (load and availability), as the locked-items fragment's landing table shows.
+- **CAP-03 feeds no calculation either.** No calculation of engine 3.0 reads CAP-03, the peak simultaneously active users (a stage 1 row), so its value feeds no `CALC-NN`. It is locked and lands in the SDD for the SDD's sizing, in §18 (concurrency and session sizing) and as evidence for Q3 (load and availability), as the locked-items fragment's landing table shows.
 
 **Labels.** Give every entry of a repeating row a `label` that names its journey, transaction type, dataset, workload, or external system, as the BRD names it, and a `scope` where the row is read per scope (REL-03, REL-04).
 
@@ -118,7 +134,20 @@ Each entry carries the Standard's record fields (Standard § 3), as the project 
 | `workload` | The migration workload of an OVL entry | `WL-NN`; empty on every other row |
 | `factors` | The sizing factors of the row | Per the factors table |
 
-**Value types.** A number row takes a number in its fixed unit: CAP-01 transactions/day, CAP-02 req/s, CAP-04 × (a multiplier), CAP-05 %/yr, CAP-07 ms, CAP-10 %, REL-01 %, REL-03 s, REL-04 s, DAT-02 GB/day. Convert a value to the row's unit; the engine refuses a change of unit. An enumerated row takes one of its values:
+**Value types.** A number row takes a number in its fixed unit:
+
+- CAP-01 transactions/day
+- CAP-02 req/s
+- CAP-04 × (a multiplier)
+- CAP-05 %/yr
+- CAP-07 ms
+- CAP-10 %
+- REL-01 %
+- REL-03 s
+- REL-04 s
+- DAT-02 GB/day
+
+Convert a value to the row's unit. The engine refuses a change of unit. An enumerated row takes one of its values:
 
 | Row | Values |
 |---|---|
@@ -134,7 +163,13 @@ Each entry carries the Standard's record fields (Standard § 3), as the project 
 
 Every other row takes text. **A blank value is `null` and `Open`, never `0`.** Zero is a real answer (an RPO of 0 seconds), and the engine keeps it. A value that is `Open` or `N/A` reads as TBD in every calculation.
 
-**Kinds.** Each row has a default kind (decision 11): `hard` for BUS-07, BUS-08, SEC-01, SEC-04, DAT-03, DAT-04, and DAT-06; `forecast` for CAP-01, CAP-03, CAP-04, CAP-05, CAP-06, CAP-10, CAP-12, and DAT-02; `target` for every other row. A value the engine derives takes `forecast`, and a default takes `assumption`. A person or the skill may change an entry's kind, always with a reason. A kind a person set is theirs: the skill and an answer policy never change it.
+**Kinds.** Each row has a default kind (decision 11):
+
+- `hard` for BUS-07, BUS-08, SEC-01, SEC-04, DAT-03, DAT-04, and DAT-06;
+- `forecast` for CAP-01, CAP-03, CAP-04, CAP-05, CAP-06, CAP-10, CAP-12, and DAT-02;
+- `target` for every other row.
+
+A value the engine derives takes `forecast`, and a default takes `assumption`. A person or the skill may change an entry's kind, always with a reason. A kind a person set is theirs: the skill and an answer policy never change it.
 
 ---
 
@@ -149,7 +184,7 @@ Every other row takes text. **A blank value is `null` and `Open`, never `0`.** Z
 
 A `Confirmed` value without both who and when is not confirmed: the engine reads it as `Estimated` and raises the advisory `STATUS-<ID>`, which asks for it to be confirmed again.
 
-**Stage 2 ends** when every entry has a status and every `Open` entry has an owner name and a due date. That counts every entry of the header rows and the 70 items, and every OVL entry of every workload while the overlay applies. G1 is met when this holds and G0 is met too: HDR-02, HDR-04, BUS-01, and BUS-03 are not `Open` (`gates-and-signoff.md`).
+**Stage 2 ends** when every entry has a status and every `Open` entry has an owner name and a due date. That counts every entry of the header rows and the 70 items, and every OVL entry of every workload while the overlay applies. G1 is met when this holds and G0 is met too. G0 is met when HDR-02, HDR-04, BUS-01, and BUS-03 are not `Open` (`gates-and-signoff.md`).
 
 ---
 
@@ -190,7 +225,7 @@ A number outside its valid range (for example a negative TPS) is a blocker too, 
 
 Only four rows take a proposal: **REL-01** (availability), **REL-03** (RTO), **REL-04** (RPO), and **CAP-07** (P99 latency) (§ 6.4, decision 12).
 
-- **Only the skill proposes,** as the E2E Architect, and only beside an `Open` entry. A proposal holds a value in the row's unit and its reason, tied to the BRD where it can be (for example a monthly disruption limit from BRD chunk 10, or a journey's priority from chunk 05 or 04, when the BRD states one).
+- **Only the skill proposes,** as the E2E Architect, and only beside an `Open` entry. A proposal holds a value in the row's unit and its reason, tied to the BRD where it can be. For example: a monthly disruption limit from BRD chunk 10, or a journey's priority from chunk 05 or 04, when the BRD states one.
 - **The entry stays `Open`** until a person or an answer policy picks the proposal (`accept-proposal`). Picking it sets the value, makes the entry `Confirmed`, and writes the source `Answer: <name>, <date> (proposal accepted)`, or the policy's label.
 - **A person's own value replaces a proposal:** setting a value clears it.
 - **A proposal beside an entry a person left open** may still be made, because a proposal helps exactly when the person does not know the value. Only a person picks it there; an answer policy does not.
@@ -213,7 +248,7 @@ Record each proposal and its outcome in `decision-log.md` § Proposal record.
 
 **Facts only a person gives** (`factOnly`): CAP-01, CAP-03, CAP-04, CAP-05, CAP-06, CAP-10, CAP-12, DAT-02, INT-03, BUS-04, ECO-01, HDR-01 to HDR-06, the fact factors on those rows, and every option cost. They are never proposed, and an answer policy never sets, confirms, or answers them: the engine refuses it. The skill may pre-fill one from a BRD that states it, as `Estimated`, for a person to confirm. The engine also refuses the skill and an answer policy every owner name and due date, on any entry. Beyond what the engine refuses, the skill's own rule is wider: an answer policy never supplies any other forecast or measurement (SKILL.md § Answer policy).
 
-**Protected values.** A value that is `Confirmed`, or that a person or a fixture owner answered, is protected: only a person (or a fixture owner) changes it, and the engine refuses the skill and an answer policy. The engine still lets them write its owner code; the owner name and the due date come only from a person or a fixture owner, on any entry (`stages-and-input.md`). The rule holds for a label or a wording fix too, so an open item whose accepted answer changes a protected value waits for a person under an answer policy (`Decided - waiting for a person`, `review-and-open-items.md` § The accept loop).
+**Protected values.** A value that is `Confirmed`, or that a person or a fixture owner answered, is protected. Only a person (or a fixture owner) changes it, and the engine refuses the skill and an answer policy. The engine still lets them write its owner code. The owner name and the due date come only from a person or a fixture owner, on any entry (`stages-and-input.md`). The rule holds for a label or a wording fix too. So an open item whose accepted answer changes a protected value waits for a person under an answer policy (`Decided - waiting for a person`, `review-and-open-items.md` § The accept loop).
 
 ---
 
@@ -232,8 +267,8 @@ An unknown is an open question the run cannot answer yet, recorded as `QD-NN` in
 | `status` | `open` or `closed` |
 | `resolution`, `closed_by`, `closed_at` | How it was answered, by whom, and when (UTC); set when it closes, empty while it is open |
 
-- **`add-unknown`** records one. Any actor may, since recording a question changes no value; the skill records the questions it finds. No op changes an unknown once it is added, so collect its owner and due date from a person first, and write them with the question.
-- **`close-unknown`** closes one, with its resolution. A person or a fixture owner may close one; the skill and an answer policy never do (the engine refuses both): the skill asks the person who owns the question. A closed unknown stays closed: when the question comes back, add a new unknown. To correct an unknown's owner or due date, close it and add a new unknown with the corrected owner or due date.
+- **`add-unknown`** records one. Any actor may, since recording a question changes no value. The skill records the questions it finds. No op changes an unknown once it is added. So collect its owner and due date from a person first, and write them with the question.
+- **`close-unknown`** closes one, with its resolution. A person or a fixture owner may close one. The skill and an answer policy never do (the engine refuses both). The skill asks the person who owns the question. A closed unknown stays closed. When the question comes back, add a new unknown. To correct an unknown's owner or due date, close it and add a new unknown with the corrected owner or due date.
 
 ---
 
@@ -252,7 +287,7 @@ IDs are stable once seen, and never renumbered or reused (SKILL.md § Output con
 | Option, cost, score | `OPT-NN`; `OPT-NN.one_time`, `OPT-NN.monthly`; `OPT-NN.<criterion>` | `OPT-01.monthly` |
 | Others | Conditions `COND-NN`, exceptions `EXC-NN`, checklist lines `G3-01` to `G3-14`, decision rules `DT-01` to `DT-15`, unknowns `QD-NN`, risks `R-NN`, open items `OI-NN`, ADRs `ADR-<AREA>-NNN` | `QD-03` |
 
-An entry number is one above the highest number the row has ever used, removed entries included, so a removed `REL-03.3` never comes back as another entry. The engine gives the number when it adds the entry; read it from the change `derive` prints before citing it. Options, workloads, conditions, and exceptions are numbered the same way, one above the highest number in the list and in the history, so a removed `OPT-02`, `WL-02`, `COND-02`, or `EXC-02` never comes back as another one.
+An entry number is one above the highest number the row has ever used, removed entries included, so a removed `REL-03.3` never comes back as another entry. The engine gives the number when it adds the entry. Read it from the change `derive` prints before citing it. Options, workloads, conditions, and exceptions are numbered the same way: one above the highest number in the list and in the history. So a removed `OPT-02`, `WL-02`, `COND-02`, or `EXC-02` never comes back as another one.
 
 **Citations.** Inside the Pre-SDD, prose cites a value by its ID (`REL-03.2`, `CALC-03`), and BRD content by its key and ID (`REFUNDS/NFR-03`), with a link. Downstream documents cite a Pre-SDD ID as `PSDD/<ID>` with a link. The link resolves because each register row is a `### <ROW-ID>` heading in its chunk, so an entry links to its row's heading. From an SDD folder beside the Pre-SDD folder, the citation reads `[PSDD/REL-03.2](../pre-sdd-refunds-platform/03c-register-reliability.md#rel-03)` in the Markdown source. There is one Pre-SDD per SDD, so `PSDD/` needs no key.
 
@@ -260,23 +295,38 @@ An entry number is one above the highest number the row has ever used, removed e
 
 ## Reading a project state: the state gate
 
-Every engine command reads the project state through one gate before it computes anything (`normalizeState`). A person who edits `project-state.json` by hand fixes it against these rules; `node "<skill>/studio/cli.mjs" validate "<state>"` lists what is still wrong (`engine-and-studio.md`).
+Every engine command reads the project state through one gate before it computes anything (`normalizeState`). A person who edits `project-state.json` by hand fixes it against these rules. `node "<skill>/studio/cli.mjs" validate "<state>"` lists what is still wrong (`engine-and-studio.md`).
 
 **Refused at once, alone:**
 
-- A file that is not a Pre-SDD 3.0 project state (`kind` is not `pre-sdd-project-state`). A Studio v2.2 file comes in through the import (`new --import`), which does not bring in its decision history (the skill tells the user so); a Studio save file is read through its `project_state`.
+- A file that is not a Pre-SDD 3.0 project state (`kind` is not `pre-sdd-project-state`). A Studio v2.2 file comes in through the import (`new --import`), which does not bring in its decision history (the skill tells the user so). A Studio save file is read through its `project_state`.
 - A `schema_version` that is not 3.x.
 
-**Collected and listed together.** Every other problem goes into one message that starts `The project state cannot be read:` and lists each problem on its own line, in the order of the file: the missing parts, then the register (rows in register order, entries by number), the options, the decisions, the sign-offs, and the unknowns. Each line names the place and says how to fix it. The rules:
+**Collected and listed together.** Every other problem goes into one message that starts `The project state cannot be read:`. The message lists each problem on its own line, in the order of the file: the missing parts, then the register (rows in register order, entries by number), the options, the decisions, the sign-offs, and the unknowns. Each line names the place and says how to fix it. The rules:
 
-1. **Every part is there:** `project` with its `brds` list, `run`, the register's header rows, items, and overlay (its workloads and rows), every row of the catalogue, `options` with its `list` and each option's `shape` and `scores`, `decisions` with its `dr_overrides`, `gate` with its `checklist`, `signoffs`, `conditions`, and `exceptions`, `unknowns`, `history`, and `ui`. One line names every missing part; compare the file with `studio/schema/project-state.schema.json`.
-2. **Every row is a list of entries that holds its primary entry.** A row is a list, never empty; each item in it is an entry object; each entry's `n` is a whole number from 1; no two entries of a row share a number; and the row holds entry 1.
+1. **Every part is there:**
+   - `project` with its `brds` list;
+   - `run`;
+   - the register's header rows, items, and overlay (its workloads and rows);
+   - every row of the catalogue;
+   - `options` with its `list` and each option's `shape` and `scores`;
+   - `decisions` with its `dr_overrides`;
+   - `gate` with its `checklist`, `signoffs`, `conditions`, and `exceptions`;
+   - `unknowns`, `history`, and `ui`.
+
+   One line names every missing part. Compare the file with `studio/schema/project-state.schema.json`.
+2. **Every row is a list of entries that holds its primary entry.** A row is a list, never empty. Each item in it is an entry object. Each entry's `n` is a whole number from 1. No two entries of a row share a number. The row holds entry 1.
 3. **Only entry 1 is primary:** `primary` is `true` exactly on the entry whose `n` is 1.
-4. **No answer policy on a fact.** An entry of a fact-only row whose source type is `policy`, or whose `confirmed_by` is a `Policy:` or `Stand-in:` label, is refused; so is a fact factor with either mark, and an option cost whose `by` is such a label. A person gives or confirms that fact instead.
-5. **Options hold only what the schema defines.** A cost holds `value`, `status`, `by`, and `at`; a score holds `value`, `reason`, `status`, `by`, and `at`; scores and weights are keyed by the criteria (`nfr_fit`, `one_time_cost`, `recurring_tco`, `delivery_time`, `operability`, `security_compliance`, `reversibility`, `uncertainty`). Any other key is refused.
+4. **No answer policy on a fact.** These three are refused:
+   - an entry of a fact-only row whose source type is `policy`, or whose `confirmed_by` is a `Policy:` or `Stand-in:` label;
+   - a fact factor with either mark;
+   - an option cost whose `by` is such a label.
+
+   A person gives or confirms that fact instead.
+5. **Options hold only what the schema defines.** A cost holds `value`, `status`, `by`, and `at`. A score holds `value`, `reason`, `status`, `by`, and `at`. Scores and weights are keyed by the criteria (`nfr_fit`, `one_time_cost`, `recurring_tco`, `delivery_time`, `operability`, `security_compliance`, `reversibility`, `uncertainty`). Any other key is refused.
 6. **Overrides take their listed values.** The topology override is one of `auto`, `single`, `multiAZ`, `multiAZActive`, `regional`, or `active`. A DR override is keyed by a failure scope and is one of `backup`, `pilot`, `warm`, or `active`.
 7. **A sign-off record agrees with itself.** `applicable` is `true` or `false`. With `true`, `decision` is `Approved`, `Approved with conditions`, or `Rejected`. With `false`, `na_reason` gives the reason and `decision` is `null`.
-8. **An unknown has a status.** An open unknown holds no `resolution`, `closed_by`, or `closed_at`; a closed one holds all three, with `closed_at` a UTC timestamp.
+8. **An unknown has a status.** An open unknown holds no `resolution`, `closed_by`, or `closed_at`. A closed one holds all three, with `closed_at` a UTC timestamp.
 
 **Read, not refused** (the engine corrects these, records each in the history as a `normalize` change, and raises the advisory `STATUS-<place>`):
 
@@ -284,4 +334,4 @@ Every engine command reads the project state through one gate before it computes
 - a blank, `auto`, or `undetermined` topology override reads as `auto` (no override);
 - a DR override with one of those values is removed (no override for that scope).
 
-A state that is already correct gives no new record, so reading it twice equals reading it once. A hand edit to the hashed content (the project's name, slug, and BRD list, the register, the options, the decisions, the checklist, the conditions, the exceptions, and the unknowns) after a G3 signature sends G3 back to review.
+A state that is already correct gives no new record, so reading it twice equals reading it once. A hand edit to the hashed content after a G3 signature sends G3 back to review. The hashed content is the project's name, slug, and BRD list, the register, the options, the decisions, the checklist, the conditions, the exceptions, and the unknowns.

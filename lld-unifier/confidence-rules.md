@@ -119,7 +119,7 @@ Example:
 | `use_case` attribute convention | Medium | SDD §11.4 or a `13x` Observability section names it → upgrade to High |
 | Owner and entry points from an older SDD with no §7.3 (inferred from 09 and `13x`) | Medium | (none; suggest upgrading the SDD) |
 | A use case with neither a screen ID nor an `MK-NN` in the BRD | Medium (`> Confirm:`) | BRD chunk 14 adds its `MK-NN` row → upgrade to High |
-| An implementation choice that rests on an SDD item still `Decided - pending application` | Low (`> TODO:` that cites the item; unlike other Low claims, the body keeps the SDD text as it stands and only the flag gives the decided option as its best guess) | (none until sdd-unifier applies the decision; the applied SDD text then sets the tier) |
+| An implementation choice that rests on an SDD item still `Decided - pending application` | Low (`> TODO:` that cites the item). Unlike other Low claims, the body keeps the SDD text as it stands, and only the flag gives the decided option as its best guess | (none until sdd-unifier applies the decision; the applied SDD text then sets the tier) |
 
 ---
 
@@ -127,7 +127,7 @@ Example:
 
 In hybrid direction, every section has both a from-sdd and a from-code value. The unified emission's confidence is **the higher of the two contributing confidences**, with one exception:
 
-- If the two values **disagree** (drift case), the emission's confidence is **High** for the *fact of drift* itself (we know they disagree because we can compare both), regardless of the contributing tiers. The drift note's *resolution suggestion* may be lower confidence: annotate accordingly.
+- If the two values **disagree** (drift case), the emission's confidence is **High** for the *fact of drift* itself, regardless of the contributing tiers. We know they disagree because we can compare both. The drift note's *resolution suggestion* may be lower confidence: annotate accordingly.
 
 Example:
 
@@ -154,7 +154,7 @@ Every flag emitted anywhere in the LLD MUST appear as a row in `15-open-question
 
 When a chunk is regenerated, the index is regenerated too. The skill enforces this by walking each chunk and grepping for the flag patterns, then emitting the index file.
 
-The summary table in § 18.5 (the open `> Confirm:` and `> TODO:` flags counted per section, for every section) is updated on each regeneration. Flag count = `> Confirm:` or `> TODO:` at line start or inside a table cell, outside code fences, excluding legend rows, markers quoted in backticks and chunks 15 and 18.
+The summary table in § 18.5 is updated on each regeneration. It counts the open `> Confirm:` and `> TODO:` flags per section, for every section. Flag count = `> Confirm:` or `> TODO:` at line start or inside a table cell, outside code fences, excluding legend rows, markers quoted in backticks and chunks 15 and 18.
 
 ---
 

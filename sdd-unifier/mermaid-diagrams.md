@@ -14,7 +14,7 @@ All SDD diagrams are authored as **inline Mermaid** by default. Every diagram is
 
 | Template section | Diagram | Mermaid dialect |
 |---|---|---|
-| §7.2 Use Case Diagram | Actors → use-case clusters (carry the keyed UC IDs as plain quoted labels, e.g. `UC04(("REFUNDS/UC-04"))`; the links to the BRD live in the text around the diagram, its Summary, and in §7.3: `brd-to-sdd.md` § The link, item 6) | `flowchart LR` |
+| §7.2 Use Case Diagram | Actors → use-case clusters (carry the keyed UC IDs as plain quoted labels, e.g. `UC04(("REFUNDS/UC-04"))`). The links to the BRD live in the text around the diagram, its Summary, and in §7.3 (`brd-to-sdd.md` § The link, item 6) | `flowchart LR` |
 | §8.2 Context Diagram | System in the middle, externals around it, edges labelled protocol + purpose | `flowchart TB` |
 | §8.3 High-Level Architecture | Layers (edge, frontend, services, data, async backbone, external, observability) | `flowchart TB` with `subgraph` |
 | §8.4 Workflow Diagrams | One per critical end-to-end flow | `flowchart TD` |
@@ -57,13 +57,13 @@ sequenceDiagram
 - Always use the `mermaid` language hint on the fence.
 - The **Summary** line after every diagram is mandatory: it is the no-renderer fallback.
 - Use named participants / meaningful node ids; annotate alt-paths for error scenarios.
-- In sequence diagrams, a synchronous call is `->>` and its reply `-->>`; an asynchronous message (an event or a queued job) is `-)`. Never put `;` or `#` in a sequence message: `;` ends a Mermaid statement, and `#` can start an entity code.
-- Keep diagrams scoped. A workflow or sequence diagram beyond about 30 lines is split into a happy-path and an error-path diagram. Layered views (§8.3, §24.3), the infrastructure and network views (§8.6, §8.7), and ERDs have no line cap; an ERD shows entities, keys (PK, FK), and relationships only, and the other columns stay in Tables Design.
-- Figure numbering is sequential across the whole SDD (not per chunk); every diagram that carries a `Figure N` label gets a row in chunk 00's Figures index with its chunk + section. The templates label the §7.2, §8.2, §8.3, §8.6.6, and §8.7.8 diagrams; every other diagram is named by its section and has no Figure label and no index row.
+- In sequence diagrams, a synchronous call is `->>` and its reply `-->>`; an asynchronous message (an event or a queued job) is `-)`. Never put `;` or `#` in a sequence message. `;` ends a Mermaid statement, and `#` can start an entity code.
+- Keep diagrams scoped. A workflow or sequence diagram beyond about 30 lines is split into a happy-path and an error-path diagram. Layered views (§8.3, §24.3), the infrastructure and network views (§8.6, §8.7), and ERDs have no line cap. An ERD shows entities, keys (PK, FK), and relationships only. The other columns stay in Tables Design.
+- Figure numbering is sequential across the whole SDD (not per chunk). Every diagram that carries a `Figure N` label gets a row in chunk 00's Figures index with its chunk + section. The templates label the §7.2, §8.2, §8.3, §8.6.6, and §8.7.8 diagrams. Every other diagram is named by its section and has no Figure label and no index row.
 
 ## Render-fail mitigation
 
-1. Validate every emitted Mermaid block parses (syntactically) before writing: with a Mermaid parser when one is available in the session, otherwise by checking each block line by line against the examples in the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
+1. Validate every emitted Mermaid block parses (syntactically) before writing. Use a Mermaid parser when one is available in the session. Otherwise check each block line by line against the examples in the chunk templates. Without a parser in the session, the line-by-line check is the validation: never download or install one for it, and never ask whether to.
 2. If a block fails to validate, fall back to a plain-text description in a `text` code-fence + `[NEEDS CLARIFICATION: Mermaid syntax error: review and fix]`.
 3. Surface the fallback count in the handoff summary.
 
@@ -78,7 +78,7 @@ The cheatsheet for the dialects used here (`sequenceDiagram`, `classDiagram`, `s
 A light run makes no board, even on request (SKILL.md § Light run). Otherwise, if, and only if, the user asks for a Miro board ("put the diagrams on Miro", "create a board"):
 
 1. Load Miro tools via ToolSearch (they are deferred).
-2. Create or reuse a board named `SDD - [Project Name] - Diagrams` (`Miro:context_explore` to check; ask for the URL when updating an existing SDD: don't guess).
+2. Create or reuse a board named `SDD - [Project Name] - Diagrams` (`Miro:context_explore` to check). Ask for the URL when updating an existing SDD: don't guess.
 3. Author the requested figures with `Miro:diagram_get_dsl` → `Miro:diagram_create`; frame names mirror the SDD figure titles (`Figure 1: System Context`, …).
 4. Append the link BELOW the corresponding inline Mermaid block (additive, never a replacement):
 

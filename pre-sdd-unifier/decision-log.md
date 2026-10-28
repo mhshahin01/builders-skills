@@ -1,11 +1,20 @@
 # Decision Log: the decision register companion file
 
-`decision-log.md` is the single home for the decision story behind a Pre-SDD: the answers, the proposals offered and taken, who decided and when, the delegations and answer policies, the review decisions, and the G3 sign-off record. The content chunks hold only the settled values and shape, in plain present tense; this register holds how and by whom they were settled.
+`decision-log.md` is the single home for the decision story behind a Pre-SDD. It holds:
+
+- the answers;
+- the proposals offered and taken;
+- who decided and when;
+- the delegations and answer policies;
+- the review decisions;
+- the G3 sign-off record.
+
+The content chunks hold only the settled values and shape, in plain present tense. This register holds how and by whom they were settled.
 
 **Companion file rules.**
 
 - Lives in `./pre-sdd-[slug]/`, next to `[slug]-pre-sdd-master.md`. In COMBINED mode it is still written to `./pre-sdd-[slug]/decision-log.md`, beside `studio/`, and the handoff summary names its path.
-- Created on first use: when the first decision is recorded (the answer to "go on?" for a BRD that is not `Approved`, a proposal, an answered batch, a group confirm, a stage 4 decision, a decided open item, an answer policy that answered a question, or a signature). Do not write an empty register.
+- Created on first use, when the first decision is recorded. That decision is one of these: the answer to "go on?" for a BRD that is not `Approved`, a proposal, an answered batch, a group confirm, a stage 4 decision, a decided open item, an answer policy that answered a question, or a signature. Do not write an empty register.
 - Linked from the master once it exists.
 - Never merged into the combined or merged Pre-SDD. It is decision history, not design text.
 - Append-only in spirit: a superseded decision keeps its record, and the later record says what it supersedes.
@@ -13,7 +22,7 @@
 - Every record that settled a value or a shape point names the ID it settled (`REL-03.2`, `OPT-02`, `OI-07`) and carries a `Rule home:` link to the chunk section that now states it. The anchor must work.
 - Every BRD ID carries its key (`REFUNDS/NFR-03`).
 
-**Relationship with the project state.** The project state holds the value of record, with who and when (`confirmed_by`, `confirmed_at`, the history records the engine writes for every op). The register never restates a value as if it were the record: it names the entry and tells the story (what was asked, what was offered, who chose, when, under which policy). When the two disagree, the project state wins, and the register gets a correcting record.
+**Relationship with the project state.** The project state holds the value of record, with who and when (`confirmed_by`, `confirmed_at`, the history records the engine writes for every op). The register never restates a value as if it were the record. It names the entry and tells the story: what was asked, what was offered, who chose, when, and under which policy. When the two disagree, the project state wins, and the register gets a correcting record.
 
 **Relationship with the ADRs.** The Pre-SDD ADRs in chunk 09 § 9.4 are content: they state the decision and its rationale. When a decision produced an ADR, the register records only the process and links the ADR as its `Rule home:`.
 

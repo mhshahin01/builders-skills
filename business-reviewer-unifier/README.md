@@ -20,6 +20,8 @@ The default panel:
 
 Optional add-on personas (Security, Finance/Legal, UX) are available on request. Findings carry `<ROLE>-NN` IDs (BO-01, SME-03) and move through a fixed status vocabulary: Pending, Decided, Applied, Partially applied, Rejected, Deferred.
 
+It is stage 6 of the suite: the panel that challenges the documents the authoring stages write (pre-BRD, BRD, Pre-SDD, SDD). It acts as the Business owner (Product Management & Business Development) in the unifier company.
+
 This is the cross-document panel. It is separate from the single-agent reviewer pass built into each authoring skill, which reviews one document at generation time.
 
 ## Why
@@ -68,11 +70,13 @@ Invocation prefix depends on the agent: `/business-reviewer-unifier panel` in Cl
 - `review-comments-tracker.md` in the project root: persistent, survives the session, updated after every point. It also records the version bumps, the hand-offs to the owning skills, any skill changes the decisions needed, and the point where an answer policy paused the walkthrough.
 - `review-panel-findings.md` next to the tracker: every raw panel finding, with its Why and Direction, grouped under the point it ended in. Written at the merge (with any re-dispatch you ask for before the walkthrough) and linked from the tracker; the walkthrough reads a point's findings before presenting it.
 - Updated documents across the chain, with version bumps and changelog entries.
+- `unifier-status.md` in the project root: the shared status board the chain skills use to hand work to each other. This skill writes only its own row and the handoff requests it raises (SKILL.md § Status board).
 
 ### Reference files
 
 | File | Contents |
 | ---- | -------- |
+| `SKILL.md` | Arguments, core principles, answer policy, the seven-step workflow, output conventions, status board |
 | `reviewer-personas.md` | Charters for the five default personas, the SME domain rules for the orchestrator, optional add-ons |
 | `panel-orchestration.md` | Subagent dispatch, finding schema, zero-findings re-dispatch, merge rules |
 | `tracker-schema.md` | Tracker structure, columns, status vocabulary, footer sections, the companion panel findings file |

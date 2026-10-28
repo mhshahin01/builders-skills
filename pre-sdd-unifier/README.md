@@ -1,6 +1,6 @@
 # Pre-SDD Unifier
 
-The E2E Architect hop between `brd-unifier` and `sdd-unifier`: it runs a Pre-SDD for one system from its finished BRDs, settles the numbers and the shape, and locks them for the SDD through a G3 sign-off per role. Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
+Stage 3 of the chain, and the E2E Architect (Software Development & Delivery) hop between `brd-unifier` and `sdd-unifier` (BRD, then Pre-SDD, then SDD): it runs a Pre-SDD for one system from its finished BRDs, settles the numbers and the shape, and locks them for the SDD through a G3 sign-off per role. A G3-signed Pre-SDD is required for every new SDD built from BRDs (`sdd-unifier` step 2a). Part of the Product Documentation Skill Suite (see the repo-root `README.md` for the full lifecycle).
 
 This README is for a maintainer of the skill: how it is built, where its versions live, how to test it, and what not to break. A user, or an agent running the skill, starts at [SKILL.md](SKILL.md).
 
@@ -9,20 +9,20 @@ This README is for a maintainer of the skill: how it is built, where its version
 ## What
 
 - **The method.** The Pre-SDD Architecture Standard (`reference/Pre-SDD_Architecture_Standard_v1.md`) is the full Pre-SDD, and the Quick Discovery Guide (`reference/Pre-SDD_Quick_Discovery_Guide.md`) is the first discovery conversation. The skill turns the Standard's 70 checklist items, plus header and migration overlay rows, into a register where every value has a status, a source, and, once confirmed, a named person.
-- **The run.** Four stages (discovery, register, assess, confirm and decide) and the gates G0 to G3. G3 approval means the SDD may start. Quick mode stops after discovery and claims no gate.
+- **The run.** Four stages (discovery, register, assess, confirm and decide) and the gates G0 to G3. G3 approval means the SDD may start. Quick mode stops after discovery and claims no gate. The arguments are `[quick|full] [web|prompt] [chunks|combined] [light]`, default `full` (SKILL.md § Argument parsing); `light` trims the review passes, the diagrams, and the options, never the engine run, the register, the gate, or the handoff guide (SKILL.md § Light run).
 - **The input.** By web (the offline Studio page) or by prompt (chat), chosen per run. Both feed the same project state.
 - **One calculator.** `studio/src/engine.js` holds every formula, rule, check, gate, derivation, and writer. The Studio bundles it; the skill runs it under Node.js through `studio/cli.mjs`. No number in a chunk is worked out by hand.
-- **The output.** Chunked Markdown (or one combined file) in `./pre-sdd-[slug]/`, ending in chunk 12, the handoff guide that `sdd-unifier` reads and that locks the settled items (`PSDD/<ID>` citations).
+- **The output.** Chunked Markdown in `./pre-sdd-[slug]/`, with the master index and `decision-log.md` (or one combined file in the project root, with no master; the folder then keeps only `studio/` and `decision-log.md`): chunks 00 to 13 in full mode and fewer in quick mode (the chunk map is `chunking.md`). Chunk 12 is the handoff guide that `sdd-unifier` reads and that locks the settled items (`PSDD/<ID>` citations). Once G3 is signed, SKILL.md step 14 raises the handoff request to the Software Architect on the status board (`unifier-status.md`); the contract is `handoff-guide.md`.
 
-## Status (2026-10-27, UTC)
+## Status (2026-10-28, UTC)
 
 | Part | State |
 |---|---|
 | Engine 3.0, `studio/src/engine.js` | Complete: register and entries, patches, the state gate, defaults and derivations, calculations, DR per failure scope, options, validation, gates, blueprint 2.0.0, fragments, save and preview files, and the helpers the page reads |
 | CLI, `studio/cli.mjs` | Complete: `new`, `derive`, `compute`, `validate`, `unwrap`, `diff`, `embed`, `--version` |
 | Studio 3.0 page, `studio/src/ui.js`, `shell.html`, `style.css` | Complete (Phase 3): stages 1 to 4 on the register; it opens filled from the embedded state; Import reads a save file, a 3.0 project state, a preview ZIP, or a Studio v2.2 project file or ZIP; Save writes the save file; the preview ZIP is labelled not of record. The v2.2 layer is gone from the engine. Checked by hand in `studio/tests/MANUAL-CHECK.md` |
-| `## Status board` section of SKILL.md | Complete (Task 5.1): the same section as in the other seven chain skills |
-| Phases 8 and onward | Not yet done: the company files, the final checks, and the merge |
+| `## Status board` section of SKILL.md | Complete (Task 5.1): the same section as in the other six chain skills and `tutorialize-unifier` |
+| Merge | Merged into main (`d7b3202`). The skill is in the unifier company as the E2E Architect (SKILL.md role line) |
 
 **Known limitation** (accepted by the owner at stop C2): a zero RTO on `az` beside a remote failure scope over-reports `CONFLICT-zeroRTO-topology@az`, because the topology order ranks regional above multi-AZ active. A topology override of `active`, or a relaxed `az` RTO, clears it.
 
@@ -191,7 +191,7 @@ node --test "<skill>/studio/tests/*.test.mjs"
 4. **The page and the CLI import alike.** The page's Import of a v2.2 file runs `importForPage`, the same sequence as `cli.mjs new --import`, and `import-page.test.mjs` compares the two registers. Never give `ui.js` its own copy of an engine sequence or rule; export it from the engine.
 5. **Byte comparisons are LF.** Files are written with LF, and every byte comparison and hash turns CRLF into LF first (`readText` in `tests/helpers.mjs`), because a Windows checkout may write CRLF.
 
-## The decisions of this plan
+## The build decisions
 
 The decisions live in three places:
 

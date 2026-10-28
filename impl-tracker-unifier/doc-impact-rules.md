@@ -5,8 +5,9 @@ found during implementation that needs a doc change is triaged (which docs), que
 (`KEY/DU-NNN` in `tracking/doc-updates.md`) and applied by a **background doc worker** while the tracker
 keeps building. A fresh verifier checks each update; then `sync` runs on its own.
 
-The tracker and the builder still never edit a doc (SKILL.md rule 4). Only the doc worker does, and only for
-a queued DU.
+The tracker and the builder still never edit a doc (SKILL.md rule 4). Only the doc worker does, only for a
+queued DU, and only in `solo` run mode; in `team` run mode the DU goes to the doc folder's owner as a board
+request (§ 6a, SKILL.md § Documents chain).
 
 ## 1. Triggers (automatic: never wait to be asked)
 
@@ -90,7 +91,7 @@ Template: templates.md § Doc updates. One row per DU, written in the same step 
 Rules: never renumber, never delete; one DU per point (dedup by doc anchor: a second point on the same
 anchor joins the open DU's What column); every DU links its gap and its task (or `-` with the reason).
 
-## 6. Dispatch: one background doc worker
+## 6. Dispatch: one background doc worker (`solo` run mode)
 
 - **When:** right after a DU row is written with status `Queued`, if no worker is `Running`. Also at the start
   of every tracker command: `Queued` rows and no live worker → dispatch.
@@ -106,8 +107,12 @@ anchor joins the open DU's What column); every DU links its gap and its task (or
 ```
 You are the doc worker for <KEY>. Apply only these doc updates, nothing else: <DU rows: ID, level, kind,
 anchors, What from -> to, Decided by>.
-Docs root: <path>. Owning skills: load brd-unifier / pre-sdd-unifier / sdd-unifier / lld-unifier for the doc you edit when
-installed; otherwise follow the doc's own format exactly (heading style, keyed IDs, tables).
+Docs root: <path>. Owning skill per doc: brd-unifier / pre-sdd-unifier / sdd-unifier / lld-unifier.
+- Owning skill installed: apply each DU through its matching row: `Decided change <KEY>/CHG-NNN (DU-NNN)` for a
+  DU decided by a CHG, `Doc gap <KEY>/GAP-NNN (DU-NNN)` for a DU that needs an owner's decision. Its delta
+  review, `Review:` stamp and documents-chain hops run here; each next-hop request keeps the CHG and DU IDs.
+- Not installed: read that skill's SKILL.md by its path and use its delta-apply path (its § Running outside
+  Claude Code); a skill with no such path: follow its matching row in full, as read from that file.
 Rules:
 - Edit only the listed anchors and the higher anchors listed with them. Never rename or delete a heading
   anchor: add a new one, or mark the old text "Superseded by <DU-ID>".
@@ -115,20 +120,44 @@ Rules:
 - Each changed doc: bump the minor version on its master/cover and add one changelog row that names the
   DU ID and the changed anchors.
 - Commit in the docs repo, one commit per doc file batch, last paragraph: `Docs: <KEY/DU-NNN>[, …]`.
-  Never push. Never touch code or tracking/.
+  Never push. Never touch code or tracking/. Where the owning skill's row and these rules differ, the row wins
+  for the doc's content and version; these rules win for scope and the commit.
 - A point you cannot apply without inventing design or business intent: stop that DU and say why.
-Reply: per DU: APPLIED <commit sha> <docs + new versions> | STOPPED <reason>.
+Reply: per DU: APPLIED <commit sha> <docs + new versions> | NO CHANGE <section that states it> |
+DECLINED <owning skill> <reason> | STOPPED <reason>.
 ```
+
+## 6a. Team run mode: board requests instead of the worker
+
+When the board's Run mode is `team` (another employee owns the doc folder; one owner per folder), the worker
+does not edit. Dispatching a DU means raising the board request for its first hop (SKILL.md § The tracker's
+board row): `Decided change <KEY>/CHG-NNN (DU-NNN): <summary>` for a DU decided by a CHG, `Doc gap
+<KEY>/GAP-NNN (DU-NNN): <question>` for a DU waiting on an owner's decision. The DU state follows the request:
+
+| Request | DU state |
+|---|---|
+| `Open` or `Accepted` | `Running` (§ 10's 30-minute rule does not apply) |
+| `Later` | `Waiting-decision` |
+| `Done` with a version | `Applied`, then the verifier (§ 7) and sync (§ 8) |
+| `Done` with `No change: <evidence>` | `Applied` with no docs commit; the verifier (§ 7) confirms the cited section already states it, then `Verified` with "No change" as evidence; for a `Doc gap`, its gap then becomes `code-drift` with a fix task (gap-rules.md) |
+| `Declined`, no other owner named | `Rejected` with the reason (the only way a request rejects a DU) |
+| `Declined`, naming another owning skill | the same DU goes back to `Queued` with its owner (the gap's Owner) changed to that skill; the new request carries the same DU ID |
+
+In `solo` run mode the worker's reply maps the same way: APPLIED as `Done` with a version, NO CHANGE as `Done`
+with `No change`, DECLINED as `Declined`; STOPPED goes to `Waiting-decision` (§ 10).
+
+A hop the owning skill raises on carries the same CHG and DU IDs; the tracker reads every request carrying them.
 
 ## 7. Verify (fresh, read-only)
 
-When a worker reports, the tracker sets each applied DU to `Applied` and starts one fresh read-only verifier
+When a worker reports (or a `team` request ends `Done`, § 6a), the tracker sets each applied DU to `Applied` and starts one fresh read-only verifier
 (Agent tool, faster model, background). Nobody grades their own work (rule 8). It checks, with evidence:
 
 1. The docs diff touches only the DU's anchors; no anchor renamed or removed (grep the old anchors).
 2. Higher docs still agree with the lower ones at those anchors (no new contradiction).
 3. For `fill-silence` / `contract` / `doc-update`: the doc now matches the code at the cited `file:line`.
-4. Version bumped and changelog row present, naming the DU.
+4. Version bumped and changelog row present, naming the DU. A `No change` DU (§ 6a) has no diff: check instead that
+   the cited section already states the decision; checks 1, 3, 4 and 5 do not apply to it.
 5. Nothing invented: every new sentence traces to the DU's What or its decider.
 
 PASS → `Verified`. FAIL → back to `Queued` with the findings appended (attempt 2). Second FAIL → `Failed`
@@ -155,7 +184,7 @@ and a `doc-gap` (major) for the user. Verdict rows go in the DU's Verified colum
 
 ## 10. Recovery
 
-- A `Running` DU whose worker reported nothing (stopped, failed, or no notification after 30 minutes) → back
+- A `Running` DU (`solo` run mode) whose worker reported nothing (stopped, failed, or no notification after 30 minutes) → back
   to `Queued`, attempt + 1; the next command redispatches it.
 - Worker STOPPED a DU → `Waiting-decision` with the reason; it appears under "Needs your decision" in standup.
 - Docs repo has uncommitted changes before dispatch → do not dispatch; open a `doc-gap` (blocker for the

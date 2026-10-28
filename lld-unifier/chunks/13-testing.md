@@ -118,14 +118,37 @@ The home of spec -> use case and spec -> test case. One row per e2e spec: one sp
 Use cases and test cases carry the key from the SDD's Source BRDs register and link to their BRD headings (test cases to the chunk 16 feature-area heading that holds them), listed one by one, never as a range.
 While BRD chunk 16 is not written (its delivery gate is shut): "Pending (BRD 16 not written)" in the test case column; specs carry use case tags only.
 The Not automated line lists every non-retired chunk 16 case of an in-scope use case that no spec covers, with its reason. "None" when every case is automated; "Pending (BRD 16 not written)" while chunk 16 is not written.
+Runs from: the phase from which the row's cases can run. When the tracker has a slice plan (impl-tracker-unifier's slice mode), its slice ID ([KEY]/S-NN) as the slice plan writes it. Otherwise a link to the use case's `17-specs.md` § 3 Roadmap row ([P2](17-specs.md#3-roadmap)), never a copy of its label or scope. From-code direction with no Roadmap: "Not applicable - no Roadmap".
+The Deferred line lists every case that cannot run until a later phase or slice than its row's Runs from, with its spec and the phase or slice it waits for (same form as Runs from). While it waits, a deferred case is listed on the Deferred line only, never also in its row's test case cell. It moves into the cell through an existing LLD update path once its phase or slice starts: a 17 § 3 Roadmap change that reaches the LLD through the documents chain, a tracker `Doc gap` or `Decided change` request (SKILL.md step 9), or the step 3c slice-order refresh. Never by hand outside an update. "None" when no case waits.
 -->
 
 > **Convention:** one spec per BRD use case, named `e2e/[key-lowercase]-uc-NN-[title-slug].spec.ts`. Every test carries its keyed use case and test case IDs as tags: Playwright `test('[TC name]', { tag: ['@[KEY]/UC-NN', '@[KEY]/TC-[AREA]-NN'] }, async ({ page }) => { ... })`; a backend REST harness (JUnit 5) uses `@Tag("[KEY]/UC-NN")` and `@Tag("[KEY]/TC-[AREA]-NN")`. To re-run a failing UAT case or a production regression: `npx playwright test --grep "@[KEY]/TC-[AREA]-NN"`, or the JUnit Platform tag filter (the `groups` parameter of Maven Surefire or Failsafe).
 
-| Spec | Use cases (BRD) | UAT/BAT test cases (BRD) | Parts covered | Runner |
-|------|-----------------|--------------------------|---------------|--------|
-| `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` | [[KEY]/UC-01](../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [[KEY]/TC-[AREA]-01](../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]), [[KEY]/TC-[AREA]-02](../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) | [step 1-5, A1, E1] | Playwright |
+| Spec | Use cases (BRD) | UAT/BAT test cases (BRD) | Parts covered | Runner | Runs from |
+|------|-----------------|--------------------------|---------------|--------|-----------|
+| `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` | [[KEY]/UC-01](../brd-[brd-slug]/06a-use-cases-[persona-slug].md#uc-01-[title-slug]) | [[KEY]/TC-[AREA]-01](../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]), [[KEY]/TC-[AREA]-02](../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) | [step 1-5, A1, E1] | Playwright | [P1](17-specs.md#3-roadmap) |
 
 **Not automated:** [[KEY]/TC-NFR-02](../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-nfr-acceptance-[ids-slug]) ([reason, e.g. BAT observation over the UAT period]) [or: None / Pending (BRD 16 not written)]
+
+**Deferred to a later phase:** [[KEY]/TC-[AREA]-03](../brd-[brd-slug]/16-uat-bat-test-cases.md#[n]-[feature-area-slug]) in `e2e/[key-lowercase]-uc-01-[title-slug].spec.ts` (runs from [P3](17-specs.md#3-roadmap): [what it waits for]) [or: None / Pending (BRD 16 not written)]
+
+## 16.9 External Dependency Stand-ins
+
+<!--
+One row per external dependency the code calls: each SDD §12 integration (INT-NN) and each managed platform service (identity provider, key management, mail sender, object store, queue). With none: "None - no external dependencies".
+One column per SDD §19 environment, plus Tests (the integration and e2e runs). Each cell: Real, Emulator (named, for example LocalStack or WireMock), or Fake (the test double class).
+Known differences: each behaviour the stand-in does not reproduce (for example a service missing from the emulator edition, keys re-created on restart, no outbound mail). "None known" only after a run proved it.
+Environment-varying values (endpoints, senders, cookie scope) live in `10-operations.md` § 13.1a.
+-->
+
+| Dependency | SDD source | Dev | SIT | UAT | Prod | Tests | Known differences |
+|------------|------------|-----|-----|-----|------|-------|-------------------|
+| [Identity provider] | [INT-01](../sdd-[sdd-slug]/08-integrations.md#12-integrations) | [Emulator ([name])] | [Real (sandbox)] | [Real (sandbox)] | Real | [Fake (`FakeIdentityProvider`)] | [What the emulator does not reproduce] |
+
+**Assumed provider facts.** Each provider behaviour the design relies on that no run has proved yet. It stays flagged `> Confirm:` until its spike passes.
+
+| Fact assumed | Dependency | Relied on by | Spike (what is run, what result proves it) | Must precede | State |
+|--------------|------------|--------------|--------------------------------------------|--------------|-------|
+| [The provider returns [claim] in [token]] | [Identity provider] | [04 anchor, link] | [Call [operation] in the sandbox; the claim is present] | [P1](17-specs.md#3-roadmap) (or the slice, as Runs from in § 16.8) | [Assumed / Verified ([evidence link]) / Refuted (open item raised)] |
 
 <!-- MASTER: [project-slug]-lld-master.md | PREV: 12-performance.md | NEXT: 14-frontend.md (conditional) | NEXT: 15-open-questions.md (if no UI) -->

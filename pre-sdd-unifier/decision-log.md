@@ -14,7 +14,7 @@ The content chunks hold only the settled values and shape, in plain present tens
 **Companion file rules.**
 
 - Lives in `./pre-sdd-[slug]/`, next to `[slug]-pre-sdd-master.md`. In COMBINED mode it is still written to `./pre-sdd-[slug]/decision-log.md`, beside `studio/`, and the handoff summary names its path.
-- Created on first use, when the first decision is recorded. That decision is one of these: the answer to "go on?" for a BRD that is not `Approved`, a proposal, an answered batch, a group confirm, a stage 4 decision, a decided open item, an answer policy that answered a question, or a signature. Do not write an empty register.
+- Created on first use, when the first decision is recorded. That decision is one of these: the answer to "go on?" for a BRD that is not `Approved`, a proposal, an answered batch, a group confirm, a stage 4 decision, a decided open item, an answer policy that answered a question, a decided change from the implementation tracker (an action entry with `Source: <KEY>/CHG-NNN`: SKILL.md § Later requests), or a signature. Do not write an empty register.
 - Linked from the master once it exists.
 - Never merged into the combined or merged Pre-SDD. It is decision history, not design text.
 - Append-only in spirit: a superseded decision keeps its record, and the later record says what it supersedes.

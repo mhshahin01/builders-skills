@@ -106,6 +106,7 @@ An item that names the SDD, the stack approval, the use-case trace, or the Child
 - [ ] 01 § 2.1 lists exactly the SDD §13 services and modules the LLD covers (SKILL.md step 3b, Scope), each by its SDD name and slug, and says whether the scope has a UI surface. The glossary links the SDD glossary and adds rows only for LLD-specific terms. Every assumption has a source.
 - [ ] 02 has the bounded context and the upstream and downstream dependencies of every in-scope service, read from the SDD.
 - [ ] 03 § 6.1 names every in-scope service or module in the style the SDD's ADR-01 records. Each § 6.2 row links the SDD §8.6 or §8.7 part it implements (or names §6, §11.3, §19, or §17.X for an SDD written before chunk 05a). § 6.4 operationalises the style without restating it.
+- [ ] 03 § 6.2a Process and Profile Wiring is written when the style is a modular monolith or hybrid core (`chunks/03-architecture.md` § 6.2a).
 - [ ] 03a (unless the LLD has none): every § 6.5.1 row has a Status by the Status rule of the chunk, and a row that adds a dependency SDD §6 does not name reads `Proposed - needs approval`. Every § 6.5.2 rule has a source. § 6.5.3 holds only a departure a source states.
 - [ ] Hybrid and partial: every § 6.3 or § 6.5.1 value that a manifest states differently from SDD §6 is a `⚠ drift` row, unless an override covers it.
 - [ ] The master lists a row for every in-scope service file as plain text followed by `Pending (part 2)`, and its Project Type line is filled.
@@ -119,7 +120,9 @@ An item that names the SDD, the stack approval, the use-case trace, or the Child
 - [ ] The API contract checks have run (`sdd-to-lld.md` § API contract blocks › Checks): checks 1 to 6, over every 04 file and 06. They ask no question: the mechanical fixes are made and the rest is flagged, as SKILL.md step 6a item 2 says. The summary gives the result. The one-time offer to complete a legacy § 9.2 (SKILL.md step 8) belongs to a targeted update's handoff, never to a part.
 - [ ] 06 and 07 match the SDD character for character: `API-NN` names and URIs, permission tokens, topic and event names. Every consumed event has its producer, and the producers' and consumers' lists agree from both sides.
 - [ ] 05 derives its tables and indexes from the SDD §17.X Tables Design, every table in § 8.2 has its Table name, Table purpose, and Column details, every secondary index and unique key on a shared-schema table leads with `tenant_id` (the primary key `id` is exempt), the `**Indexes:**` lines and § 8.3 name the same indexes, and the Flyway plan matches the tables.
+- [ ] 05 § 8.5 versions follow its apply-order rule, and § 8.6 is written or marked not applicable (`chunks/05-data-model.md`).
 - [ ] 08 holds a state machine only for a service that is genuinely stateful with named states.
+- [ ] 08 § 11.4 is written or marked not applicable (`chunks/08-state-and-rules.md`).
 - [ ] Every service file cites a § 6.5 row instead of restating it, and every departure has its § 6.5.3 row, as the § 6.5.3 Convention says.
 - [ ] Every citation of a part 3 chunk is inline code (a section reference), not a link.
 - [ ] The back-fill of 01, 02, 03, and 03a is done and listed.
@@ -128,6 +131,7 @@ An item that names the SDD, the stack approval, the use-case trace, or the Child
 
 **Part 3**
 
+- [ ] 09 § 12.6a, 13 § 16.9 and 14 § 17.3b are written or marked not applicable (`chunks/09-cross-cutting.md`, `chunks/13-testing.md`, `chunks/14-frontend.md`).
 - [ ] Chunks 09 to 14 are at the bar of `lld-quality.md`. The derived views that SKILL.md principle 13 allows in them (09 § 12.3 instances, 10 § 13.1 and § 13.7, 12 § 15.1) name their source on every row. A light run leaves the detail it names (SKILL.md § Light run) as `> TODO: light-work run - detail before release`.
 - [ ] Every citation a part 1 or part 2 chunk makes to a chunk of part 3 resolves: the section exists and states what the citing line needs. A missing platform rule is added to the cited chunk; a service-specific deviation is stated in the service file with its reason.
 - [ ] The Screens field of every traceability line is filled from 14 § 17.3, or reads `Not applicable - no UI`. None reads `Pending (part 3)`.

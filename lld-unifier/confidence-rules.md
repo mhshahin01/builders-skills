@@ -30,12 +30,14 @@ The claim is grounded in:
 - (FROM-CODE) inference from naming or code shape that is plausible but not directly stated.
 - (FROM-SDD) a CLAUDE.md guideline (not a hard rule) applied because the situation matches.
 - (FROM-SDD) inference from SDD prose that is plausible but not pinned.
+- (any direction) a statement about how a container, framework or provider behaves at runtime that no source, test or probe result shows, such as how a server answers an over-size body or a dropped connection. The `> Confirm:` names the probe that would verify it. A passing test or a recorded probe result upgrades it to High.
 
 Examples:
 - "Strategy pattern is used here for tenant-tier pricing." (Pattern detected structurally; rationale inferred from naming.)
 - "This service uses choreography saga for the order-fulfilment flow." (Inferred from event listener registrations + state transitions.)
 - "Caching tier is in-process Caffeine, sized 10k entries." (Inferred from `@Cacheable` annotation; size from `application.yml`.)
 - "GET /v1/foo p99 latency target is 100ms." (Inferred: SDD §18 didn't pin per-endpoint targets but mentioned 100ms as a service-level target.)
+- "An over-size upload is refused with 413 and a ProblemDetails body." (Runtime behaviour stated from memory; the server may reset the connection instead.)
 
 **Emission:** content + `> Confirm: [reason for medium confidence - what to verify]`.
 
@@ -43,6 +45,7 @@ Example:
 
 ```markdown
 > Confirm: Strategy pattern detected via structural heuristic (interface FooStrategy + 3 implementations + context FooService). Verify the runtime selection logic matches the documented per-tenant-tier rationale.
+> Confirm: runtime behaviour not verified. Probe: send a body one byte over the limit to the running service and record whether the client gets a 413 ProblemDetails or a connection reset.
 ```
 
 ### Low confidence: emit + `> TODO: <best-guess> - verify` flag
@@ -99,7 +102,7 @@ Example:
 | Claim type | Default tier | Override conditions |
 |------------|--------------|---------------------|
 | Section directly carried from SDD (verbatim or paraphrased) | High | (none) |
-| Pattern application driven by CLAUDE.md hard rule (Outbox, Idempotency on money, RFC 9457) | High | (none: CLAUDE.md hard rules are unconditional) |
+| Pattern application driven by CLAUDE.md hard rule (Outbox, Idempotency per `pattern-rules.md` § Idempotency, RFC 9457) | High | (none: CLAUDE.md hard rules are unconditional) |
 | Pattern application driven by CLAUDE.md guideline (Strategy, Factory, Mediator) | Medium | SDD prose explicitly names the pattern → upgrade to High |
 | Concrete class names per CLAUDE.md naming conventions | Medium | (none: names are conventions, not facts) |
 | Method-level pseudocode | Medium | SDD `13x` Business Logic is detailed enough to dictate the algorithm → upgrade to High |
@@ -167,6 +170,7 @@ The summary table in § 18.5 is updated on each regeneration. It counts the open
 | CLAUDE.md hard rule applies | applied content (no flag, with attribution) |
 | Pattern detected via structural heuristic | content + `> Confirm:` |
 | Pattern proposed via CLAUDE.md guideline | content + `> Confirm:` (unless SDD names the pattern) |
+| Container, framework or provider behaviour that no source, test or probe shows | content + `> Confirm:` naming the probe that would verify it |
 | Best-guess from variable names / branches | content + `> TODO: <best-guess> - verify` |
 | Best-guess for SLO / threat / peak scenario | content + `> TODO: <best-guess> - verify` |
 | Section neither code nor SDD covers | section heading + `> TODO: not derivable from inputs - please specify` |

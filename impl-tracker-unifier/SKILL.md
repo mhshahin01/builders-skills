@@ -24,7 +24,8 @@ You act as the Developer / software engineer (Software Development & Delivery) i
 
 It **never edits** BRD, SDD or LLD files itself. Every doc point becomes a gap row **and** a doc update
 (`KEY/DU-NNN`), triaged to the docs it affects and applied in the background by a separate doc worker that
-uses the owning skill (brd-unifier, pre-sdd-unifier, sdd-unifier, lld-unifier) - doc-impact-rules.md.
+uses the owning skill (brd-unifier, pre-sdd-unifier, sdd-unifier, lld-unifier): doc-impact-rules.md. In `team`
+run mode the DU goes to the doc folder's owner as a board request instead (§ Documents chain).
 
 Support files (paths relative to this skill folder):
 
@@ -135,7 +136,7 @@ Follow `task-splitting.md`. In short:
    (`In progress` + missing list + gaps), Missing (`Planned`); unclaimed inventory items → `untracked-code`.
 6. Run the ownership check: nothing owned twice (across all features).
 7. Run the **coverage check**: every in-scope UC, every AC, every e2e spec, every migration,
-   every endpoint in scope has ≥ 1 task. Missing → `GAP` type `plan-gap` (the LLD has no unit for it)
+   every endpoint in scope, and every unit of each kind in task-splitting.md's unit map has ≥ 1 task. Missing → `GAP` type `plan-gap` (the LLD has no unit for it)
    or task added.
 8. Show the plan summary (phases, counts, DAG Mermaid, gaps, **existing-code match table** with
    confidence - discovery-rules.md § 3, and the **risk table**: each task's Risk with its reason,
@@ -144,7 +145,8 @@ Follow `task-splitting.md`. In short:
 
 **Slice mode** (`plan KEY slice` / `reslice`, or `Mode: slice` in config): after step 5c, group the tasks into
 slices and check slice order per slice-rules.md § 3; step 8 shows the slice table first and asks for the
-grouping and the order; on approval also write the slice cards and `config.md` § Slices.
+grouping and the order; on approval also write the slice cards and `config.md` § Slices (the home of the
+slice order that lld-unifier reads: slice-rules.md § 1).
 
 Re-running `plan` on a planned scope is a **re-plan**: it diffs against existing tasks, never renumbers,
 never deletes (unused tasks become `Dropped` with a reason), and keeps all status/evidence.
@@ -400,8 +402,10 @@ and promotion. The `checks.json` entry is written in the same step as the lesson
 ### change
 
 Follow `lessons-rules.md` § 6. Needs a user quote or doc version as the decider; otherwise ask.
-Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, queues a DU (kind `direction`,
-decided by the CHG's quote) for every doc the change affects.
+Marks affected tasks, supersedes old decisions/lessons, creates rework tasks, and queues a DU (kind `direction`,
+decided by the CHG's quote) for every doc the change affects. The DUs carry the change through the documents
+chain (§ Documents chain): the doc worker applies them in `solo` run mode, and `Decided change` requests carry
+them in `team` run mode. Their results fill the CHG Follow-up.
 
 ### gap
 
@@ -412,7 +416,7 @@ type bug / code-drift / layer-miss / obs-gap / double-build / untracked-code →
 ### docs
 
 Follow `doc-impact-rules.md`. Every command first checks `doc-updates.md`: `Queued` rows and no live worker →
-dispatch (§ 6); a worker or verifier that reported → process it (§§ 7-8). `docs [KEY]` prints the queue by
+dispatch (§ 6; in `team` run mode, raise the board request: § 6a); a worker or verifier that reported → process it (§§ 7-8). `docs [KEY]` prints the queue by
 state and the doc-drift count (§ 11). `docs run` dispatches now. `docs approve KEY/DU-NNN` applies a
 `Waiting-decision` DU (the user's word is its decider, quoted); `docs reject KEY/DU-NNN <reason>` sets it
 `Rejected` and turns its gap into `code-drift` when the code must change instead.
@@ -437,7 +441,7 @@ blocked chains, open gaps by severity. Mermaid progress optional.
 ### sync
 
 Follow `sync-and-drift.md`: doc version bump → find changed anchors → mark citing tasks `Stale`
-(Done ones become `Done-stale`) and open `doc-changed` gaps, except anchors a DU changed for the task that
+(Done / Verified ones become `Done-stale`) and open `doc-changed` gaps, except anchors a DU changed for the task that
 raised it (doc-impact-rules.md § 8); owned files missing or moved → `code-drift`;
 code with no owning task (new top-level classes, migrations, routes) → `untracked-code`. Then re-run the
 inventory and diff it (discovery-rules.md § 5).
@@ -449,13 +453,107 @@ asks before writing.
 
 ---
 
+## Rules that apply to every command
+
+1. **Write immediately.** Every change goes to disk in the same step; then regenerate `index.md`. In a
+   wave: every status change updates its `index.md` row at once (the Stop hook reads it); the full
+   regeneration runs once, after the wave's last verdict.
+1a. **Paired writes.** Some files change together, in the same edit step, never "later": a gap owned by a doc
+   skill writes its `gaps.md` row **and** its `doc-updates.md` row; a status change
+   writes the card's Status + History row **and** its `index.md` row (pre-flight P3 compares them); a new or
+   sharpened lesson writes its `lessons.md` row **and** its `checks.json` entry (command, builtin or
+   judgement; P7 coverage). Run `--lint` after such a write while a task is open.
+2. **Never renumber, never delete.** IDs are permanent. Removed scope → `Dropped` + reason.
+3. **Keyed IDs everywhere,** linked to the heading anchor, exactly as lld-unifier writes them:
+   `[AUTOAPPLY/UC-23](<rel path>#uc-23-…) AC-3: <short label>`.
+4. **Never edit BRD/SDD/LLD** in the tracker or the builder. Doc points become gap + DU; only the background
+   doc worker edits docs (`solo` run mode), only for a queued DU and through the owning skill, and a fresh
+   verifier checks it (doc-impact-rules.md). In `team` run mode the DU goes to the doc folder's owner as a board
+   request (§ Documents chain).
+5. **Never invent design.** If the LLD doesn't say how, the task says "LLD silent" and a `plan-gap`
+   is opened; the implementer may propose, and the proposal is queued as a DU (§ Documents chain).
+6. **Ask only direction-level questions.** Local choices (task split, wording, ordering ties) are
+   decided and noted in the plan's decision list.
+7. **Learn once.** Every trigger in lessons-rules.md § 1 writes a lesson in the same step; every direction
+   change writes a CHG row before any code follows the new direction.
+8. **Nobody grades their own work.** Done requires a passing audit by a fresh auditor (audit-rules.md).
+8a. **Mechanical first, judgement second.** Pre-flight passes before any audit that can set a task Done
+    (`done`, and `audit` of a task that is not Done yet); the auditor spends its time on design, contracts,
+    security and concurrency, and re-runs pre-flight in audit mode instead of trusting the pasted result.
+8b. **Speed never removes a gate.** Waves, parallel audits and risk tiers change only order and depth;
+    every task still gets its own gates, pre-flight, fresh auditor, report and verdict.
+8c. **Run each thing once.** Full test suites run once per head commit (pre-flight); one export per wave
+    is reused; a re-audit checks only the delta. Anything re-run must have a reason: sha/tree differs from
+    the task head, report missing, any non-zero failures/errors/skipped, count below the last passing run,
+    or the fix touched the layer. Auditors reuse a valid pre-flight and run only the task's test classes
+    (twice only when the task owns concurrency or timing logic, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
+    The pre-flight caches its suite rows and raw mutation survivors (`tracking/preflight-cache.json`): a
+    re-run whose code is unchanged (only tracking/ files changed, e.g. a card, an equivalent-mutant line or a
+    Touches line) reuses both and re-judges in seconds. `--mutate` stores its result there too, and the first
+    full run reuses it for unchanged code; the removals report survives test-only fixes elsewhere. Never re-run a full pre-flight to fix paperwork: fix
+    it, `--lint`, then re-run (it reuses). Budget: one full pre-flight per task; a second needs a code fix.
+8e. **Fewer, tighter rounds.** Audit claims freeze at audit 1; only the 7 big points (audit-rules.md § 4)
+    can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
+    strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
+    round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
+8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
+    gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →
+    the audit. A task that fails its first audit records which earlier gate should have caught it.
+9. **Attribution.** Every status change records agent + date. Every commit carries exactly one trailer:
+   `Task: KEY/T-NNN`, or `Tracking: <reason>` for a commit that changes only tracking files and belongs to
+   no single task (slice delivery, config, lessons shared by several tasks). The trailer goes in the **last paragraph** of the message, together with any `Co-Authored-By` line
+   (no blank line between them), or git does not read it as a trailer and push-check warns.
+
+## Documents chain (bottom-up and top-down)
+
+A decision that fills, narrows or changes a design point (the user's answer, a tracker choice, a gap or open
+item settled) goes through the documents chain in the same change. The tracker carries it only as doc updates:
+each doc point is a gap and a `KEY/DU-NNN` row (doc-impact-rules.md §§ 1-5), and the DU's impact level names the
+documents it reaches. The gates of doc-impact-rules.md § 9 decide which task waits for it.
+
+| Change starts at | Hops, in this order | A hop runs when |
+|---|---|---|
+| Code or the LLD (an implementation decision, an LLD update) | lld-unifier, then sdd-unifier, then pre-sdd-unifier, then brd-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document states the changed fact otherwise, or must state it (a contract, a behaviour rule, a business rule), and the tracker hop when it cites or realises the changed item |
+| The SDD | sdd-unifier, then brd-unifier when a business rule changes, and lld-unifier for every child LLD the change reaches, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the same |
+| The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then pre-sdd-unifier, then sdd-unifier, then lld-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
+
+- **One route, two run modes** (the board's Run mode line). Each hop runs through its owning skill; the tracker
+  never writes a document itself.
+  - `solo` (one session can edit the docs): the doc worker (doc-impact-rules.md § 6) applies each DU through the
+    owning skill's own row: its `Decided change` row for a DU decided by a CHG, its `Doc gap` row for a DU that
+    needs an owner's decision. That skill's delta review, `Review:` stamp and documents-chain hops run inside the
+    worker. Then the verifier and `sync` run (doc-impact-rules.md §§ 7-8).
+  - `team` (another employee owns the doc folder; one owner per folder): the worker does not edit. The tracker
+    raises the board request instead (§ The tracker's board row), and the DU state follows the request
+    (doc-impact-rules.md § 6a).
+- **Hops.** The tracker dispatches or raises only the first hop. The owning skill carries the change on through
+  its own documents chain, and every next-hop request, in either mode, keeps the CHG and the DU ID. The tracker
+  reads every board request carrying that CHG or DU ID, whoever raised it, to fill the CHG Follow-up and the DU
+  state.
+- The CHG decider quote is each hop's acceptance: the owning skill asks again only when a record disagrees with it.
+- The CHG row's Follow-up names every document the change reached with the version that records it, and every
+  document that needed no change with the reason (`SDD: no change, contract unchanged`).
+- A doc-owned gap closes through its DU (gap-rules.md). Only a question still waiting for its owner (a business
+  decision, a provider fact) stays an open gap.
+- The tracker hop is doc-impact-rules.md § 8: `sync` runs on its own once the DU is `Verified`, moves the baseline
+  without asking, and does not mark the task that raised the DU `Stale`; `plan` runs for new scope. It reports the
+  doc versions its baseline now holds.
+- Scope the user leaves for later stays a gap (`Deferred` with the user's quote) that cites the document's TODO
+  or open question recording it.
+- An answer policy set for a tracker run answers only the tracker's own questions. Each hop keeps its skill's own
+  stops and asks, unless the policy names that document.
+
 ## The tracker's board row
 
 The tracker runs in the code repo, and the status board lives in the docs root.
 
 - **Path:** `<docs root>/unifier-status.md`, taken from the `Board` row `init` records in `tracking/config.md`. The docs root may differ from the folder holding the hop folders; the tracker then uses the recorded path as written.
 - **Its row:** the tracker writes only the row whose Skill cell is `impl-tracker-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
-- **Requests:** for each doc gap whose DU it routes to an owner (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), it raises one handoff request on the board, `Doc gap <KEY>/GAP-NNN: <question>`, with the gap row as Link, and reuses its pending request on the same gap. The owner's result decides the gap: Done with a version closes it with that version through its DU (doc-impact-rules.md § 8); Done with `No change` re-classifies it as `code-drift` with a fix task; Declined routes it to the named owner with a new request. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
+- **Requests:** in `team` run mode (§ Documents chain), for each DU it raises one handoff request on the board to the owning skill (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), for the first hop only, and reuses its pending request on the same DU and skill:
+  - `Decided change <KEY>/CHG-NNN (DU-NNN): <summary>`, for a DU decided by a CHG, with the CHG row in `tracking/changes.md` as Link;
+  - `Doc gap <KEY>/GAP-NNN (DU-NNN): <question>`, for a DU waiting on an owner's decision, with the gap row as Link.
+
+  That skill's documents chain raises each later hop, up or down the chain, with the same form, IDs and Link. The tracker reads every board request whose Request carries that CHG or DU ID, whoever raised it, and sets the DU state from it (doc-impact-rules.md § 6a): Done with a version fills the CHG Follow-up with the document and that version; Done with `No change: <evidence>` fills it with that evidence, sets the DU to `Applied` with no docs commit for the verifier to confirm, and for a `Doc gap` also re-classifies the gap as `code-drift` with a fix task; Declined sets the DU `Rejected` with the reason, or, when it names another owner, returns the same DU to `Queued` for that owner, whose new request carries the same DU ID (doc-impact-rules.md § 6a). A request in `Later` keeps its DU at `Waiting-decision`. When every hop the chain reached has a version or a reason, the Follow-up is complete. It updates only the State and Closed cells of a request addressed to it. It sets that request to Accepted when plan or sync starts, and to Done, with Closed (UTC), at the stop that ends it.
 - **Missing file:** when the recorded path is reachable but `unifier-status.md` does not exist there, the tracker creates the board from the template in the Status board section below, as that section says the first skill to run does, then writes its row.
 - **Unreachable path:** when the recorded path cannot be reached or written, the tracker skips the board update and says so in a note in its reply; the run goes on.
 
@@ -517,55 +615,6 @@ Run mode: solo
   - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
   - `tutorialize-unifier` only reads the board and has no row.
 
-## Rules that apply to every command
-
-1. **Write immediately.** Every change goes to disk in the same step; then regenerate `index.md`. In a
-   wave: every status change updates its `index.md` row at once (the Stop hook reads it); the full
-   regeneration runs once, after the wave's last verdict.
-1a. **Paired writes.** Some files change together, in the same edit step, never "later": a gap owned by a doc
-   skill writes its `gaps.md` row **and** its `doc-updates.md` row; a status change
-   writes the card's Status + History row **and** its `index.md` row (pre-flight P3 compares them); a new or
-   sharpened lesson writes its `lessons.md` row **and** its `checks.json` entry (command, builtin or
-   judgement; P7 coverage). Run `--lint` after such a write while a task is open.
-2. **Never renumber, never delete.** IDs are permanent. Removed scope → `Dropped` + reason.
-3. **Keyed IDs everywhere,** linked to the heading anchor, exactly as lld-unifier writes them:
-   `[AUTOAPPLY/UC-23](<rel path>#uc-23-…) AC-3: <short label>`.
-4. **Never edit BRD/SDD/LLD** in the tracker or the builder. Doc points become gap + DU; only the background
-   doc worker edits docs, only for a queued DU, and a fresh verifier checks it (doc-impact-rules.md).
-5. **Never invent design.** If the LLD doesn't say how, the task says "LLD silent" and a `plan-gap`
-   is opened; the implementer may propose, and the proposal is queued as a DU for the doc worker.
-6. **Ask only direction-level questions.** Local choices (task split, wording, ordering ties) are
-   decided and noted in the plan's decision list.
-7. **Learn once.** Every trigger in lessons-rules.md § 1 writes a lesson in the same step; every direction
-   change writes a CHG row before any code follows the new direction.
-8. **Nobody grades their own work.** Done requires a passing audit by a fresh auditor (audit-rules.md).
-8a. **Mechanical first, judgement second.** Pre-flight passes before any audit that can set a task Done
-    (`done`, and `audit` of a task that is not Done yet); the auditor spends its time on design, contracts,
-    security and concurrency, and re-runs pre-flight in audit mode instead of trusting the pasted result.
-8b. **Speed never removes a gate.** Waves, parallel audits and risk tiers change only order and depth;
-    every task still gets its own gates, pre-flight, fresh auditor, report and verdict.
-8c. **Run each thing once.** Full test suites run once per head commit (pre-flight); one export per wave
-    is reused; a re-audit checks only the delta. Anything re-run must have a reason: sha/tree differs from
-    the task head, report missing, any non-zero failures/errors/skipped, count below the last passing run,
-    or the fix touched the layer. Auditors reuse a valid pre-flight and run only the task's test classes
-    (twice only when the task owns concurrency or timing logic, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
-    The pre-flight caches its suite rows and raw mutation survivors (`tracking/preflight-cache.json`): a
-    re-run whose code is unchanged (only tracking/ files changed, e.g. a card, an equivalent-mutant line or a
-    Touches line) reuses both and re-judges in seconds. `--mutate` stores its result there too, and the first
-    full run reuses it for unchanged code; the removals report survives test-only fixes elsewhere. Never re-run a full pre-flight to fix paperwork: fix
-    it, `--lint`, then re-run (it reuses). Budget: one full pre-flight per task; a second needs a code fix.
-8e. **Fewer, tighter rounds.** Audit claims freeze at audit 1; only the 7 big points (audit-rules.md § 4)
-    can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
-    strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
-    round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
-8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
-    gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →
-    the audit. A task that fails its first audit records which earlier gate should have caught it.
-9. **Attribution.** Every status change records agent + date. Every commit carries exactly one trailer:
-   `Task: KEY/T-NNN`, or `Tracking: <reason>` for a commit that changes only tracking files and belongs to
-   no single task (slice delivery, config, lessons shared by several tasks). The trailer goes in the **last paragraph** of the message, together with any `Co-Authored-By` line
-   (no blank line between them), or git does not read it as a trailer and push-check warns.
-
 ## Read budget per command
 
 | Command | May read |
@@ -575,12 +624,13 @@ Run mode: solo
 | start | + one task card, `ownership.md`, code grep for owned items, `lessons.md` / `changes.md` filtered by scope |
 | done, audit | + `git log`, diff since start commit, test/tool output, cited doc anchors, filtered lessons/changes, `checks.json`, pre-flight output, the previous audit report (delta re-audit) |
 | wave | `index.md`, `ownership.md`, the candidate task cards (Owns, Risk, depends_on) |
-| lesson, change | + `lessons.md` / `changes.md`, cited task cards |
+| lesson, change | + `lessons.md` / `changes.md`, cited task cards, `config.md` and the doc master headers (documents chain) |
 | standup | + last journal, `git log --since` |
-| gap | + the cited task card and the one cited doc section |
+| gap | + the cited task card and the one cited doc section, `config.md` and the doc master headers (documents chain) |
 | verify | + cited BRD AC sections, test files with matching tags |
 | docs | `doc-updates.md`, `config.md` § Doc updates, the DU anchors' sections and the higher anchors they link (worker and verifier: the same, plus the docs diff and the cited code lines) |
 | plan, sync, discover | `inventory.md`, code scan per discovery-rules.md § 1, LLD scope files, SDD §7.3 rows for the scope, BRD sections by anchor, doc master headers |
+| every command | + `unifier-status.md` through the `Board` path in `config.md` (its own row and its requests) |
 
 ## Quality checks before finishing any write
 
@@ -604,3 +654,5 @@ Run mode: solo
 - [ ] Every lesson with a mechanical Check has a `checks.json` entry (or a reason it can't).
 - [ ] No task went to `In review` without a linked pre-flight report (PASS) for its head commit.
 - [ ] After every audit (finished or stopped) the code tree was clean before the next commit.
+- [ ] Every design point decided this run went through the documents chain as DUs: each CHG Follow-up names the
+      doc versions that record it, or why a document needed no change.

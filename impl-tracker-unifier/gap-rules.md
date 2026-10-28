@@ -21,5 +21,5 @@
 untracked-code also writes its lesson - lessons-rules.md § 1): the commit, the doc version that fixed it, or the user's decision quoted.
 **Doc-owned gaps** (`doc-gap`, `doc-update`, `doc-changed`, and `plan-gap` routed to lld-unifier) are written
 together with their DU row (doc-impact-rules.md § 5) and close only when that DU is `Verified` (evidence: docs
-commit + new version) or `Rejected` with a reason.
+commit + new version) or `Rejected` with a reason. A doc gap whose owner answers `No change` becomes `code-drift` with a fix task (doc-impact-rules.md § 6a).
 

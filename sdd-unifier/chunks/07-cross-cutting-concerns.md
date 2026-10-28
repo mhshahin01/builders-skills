@@ -13,6 +13,7 @@ PART OF: SDD - [Project Name]
 Each concern in this section is the platform-wide default. Individual services may override the default in their detailed section
 (§17.X, chunks 13x) and the override must be justified there.
 With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 are cited as PSDD/<ID> with a link and are locked (brd-to-sdd.md § Pre-SDD inputs (locked)).
+A library, SDK, or framework that a concern here names as policy (an adapter or client library, for example) meets the library test in sdd-quality.md § §6 Ecosystem Overview.
 -->
 
 ## 11.1 DB Modeling (Default)
@@ -47,7 +48,14 @@ With a loaded Pre-SDD (SKILL.md step 2a), the items its chunk 12 lands in §11 a
 
 ## 11.4 Observability (Default)
 
-- **Logging:** [Format + mandatory fields]
+- **Logging:** [Format; mandatory fields in the table below]
+
+<!-- One row per mandatory field. Meaning says whose value it is: for example `module` is the module that emits the line, not the module that called it; a caller needs a field of its own. When absent says what a line without the value carries (a framework or startup line, for example). The context lifecycle and the masking mechanism belong to the LLD. -->
+
+| Field | Meaning (whose value) | When absent |
+|-------|-----------------------|-------------|
+| [field, e.g. `module`] | [e.g., the module that emits the line] | [e.g., omitted on framework lines] |
+
 - **Metrics:** [Tooling + RED + golden signals]
 - **Tracing:** [Tooling + sampling]
 - **Dashboards:** [Default dashboard expectations]

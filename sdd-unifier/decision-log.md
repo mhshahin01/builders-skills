@@ -27,6 +27,7 @@ The content chunks (00-17) hold only the settled design in plain present tense; 
   - a settled marker;
   - an accepted open item;
   - a direct design instruction;
+  - a decided change from the implementation tracker (a CHG row);
   - a business review point;
   - the record of an answer policy that answered a question.
 
@@ -137,7 +138,7 @@ MAINTENANCE: New decisions are added here, not in the content chunks. The chunks
 
 ### Action entries
 
-**[Action], [YYYY-MM-DD]:** [What was done in that session: chunks written, back-fills, markers raised or resolved, contracts re-reconciled, what stays pending. A direct design instruction from the user, with no question behind it, is recorded here: the instruction as the user gave it, then `Rule home:` and the link to the section that now states it.]
+**[Action], [YYYY-MM-DD]:** [What was done in that session: chunks written, back-fills, markers raised or resolved, contracts re-reconciled, what stays pending. A direct design instruction from the user, with no question behind it, is recorded here: the instruction as the user gave it, then `Rule home:` and the link to the section that now states it. A decided change from the implementation tracker is recorded the same way: the decision with its decider quote, `Source: <KEY>/CHG-NNN` linked to the CHG row in the tracker's `tracking/changes.md`, then `Rule home:` (SKILL.md step 10, `Decided change`).]
 
 ## Part N handoff record
 

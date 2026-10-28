@@ -42,7 +42,7 @@ PART OF: SDD - [Project Name]
 
 ### Child LLDs (children)
 
-<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD reflects (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier)" to its SDD version cell (replacing an earlier such note) and names the LLD in the handoff; it never writes into the LLD, whose next run rewrites its own row and clears the note only when the row then names this SDD's current version. Before any LLD exists: one row "None yet". -->
+<!-- Written by lld-unifier: each LLD that reads this SDD (Direction: from-sdd, hybrid, partial, or from-code with this SDD given) adds or updates its own row, matched by Link; SDD version is the SDD version that LLD reflects (lld-unifier step 6c). Checked by sdd-unifier on every run: links resolve, scope services exist in §13, sibling LLD masters (lld-*/*lld-master.md) and combined LLDs (LLD-*.md, skipping LLD-*-MERGED.md: a merged copy of a chunked LLD already registered through its master) whose Related SDD line links to this SDD's master are added if missing, stale rows are flagged, never deleted. A row whose SDD version is older than this SDD's version is out of date: sdd-unifier appends " (out of date: SDD is now v[X.X]; refresh through lld-unifier) Affected: [anchor links]" to its SDD version cell (replacing an earlier such note) and names the LLD in the handoff; Affected lists, by anchor link, every SDD section changed since the row's SDD version (the Anchors of the Changes Log rows after it; a row with no `Anchors:` contributes its `Chunks:` list, for example "Affected: see Chunks 11, 13b of v[X.X]"), and lld-unifier maps them to its own sections; it never writes into the LLD, whose next run rewrites its own row and clears the note only when the row then names this SDD's current version. Before any LLD exists: one row "None yet". -->
 
 | LLD | Scope (§13 services) | Direction | Version | SDD version | Link |
 |-----|----------------------|-----------|---------|-------------|------|
@@ -56,9 +56,9 @@ PART OF: SDD - [Project Name]
 
 | Version | Updated Date | Updated By | Reviewed By | Approved By | Update Summary |
 |---------|--------------|------------|-------------|-------------|----------------|
-| 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. Chunks: none (initial build) |
+| 1.0     | YYYY-MM-DD   | [Name]     |             |             | Initial draft. Review: full. Chunks: none (initial build) |
 
-<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. Reviewed By and Approved By: SKILL.md § Output conventions, Approvals. -->
+<!-- One row per update that changes content (SKILL.md § Output conventions, Versions), ending with its `Chunks:` list. Before `Chunks:` the row carries its review stamp, `Review:` and the baseline that ran: `full` (the first build), `delta`, `application check`, `none needed: <reason>` (no content in chunks 01 to 17 changed), or `not run` (the review could not run, for example in a delta apply without it; SKILL.md § Running outside Claude Code). A replay adds `replays v[X.X]`. A `not run` row is a review owed (SKILL.md step 10, common tail). When the change reaches a child LLD (SKILL.md step 9a), `Anchors:` follows the stamp and lists each changed SDD section as an anchor link, for example `Anchors: [§15.2](./11-api-contracts.md#anchor)`. `Chunks:` stays last and unchanged. Reviewed By and Approved By: SKILL.md § Output conventions, Approvals. -->
 
 ---
 

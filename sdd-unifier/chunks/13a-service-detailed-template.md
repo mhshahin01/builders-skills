@@ -30,6 +30,9 @@ Each service follows the exact same structure for predictability and grep-abilit
 - **Does not own:** [Things explicitly outside its boundary]
 - **Upstream consumers:** [Who calls this service]
 - **Downstream dependencies:** [What this service calls / consumes]
+- **Interim components:** [None | one line each: the component, what it stands in for, and a link to its row in the child LLD's Interim components table]
+
+<!-- Interim components: built by owner decision ahead of, or outside, the target design. The child LLD's table owns the facts (why, the decision, the replacement and when, the platform rules that bind it); this line only names it. It enters only through the documents chain (SKILL.md step 10, "LLD <slug> changed contracts" or a decided change), never invented. -->
 
 ### Input
 

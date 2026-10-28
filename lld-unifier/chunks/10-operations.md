@@ -26,6 +26,20 @@ PART OF: LLD - [Project Name]
 
 > **Source:** each Default restates the SDD value it comes from (SDD §19 Environments, or the `13x` section that sets it) and links it; `LLD` marks a variable or default the LLD adds. A default that differs from the SDD is drift to flag (`sdd-to-lld.md` § One fact, one home, rule 3).
 
+## 13.1a Environment-Varying Values
+
+<!--
+A § 13.1 variable whose value differs by environment gets one row here, with one column per SDD §19 environment; its § 13.1 Default reads "See § 13.1a". Typical rows: paths, domains, cookie scope (domain, path, SameSite, Secure), sender identities, callback and redirect URLs, emulator endpoints (the stand-ins of `13-testing.md` § 16.9).
+Source as § 13.1: SDD §19 or the `13x` section that sets the value, else `LLD`. Which process or profile loads which job, runner or one-off command is in `03-architecture.md` § 6.2a; this table holds values only.
+With none: "None - no value varies by environment".
+-->
+
+| Service | Variable | Dev | SIT | UAT | Prod | Source |
+|---------|----------|-----|-----|-----|------|--------|
+| `[service-a]` | `AUTH_COOKIE_DOMAIN` | `localhost` | `[sit domain]` | `[uat domain]` | `[prod domain]` | [SDD §19 Environments] |
+| `[service-a]` | `AUTH_COOKIE_PATH` | `/` | `/api` | `/api` | `/api` | [SDD §19 Environments] |
+| `[service-a]` | `MAIL_SENDER` | `[dev sender]` | `[sit sender]` | `[uat sender]` | `[prod sender]` | [SDD §19 Environments] |
+
 ## 13.2 Health & Readiness
 
 > See `09-cross-cutting.md` § 12.10. Per-service additions:

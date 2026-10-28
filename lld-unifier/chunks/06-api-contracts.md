@@ -19,13 +19,17 @@ PART OF: LLD - [Project Name]
 
 | API ID (§15) | Method | Path | Summary | Idempotency-Key | Permission token (SDD §16) | Status Codes |
 |--------------|--------|------|---------|-----------------|----------------------------|--------------|
-| [API-01](../sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) | `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 409, 422 |
-| - | `GET` | `/v1/foo/{id}` | Get foo by ID | N/A | `foo:read` | 200, 404 |
-| - | `GET` | `/v1/foo` | List foos (paginated) | N/A | `foo:read` | 200, 400 |
-| - | `PATCH` | `/v1/foo/{id}` | Update foo | Required | `foo:write` | 200, 400, 404, 409, 422 |
-| - | `DELETE` | `/v1/foo/{id}` | Delete foo (soft) | Required | `foo:write` | 204, 404 |
+| [API-01](../sdd-[sdd-slug]/11-api-contracts.md#[api-01-heading-slug]) | `POST` | `/v1/foo` | Create foo | Required | `foo:write` | 201, 400, 401, 403, 409, 413, 422, 429 |
+| - | `GET` | `/v1/foo/{id}` | Get foo by ID | N/A | `foo:read` | 200, 401, 403, 404, 429 |
+| - | `GET` | `/v1/foo` | List foos (paginated) | N/A | `foo:read` | 200, 400, 401, 403, 429 |
+| - | `PATCH` | `/v1/foo/{id}` | Update foo | Required | `foo:write` | 200, 400, 401, 403, 404, 409, 413, 422, 429 |
+| - | `DELETE` | `/v1/foo/{id}` | Delete foo (soft) | Required | `foo:write` | 204, 401, 403, 404, 409, 429 |
 
-> **Convention:** every write endpoint touching money/wallet/notifications/external-providers requires an `Idempotency-Key` header (CLAUDE.md). The dedup tuple and the TTL are in `09-cross-cutting.md` § 12.2.
+> **Convention:** every write endpoint a client may retry requires an `Idempotency-Key` header, except the excluded routes; money, wallet, notification, and external-provider writes are never excluded (CLAUDE.md). The scope, the tuples, the TTL, and the excluded routes are in `09-cross-cutting.md` § 12.2.
+>
+> **Status Codes:** the endpoint's own outcomes plus every status a filter or interceptor on its path can return, read from the `09-cross-cutting.md` § 12.6 Filter chain; the chain is listed there once and never here.
+>
+> **Traced entry points:** every HTTP entry point that a 04 traceability line names is a row here, and a row the trace names but this table lacks is a gap to fix before review.
 >
 > **API ID:** the SDD §15 HTTP contract (Type Internal or External) the endpoint implements, linked to its block; `-` for an endpoint no §15 contract covers (for example one only the frontend calls). Every row has one block in § 9.2. A call a service makes to a provider is not a § 9.1 row: it is recorded in the § 12.3 Instances table of `09-cross-cutting.md`, and the provider's contract (its SDD §15 entry, or the provider LLD) holds the block. The owner's 04 file names the controller, and a client is the one that the HTTP client rows of `03a-libraries-and-conventions.md` § 6.5.1 give that service: this chunk names none. Permission tokens are SDD §16 tokens, verbatim. An endpoint whose SDD contract has no token copies the SDD's cell verbatim (`None - public`); any reason goes in § 9.3, never in the cell (never `- (<reason>)`).
 
@@ -45,16 +49,20 @@ PART OF: LLD - [Project Name]
 | Method and path | `Method` and `Path`, as the row writes them | `Type` (`Internal (in-process)`) and `Operation` (`[ProviderPort].[operation]`), as the row writes them |
 | Request headers | Each header beyond the standard ones: name, required, format | Omitted: the call never leaves the process |
 | Path and query parameters | Each parameter: name, where, type, required, constraints | Omitted |
-| Request body | The record, and each field: name, type, required, constraints | The request record, and each field in the same table |
+| Request body | The record, and each field: name, type, required, constraints; the body limit when it differs from the default of `09-cross-cutting.md` § 12.6a | The request record, and each field in the same table |
 | Responses | Each success status: meaning, body record, response headers; then each body record's fields | The response record, and each field in the same table |
 | Errors | Each error status of the row that is not a shared error: Problem Details `type`, `errorCode`, when | Each error the operation raises: `errorCode`, when. No status and no `type` |
-| Idempotency | `Required` or `N/A` as the row says, then the key, the dedup window, and what a repeat returns | The key and what a repeated call returns, and `Transaction` as the row says |
+| Idempotency | `Required` or `N/A` as the row says, then the key, the dedup window, what a repeat returns, and for `Required` what a repeat after the dedup window returns (`09-cross-cutting.md` § 12.2 Replay after TTL) | The key and what a repeated call returns, and `Transaction` as the row says |
 | Authentication, Permission token | The scheme; the SDD §16 token, verbatim | The token, verbatim, checked at the port |
 
 > **Convention:**
 >
 > - **One block per row.** The blocks of a service group follow its § 9.1 rows in order. A block is headed by the row's Method and Path (`POST /v1/foo`), or for a port by its port and operation (`[ProviderPort].[operation]`). A row whose Method and Path read `TBD` is headed by its API ID and operation (`API-02: [Operation]`). A service with no § 9.1 row has no group.
 > - **Equal to the row.** A block's API ID, Method and Path (or Type and Operation), permission token, and idempotency requirement (`Required` or `N/A`) equal the row's cells. Every status of the row's Status Codes cell is a Responses row, an Errors row, a shared error, or covered by a `TBD - external` Responses or Errors field, and no other status appears.
+> - **Proposed endpoints in full.** An endpoint the LLD proposes (API ID `-`, or one no SDD source shapes) gets a full block: every field carries a proposed value, and the `> Confirm:` flags those values. A block that is only a `> Confirm:`, with no request and response shape, is incomplete.
+> - **Distinct outcomes.** Each outcome the client must react to differently has its own `type` and `errorCode`. Where several such outcomes share one code, the block declares a `reason` extension with its full value list, one value per outcome (`09-cross-cutting.md` § 12.6).
+> - **Server deadlines.** An endpoint that enforces a time limit the UI shows (a session, an expiry, a countdown) returns the absolute server deadline as an ISO 8601 UTC timestamp, not only a duration (`14-frontend.md` § 17.10).
+> - **Siblings agree.** Sibling responses use the same type and shape for the same concept: field errors are always the `errors[]` array, never a joined string, and an ID or a timestamp has one type across the group.
 > - **Nothing blank.** A field with nothing to list says so on one line: `None`, `Standard headers only`, or `Not applicable - <reason>`.
 > - **Values.** A value the SDD states, in its contract or for API ID `-` in its `13x` rows, is written as the SDD writes it, with no flag.
 > - **Flags.** A value no source gives is written as a proposal and flagged: one `> Confirm:` directly under the block heading that names the proposed fields, or one under the group heading when every block of the group has the same gap. Where the SDD carries an open question on the value, the flag is a `> TODO: <best-guess> - verify` that cites it. From code, a field the code does not show is flagged the same way. A field is never invented without its flag.
@@ -71,6 +79,7 @@ PART OF: LLD - [Project Name]
 |--------|-------------|------------------------|-----------|
 | 401 | `UNAUTHENTICATED` | `https://errors.example.com/auth/unauthenticated` | The security chain |
 | 403 | `FORBIDDEN` | `https://errors.example.com/auth/forbidden` | The permission check |
+| 413 | `PAYLOAD_TOO_LARGE` | `https://errors.example.com/request/too-large` | The body limit filter (`09-cross-cutting.md` § 12.6a) |
 | 429 | `RATE_LIMITED` | `https://errors.example.com/rate-limit/exceeded` | [The gateway or the rate limiter] |
 | 500 | `INTERNAL_ERROR` | `https://errors.example.com/internal/error` | The global `@RestControllerAdvice` |
 | 503 | `UNAVAILABLE` | `https://errors.example.com/[context]/unavailable` | [A downstream dependency is down] |
@@ -90,7 +99,7 @@ PART OF: LLD - [Project Name]
 | Path | `/v1/foo` |
 | Authentication | Bearer JWT, validated as § 9.3 says |
 | Permission token | `foo:write` (SDD §16, verbatim) |
-| Idempotency | Required. The `Idempotency-Key` header; dedup tuple and TTL as `09-cross-cutting.md` § 12.2; a repeat of a finished request returns the stored response |
+| Idempotency | Required. The `Idempotency-Key` header; dedup tuple and TTL as `09-cross-cutting.md` § 12.2; a repeat of a finished request returns the stored response; after the window, 409 `CONFLICT` from the natural key |
 
 **Request headers**
 

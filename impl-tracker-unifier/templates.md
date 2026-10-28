@@ -10,7 +10,8 @@ Exact templates for every file the skill writes in `./tracking/`. Replace `<rel>
 | Key | Value |
 |---|---|
 | Code root | . |
-| Docs root | ../chagaf-platform |
+| Docs root | ../acme-platform |
+| Board | ../acme-platform/unifier-status.md |
 | Current phase | AUTOAPPLY: P1 |
 | Commit trailer | Task: <KEY/T-NNN>; tracking-only commits of no single task: Tracking: <reason> |
 
@@ -113,7 +114,7 @@ Copy `tracking/<KEY>/preflight/<T-NNN>-<sha>.md` back into the main tracking fol
 | SDD | auto |
 | BRD | ask, or `auto (user: "<quote>", <date>)` |
 | SoW | ask |
-| Docs repo | ../chagaf-platform (the worker commits there with `Docs: KEY/DU-NNN`; never pushes) |
+| Docs repo | ../acme-platform (the worker commits there with `Docs: KEY/DU-NNN`; never pushes) |
 
 ## Slices (slice mode only)
 
@@ -133,7 +134,7 @@ value means ask.
 
 | Key | BRD master | SDD §7.3 | LLD master | LLD 04-implementation | Baseline (BRD / SDD / LLD) | Mode |
 |---|---|---|---|---|---|---|
-| AUTOAPPLY | features/job-manager/brd-chagaf-autoapply/chagaf-autoapply-brd-master.md | tech/sdd-chagaf-platform/03-users-and-use-cases.md#73-… | tech/lld-chagaf-autoapply/chagaf-autoapply-lld-master.md | tech/lld-chagaf-autoapply/04-implementation/autoapply.md | v1.3 / vX / v1.4 | layer |
+| AUTOAPPLY | features/job-manager/brd-acme-autoapply/acme-autoapply-brd-master.md | tech/sdd-acme-platform/03-users-and-use-cases.md#73-… | tech/lld-acme-autoapply/acme-autoapply-lld-master.md | tech/lld-acme-autoapply/04-implementation/autoapply.md | v1.3 / vX / v1.4 | layer |
 ~~~
 
 ## `tracking/index.md` (generated - one line per task)
@@ -317,7 +318,7 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 | AUTOAPPLY/DU-004 | Verified | LLD | fill-silence | AUTOAPPLY/T-014 | AUTOAPPLY/GAP-003 | [LLD 7.3 route](<rel>#routingserviceimplroute) | tie on score: undefined → older match first (code `RoutingServiceImpl.java:57`) | LLD silent; code fills it (§ 2) | LLD v1.4 → v1.5 | 9f3e2a1 | PASS 2026-10-20 (5/5 checks) | - | 2026-10-20 |
 | AUTOAPPLY/DU-005 | Waiting-decision | BRD | doc-conflict | AUTOAPPLY/T-022 | AUTOAPPLY/GAP-008 | [BRD UC-23 AC-2](<rel>#uc-23-route-a-new-match) | review queue limit: 50 (BRD) vs 100 (LLD 7.3) | - (BRD mode `ask`) | BRD, LLD | - | - | - | 2026-10-20 |
 ~~~
-`Status`: Queued, Running (worker started <time>), Applied, Verified, Waiting-decision, Rejected (<reason>),
+`Status`: Queued, Running (worker started <time>; in `team` run mode, the board request and its State), Applied, Verified, Waiting-decision, Rejected (<reason>),
 Failed. `Verified`: the verifier's verdict and date. A failed verification appends its findings to `What`.
 
 ## `tracking/ownership.md` (generated)

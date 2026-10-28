@@ -130,6 +130,18 @@ class CheckStatusBoard(unittest.TestCase):
                '| The LLD is silent | 2026-10-28 09:00 | Declined | 2026-10-28 10:15 | tracking/gaps.md#KEY/GAP-001 |')
         self.assertEqual(self.check(board(requests=[row])), [])
 
+    def test_check_tracker_decided_change_request_done_pass(self):
+        row = ('| HR-001 | Developer / software engineer | Software Architect | Decided change KEY/CHG-001: retry the payout '
+               'three times | The tracker decided it with the owner | 2026-10-28 09:00 | Done | 2026-10-28 12:00 '
+               '| tracking/changes.md#KEY/CHG-001 |')
+        self.assertEqual(self.check(board(requests=[row])), [])
+
+    def test_check_tracker_decided_change_request_declined_pass(self):
+        row = ('| HR-001 | Developer / software engineer | Software Architect | Decided change KEY/CHG-001: retry the payout '
+               'three times | The tracker decided it with the owner | 2026-10-28 09:00 | Declined | 2026-10-28 10:15 '
+               '| tracking/changes.md#KEY/CHG-001 |')
+        self.assertEqual(self.check(board(requests=[row])), [])
+
     def test_check_board_team_mode_pass(self):
         self.assertEqual(self.check(board(mode='Run mode: team')), [])
 

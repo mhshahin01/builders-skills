@@ -137,7 +137,7 @@ Subsection-level drift inside a per-service file:
 ### `09-cross-cutting.md`
 
 - Per concern: SDD specifies the default; code implements. Compare per-row.
-- Idempotency on money writes: code MUST implement (CLAUDE.md hard rule). If SDD says yes and code doesn't → `⚠ drift` flagged HIGH severity.
+- Idempotency: scope and severity per `pattern-rules.md` § Idempotency. If SDD says yes and code doesn't → `⚠ drift` (HIGH for a money write).
 - Outbox pattern: same, hard rule. HIGH severity drift when the code has no outbox recognised per `pattern-rules.md` § Outbox (atomic aggregate-and-outbox write plus a separate publisher), writes to the database and Kafka directly, or marks outbox rows processed without their target's acknowledgement.
 
 ### `10-operations.md`
@@ -210,7 +210,7 @@ A wrong value contradicts SDD §7.3 or the BRD, so it is drift. A missing one is
 
 | Severity | Examples |
 |----------|----------|
-| **HIGH** | Missing outbox pattern, missing idempotency on money endpoints, PII handling drift, multi-tenancy enforcement gap, RFC 9457 error model not implemented, SDD-mandated saga not implemented in cross-service flow. |
+| **HIGH** | Missing outbox pattern, missing idempotency on money endpoints (other idempotency gaps: `pattern-rules.md` § Idempotency), PII handling drift, multi-tenancy enforcement gap, RFC 9457 error model not implemented, SDD-mandated saga not implemented in cross-service flow. |
 | **MEDIUM** | Different design pattern than SDD specified (but functionally equivalent), missing Resilience4j config on a downstream call, additional un-described Kafka topic, test coverage gap, a use case's entry point not built or tagged with the wrong use case. |
 | **LOW** | Naming difference, additional helper class without business meaning, documentation gap, ordering of fields in DTOs, route data or spec tags out of step with the BRD. |
 

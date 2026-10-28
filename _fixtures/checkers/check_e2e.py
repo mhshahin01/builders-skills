@@ -1,4 +1,5 @@
 import glob, os, re, sys
+from _sdd_values import consumers
 from _e2e_gate import BODY_CHUNK, SERVICE_CHUNK, content_hash, evaluate_inventory, reconciled_date, reconciled_entry, reconciled_hash, unclosed_items
 
 SDD = sys.argv[1]
@@ -87,7 +88,7 @@ for r in table(sect(c10, "## 14.10"), "| Event | Publisher module"):
 contracts = []
 for r in table(sect(c11, "## 15.2"), "| API ID |"):
     if re.match(r"API-\d\d", r.get("API ID", "")):
-        contracts.append(dict(id=r["API ID"], caller=plain(r.get("Consumer (caller)", "")), callee=plain(r.get("Provider (callee)", "")), type=plain(r.get("Type", ""))))
+        contracts.append(dict(id=r["API ID"], caller=plain(r.get("Consumer (caller)", "")), callers=consumers(r.get("Consumer (caller)", "")), callee=plain(r.get("Provider (callee)", "")), type=plain(r.get("Type", ""))))
 internal = [c for c in contracts if c["type"].startswith("Internal")]
 external = [c for c in contracts if c["type"].startswith("External")]
 s73 = set(re.findall(r"^\| \[((?:[A-Z]+)/UC-\d\d)\]", sect(c03, "## 7.3"), re.M))
@@ -203,9 +204,14 @@ else:
         got = next((v for k, v in counts.items() if k.startswith(dim)), "missing")
         if got not in exp:
             problems.append(f"Counts at a Glance {dim}: {got} vs {exp[0]}")
-    if len([r for r in r247 if not r["inproc"]]) != len([c for c in internal if "in-process" not in c["type"]]):
-        problems.append(f"§24.7 HTTP rows {len([r for r in r247 if not r['inproc']])} vs §15.2 internal HTTP contracts {len([c for c in internal if 'in-process' not in c['type']])}")
-    if len([r for r in r247 if r["inproc"]]) != len([c for c in internal if "in-process" in c["type"]]):
+    def edge_range(inproc):
+        cs = [c for c in internal if ("in-process" in c["type"]) == inproc]
+        return len(cs), sum(max(1, len(c["callers"])) for c in cs)
+    lo, hi = edge_range(False)
+    if not lo <= len([r for r in r247 if not r["inproc"]]) <= hi:
+        problems.append(f"§24.7 HTTP rows {len([r for r in r247 if not r['inproc']])} vs §15.2 internal HTTP contracts {lo}" + (f" ({hi} caller edges)" if hi != lo else ""))
+    lo, hi = edge_range(True)
+    if not lo <= len([r for r in r247 if r["inproc"]]) <= hi:
         problems.append(f"§24.7 in-process rows vs §15.2 Internal (in-process) contracts differ")
 
     # §24.1 landscape
@@ -313,14 +319,23 @@ else:
 
     # §24.7 against §15.2 internal contracts
     ids247 = {a for r in r247 for a in r["api"]}
+    def sides(edge):
+        parts = re.split(r"\s*(?:→|->)\s*", edge, maxsplit=1)
+        return (parts[0], parts[1]) if len(parts) == 2 else (edge, edge)
     for c in internal:
-        row = next((r for r in r247 if c["id"] in r["api"]), None)
-        if not row:
+        rows = [r for r in r247 if c["id"] in r["api"]]
+        if not rows:
             problems.append(f"§24.7 has no row for {c['id']} ({c['caller']} -> {c['callee']}, {c['type']})")
             continue
-        if c["caller"].split(" (")[0] not in row["edge"] or c["callee"].split(" (")[0] not in row["edge"]:
-            problems.append(f"§24.7 {c['id']} edge {row['edge']!r} vs §15.2 {c['caller']} -> {c['callee']}")
-        if ("in-process" in c["type"]) != row["inproc"]:
+        callee = c["callee"].split(" (")[0]
+        for caller in c["callers"] or [c["caller"]]:
+            name = caller.split(" (")[0]
+            if not any(name in sides(r["edge"])[0] and callee in sides(r["edge"])[1] for r in rows):
+                if len(c["callers"]) > 1:
+                    problems.append(f"§24.7 {c['id']} has no edge {name} -> {callee} for §15.2 consumer {caller!r} ({len(c['callers'])} consumers)")
+                else:
+                    problems.append(f"§24.7 {c['id']} edge {rows[0]['edge']!r} vs §15.2 {c['caller']} -> {c['callee']}")
+        if any(("in-process" in c["type"]) != r["inproc"] for r in rows):
             problems.append(f"§24.7 {c['id']} in-process label does not match §15.2 Type {c['type']!r}")
     for a in sorted(ids247 - {c["id"] for c in internal}):
         problems.append(f"§24.7 cites {a}, which is not an internal contract in §15.2")
@@ -332,10 +347,10 @@ else:
         if f04:
             s242 += "\n" + sect(read(os.path.basename(f04[0])), "## 8.2")
     for c in external:
-        ext = c["callee"] if c["type"].startswith("External outbound") else c["caller"]
-        alts = [ext, ext.split(" (")[0]] + re.findall(r"\(([^)]+)\)", ext)
-        if not any(a and a in s242 for a in alts):
-            problems.append(f"§24.2 does not show external system {ext} ({c['id']})")
+        for ext in [c["callee"]] if c["type"].startswith("External outbound") else (c["callers"] or [c["caller"]]):
+            alts = [ext, ext.split(" (")[0]] + re.findall(r"\(([^)]+)\)", ext)
+            if not any(a and a in s242 for a in alts):
+                problems.append(f"§24.2 does not show external system {ext} ({c['id']})")
 
     # §24.8 sagas
     for h in sagas:

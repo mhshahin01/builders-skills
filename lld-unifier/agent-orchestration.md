@@ -65,7 +65,7 @@ prompt: |
       - A provider client call, or an in-process event delivery, after a state change with no outbox row in the same transaction. Report the side effect it carries; the synthesis decides against the SDD whether it must not be lost.
       - Outbox row written outside the aggregate's transaction (`REQUIRES_NEW`, after commit).
       - Outbox publisher that marks a row processed without its target's acknowledgement (fire-and-forget send, or update before the acknowledgement).
-      - Missing `Idempotency-Key` on write endpoints whose path mentions money/wallet/notify/payment/charge/transfer.
+      - Missing idempotency per `pattern-rules.md` § Idempotency (a write endpoint a client may retry, a consumer; a money, wallet, notify, payment, charge or transfer path is stricter).
       - SQL queries lacking `tenant_id` predicate on shared-schema tables.
       - Logging statements at INFO level that include `tenant_id` or PII.
       - DTO classes (`*Dto`, `*Request`, `*Response`) that are not records.
@@ -193,7 +193,7 @@ prompt: |
   ## CLAUDE.MD RULES (the user's standing design rules to attribute patterns to)
 
   - "Outbox pattern is mandatory for any state change that must produce an event. No dual-writes to DB and Kafka."
-  - "Idempotency keys on all write endpoints touching money/wallet/notifications or external providers."
+  - Idempotency scope: `pattern-rules.md` § Idempotency.
   - "Sagas (choreography by default, orchestration when the flow is complex or needs central visibility) for cross-service business transactions."
   - "Constructor injection only, no field injection."
   - "Records for DTOs."

@@ -142,7 +142,7 @@ asks before writing.
     can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
     strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
     round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
-8f. **Full suites once per wave.** A task whose diff adds no migration, bean wiring, config or build file
+8f. **Full suites once per wave.** A task whose diff adds no migration, no added or removed bean wiring annotation, no config or build file
     runs its pre-flight with `--defer-suites` (related tests + reused `--mutate`); the full suites run once
     after the wave's last task (one pre-flight with every wave task) and in `slice deliver`. A red full run
     there reopens the task whose classes fail (CHG-029, user: "Apply all 10").

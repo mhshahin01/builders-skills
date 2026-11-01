@@ -310,6 +310,11 @@ A new visitor creates an account, verifies the email and signs in to the home pa
 | AUTOAPPLY/GAP-003 | doc-gap | major | 2026-10-19, codex, T-014 | LLD 7.3 route | Tie on score not defined | lld-unifier (DU-004) | - | Open |
 ~~~
 
+Status starts with exactly one of `Open`, `Closed`, `Deferred`, `Rejected`, then optional detail
+(`Closed 2026-10-30: fixed in T-041`, never `Fixed in T-041`): P15 and the large-file greps match that first
+word, so any other first word counts as open. Description ≤ 300 characters; evidence lives in the linked report.
+The minor findings of one audit go in **one** gap row (`minor ×N`), each listed in the audit report.
+
 ## `tracking/doc-updates.md`
 
 ~~~markdown

@@ -201,6 +201,12 @@ Run mode: solo
 | plan, sync, discover | `inventory.md`, code scan per discovery-rules.md § 1, LLD scope files, SDD §7.3 rows for the scope, BRD sections by anchor, doc master headers |
 | every command | + `unifier-status.md` through the `Board` path in `config.md` (its own row and its requests) |
 
+**Large files (over 20 KB: `gaps.md`, `index.md`, `ownership.md`, `lessons.md`, `changes.md`, `history.md`):**
+never load them whole. Grep the rows the step needs: `gaps.md` rows whose Status starts with `Open` (plus cited
+IDs), `index.md` rows not `Done`/`Verified`/`Dropped` (plus cited IDs), `ownership.md` rows of the owned items,
+`lessons.md`/`changes.md` rows by Scope or ID. Counts (status, report, standup) come from `grep -c`, not from
+reading rows. Script reports are read as their FAIL/WARN rows only.
+
 ## Quality checks before finishing any write
 
 - [ ] Every task has: keyed ID, phase, layer, Doc refs (≥ 1 LLD anchor, ≥ 1 BRD UC/AC or a stated

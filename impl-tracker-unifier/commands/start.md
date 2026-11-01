@@ -4,7 +4,8 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
 
 ## start
 
-1. Read the task card + `index.md` + `ownership.md`.
+1. Read the task card; from `index.md` grep only the rows of the task and its `depends_on`, from
+   `ownership.md` only the rows naming its Owns items (SKILL.md § Read budget: large files).
 2. **Readiness gate** (status-rules.md § Gate): every `depends_on` Done/Verified; task not Stale;
    no open `blocker` gap linked to it; for risk `high`, no open `plan-gap`/`doc-gap` or LLD open item
    (OI) on an anchor the task cites - settle the doc first, so the design does not move mid-task (PLATFORM/T-055
@@ -41,6 +42,11 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
      interleaving test), or `- In: no guard line: <reason>`. P14 fails an untagged invariant (also in `--lint`),
      so a test that passes with its mechanism removed is found by `--removals`, not by the audit (T-008, T-009,
      PLATFORM/T-029 audit 1).
+   - **Test map (before any code):** one line per card promise, DoD item, invariant, `no guard line` reason and
+     cancel or shutdown line: the test that proves it, and the line whose deletion must fail that test. A promise
+     moved to another task is added to that card with a gap or CHG. A concurrent test also gets a hard time limit
+     and releases parked workers in a `finally`, so a removed guard fails instead of hanging. Most first-audit
+     FAILs are a missing row here; each one costs a full mutate, removals, pre-flight and audit round.
    Then one fresh reviewer (Agent tool, `general-purpose`, model `haiku`, about 3 minutes, read-only) checks
    the design check against the cited docs. Pass it **only** the card's `## Design check` text and the cited
    anchor sections pasted inline (never the whole doc file, never the code); it returns missing invariants,

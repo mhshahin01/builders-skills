@@ -35,7 +35,7 @@ Each row has:
 |---|---|
 | Trigger | What happened, with the task/gap/audit ID. One line. |
 | Root cause | One of: `misread-doc` · `skipped-layer` · `stale-assumption` · `wrong-pattern` · `missing-test` · `env-tooling` · `direction-change` · `scope-creep` · `false-done`. Pick the deepest true one, not the symptom. |
-| Rule | Imperative, starts with **Always** / **Never** / **Before X, do Y**. |
+| Rule | Imperative, starts with **Always** / **Never** / **Before X, do Y**. At most 2 sentences (≈ 300 characters): sharpening a lesson replaces words, it does not append clauses; detail goes in the linked audit. |
 | Check | A concrete, mechanical check that proves the rule was followed: a grep, a command, a file that must exist, a test name. **No check → not a lesson, rewrite it.** |
 | Scope | Layer(s) (`api` `db` `ui` `logs` `domain` `infra` `test` `security`), key (`*` = all), tags (owned-item kinds: `migration`, `endpoint`, `entity`, `screen`, `event`…). |
 | Source | Task / gap / audit / CHG IDs, date, agent. |
@@ -68,7 +68,7 @@ Before adding: search `lessons.md` for the same root cause + overlapping scope.
 | Active | Normal lesson | printed in `start` brief; checked by audit |
 | Promoted-DoD | Hit ≥ 2 or recurred once | auto-added to the DoD of every new matching task by `plan` |
 | Promoted-rule | Recurred twice, or user says "always" | added to `config.md` § Standing rules **and** the code repo's agent rules block (ask once to edit AGENTS.md/CLAUDE.md); audit treats a violation as `blocker` |
-| Retired | Superseded by a CHG, or the code/tool it is about is gone | not printed; kept for history with the reason |
+| Retired | Superseded by a CHG, the code/tool it is about is gone, or fully enforced by a `cmd`/`builtin` check (`Retired: covered by <check id>`, set at once, not at standup; the check keeps running) | not printed; kept for history with the reason |
 
 Never delete a lesson. Retire it with a reason and the superseding CHG/L ID.
 

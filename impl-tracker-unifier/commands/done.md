@@ -6,6 +6,11 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
 
 Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per task.
 
+**Read by section, not by file.** From `audit-rules.md` read only § 1, § 4 and § 6 (or § 6a), found by
+grepping their headings; the auditor reads the rest itself. From the task card read the sections a step
+needs (Owns, Touches, DoD, Tests, Design check, Removals). From script reports read only FAIL/WARN rows and
+line 1. SKILL.md § Read budget: large files applies to every tracking file.
+
 1. Collect evidence: commits with `Task: KEY/T-NNN` (git log), changed files, unit tests added.
    A Partial task with no start commit first runs `start` steps 1-4 (gates, start commit) - never a
    hand-picked start sha.
@@ -27,11 +32,15 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    `## Always-run tests` (architecture rules, schema gates), the test classes that name a table its migrations
    seed or alter (P16), and the covering tests of its changed classes (those naming them or in their package).
    P12 also names any test that still pins a schema's previous highest migration. Green here before `--mutate`,
-   `--removals` or the full run. Every full-suite failure so far (T-006 pinned version, T-007 second bean, T-009
+   `--removals` or the full run. A passing `--quick` is kept with its code tree: the full run (and
+   `--defer-suites`) reports **P5 related tests** `reused from --quick` while the code is the same, instead of
+   running them again. Every full-suite failure so far (T-006 pinned version, T-007 second bean, T-009
    ArchUnit, T-029 pinned row count) sat in this set.
    Report files the scripts write under `tracking/` (removals, pre-flight) need no commit before the next run:
    P1 ignores `tracking/`; commit them with the next status change. Console output shows FAIL/WARN rows only
    (`--verbose` for all); never grep a full report back into the context.
+   **Before every full pre-flight, `--lint` must print `LINT: PASS`;** when tests were removed on purpose, pass
+   `--accept-count "<reason>"` on the first run. A gap with no doc point is written alone, never through `--gap-du`.
    **Fast path, in this order, each once (target: one full pre-flight, one audit):** lint → `--quick` →
    `--mutate` (fix or list every survivor) → commit everything (code, docs, binaries: tree clean) → `--removals`
    on the final code → full pre-flight → audit. The removals report stays valid until production code, a build
@@ -90,8 +99,9 @@ Accepts one or several ids: `done KEY/T-a[,KEY/T-b…]`. Every step runs per tas
    the Maven module (the backend suite starts with `clean`): the `--quick` set as **P5 related tests**, whose
    failure stops the suites at once (a failing run ends in about two minutes, not after the whole suite), and a
    Maven mutation suite the `--mutate` result does not cover. **P16** (INFO) lists the migration neighbours.
-   **`--defer-suites` (rule 8f):** add it when the diff has no migration, bean wiring (`@Component`, `@Bean`,
-   `@Configuration`…), config or build file and a passing `--mutate` covers the code: the related tests stand
+   **`--defer-suites` (rule 8f):** add it by default; it applies when the diff has no migration, no added or
+   removed bean wiring annotation (`@Component`, `@Bean`, `@Configuration`, `@Profile`…; a change inside an
+   existing bean's body does not block), no config or build file and a passing `--mutate` covers the code: the related tests stand
    for the full suites, which then run once at the wave end (`--task` every wave task) and at `slice deliver`.
    The script refuses (and runs the full suites) when any condition fails.
    It writes `tracking/KEY/preflight/T-NNN-<sha>.md`; **link** that file from the History row (don't paste

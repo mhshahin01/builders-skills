@@ -849,17 +849,21 @@ DEFER_BLOCKERS = re.compile(r"(^|/)(db/migration|migration)/|\.sql$|(^|/)applica
                             r"(^|/)(pom\.xml|build\.gradle(\.kts)?|package(-lock)?\.json|angular\.json)$")
 
 
-def defer_blockers(code_root, changed, tracking, cache_key, head_full, rel_tracking):
-    """Why --defer-suites cannot stand in for the full suites here (rule 8f); empty = it can."""
+BEAN_LINE = re.compile(r"^[+-]\s*@(Component|Service|Repository|Configuration|Bean|RestController|Controller|"
+                       r"Primary|Qualifier|Conditional\w*|Profile|Import|EnableScheduling|EnableAsync)\b", re.M)
+
+
+def defer_blockers(code_root, changed, tracking, cache_key, head_full, rel_tracking, starts=()):
+    """Why --defer-suites cannot stand in for the full suites here (rule 8f); empty = it can. Bean wiring blocks only
+    when the task adds or removes a wiring annotation (a new, removed or re-conditioned bean): a change inside an
+    existing bean's body cannot break the context, and its covering tests run in P5 related tests."""
     why = [f for f in changed if DEFER_BLOCKERS.search(f)]
+    base = min(starts, key=lambda c: int(git(["rev-list", "--count", c], code_root)[1].strip() or 0)) if starts else ""
     for f in changed:
         if f.endswith((".java", ".kt")) and "/src/main/" in f:
-            try:
-                if re.search(r"@(Component|Service|Repository|Configuration|Bean|RestController|Controller)\b",
-                             open(os.path.join(code_root, f), encoding="utf-8").read()):
-                    why.append(f + " (bean wiring)")
-            except OSError:
-                pass
+            rc, diff, _ = git(["diff", "-U0", base, "--", f], code_root) if base else (1, "", "")
+            if rc != 0 or BEAN_LINE.search(diff):
+                why.append(f + " (bean wiring added or removed)")
     try:
         local = json.load(open(os.path.join(tracking, "preflight-cache.json"), encoding="utf-8")).get(
             "local-mutation:" + cache_key, {})
@@ -885,8 +889,30 @@ def quick_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, tasks, extr
     for r, where, detail in rows:
         print("| %s | quick %s | %s |" % (r, where, detail))
     failed = any(r == FAIL for r, _, _ in rows)
+    tree = worktree_tree(code_root, rel_tracking)
+    if tree:
+        # a pass is kept with the code tree it ran on: the full run skips P5 related tests while the code is the same
+        cache_path = os.path.join(tracking, "preflight-cache.json")
+        cache = json.load(open(cache_path, encoding="utf-8")) if os.path.exists(cache_path) else {}
+        key = "quick:" + "|".join(sorted(tasks))
+        if failed:
+            cache.pop(key, None)
+        else:
+            cache[key] = {"tree": tree, "detail": ", ".join("%s %d" % kv for kv in why.items())}
+        json.dump(cache, open(cache_path, "w", encoding="utf-8"), indent=1)
     print("\nQUICK: %s" % ("FAIL" if failed else "PASS"))
     return 1 if failed else 0
+
+
+def quick_reusable(tracking, cache_key, head_full, code_root, rel_tracking):
+    """Detail for a P5 related tests row reused from a passing --quick on exactly this code, or '' (run them)."""
+    try:
+        q = json.load(open(os.path.join(tracking, "preflight-cache.json"), encoding="utf-8")).get("quick:" + cache_key)
+    except (OSError, ValueError):
+        return ""
+    if not q or git(["diff", "--quiet", q["tree"], head_full, "--"] + code_spec(rel_tracking), code_root)[0] != 0:
+        return ""
+    return "%s · reused from --quick (code tree %s, same code)" % (q.get("detail", ""), q["tree"][:7])
 
 
 _TEST_SOURCES = {}
@@ -1266,7 +1292,8 @@ def removals_row(tracking, card, full, head_full, code_root, rel_tracking):
     m = re.search(r"code ([0-9a-f]{40}) .* (PASS|FAIL)\s*$", report.splitlines()[0] if report else "")
     if not m or m.group(2) != "PASS":
         return FAIL, "P14 removals", "the last --removals run failed: fix and re-run it"
-    killed = {l for r, l, _ in (split_row(x) for x in report.splitlines() if x.startswith("| PASS |"))}
+    killed = {x.strip()[len("| PASS |"):].rstrip("|").rsplit(" | ", 1)[0].strip()
+              for x in report.splitlines() if x.startswith("| PASS |")}  # a guard may hold ||
     missing = [removal_label(f, c) for f, c, _ in entries if removal_label(f, c) not in killed]
     if missing:
         return FAIL, "P14 removals", "guards not in the report %s: re-run --removals (%s)" % (
@@ -1522,7 +1549,10 @@ def lesson_checks(tracking, key, code_root, builtin_results):
             results.append((INFO, label, "judgement, the auditor verifies: " + c["judgement"]))
             continue
         if "builtin" in c:
-            results.append((builtin_results.get(c["builtin"], INFO), label, "covered by built-in %s" % c["builtin"]))
+            # a built-in FAIL is already its own row: mirror it as INFO so one failure is not counted twice
+            state = builtin_results.get(c["builtin"], INFO)
+            results.append((INFO if state == FAIL else state, label, "covered by built-in %s%s"
+                            % (c["builtin"], " (FAIL counted there)" if state == FAIL else "")))
             continue
         cmd = c.get("cmd", "")
         if not cmd:
@@ -1964,9 +1994,14 @@ def main():
                   "re-checks them in seconds")]
         stack = (INFO, "P6 local stack", "not run (fail fast)")
     elif a.defer_suites and not defer_blockers(code_root, all_changed, tracking, "|".join(sorted(a.task)),
-                                                 head_full, rel_tracking):
-        by_cmd, why = related_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, a.task, "")
-        tests = [(r, "P5 related tests", "%s: %s" % (where, d)) for r, where, d in run_related(by_cmd or {}, code_root)]
+                                                 head_full, rel_tracking, [st for st, _ in task_starts]):
+        quick = quick_reusable(tracking, "|".join(sorted(a.task)), head_full, code_root, rel_tracking)
+        if quick:
+            tests = [(OK, "P5 related tests", quick)]
+        else:
+            by_cmd, why = related_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, a.task, "")
+            tests = [(r, "P5 related tests", "%s: %s" % (where, d))
+                     for r, where, d in run_related(by_cmd or {}, code_root)]
         if not tests:
             tests = [(FAIL, "P5 related tests", "no related test found: run without --defer-suites")]
         tests.append((INFO, "P5 suites", "deferred to the wave or slice end (--defer-suites, rule 8f): no migration, "
@@ -2035,8 +2070,11 @@ def main():
             # fail; each Maven mutation suite in its own copy (the backend suite starts with `clean`). A failing
             # pre-flight ends at the related tests' time; a passing one costs the slowest of the three.
             cancel, copies, beside = threading.Event(), [], {}
+            quick = quick_reusable(tracking, cache_key, head_full, code_root, rel_tracking) if required else ""
+            if quick:
+                tests.append((OK, "P5 related tests", quick))
             by_cmd, why = related_tests(cfg, tracking, code_root, rel_tracking, repo_prefix, a.task, "") \
-                if required else ({}, {})
+                if required and not quick else ({}, {})
             rel_mods = {maven_module(c, code_root) for c in by_cmd or {}}
             related_root = None
             if by_cmd and len(rel_mods) == 1 and "" not in rel_mods:

@@ -6,9 +6,9 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
 
 Builds several tasks in one pass without loosening any gate.
 
-1. Read `index.md`, `ownership.md`. Candidates = tasks that pass the `next` readiness rule (in slice mode:
+1. Grep `index.md` for rows not Done/Verified/Dropped and `ownership.md` for the candidates' Owns rows. Candidates = tasks that pass the `next` readiness rule (in slice mode:
    current slice only).
-2. Pick tasks in `next` order such that: no two share an owned item (ownership.md); none depends on
+2. Pick tasks in `next` order such that: no two share an owned item (ownership.md); no two touch the same production or test class, and a later task in the set does not rerun an earlier task's removals (a code commit makes the other task's report stale, so such tasks run one after the other); none depends on
    another in the set; at most one is risk `high` unless the user asks for more; total size ≤ 3 M
    (S = ½, M = 1, L = 2), so the wave fits one session. Default at most 4 tasks; **at most 2 when the
    current slice is mostly `high` risk** (e.g. auth, money, personal data) - short waves get audit

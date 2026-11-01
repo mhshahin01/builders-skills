@@ -281,7 +281,7 @@ Pre-flight report: <path> for head <sha>. Reject it if its sha is not the head a
 INFO and SKIPPED rows were not checked by the script: verify them. Tests (§ 3a item 3): reuse the
 pre-flight counts if line 1 head is the task head, its `P5 reuse` row says reusable (re-check the git diff)
 and every suite row is zero failures/errors/skipped; then run the test classes this task added or changed
-plus those covering its commits (risk high: run them twice and add one hands-on probe of a key invariant
+plus those covering its commits (risk high: run them twice only when the task owns concurrency or timing logic, § 3a; add one hands-on probe of a key invariant
 from the card's ## Design check). Otherwise run the full suites. State which in the report's Tests line.
 Targeted spec runs: build `--include` paths from the project's angular.json test `include` entries (they
 resolve against `projects/<app>/src`, e.g. `../../../libs/...`); a run with 0 tests is a failure, never a count.

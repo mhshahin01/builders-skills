@@ -10,7 +10,8 @@ tracking=$(ls -d "$root"/tracking "$root"/*/tracking 2>/dev/null | head -n1)
 grep -F "[$task]" "$tracking/index.md" 2>/dev/null | grep -qE '\| (Done|Verified|Dropped) \|' && exit 0
 script="$HOME/.claude/skills/impl-tracker-unifier/scripts/preflight.py"
 py=$(command -v python3 || command -v python)
-out=$("$py" "$script" --tracking "$tracking" --task "$task" --lint 2>&1)
+# the guard compile-check (javac per guard) is for an explicit --lint, not every commit
+out=$(PREFLIGHT_NO_GUARD_COMPILE=1 "$py" "$script" --tracking "$tracking" --task "$task" --lint 2>&1)
 if printf '%s' "$out" | grep -q 'LINT: FAIL'; then
   echo ""
   echo "impl-tracker lint for $task found problems (fix before pre-flight):"

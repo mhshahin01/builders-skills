@@ -127,7 +127,9 @@ def write(tracking, code_root):
             if len(r) > 8 and r[0].startswith("L-"):
                 home = (re.search(r"\b([A-Z]+)/T-\d+", r[2] + r[8]) or re.search(r"·\s*([A-Z]+)\s*·", r[6]) or [None, None])[1]
                 lessons.append((r, home))
-    gaps = [r for r in table_rows(open(os.path.join(tracking, "gaps.md"), encoding="utf-8").read())
+    archive = os.path.join(tracking, "gaps-archive.md")  # archived gaps still count in a task's history
+    gaps = [r for r in table_rows(open(os.path.join(tracking, "gaps.md"), encoding="utf-8").read()
+                                  + ("\n" + open(archive, encoding="utf-8").read() if os.path.exists(archive) else ""))
             if len(r) > 3 and "GAP-" in r[0]]
     tasks = []
     for card in sorted(glob.glob(os.path.join(tracking, "*", "tasks", "T-*.md"))):

@@ -70,7 +70,7 @@ Support files (paths relative to this skill folder):
 | `discover` | `[KEY]` | Re-scan the code; match new/changed items to tasks; open gaps (discovery-rules.md). |
 | `plan` | `KEY` or `KEY/UC-NN[,…]` or `KEY/P2`; flags `slice`, `reslice` | Split the LLD (and its BRD/SDD links) into tasks for that scope; with `slice`, group them into ordered end-to-end slices (slice-rules.md); `reslice` regroups existing tasks. |
 | `next` | `[KEY]` | Show the next ready task(s), with why it's next. |
-| `wave` | `[KEY] [n]` | Pick up to n (default 4) ready tasks that can be built together; start them on approval. |
+| `wave` | `[KEY] [n]` | Pick up to n (default 3) ready tasks that share no file; build them in parallel worktrees, test them one at a time, run the full suites once, audit them in parallel. |
 | `start` | `KEY/T-NNN` | Check readiness and ownership; set In progress; print the task brief. |
 | `done` | `KEY/T-NNN[,KEY/T-MMM…]` | Pre-flight, then one fresh audit per task (in parallel for several); set Done; unblock dependents. |
 | `audit` | `KEY/T-NNN`, `KEY/UC-NN` or `KEY` | Run the consistency auditor (audit-rules.md); write the report; open gaps and lessons. |
@@ -201,6 +201,7 @@ Run mode: solo
 | plan, sync, discover | `inventory.md`, code scan per discovery-rules.md § 1, LLD scope files, SDD §7.3 rows for the scope, BRD sections by anchor, doc master headers |
 | every command | + `unifier-status.md` through the `Board` path in `config.md` (its own row and its requests) |
 
+**Archive:** `preflight.py --tracking <t> --archive` moves gaps closed 7 or more days ago to `gaps-archive.md`; grep that file only for a cited ID.
 **Large files (over 20 KB: `gaps.md`, `index.md`, `ownership.md`, `lessons.md`, `changes.md`, `history.md`):**
 never load them whole. Grep the rows the step needs: `gaps.md` rows whose Status starts with `Open` (plus cited
 IDs), `index.md` rows not `Done`/`Verified`/`Dropped` (plus cited IDs), `ownership.md` rows of the owned items,

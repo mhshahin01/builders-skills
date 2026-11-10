@@ -5,6 +5,10 @@
   preflight.py --tracking <t> --gap-du KEY/T-NNN "type|severity|anchor|text|owner" "level|kind|anchors|what|decided"
       next KEY/GAP-NNN row in gaps.md (after the key's last gap) and next KEY/DU-NNN row in doc-updates.md;
       DU "-" writes the gap alone (an owner that is not a doc skill)
+  preflight.py --tracking <t> --close-out KEY/T-NNN --reason "<verdict>" --evidence "<bullet>"...       --gap "type|severity|anchor|text|owner[||level|kind|anchors|what|decided]"... --journal "<line>"
+      one command for a task's close-out: every gap (a doc gap with its DU, Owner naming the DU), every flake in
+      tracking/flakes.md as a minor test gap (the file is then emptied), the card's ## Evidence bullets, Done
+      (card + History + index), one journal line, then --history
 Prints the ids it wrote. Never renumbers, never deletes.
 """
 import datetime
@@ -76,7 +80,9 @@ def gap_du(tracking, full, gap, du, agent):
         sys.exit("paperwork: GAP needs 'type|severity|anchor|text|owner'")
     gpath = os.path.join(tracking, "gaps.md")
     gtext = open(gpath, encoding="utf-8").read()
-    gid = _next_id(gtext, key, "GAP")
+    apath = os.path.join(tracking, "gaps-archive.md")  # IDs of archived gaps are never reused
+    archived = open(apath, encoding="utf-8").read() if os.path.exists(apath) else ""
+    gid = _next_id(gtext + "\n" + archived, key, "GAP")
     dpath = os.path.join(tracking, "doc-updates.md")
     dtext = open(dpath, encoding="utf-8").read()
     did = None
@@ -98,3 +104,63 @@ def gap_du(tracking, full, gap, du, agent):
             did, d[0], d[1], full, gid, d[2], d[3], d[4], _today())
         open(dpath, "w", encoding="utf-8").write(dtext.rstrip("\n") + "\n" + drow + "\n")
     print("gap-du: %s%s" % (gid, " + " + did if did else ""))
+    return gid, did
+
+
+def close_out(tracking, full, evidence, gaps, reason, journal, agent, audit_report=""):
+    """S-17 wave 3 cause (7): the close-out paperwork in one command (gaps, DUs, flakes, Evidence, Done, journal).
+    audit_report: the auditor's returned text (a file path); saved as audits/T-NNN-audit-N.md and linked under Evidence
+    with its verdict, so the slice gate S1 finds it (S-17: five Done tasks had no audit link)."""
+    if audit_report:
+        key, tid = full.split("/")
+        adir = os.path.join(tracking, key, "audits")
+        os.makedirs(adir, exist_ok=True)
+        n = 1
+        while os.path.exists(os.path.join(adir, "%s-audit-%d.md" % (tid, n))):
+            n += 1
+        text = open(audit_report, encoding="utf-8").read()
+        verdict = re.search(r"\b(PASS-minor|PASS|FAIL)\b", text)
+        verdict = verdict.group(1) if verdict else "PASS"
+        open(os.path.join(adir, "%s-audit-%d.md" % (tid, n)), "w", encoding="utf-8").write(
+            "# %s audit %d: %s\n\n%s\n" % (full, n, verdict, text.strip()))
+        evidence = [e for e in evidence if not e.startswith("Audit:")] + [
+            "Audit: [%s-audit-%d](../audits/%s-audit-%d.md) %s" % (tid, n, tid, n, verdict)]
+    for g in gaps:
+        gap, _, du = g.partition("||")
+        gid, did = gap_du(tracking, full, gap, du or "-", agent)
+        if did:  # P15: every DU the task raised is listed on its card
+            path = _card(tracking, full)
+            card = open(path, encoding="utf-8").read()
+            m = re.search(r"^## Doc updates[^\n]*\n", card, re.M)
+            line = "- %s (%s)\n" % (did, gid)
+            card = card[:m.end()] + line + card[m.end():] if m else card.rstrip("\n") + "\n\n## Doc updates\n" + line
+            open(path, "w", encoding="utf-8").write(card)
+    fpath = os.path.join(tracking, "flakes.md")
+    if os.path.exists(fpath):
+        for line in open(fpath, encoding="utf-8").read().splitlines():
+            c = _cells(line)
+            if len(c) >= 3 and c[1]:
+                gap_du(tracking, full, "test|minor|%s|order or start-up flake: %s failed in the %s run and passed "
+                       "alone (pre-flight re-run once)|tracker" % (c[1], c[1], c[2]), "-", agent)
+        open(fpath, "w", encoding="utf-8").write("")
+    if evidence:
+        path = _card(tracking, full)
+        card = open(path, encoding="utf-8").read()
+        bullets = "".join("- %s\n" % e for e in evidence)
+        m = re.search(r"^## Evidence\n", card, re.M)
+        if m:
+            card = card[:m.end()] + bullets + card[m.end():]
+        else:
+            h = re.search(r"^## History", card, re.M)
+            at = h.start() if h else len(card)
+            card = card[:at] + "## Evidence\n" + bullets + "\n" + card[at:]
+        open(path, "w", encoding="utf-8").write(card)
+    set_status(tracking, full, "Done", reason or "Done", agent)
+    if journal:
+        jdir = os.path.join(tracking, "journal")
+        os.makedirs(jdir, exist_ok=True)
+        jpath = os.path.join(jdir, _today() + ".md")
+        head = "" if os.path.exists(jpath) else "# Journal %s\n\n" % _today()
+        with open(jpath, "a", encoding="utf-8") as f:
+            f.write(head + "- %s\n" % journal)
+    print("close-out: %s Done" % full)

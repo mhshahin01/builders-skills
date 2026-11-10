@@ -144,7 +144,8 @@ asks before writing.
     round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
 8f. **Full suites once per wave.** A task whose diff adds no migration, no added or removed bean wiring annotation, no config or build file
     runs its pre-flight with `--defer-suites` (related tests + reused `--mutate`); the full suites run once
-    after the wave's last task (one pre-flight with every wave task) and in `slice deliver`. A red full run
+    after the wave's last task (one pre-flight with every wave task) and in `slice deliver`. Inside a wave
+    (`--wave`) a migration no longer blocks deferring; the wave-end run covers it. A red full run
     there reopens the task whose classes fail (CHG-029, user: "Apply all 10").
 8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
     gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →

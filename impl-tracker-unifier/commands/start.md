@@ -42,6 +42,17 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
      interleaving test), or `- In: no guard line: <reason>`. P14 fails an untagged invariant (also in `--lint`),
      so a test that passes with its mechanism removed is found by `--removals`, not by the audit (T-008, T-009,
      PLATFORM/T-029 audit 1).
+     **Shared state needs a race test (P17, L-010, L-098):** an invariant on state that two threads or fetches share
+     (no X while Y, at most one, a pause, a lock, a claim) names a latch-parked test repeated 20 times in the Test
+     map; a gate (pause, breaker) is re-checked after the slot is taken, right before each send. `--lint` fails P17
+     when the map names none (T-153 audit 1 FAIL: a pause tested on one thread cost a second full cycle).
+   - **Attack questions (answer each in the State table or Test map; every one cost a failed audit):**
+     (a) *Input limits:* for each input, what passes the language's parsing but fails in the store or the next system (NUL in text,
+     out-of-range times and numbers)? It answers 400 and is tested (L-117). (b) *Other channels:* does a "never" or "only" rule cover
+     every route to the thing, not the obvious one (egress: redirects, IP literals, WebSockets, WebRTC) (L-119)? (c) *Every call site:*
+     a rule stated for "any X" gets one test per place X can happen (L-120). (d) *Settings:* a configured value is tested by behaviour at a
+     value apart from its default (L-121). (e) *SQL:* each condition of a predicate named by an invariant has a guard or a test only it
+     fails; P18 checks this (L-118).
    - **Test map (before any code):** one line per card promise, DoD item, invariant, `no guard line` reason and
      cancel or shutdown line: the test that proves it, and the line whose deletion must fail that test. A promise
      moved to another task is added to that card with a gap or CHG. A concurrent test also gets a hard time limit
@@ -60,6 +71,9 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
    started before the current head commit is restarted now, as part of bringing the environment up
    (audit-rules.md § 3a); never mid-task, never by asking the user.
 4. Set `In progress`, `agent`, `started`, **start commit** (`git rev-parse HEAD`); append to today's journal.
+   Commit this paperwork before any builder worktree is cut, so its cherry-pick never conflicts on the card, with
+   the trailer as its own last paragraph so push-check sees it (T-156 start commit WARNed without it):
+   `git commit -m "Tracking: KEY/T-NNN start" -m "Tracking: start KEY/T-NNN"`.
    Stamp the start clock: `python <skill>/scripts/preflight.py --tracking <tracking> --history-start KEY/T-NNN`
    (writes `history-clock.json`, used by `history.md` for the task's span; run once, a second run keeps the first).
 5. Print the **task brief** for the implementer: Goal, Why, Doc refs (links), Owns, **Layers to touch**

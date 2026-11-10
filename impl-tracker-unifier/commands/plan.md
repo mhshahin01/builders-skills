@@ -25,6 +25,10 @@ Follow `task-splitting.md`. In short:
    confidence - discovery-rules.md § 3, and the **risk table**: each task's Risk with its reason,
    task-splitting.md § Risk) and **ask for approval** before writing
    task cards. On approval write `KEY/plan.md`, task cards, update `index.md`, `ownership.md`.
+   **Owns / Touches lines in the lint format** (templates.md task card): `- kind `name`` with one kind and one
+   name per line (`- class `BoardPacer``, `- file `<full repo-relative path>``, never `...` or a glob);
+   `## Touches` holds one file per line, `- `path` - reason`. Then run
+   `preflight.py --tracking tracking --task KEY/T-NNN --lint` for the new cards and fix each P8/Owns row.
 
 **Slice mode** (`plan KEY slice` / `reslice`, or `Mode: slice` in config): after step 5c, group the tasks into
 slices and check slice order per slice-rules.md § 3; step 8 shows the slice table first and asks for the

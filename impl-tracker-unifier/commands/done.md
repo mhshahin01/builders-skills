@@ -17,12 +17,19 @@ line 1. SKILL.md § Read budget: large files applies to every tracking file.
 1b. **Bring the test environment up:** `preflight.py --tracking <t> --doctor` (seconds). It starts Docker
    when down (never installs or reconfigures it), recreates a missing verify worktree, checks Node against
    every `engines.node`, and checks the shared test database's connection headroom (classes × pool under
-   80% of `max_connections`). Start the local compose stack if the project has one. Any doctor FAIL → fix it
+   80% of `max_connections`), and checks that every port in config.md `Test ports` is free (D5: a dev server
+   left on a port a test binds fails the suite only after minutes). `--quick` runs the doctor too and stops in
+   seconds on a FAIL. Only one `--quick`, `--mutate`, `--removals` or full run may run at a time per tracking
+   folder (`tracking/.preflight.lock`; a second prints `PRE-FLIGHT: BUSY`): two runs share the checkout, the
+   test database, LocalStack and the ports, and break each other. A `--quick` class that hangs is stopped at
+   15 minutes (`PREFLIGHT_QUICK_TIMEOUT`) and named in the row. Start the local compose stack if the project has one. Any doctor FAIL → fix it
    before pre-flight; never ask the user first. The full pre-flight also runs the doctor first, and **fails
    fast**: when a doctor, paperwork or lint row fails, it skips the suites (seconds, no report written)
    instead of spending minutes on tests whose result cannot count.
 1c. **Lint first (seconds).** `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-NNN --lint`
-   runs every check except tests and the stack, accepts uncommitted work, and prints ready-to-paste
+   runs every check except tests and the stack (it also compiles each Java `## Removals` guard file with the guard
+   line deleted, javac against the module classpath, seconds: a guard that cannot go alone fails here), accepts
+   uncommitted work, and prints ready-to-paste
    `## Touches` lines for files outside Owns. Fix everything it reports before the full pre-flight: Touches
    paths, Risk floor, trailers, card/index status, lesson coverage (`checks.json`). It writes no report, ends with
    `LINT: PASS|FAIL`, and never stands in for the pre-flight. Lint fails on an uncommitted doc or binary
@@ -37,8 +44,12 @@ line 1. SKILL.md § Read budget: large files applies to every tracking file.
    running them again. Every full-suite failure so far (T-006 pinned version, T-007 second bean, T-009
    ArchUnit, T-029 pinned row count) sat in this set.
    Report files the scripts write under `tracking/` (removals, pre-flight) need no commit before the next run:
-   P1 ignores `tracking/`; commit them with the next status change. Console output shows FAIL/WARN rows only
+   P1 ignores `tracking/`; commit them with the next status change. Console output shows line 1 and FAIL rows only (WARN counted)
    (`--verbose` for all); never grep a full report back into the context.
+   `--own` runs only the task's own test classes (seconds to a minute; never stands in for `--quick`). Several
+   `--task` on one `--quick` run the union of their related sets once and count for each task (wave mode).
+   A class that fails in the run but passes alone once is re-run by pre-flight itself and logged in
+   `tracking/flakes.md` (WARN, not FAIL; at most 3 classes); `--close-out` turns each into a minor gap.
    **Before every full pre-flight, `--lint` must print `LINT: PASS`;** when tests were removed on purpose, pass
    `--accept-count "<reason>"` on the first run. A gap with no doc point is written alone, never through `--gap-du`.
    **Fast path, in this order, each once (target: one full pre-flight, one audit):** lint → `--quick` →
@@ -46,6 +57,19 @@ line 1. SKILL.md § Read budget: large files applies to every tracking file.
    on the final code → full pre-flight → audit. The removals report stays valid until production code, a build
    file or a test it names changes; a fix to another test (a neighbour's pinned count) or to docs keeps it.
    The full run reuses the `--mutate` result while the code equals what `--mutate` ran on, so mutation runs once.
+   **Nothing beside a run:** while a `--quick`, `--mutate`, `--removals` or full run holds the lock, run no Maven,
+   npm or lint command (lint prints `LINT: BUSY`) and leave the code tree as it is: a load spike breaks container
+   start-up (LocalStack timed out once) and an uncommitted edit fails P1 after the run. Read and design meanwhile.
+   **After a fix (audit or own):** `--quick`, then `--mutate` (fix every survivor in one pass), then update `## Removals`,
+   commit, and run `--removals`, then the full run. Mutation takes minutes and finds most gaps; removals is the slow step and
+   must run on final code (T-078: removals before mutate cost a second 19-minute run). `--removals` reuses each guard whose task
+   code and named tests are unchanged since it was last killed (`reused` rows; `--all-guards` runs them all), so a test-only fix
+   re-runs only its own guards.
+   **Commit with** `preflight.py --tracking <t> --commit KEY/T-NNN --message "<subject>" --paths <paths>` (`--tracking-only` for a
+   paperwork commit, `--coauthor "<value>"` for the attribution line): it stages only those paths and writes the trailer block
+   correctly, so a blank line never pushes `Task:` out of the trailers.
+   **Shared checkout:** another session's commit inside this task's range is listed on the card under `## Other sessions' commits`
+   with the user's words quoted, and P2 then skips only those shas. Never move the start commit past the task's own code.
 2. Check: every owned item exists in code; DoD checklist ticked. Missing → stay `In progress` and list
    what's missing, or the user splits it (new task, `depends_on` this one).
 2a. **Self-replay lessons.** Every lesson created or hit during this task, and every lesson in the brief,
@@ -80,6 +104,10 @@ line 1. SKILL.md § Read budget: large files applies to every tracking file.
    included); the full run reuses it while the code is the same and it passes against the cards (P10 row
    `reused from --mutate`), so a fix found here never costs a second mutation run. Record "local mutation:
    N classes, 0 survivors / listed" in the self-check row.
+   **Fix rounds (S-17 T-156: 8 rounds x 9 min):** PIT 1.30 has no free incremental history (it needs the
+   arcmutate plugin), so cut rounds instead. Survivors on a local counter step whose every read is a log call are `auto
+   (log-only counters)`, shown in the P10 row for the auditor, never a FAIL. Fix all survivors of one round in one
+   pass (one fixer, every listed line) before the next round; never one round per survivor.
 2b. **Pre-flight (mandatory before any audit that can set a task Done):**
    `python <skill>/scripts/preflight.py --tracking <tracking> --task KEY/T-a [--task KEY/T-b …]`.
    It checks: clean tree; commits (start commit, exactly one `Task:` trailer each); card/index status;
@@ -103,7 +131,9 @@ line 1. SKILL.md § Read budget: large files applies to every tracking file.
    removed bean wiring annotation (`@Component`, `@Bean`, `@Configuration`, `@Profile`…; a change inside an
    existing bean's body does not block), no config or build file and a passing `--mutate` covers the code: the related tests stand
    for the full suites, which then run once at the wave end (`--task` every wave task) and at `slice deliver`.
-   The script refuses (and runs the full suites) when any condition fails.
+   The script refuses (and runs the full suites) when any condition fails. **Inside a wave** add `--wave` too: a
+   migration then does not block deferring, since the wave-end run of the full suites (`--task` every wave task,
+   no `--defer-suites`) covers it once; bean wiring, config and build files still block.
    It writes `tracking/KEY/preflight/T-NNN-<sha>.md`; **link** that file from the History row (don't paste
    the table). Adopted tasks run the same command (Adopted mode is automatic: no commit checks).
    **Where it runs:** in the permanent verify worktree named in `config.md` § Verify worktree when one is
@@ -111,7 +141,8 @@ line 1. SKILL.md § Read budget: large files applies to every tracking file.
    `node_modules`, `npm ci` only when `package-lock.json` changed), so a live IDE or dev server in the main
    checkout is never disturbed and installs are not repeated (L-028). Copy the report back into the main
    tracking folder before committing it.
-3. Set `In review`. **Run the audit** (audit-rules.md) - mandatory; an agent cannot skip it, only the user
+3. Set `In review`. Build the auditor's inputs with `preflight.py --tracking <t> --audit-pack KEY/T-NNN` (add `--since <failed head>`
+   for a delta re-audit) and name the printed file in the prompt. **Run the audit** (audit-rules.md) - mandatory; an agent cannot skip it, only the user
    in chat (then record `audit skipped by user: "<quote>"` in History and open a major gap). Launch the auditor
    with `run_in_background: false`: the turn waits for the verdict and goes straight on to Done.
    - The audit runs on a **clean export** of the task's last commit (audit-rules.md § 1a), never on the
@@ -121,14 +152,16 @@ line 1. SKILL.md § Read budget: large files applies to every tracking file.
    - **Depth follows the task's Risk** (audit-rules.md § 1): `high` → strongest model, full prompt;
      `low` → faster model, focused prompt; missing or unclear → `high`.
    - **Several tasks:** one fresh auditor per task, launched together in one message (foreground, not in
-     the background), at most 2 at once when their tests start containers. Each gets only its own task's
+     the background), up to 3 at once when each runs only its targeted classes, at most 2 when their tests
+     start containers. Each gets only its own task's
      inputs and writes its own report and verdict.
    - After every audit, **including a stopped or failed one**, run `git status` on the code root and revert
      anything left behind before the next commit.
 3a. **Recompute the verdict** (audit-rules.md § 4): an incomplete reply or `RISK: high` is no verdict
    (re-run at high); any blocker or major, any LAYERS row marked FAIL or without evidence, is FAIL,
    whatever the auditor wrote. Line 1 of the report carries the recomputed verdict.
-4. PASS / PASS-minor → set `Done`, record evidence + audit report + pre-flight report links; recompute
+4. PASS / PASS-minor → set `Done`, record evidence + audit report + pre-flight report links (one command:
+   `--close-out`, see wave.md step 9; lint accepts a Done card there); recompute
    readiness of dependents and print which became Ready. FAIL → back to `In progress`, print the findings
    as a fix list, open gaps, capture lessons; re-run `done` after fixing (re-audit only the failed tasks,
    as a **delta re-audit**, audit-rules.md § 1c, in the reused export).

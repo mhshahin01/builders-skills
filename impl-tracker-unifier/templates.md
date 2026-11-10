@@ -184,11 +184,17 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
   (LLD 17-specs Roadmap) - building them now would be built twice.
 
 ## Owns
-- class `RoutingServiceImpl`, interface `RoutingService`
-- file `autoapply/src/main/java/.../routing/RoutingServiceImpl.java`
+- class `RoutingServiceImpl`
+- interface `RoutingService`
+- file `autoapply/src/main/java/com/chagaf/autoapply/routing/RoutingServiceImpl.java`
 
 ## Touches (files outside Owns this task may change, with the reason)
 - `autoapply-api/pom.xml` - adds the AWS SDK dependency this task needs
+
+<!-- Lint format (preflight --lint P8): Owns = one `- kind `name`` per line (kind is one word: class, interface,
+     file, table, endpoint, migration...); file paths are full and repo-relative (no `...`, no globs).
+     Touches = one file (or directory ending in /) per line, in backticks, then ` - reason`. -->
+
 
 ## Definition of done
 - [ ] Owned items exist; ArchUnit rules pass

@@ -110,8 +110,9 @@ target that made AUTOAPPLY/T-111 fail five times.
 ## 1b. Parallel audits (wave)
 
 For `done` with several tasks: one auditor per task, launched in the same message, in the foreground.
-Each prompt holds only its own task's inputs, its own commits and its own export folder. At most 2 at once
-when their tests start containers (Docker Desktop and the build cache are shared); queue the rest.
+Each prompt holds only its own task's inputs, its own commits and its own export folder. Up to 3 at once
+when each runs only its task's targeted test classes; at most 2 at once when their tests start containers
+(Docker Desktop and the build cache are shared); queue the rest. No auditor runs beside the wave's full run.
 Containers started by tests use random ports (Testcontainers); never start fixed-port services from an
 audit.
 
@@ -267,6 +268,8 @@ You are a strict, read-only implementation auditor. Do not edit any file.
 Task: <KEY/T-NNN - title>. Start commit: <sha>. Repo: <code root>. Docs: <docs root>.
 
 Inputs (read these, nothing else first):
+- Audit pack: <path from --audit-pack> (one file: the card, this task's diff, the cited doc sections, its lessons). Read it first and
+  open a repository or doc file only for what it lacks or to check a specific line; open an anchor listed as not extracted.
 - Task card: <path>
 - Doc anchors: <list of LLD/BRD/SDD paths#anchors>
 - Applicable lessons (run each Check): <rows>

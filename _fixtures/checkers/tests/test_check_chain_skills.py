@@ -17,7 +17,7 @@ ROLES = {
     'pre-sdd-unifier': ('E2E Architect', SD),
     'sdd-unifier': ('Software Architect', SD),
     'lld-unifier': ('Tech Lead', SD),
-    'impl-tracker-unifier': ('Developer / software engineer', SD),
+    'impl-unifier': ('Developer / software engineer', SD),
     'tutorialize-unifier': ('Mentor / assistant', SD),
 }
 EM_DASH = '\u2014'
@@ -150,8 +150,8 @@ class CheckChainSkills(unittest.TestCase):
         self.assertEqual(self.check(), [])
 
     def test_check_section_missing_problem(self):
-        self.write('impl-tracker-unifier/SKILL.md', skill_md('impl-tracker-unifier', section=''))
-        self.only(self.check(), 'impl-tracker-unifier/SKILL.md', 'no "## Status board" section')
+        self.write('impl-unifier/SKILL.md', skill_md('impl-unifier', section=''))
+        self.only(self.check(), 'impl-unifier/SKILL.md', 'no "## Status board" section')
 
     def test_check_section_heading_in_code_fence_not_a_section_problem(self):
         fenced = '```markdown\n## Status board\n\nExample only.\n```\n'
@@ -288,18 +288,18 @@ class CheckChainSkills(unittest.TestCase):
         self.only(self.check(), 'tutorialize-unifier/SKILL.md', 'not read')
 
     def test_check_description_missing_problem(self):
-        self.write('impl-tracker-unifier/SKILL.md', skill_md('impl-tracker-unifier', description=''))
-        self.only(self.check(), 'impl-tracker-unifier/SKILL.md', 'no description in the front matter')
+        self.write('impl-unifier/SKILL.md', skill_md('impl-unifier', description=''))
+        self.only(self.check(), 'impl-unifier/SKILL.md', 'no description in the front matter')
 
     def test_check_front_matter_missing_problem(self):
-        text = skill_md('impl-tracker-unifier')
-        self.write('impl-tracker-unifier/SKILL.md', text[text.index('# impl-tracker-unifier'):])
-        self.only(self.check(), 'impl-tracker-unifier/SKILL.md', 'no front matter')
+        text = skill_md('impl-unifier')
+        self.write('impl-unifier/SKILL.md', text[text.index('# impl-unifier'):])
+        self.only(self.check(), 'impl-unifier/SKILL.md', 'no front matter')
 
     def test_check_front_matter_not_closed_problem(self):
-        text = skill_md('impl-tracker-unifier')
-        self.write('impl-tracker-unifier/SKILL.md', text.replace('---\n\n# impl-tracker-unifier', '\n# impl-tracker-unifier', 1))
-        self.only(self.check(), 'impl-tracker-unifier/SKILL.md', 'front matter is not closed')
+        text = skill_md('impl-unifier')
+        self.write('impl-unifier/SKILL.md', text.replace('---\n\n# impl-unifier', '\n# impl-unifier', 1))
+        self.only(self.check(), 'impl-unifier/SKILL.md', 'front matter is not closed')
 
     def test_check_em_dash_problem(self):
         self.write('brd-unifier/chunks/10-nfrs.md', '# NFRs\n\nA line.\nA ' + EM_DASH + ' dash.\n')

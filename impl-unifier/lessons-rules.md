@@ -77,7 +77,7 @@ Never delete a lesson. Retire it with a reason and the superseding CHG/L ID.
 | Command | Uses lessons how |
 |---|---|
 | `plan` | For each new task: matching Promoted-DoD lessons → DoD items `L-NNN: <rule>`; matching Active lessons → one line in **Why this way** if they change the design. |
-| `start` | Task brief gets a **Lessons that apply** section: filter Active/Promoted by layer ∩ task layers, key, and tags ∩ owned-item kinds. **Max 4**, Promoted first, then by Hits. Lessons a pre-flight check already enforces mechanically (a `command` or `builtin` entry in `checks.json`, or P10) are left out: the script catches them. The card links each lesson (`[L-NNN](../../lessons.md#l-nnn)`), never copies its text. |
+| `start` | Task brief gets a **Lessons that apply** section: filter Active/Promoted by layer ∩ task layers, key, and tags ∩ owned-item kinds. **Max 4**, Promoted first, then by Hits. Lessons a pre-flight check already enforces mechanically (a `command` or `builtin` entry in `checks.json`, or P10) are left out: the script catches them. The card links each lesson (`[L-NNN](../../lessons.md#l-nnn)`), never copies its text. The printed brief shows each rule up to 300 characters (cut at a clause end, then the link) with its Check in full: the Check is what gets run, the long rule is one click away. |
 | `done` | Implementer must tick each listed lesson's Check; the audit re-runs them independently. |
 | audit | Every applicable lesson's Check is run; violation of Promoted-rule = blocker, others = major. |
 | `standup` | New lessons and recurrences since last entry. |

@@ -184,11 +184,17 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
   (LLD 17-specs Roadmap) - building them now would be built twice.
 
 ## Owns
-- class `RoutingServiceImpl`, interface `RoutingService`
-- file `autoapply/src/main/java/.../routing/RoutingServiceImpl.java`
+- class `RoutingServiceImpl`
+- interface `RoutingService`
+- file `autoapply/src/main/java/com/chagaf/autoapply/routing/RoutingServiceImpl.java`
 
 ## Touches (files outside Owns this task may change, with the reason)
 - `autoapply-api/pom.xml` - adds the AWS SDK dependency this task needs
+
+<!-- Lint format (preflight --lint P8): Owns = one `- kind `name`` per line (kind is one word: class, interface,
+     file, table, endpoint, migration...); file paths are full and repo-relative (no `...`, no globs).
+     Touches = one file (or directory ending in /) per line, in backticks, then ` - reason`. -->
+
 
 ## Definition of done
 - [ ] Owned items exist; ArchUnit rules pass
@@ -198,6 +204,12 @@ Route a new match to Quick Review or drop it, per Review-mode rules.
 ## Tests
 - `route_hybridScoreEqualsThreshold_approves` - AUTOAPPLY/UC-23 AC (LLD 16.2)
 - `route_reviewQueueFull_doesNotKeepMatch` - AUTOAPPLY/UC-23 A1
+- queue-full race, two workers → `MatchRouterRaceTest#twoWorkers_oneSlot_keepsOne`
+- UI: save button disabled while saving → `match-review.component.spec.ts#disables save while saving`
+
+(P19: before In review every clause names a test that exists: a bare test method, ` → `Class#method``, or
+` → `file.spec.ts#test name``; `- no test: <reason>` for a clause that has none. Plan-time clauses may be
+plain text; the builder adds the name with the test.)
 
 ## Lessons that apply (filled by start)
 - [L-004](../../lessons.md#l-004) - links only; the rule and Check live in lessons.md (never copied, so never stale)
@@ -403,10 +415,10 @@ Failed. `Verified`: the verifier's verdict and date. A failed verification appen
 ~~~markdown
 # AUTOAPPLY/T-014 audit 1 - FAIL
 
-Auditor: <agent/model> · risk <low|high> · 2026-10-19 · commits <shas> · export <head>
+Auditor: <agent/model> · risk <low|medium|high> · 2026-10-19 · commits <shas> · export <head>
 Time: started <HH:MM> · finished <HH:MM> · <n> min (budget 25; delta 10)
 Pre-flight: [T-014-<sha>.md](../preflight/T-014-<sha>.md) · auditor verdict <as written> · recomputed <verdict>
-Tests: <full run in export | reused pre-flight <file> (tree = head) + ran <classes>> · Scope: <full | delta of audit-<n>> · Export: <fresh | reused, clean, HEAD = <sha>>
+Tests: <full run in export | reused pre-flight <file> (code = report tree <sha>) + ran <classes>> · Scope: <full | delta of audit-<n>> · Export: <fresh | reused, clean, HEAD = <sha>>
 
 ## Layers
 | Layer | Applies | Result | Evidence |
@@ -436,7 +448,7 @@ UI - n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → MatchEn
 ~~~markdown
 ## Implementation tracking
 
-- Before coding, run `impl-tracker-unifier next` (or read `tracking/index.md`). Work only on a task that is
+- Before coding, run `impl-unifier next` (or read `tracking/index.md`). Work only on a task that is
   `In progress` under your name. Never start a task whose depends_on are not Done.
 - Build only what the task's **Owns** lists. Need something else → it's another task or a gap.
 - Every commit ends with exactly one `Task: <KEY/T-NNN>` trailer; never two tasks in one commit.
@@ -447,9 +459,9 @@ UI - n/a → DTO RouteRequest.java:12 → RoutingServiceImpl.java:77 → MatchEn
   it Done.
 - Push only when the user said so, or `config.md` § Delivery reads `auto (user: "…")` and the push check
   passes.
-- The user corrects you or changes direction → `impl-tracker-unifier lesson` / `change` before continuing.
-- Finished → `impl-tracker-unifier done <id>`. Found a bug, missing rule, or doc conflict →
-  `impl-tracker-unifier gap`; the tracker queues the doc update and a background doc worker applies it.
+- The user corrects you or changes direction → `impl-unifier lesson` / `change` before continuing.
+- Finished → `impl-unifier done <id>`. Found a bug, missing rule, or doc conflict →
+  `impl-unifier gap`; the tracker queues the doc update and a background doc worker applies it.
   Never edit BRD/SDD/LLD yourself, and never to make code fit.
 ~~~
 

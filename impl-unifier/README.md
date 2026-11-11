@@ -1,4 +1,4 @@
-# impl-tracker-unifier
+# impl-unifier
 
 Stage 7 of the suite: tracks implementation against the BRD, SDD and LLD. It acts as the Developer / software engineer (Software Development & Delivery) in the unifier company. Entry point: [SKILL.md](SKILL.md). Below are the design decisions behind it.
 
@@ -8,7 +8,7 @@ Stage 7 of the suite: tracks implementation against the BRD, SDD and LLD. It act
 flowchart LR
     brd["brd-unifier<br/>WHAT / WHY"] --> psdd["pre-sdd-unifier<br/>numbers and shape"] --> sdd["sdd-unifier<br/>HOW, system"]
     sdd --> lld["lld-unifier<br/>HOW, per service<br/>17-specs Roadmap"]
-    lld --> trk["7. impl-tracker-unifier<br/>init · discover · plan · next · wave · start · done<br/>audit · verify · gap · lesson · change<br/>standup · status · sync · slice · report · docs"]
+    lld --> trk["7. impl-unifier<br/>init · discover · plan · next · wave · start · done<br/>audit · verify · gap · lesson · change<br/>standup · status · sync · slice · report · docs"]
     trk --> code(["code + commits"])
     code -. "drift, bugs, missing deps" .-> trk
     trk -. "doc updates (DU queue): doc worker or board requests" .-> brd
@@ -102,5 +102,5 @@ worth it when several products share one tracker (not now).
 | `slice-rules.md` | Slice mode: end-to-end slices, order (its one home is `tracking/config.md` § Slices), delivery gate, manager report |
 | `lessons-rules.md` | Lessons, recall, promotion, the change log |
 | `audit-rules.md` | The fresh auditor, layer matrix, verdicts, clean export, Stop hook |
-| `scripts/` | `preflight.py` (mechanical checks before any audit) and `history.py` (builds `tracking/history.md` from recorded facts) |
+| `scripts/` | `preflight.py` (mechanical checks before any audit; suites deferred to the wave end by default, `--full-suites` and `--suites` run them) and `history.py` (builds `tracking/history.md` from recorded facts, with a `## Speed` block per week) |
 | `hooks/` | `stop-audit-guard.js`, an optional Claude Code Stop hook that blocks ending a turn while a task is In review without a passing audit; `post-commit-lint.sh`, an optional git post-commit hook that lints the commit's task |

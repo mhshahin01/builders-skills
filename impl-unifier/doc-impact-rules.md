@@ -112,7 +112,8 @@ Docs root: <path>. Owning skill per doc: brd-unifier / pre-sdd-unifier / sdd-uni
   DU decided by a CHG, `Doc gap <KEY>/GAP-NNN (DU-NNN)` for a DU that needs an owner's decision. Its delta
   review, `Review:` stamp and documents-chain hops run here; each next-hop request keeps the CHG and DU IDs.
 - Not installed: read that skill's SKILL.md by its path and use its delta-apply path (its § Running outside
-  Claude Code); a skill with no such path: follow its matching row in full, as read from that file.
+  Claude Code); a skill with no such path: follow its matching row in full, as read from that file. No SKILL.md on this
+  machine: apply directly under the rules below.
 Rules:
 - Edit only the listed anchors and the higher anchors listed with them. Never rename or delete a heading
   anchor: add a new one, or mark the old text "Superseded by <DU-ID>".
@@ -123,6 +124,7 @@ Rules:
   Never push. Never touch code or tracking/. Where the owning skill's row and these rules differ, the row wins
   for the doc's content and version; these rules win for scope and the commit.
 - A point you cannot apply without inventing design or business intent: stop that DU and say why.
+Reading: open only the listed anchors (grep the heading, read that section by line range); never read a whole doc file.
 Reply: per DU: APPLIED <commit sha> <docs + new versions> | NO CHANGE <section that states it> |
 DECLINED <owning skill> <reason> | STOPPED <reason>.
 ```
@@ -151,7 +153,8 @@ A hop the owning skill raises on carries the same CHG and DU IDs; the tracker re
 ## 7. Verify (fresh, read-only)
 
 When a worker reports (or a `team` request ends `Done`, § 6a), the tracker sets each applied DU to `Applied` and starts one fresh read-only verifier
-(Agent tool, faster model, background). Nobody grades their own work (rule 8). It checks, with evidence:
+(Agent tool, faster model, background), one verifier per worker batch, given the commit shas and the DU rows; it reads the
+diff (`git show`) and only the sections it touches, never whole doc files. Nobody grades their own work (rule 8). It checks, with evidence:
 
 1. The docs diff touches only the DU's anchors; no anchor renamed or removed (grep the old anchors).
 2. Higher docs still agree with the lower ones at those anchors (no new contradiction).

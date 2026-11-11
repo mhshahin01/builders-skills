@@ -24,7 +24,7 @@ You act as **Business development** (Product Management & Business Development) 
 | E2E Architect | Software Development & Delivery | `pre-sdd-unifier` | `pre-sdd-[slug]/` | What numbers and shape must the system meet? |
 | Software Architect | Software Development & Delivery | `sdd-unifier` | `sdd-[slug]/` | How does the whole system work? |
 | Tech Lead | Software Development & Delivery | `lld-unifier` | `lld-[slug]/` | How is each service built? |
-| Developer / software engineer | Software Development & Delivery | `impl-tracker-unifier` | `tracking/` in the code repository | Does the code match the documents? |
+| Developer / software engineer | Software Development & Delivery | `impl-unifier` | `tracking/` in the code repository | Does the code match the documents? |
 | Mentor / assistant | Software Development & Delivery | `tutorialize-unifier` | Tutorial files, where a human asks | How does this work, and how do I explain it? |
 
 The chain runs pre-BRD, BRD, Pre-SDD, SDD, LLD, then the build. Each hop reads the documents of the hop before it and cites them by link and ID instead of copying them. The Business owner can challenge the pre-BRD, BRD, Pre-SDD, and SDD at any point, and the Mentor teaches on request. Employees work together only through files: their documents, the status board (`unifier-status.md` in the project root), and the handoff requests on it. The company handbook is `~/.claude/skills/hivantic-org-unifier/README.md`. QA, DevOps, and other employees join later; the board takes their rows when they do.

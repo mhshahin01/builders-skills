@@ -1,4 +1,4 @@
-# impl-tracker-unifier: start
+# impl-unifier: start
 
 Read from SKILL.md § Workflow per command. Rules, read budget and quality checks stay in SKILL.md.
 
@@ -15,8 +15,12 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
    stop and ask: is it the same thing (then link it, maybe the task is already done) or a clash (gap
    `double-build`). Also grep `changes.md`: an owned item removed/replaced by an active CHG → stop, show it.
 3b. **Re-check Risk** against task-splitting.md § Risk with the card's Goal and Owns; a plan default is
-   never final. Raise to `high` if any high-risk item applies; record the reason on the card. Lowering
-   `high` → `low` needs the user's own words, quoted on the card (`low (user: "<quote>", <date>)`).
+   never final, and a card planned before the three tiers existed is re-tiered here. Raise to `high` if the
+   task adds or changes logic on the high list; set `medium` when nothing on that list applies but the task
+   has I/O at size M or L, or edits a file that holds high-risk code; size S with no I/O is `low`. Record the
+   reason on the card. `high` → `medium` needs that reason and is confirmed by pre-flight P9 (no high-risk
+   line in the diff); lowering anything to `low` against P9 needs the user's own words, quoted on the card
+   (`low (user: "<quote>", <date>)`).
 3c. **Design check (risk `high` only, before any code).** Write `## Design check` on the card:
    - **Invariants**: the rules the code must never break, each with its doc anchor (for example "no
      automatic request carries the user-action marker", "a pending account survives every job").
@@ -42,6 +46,17 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
      interleaving test), or `- In: no guard line: <reason>`. P14 fails an untagged invariant (also in `--lint`),
      so a test that passes with its mechanism removed is found by `--removals`, not by the audit (T-008, T-009,
      PLATFORM/T-029 audit 1).
+     **Shared state needs a race test (P17, L-010, L-098):** an invariant on state that two threads or fetches share
+     (no X while Y, at most one, a pause, a lock, a claim) names a latch-parked test repeated 20 times in the Test
+     map; a gate (pause, breaker) is re-checked after the slot is taken, right before each send. `--lint` fails P17
+     when the map names none (T-153 audit 1 FAIL: a pause tested on one thread cost a second full cycle).
+   - **Attack questions (answer each in the State table or Test map; every one cost a failed audit):**
+     (a) *Input limits:* for each input, what passes the language's parsing but fails in the store or the next system (NUL in text,
+     out-of-range times and numbers)? It answers 400 and is tested (L-117). (b) *Other channels:* does a "never" or "only" rule cover
+     every route to the thing, not the obvious one (egress: redirects, IP literals, WebSockets, WebRTC) (L-119)? (c) *Every call site:*
+     a rule stated for "any X" gets one test per place X can happen (L-120). (d) *Settings:* a configured value is tested by behaviour at a
+     value apart from its default (L-121). (e) *SQL:* each condition of a predicate named by an invariant has a guard or a test only it
+     fails; P18 checks this (L-118).
    - **Test map (before any code):** one line per card promise, DoD item, invariant, `no guard line` reason and
      cancel or shutdown line: the test that proves it, and the line whose deletion must fail that test. A promise
      moved to another task is added to that card with a gap or CHG. A concurrent test also gets a hard time limit
@@ -60,9 +75,14 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
    started before the current head commit is restarted now, as part of bringing the environment up
    (audit-rules.md § 3a); never mid-task, never by asking the user.
 4. Set `In progress`, `agent`, `started`, **start commit** (`git rev-parse HEAD`); append to today's journal.
+   Commit this paperwork before any builder worktree is cut, so its cherry-pick never conflicts on the card, with
+   the trailer as its own last paragraph so push-check sees it (T-156 start commit WARNed without it):
+   `git commit -m "Tracking: KEY/T-NNN start" -m "Tracking: start KEY/T-NNN"`.
    Stamp the start clock: `python <skill>/scripts/preflight.py --tracking <tracking> --history-start KEY/T-NNN`
    (writes `history-clock.json`, used by `history.md` for the task's span; run once, a second run keeps the first).
 5. Print the **task brief** for the implementer: Goal, Why, Doc refs (links), Owns, **Layers to touch**
    (API / DB / UI / logs / security - derived from the LLD, each with its doc anchor), **Lessons that
-   apply** (lessons-rules.md § 5, with their Checks), the **Design check** (high risk), Definition of done,
-   Tests to write - nothing else.
+   apply** (lessons-rules.md § 5, with their Checks; each rule printed up to 300 characters, cut at a clause
+   end, then its link: a rule grown over many audits runs past 1,000 characters and the brief is read on
+   every task), the **Design check** (high risk), Definition of done, Tests to write (each clause will end
+   with ` → `Class#method`` before In review: P19) - nothing else.

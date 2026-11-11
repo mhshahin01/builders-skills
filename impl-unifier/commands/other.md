@@ -1,4 +1,4 @@
-# impl-tracker-unifier: next, slice, report, verify, audit, lesson, change, gap, docs, standup, status, sync, discover
+# impl-unifier: next, slice, report, verify, audit, lesson, change, gap, docs, standup, status, sync, discover
 
 Read from SKILL.md § Workflow per command. Rules, read budget and quality checks stay in SKILL.md.
 
@@ -67,6 +67,8 @@ state and the doc-drift count (§ 11). `docs run` dispatches now. `docs approve 
 
 ## standup
 
+0. Archive first (seconds, no tokens): `python <skill>/scripts/preflight.py --tracking <tracking> --archive`
+   moves gaps closed 7 or more days ago to `gaps-archive.md`, so every later grep of `gaps.md` reads less.
 1. Read the last journal entry, `index.md`, `gaps.md`, and `git log --since=<last entry>`.
 2. Write `journal/YYYY-MM-DD.md`: Done since last (by agent), In progress, Next (from `next`),
    Blockers (blocked chains + blocker gaps), New/closed gaps, Commits without a `Task:` trailer
@@ -128,10 +130,12 @@ asks before writing.
     security and concurrency, and re-runs pre-flight in audit mode instead of trusting the pasted result.
 8b. **Speed never removes a gate.** Waves, parallel audits and risk tiers change only order and depth;
     every task still gets its own gates, pre-flight, fresh auditor, report and verdict.
-8c. **Run each thing once.** Full test suites run once per head commit (pre-flight); one export per wave
-    is reused; a re-audit checks only the delta. Anything re-run must have a reason: sha/tree differs from
-    the task head, report missing, any non-zero failures/errors/skipped, count below the last passing run,
-    or the fix touched the layer. Auditors reuse a valid pre-flight and run only the task's test classes
+8c. **Run each thing once.** Full test suites run once per code tree (their rows are kept by code tree,
+    whatever task asked: a wave run, a neighbour's run or `--suites` on the same code is reused, and only a
+    required suite with no passing row runs again); one export per wave
+    is reused; a re-audit checks only the delta. Anything re-run must have a reason: the code differs from
+    the tree the report names, report missing, any non-zero failures/errors/skipped, count below the last
+    passing run, or the fix touched the layer. Auditors reuse a valid pre-flight and run only the task's test classes
     (twice only when the task owns concurrency or timing logic, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
     The pre-flight caches its suite rows and raw mutation survivors (`tracking/preflight-cache.json`): a
     re-run whose code is unchanged (only tracking/ files changed, e.g. a card, an equivalent-mutant line or a
@@ -142,10 +146,15 @@ asks before writing.
     can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
     strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
     round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
-8f. **Full suites once per wave.** A task whose diff adds no migration, no added or removed bean wiring annotation, no config or build file
-    runs its pre-flight with `--defer-suites` (related tests + reused `--mutate`); the full suites run once
-    after the wave's last task (one pre-flight with every wave task) and in `slice deliver`. A red full run
-    there reopens the task whose classes fail (CHG-029, user: "Apply all 10").
+8f. **Full suites once per wave, deferred by default.** A per-task pre-flight runs the related tests + the
+    reused `--mutate` in place of the full suites, with no flag (user, 2026-11-11: "Go with the recommended
+    approach"). Only three things make the script run the suites on a per-task run, and its `P5 suites` row
+    names the one that did: a new bean type, a config or build file, production code no passing `--mutate`
+    covers. A migration, a removed bean or a changed `@Profile` does not: the related tests hold the migration
+    neighbours and the always-run tests load the context. The full suites run once after the wave's last task
+    (one pre-flight with every wave task and `--full-suites`) and in `slice deliver` (`--suites`,
+    slice-rules.md § 5). A red full run there reopens the task whose classes fail (CHG-029, user: "Apply
+    all 10"). The cost accepted: a cross-task break shows at the wave end or the slice gate, not per task.
 8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
     gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →
     the audit. A task that fails its first audit records which earlier gate should have caught it.
@@ -163,9 +172,9 @@ documents it reaches. The gates of doc-impact-rules.md § 9 decide which task wa
 
 | Change starts at | Hops, in this order | A hop runs when |
 |---|---|---|
-| Code or the LLD (an implementation decision, an LLD update) | lld-unifier, then sdd-unifier, then pre-sdd-unifier, then brd-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document states the changed fact otherwise, or must state it (a contract, a behaviour rule, a business rule), and the tracker hop when it cites or realises the changed item |
-| The SDD | sdd-unifier, then brd-unifier when a business rule changes, and lld-unifier for every child LLD the change reaches, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the same |
-| The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then pre-sdd-unifier, then sdd-unifier, then lld-unifier, then impl-tracker-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
+| Code or the LLD (an implementation decision, an LLD update) | lld-unifier, then sdd-unifier, then pre-sdd-unifier, then brd-unifier, then impl-unifier (`sync`, and `plan` for new scope) | the next document states the changed fact otherwise, or must state it (a contract, a behaviour rule, a business rule), and the tracker hop when it cites or realises the changed item |
+| The SDD | sdd-unifier, then brd-unifier when a business rule changes, and lld-unifier for every child LLD the change reaches, then impl-unifier (`sync`, and `plan` for new scope) | the same |
+| The BRD (a use case, business rule, persona, integration or screen added, changed or removed) | brd-unifier, then pre-sdd-unifier, then sdd-unifier, then lld-unifier, then impl-unifier (`sync`, and `plan` for new scope) | the next document cites or realises the changed item |
 
 - **One route, two run modes** (the board's Run mode line). Each hop runs through its owning skill; the tracker
   never writes a document itself.

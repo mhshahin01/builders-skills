@@ -16,7 +16,7 @@ One of the two teams of the unifier company. The shared rules (the status board,
 | E2E Architect | `pre-sdd-unifier` | `./pre-sdd-[slug]/` | [agent-e2e-architect-pre-sdd-unifier.md](agent-e2e-architect-pre-sdd-unifier.md) |
 | Software Architect | `sdd-unifier` | `./sdd-[slug]/` | [agent-software-architect-sdd-unifier.md](agent-software-architect-sdd-unifier.md) |
 | Tech Lead | `lld-unifier` | `./lld-[slug]/` | [agent-tech-lead-lld-unifier.md](agent-tech-lead-lld-unifier.md) |
-| Developer / software engineer | `impl-tracker-unifier` | The code, and `./tracking/` in the code repository | [agent-developer-impl-tracker-unifier.md](agent-developer-impl-tracker-unifier.md) |
+| Developer / software engineer | `impl-unifier` | The code, and `./tracking/` in the code repository | [agent-developer-impl-unifier.md](agent-developer-impl-unifier.md) |
 | Mentor / assistant | `tutorialize-unifier` | Tutorial files, where a human asks | [agent-mentor-tutorialize-unifier.md](agent-mentor-tutorialize-unifier.md) |
 
 ## How the team works

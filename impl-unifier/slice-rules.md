@@ -71,6 +71,10 @@ Gate, all required:
    e2e task (auditor or pre-flight) when its tree hash equals the code at HEAD (tracking files excluded)
    and it had 0 failures and 0 skips; otherwise run them now (local stack up, audit-rules.md § 3a).
    Record the command, counts and tree hash, or "reused <link>, tree <sha>".
+3a. The full suites pass on the current code: `preflight.py --tracking <t> --suites` (every configured suite,
+   no task). Per-task pre-flights defer the suites (rule 8f), so this is where a slice of tasks done one at a
+   time gets its full run; a passing run on the same code (the last wave-end run) is reused in seconds. A red
+   suite reopens the task whose classes fail, and the slice stays `In progress`.
 4. No task in the slice is `Stale` or `Done-stale`.
 
 Pass → slice `Delivered` with date, agent, evidence links; the next slice becomes current. Fail → list what

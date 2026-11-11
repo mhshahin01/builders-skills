@@ -1,4 +1,4 @@
-"""impl-tracker-unifier history: tracking/history.md, rebuilt from recorded facts only.
+"""impl-unifier history: tracking/history.md, rebuilt from recorded facts only.
 
   python preflight.py --tracking <t> --history-start KEY/T-NNN   # at `start`: stamps the start clock
   python preflight.py --tracking <t> --history                   # at `done`: rebuilds history.md
@@ -8,7 +8,8 @@ Sources (nothing else is read, nothing is inferred):
   clock         tracking/history-clock.json, written only by --history-start
   task card     Status, Slice, Risk, Size, History rows (reopen count)
   audits        tracking/<KEY>/audits/T-NNN-audit-N.md, verdict from line 1
-  pre-flight    tracking/<KEY>/preflight/T-NNN-*.md, verdict from line 1, FAIL rows
+  pre-flight    tracking/<KEY>/preflight/T-NNN-*.md, verdict from line 1, FAIL rows; for the Speed block: the
+                date on line 1, the `P5 suites` row (deferred, or why not), suite and mutation times and reuse
   lessons.md    rows whose Trigger or Source cites the task (root cause, rule, hits)
   gaps.md       rows whose Found by or Linked task cites the task
 The file is rebuilt every run, so it never holds duplicates or hand-written facts.
@@ -18,6 +19,7 @@ import glob
 import json
 import os
 import re
+import statistics
 
 from preflight import git, split_row, table_rows, table_value
 
@@ -115,6 +117,88 @@ def _fm(m):
     return "%dm" % round(m) if m < 120 else "%.1fh" % (m / 60)
 
 
+def _week(d):
+    return (d - datetime.timedelta(days=d.weekday())).strftime("%Y-%m-%d")
+
+
+def _reason(why):
+    why = why.strip()
+    for key in ("new bean type", "bean wiring", "no passing --mutate", "--full-suites"):
+        if key in why:
+            return key
+    return "config or build file" if why else ""
+
+
+def _speed(tracking, tasks):
+    """## Speed: the numbers a tuning of the skill is judged by, per ISO week (Monday date), counted from the task
+    rows and the pre-flight reports. Nothing is estimated: a week with no report shows `-`."""
+    new = lambda: dict(n=0, deferred=0, fresh=[], reused=0, mfresh=0, mreused=0, why={})
+    reports, total = {}, new()
+    for p in glob.glob(os.path.join(tracking, "*", "preflight", "T-*.md")):
+        if p.endswith("-removals.md"):
+            continue
+        with open(p, encoding="utf-8", errors="replace") as f:
+            text = f.read()
+        m = re.search(r"(\d{4}-\d\d-\d\d)T", text.split("\n", 1)[0])
+        if not m:
+            continue
+        for r in (reports.setdefault(_week(datetime.date.fromisoformat(m.group(1))), new()), total):
+            r["n"] += 1
+            for line in text.splitlines():
+                c = split_row(line) if line.startswith("|") else []
+                if len(c) < 3:
+                    continue
+                label, detail = c[1], c[2]
+                secs = re.search(r"· (\d+)s\b", detail)
+                if label == "P5 suites":
+                    if detail.startswith("deferred"):
+                        r["deferred"] += 1
+                    elif detail.startswith("not deferred:"):
+                        for why in {_reason(w) for w in detail[len("not deferred:"):].split(";")} - {""}:
+                            r["why"][why] = r["why"].get(why, 0) + 1
+                elif label.startswith("P5 suite "):
+                    if "reused from" in detail:
+                        r["reused"] += 1
+                    elif secs:
+                        r["fresh"].append(int(secs.group(1)))
+                elif label.startswith("P10 mutation") and c[0] in ("PASS", "FAIL"):
+                    if "reused from" in detail:
+                        r["mreused"] += 1
+                    elif secs:
+                        r["mfresh"] += 1
+    by_week = {}
+    for h in tasks:
+        by_week.setdefault(_week(h["t0"].date()), []).append(h)
+    share = lambda a, b: "%d%% (%d of %d)" % (round(100.0 * a / b), a, b) if b else "-"
+
+    def row(name, hs, r):
+        audited = [h for h in hs if h["verdicts"]]
+        first = sum(h["verdicts"][0][1] != "FAIL" for h in audited)
+        return "| %s | %d | %s | %s | %s | %s | %s | %s | %s | %s | %s |" % (
+            name, len(hs), _fm(statistics.median(h["active"] for h in hs)) if hs else "-",
+            "%.2f" % (sum(h["pfs"] for h in hs) / len(hs)) if hs else "-",
+            "%.2f" % (sum(len(h["verdicts"]) for h in hs) / len(hs)) if hs else "-",
+            share(first, len(audited)), r["n"] if r else "-", share(r["deferred"], r["n"]) if r else "-",
+            ("%d (median %ds)" % (len(r["fresh"]), statistics.median(r["fresh"])) if r["fresh"] else "0") if r else "-",
+            share(r["reused"], r["reused"] + len(r["fresh"])) if r else "-",
+            share(r["mreused"], r["mreused"] + r["mfresh"]) if r else "-")
+
+    out = ["## Speed", "",
+           "Per ISO week (the Monday): tasks by their start, pre-flight reports by their date. A report is one "
+           "pre-flight run that reached the tests. Compare the weeks after a change to the skill with those before.", "",
+           "| Week | Tasks | Median active | Pre-flights / task | Audits / task | First audit passed | Pre-flight "
+           "reports | Suites deferred | Suite runs | Suite rows reused | Mutation reused |",
+           "|---|---|---|---|---|---|---|---|---|---|---|"]
+    for w in sorted(set(by_week) | set(reports)):
+        out.append(row(w, by_week.get(w, []), reports.get(w)))
+    out.append(row("**All**", tasks, total))
+    out.append(row("Last 20 tasks", tasks[-20:], None))
+    if total["why"]:
+        out += ["", "Suites not deferred, by reason (a report can name several): "
+                + ", ".join("%s %d" % kv for kv in sorted(total["why"].items(), key=lambda x: -x[1])) + "."]
+    return out + [""]
+
+
 def write(tracking, code_root):
     cfg = open(os.path.join(tracking, "config.md"), encoding="utf-8").read()
     m = re.search(r"\d+", table_value(cfg, "History threshold (min)") or "")
@@ -127,7 +211,9 @@ def write(tracking, code_root):
             if len(r) > 8 and r[0].startswith("L-"):
                 home = (re.search(r"\b([A-Z]+)/T-\d+", r[2] + r[8]) or re.search(r"·\s*([A-Z]+)\s*·", r[6]) or [None, None])[1]
                 lessons.append((r, home))
-    gaps = [r for r in table_rows(open(os.path.join(tracking, "gaps.md"), encoding="utf-8").read())
+    archive = os.path.join(tracking, "gaps-archive.md")  # archived gaps still count in a task's history
+    gaps = [r for r in table_rows(open(os.path.join(tracking, "gaps.md"), encoding="utf-8").read()
+                                  + ("\n" + open(archive, encoding="utf-8").read() if os.path.exists(archive) else ""))
             if len(r) > 3 and "GAP-" in r[0]]
     tasks = []
     for card in sorted(glob.glob(os.path.join(tracking, "*", "tasks", "T-*.md"))):
@@ -145,8 +231,9 @@ def write(tracking, code_root):
            "(`clock`), else the task's first commit (`first commit`: time spent before that commit is not seen).",
            "- **Active**: span minus pauses longer than %d min between recorded events. Elapsed time, not focused time."
            % IDLE_GAP_MIN,
-           "- **Over**: span above %d min (`History threshold (min)` in config.md)." % threshold, "",
-           "## Tasks", "",
+           "- **Over**: span above %d min (`History threshold (min)` in config.md)." % threshold, ""]
+    out += _speed(tracking, tasks)
+    out += ["## Tasks", "",
            "| Task | Slice / phase | Risk | Size | Status | Start (source) | Span | Active | Over | Commits | Audits | Pre-flight (FAIL) | Lessons | Gaps |",
            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for h in tasks:

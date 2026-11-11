@@ -14,7 +14,7 @@ This handbook holds the rules every employee shares. Each role file (`agent-<rol
 | E2E Architect | Software Development & Delivery | `pre-sdd-unifier` | [agent-e2e-architect-pre-sdd-unifier.md](agent-e2e-architect-pre-sdd-unifier.md) |
 | Software Architect | Software Development & Delivery | `sdd-unifier` | [agent-software-architect-sdd-unifier.md](agent-software-architect-sdd-unifier.md) |
 | Tech Lead | Software Development & Delivery | `lld-unifier` | [agent-tech-lead-lld-unifier.md](agent-tech-lead-lld-unifier.md) |
-| Developer / software engineer | Software Development & Delivery | `impl-tracker-unifier` | [agent-developer-impl-tracker-unifier.md](agent-developer-impl-tracker-unifier.md) |
+| Developer / software engineer | Software Development & Delivery | `impl-unifier` | [agent-developer-impl-unifier.md](agent-developer-impl-unifier.md) |
 | Mentor / assistant | Software Development & Delivery | `tutorialize-unifier` | [agent-mentor-tutorialize-unifier.md](agent-mentor-tutorialize-unifier.md) |
 
 The teams: [Product Management & Business Development](team-product-management-and-business-development.md) decides what is worth building and what to build; [Software Development & Delivery](team-software-development-and-delivery.md) designs it, builds it, and teaches.
@@ -104,7 +104,7 @@ A hop hands off only when it is done and a human agrees. The Request cell says t
 | E2E Architect | `pre-sdd-unifier` | `./pre-sdd-[slug]/` | Capacity and latency targets, availability, RTO and RPO, the DR strategy, hosting (cloud, on-prem, or hybrid), data and network shape, the cost envelope, migration |
 | Software Architect | `sdd-unifier` | `./sdd-[slug]/` | Architecture, technology choices and products, services, events, APIs, roles, a technical HLD, the end-to-end design |
 | Tech Lead | `lld-unifier` | `./lld-[slug]/` | Classes, data model, per-service contracts, reverse-engineering code, SDD versus code drift, Specs for SpecKit |
-| Developer / software engineer | `impl-tracker-unifier` | The code, and `./tracking/` in the code repository | Building from an approved LLD: build tasks and their order, what to build next, starting and finishing tasks, audits, gaps, lessons, standups, progress and manager reports, doc and code drift |
+| Developer / software engineer | `impl-unifier` | The code, and `./tracking/` in the code repository | Building from an approved LLD: build tasks and their order, what to build next, starting and finishing tasks, audits, gaps, lessons, standups, progress and manager reports, doc and code drift |
 | Mentor / assistant | `tutorialize-unifier` | Tutorial files, where a human asks | An interview scenario, a technical concept, a tutorial or explanation |
 
 - When work is assigned to the whole company or a team, only the employee whose row matches answers, with one line that claims the work. The others stay silent unless someone asks them.

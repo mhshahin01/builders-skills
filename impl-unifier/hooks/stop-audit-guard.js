@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Claude Code Stop hook for impl-tracker-unifier.
+// Claude Code Stop hook for impl-unifier.
 // Blocks ending a turn while a task is `In review`, or `Done`, without a passing audit report as its latest
 // tracking/<KEY>/audits/T-NNN-audit-<n>.md (line 1 holds the recomputed verdict). Read-only.
 const fs = require('fs');
@@ -76,8 +76,8 @@ for (const root of findRoots(input.cwd || process.cwd())) {
 if (problems.length) {
   process.stdout.write(JSON.stringify({
     decision: 'block',
-    reason: 'impl-tracker audit guard:\n- ' + problems.join('\n- ') +
-      '\nRun `impl-tracker-unifier done <id>` (pre-flight, then the audit), fix FAIL findings, or ask the user to skip the audit in chat.'
+    reason: 'impl-unifier audit guard:\n- ' + problems.join('\n- ') +
+      '\nRun `impl-unifier done <id>` (pre-flight, then the audit), fix FAIL findings, or ask the user to skip the audit in chat.'
   }));
 }
 process.exit(0);

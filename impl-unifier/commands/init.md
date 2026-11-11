@@ -1,4 +1,4 @@
-# impl-tracker-unifier: init
+# impl-unifier: init
 
 Read from SKILL.md § Workflow per command. Rules, read budget and quality checks stay in SKILL.md.
 

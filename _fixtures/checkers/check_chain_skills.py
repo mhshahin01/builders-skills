@@ -19,7 +19,7 @@ ROLES = {
     "pre-sdd-unifier": ("E2E Architect", SD),
     "sdd-unifier": ("Software Architect", SD),
     "lld-unifier": ("Tech Lead", SD),
-    "impl-tracker-unifier": ("Developer / software engineer", SD),
+    "impl-unifier": ("Developer / software engineer", SD),
     "tutorialize-unifier": ("Mentor / assistant", SD),
 }
 EXTENSIONS = (".md", ".py", ".mjs", ".js", ".json", ".yaml", ".yml", ".css", ".html", ".txt")

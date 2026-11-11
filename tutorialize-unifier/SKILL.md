@@ -240,7 +240,7 @@ Run mode: solo
 | E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
 | Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
 | Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
-| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-unifier | - | Not started | - | - | - | - |
 
 ## Handoff requests
 
@@ -273,7 +273,7 @@ Run mode: solo
 - **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
 - **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
 - **Writers outside the project root:**
-  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `impl-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
   - `tutorialize-unifier` only reads the board and has no row.
 
 ## Follow-up requests this skill should handle the same way

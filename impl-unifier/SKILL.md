@@ -1,5 +1,5 @@
 ---
-name: impl-tracker-unifier
+name: impl-unifier
 description: >-
   Track implementation against the BRD, SDD and LLD. Use to plan implementation, split a feature into tasks,
   pick what to build next, start or finish a task, log a bug or gap, audit consistency, record a lesson or
@@ -15,7 +15,7 @@ description: >-
 
 The seventh stage of the documentation chain:
 
-    SoW → BRD → Pre-SDD → SDD → LLD → **impl-tracker** → code
+    SoW → BRD → Pre-SDD → SDD → LLD → **impl-unifier** → code
 
 It turns an approved LLD into an ordered, dependency-checked task ledger, keeps that ledger true while
 code is written, and reports the gap between what the documents require and what the code does.
@@ -44,7 +44,7 @@ Support files (paths relative to this skill folder):
 | `audit-rules.md` | The auditor subagent, layer matrix, tool evidence, verdicts, auditor prompt, clean export, parallel audits |
 | `scripts/preflight.py` | Pre-flight: the mechanical checks run before any audit (tree, trailers, status, Owns, tests, stack, lesson checks) |
 | `scripts/paperwork.py` | `--set-status` and `--gap-du`: the paired writes of rule 1a |
-| `scripts/history.py` | `--history` / `--history-start`: rebuilds `tracking/history.md` (time per task, over-threshold signals, problems, root-cause counts) from recorded facts only |
+| `scripts/history.py` | `--history` / `--history-start`: rebuilds `tracking/history.md` (a `## Speed` block per week, time per task, over-threshold signals, problems, root-cause counts) from recorded facts only |
 | `hooks/stop-audit-guard.js` | Optional Claude Code Stop hook: blocks ending a turn while a task is `In review` without a passing audit |
 
 ---
@@ -56,13 +56,13 @@ Support files (paths relative to this skill folder):
 | `CLAUDE.md` defaults | The project instruction file (`AGENTS.md`, or `CLAUDE.md`). |
 | `AskUserQuestion` | Ask in chat: numbered questions with options, recommendation first. Wait. |
 | `Agent` tool | Used by `plan deep` and by the audit. Otherwise run the step yourself as a separate pass that starts from the fixed inputs only. |
-| Invoking | Claude Code `/impl-tracker-unifier <cmd>`; Codex `$impl-tracker-unifier <cmd>`; Kimi `/skill:impl-tracker-unifier <cmd>`. |
+| Invoking | Claude Code `/impl-unifier <cmd>`; Codex `$impl-unifier <cmd>`; Kimi `/skill:impl-unifier <cmd>`. |
 
 ---
 
 ## Argument parsing: do this first
 
-`impl-tracker-unifier <command> [target] [flags]`
+`impl-unifier <command> [target] [flags]`
 
 | Command | Target | Does |
 |---|---|---|
@@ -70,7 +70,7 @@ Support files (paths relative to this skill folder):
 | `discover` | `[KEY]` | Re-scan the code; match new/changed items to tasks; open gaps (discovery-rules.md). |
 | `plan` | `KEY` or `KEY/UC-NN[,…]` or `KEY/P2`; flags `slice`, `reslice` | Split the LLD (and its BRD/SDD links) into tasks for that scope; with `slice`, group them into ordered end-to-end slices (slice-rules.md); `reslice` regroups existing tasks. |
 | `next` | `[KEY]` | Show the next ready task(s), with why it's next. |
-| `wave` | `[KEY] [n]` | Pick up to n (default 4) ready tasks that can be built together; start them on approval. |
+| `wave` | `[KEY] [n]` | Pick up to n (default 3) ready tasks that share no file; build them in parallel worktrees, test them one at a time, run the full suites once, audit them in parallel. |
 | `start` | `KEY/T-NNN` | Check readiness and ownership; set In progress; print the task brief. |
 | `done` | `KEY/T-NNN[,KEY/T-MMM…]` | Pre-flight, then one fresh audit per task (in parallel for several); set Done; unblock dependents. |
 | `audit` | `KEY/T-NNN`, `KEY/UC-NN` or `KEY` | Run the consistency auditor (audit-rules.md); write the report; open gaps and lessons. |
@@ -107,17 +107,18 @@ Read **only** the file for the command being run (it holds every step), then fol
 | plan | `commands/plan.md` |
 | wave | `commands/wave.md` (then start, done) |
 | start | `commands/start.md` |
-| done | `commands/done.md` |
+| done | `commands/done-fast.md`; after a FAIL also `commands/done-fix.md` |
 | next, slice, report, verify, audit, lesson, change, gap, docs, standup, status, sync, discover | `commands/other.md` |
 
-A task run end to end reads `commands/start.md` and `commands/done.md` once each.
+A task run end to end reads `commands/start.md` and `commands/done-fast.md` once each; `commands/done-fix.md`
+only when an audit or pre-flight fails, so a task that passes never loads the fix rules.
 
 ## The tracker's board row
 
 The tracker runs in the code repo, and the status board lives in the docs root.
 
 - **Path:** `<docs root>/unifier-status.md`, taken from the `Board` row `init` records in `tracking/config.md`. The docs root may differ from the folder holding the hop folders; the tracker then uses the recorded path as written.
-- **Its row:** the tracker writes only the row whose Skill cell is `impl-tracker-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
+- **Its row:** the tracker writes only the row whose Skill cell is `impl-unifier`, at each stop (the end of a command, a gate stop, a handoff, a wait): State, Version (the doc versions its baseline holds), Updated (UTC), Next step and Waiting on.
 - **Requests:** in `team` run mode (§ Documents chain), for each DU it raises one handoff request on the board to the owning skill (brd-unifier, pre-sdd-unifier for capacity, availability and DR, hosting and tenancy isolation points, sdd-unifier, lld-unifier), for the first hop only, and reuses its pending request on the same DU and skill:
   - `Decided change <KEY>/CHG-NNN (DU-NNN): <summary>`, for a DU decided by a CHG, with the CHG row in `tracking/changes.md` as Link;
   - `Doc gap <KEY>/GAP-NNN (DU-NNN): <question>`, for a DU waiting on an owner's decision, with the gap row as Link.
@@ -148,7 +149,7 @@ Run mode: solo
 | E2E Architect | Software Development & Delivery | pre-sdd-unifier | - | Not started | - | - | - | - |
 | Software Architect | Software Development & Delivery | sdd-unifier | - | Not started | - | - | - | - |
 | Tech Lead | Software Development & Delivery | lld-unifier | - | Not started | - | - | - | - |
-| Developer / software engineer | Software Development & Delivery | impl-tracker-unifier | - | Not started | - | - | - | - |
+| Developer / software engineer | Software Development & Delivery | impl-unifier | - | Not started | - | - | - | - |
 
 ## Handoff requests
 
@@ -181,7 +182,7 @@ Run mode: solo
 - **Concurrency:** there is no lock. Re-read the board just before writing, change only the cells you own, and keep the line structure (one table row per line, the column order) and the file's line endings. The accepted risk is two agents writing at the same instant.
 - **Resuming inside a hop** still uses the skill's own master. The board's Next step points to it.
 - **Writers outside the project root:**
-  - `impl-tracker-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
+  - `impl-unifier` runs in the code repo. It writes its row through the docs root its `tracking/config.md` records. When that path is unreachable, it skips the board update and says so in a note.
   - `tutorialize-unifier` only reads the board and has no row.
 
 ## Read budget per command
@@ -201,6 +202,7 @@ Run mode: solo
 | plan, sync, discover | `inventory.md`, code scan per discovery-rules.md § 1, LLD scope files, SDD §7.3 rows for the scope, BRD sections by anchor, doc master headers |
 | every command | + `unifier-status.md` through the `Board` path in `config.md` (its own row and its requests) |
 
+**Archive:** `preflight.py --tracking <t> --archive` moves gaps closed 7 or more days ago to `gaps-archive.md`; grep that file only for a cited ID.
 **Large files (over 20 KB: `gaps.md`, `index.md`, `ownership.md`, `lessons.md`, `changes.md`, `history.md`):**
 never load them whole. Grep the rows the step needs: `gaps.md` rows whose Status starts with `Open` (plus cited
 IDs), `index.md` rows not `Done`/`Verified`/`Dropped` (plus cited IDs), `ownership.md` rows of the owned items,
@@ -221,7 +223,8 @@ reading rows. Script reports are read as their FAIL/WARN rows only.
 - [ ] Every trigger this run (audit FAIL, reopen, closed bug-type gap, user correction) has a lesson row.
 - [ ] Every lesson has a mechanical Check; no duplicate lesson (same root cause + scope).
 - [ ] Every direction change this run has a CHG row with a decider.
-- [ ] Every task has a Risk (`low`/`high` with reason); unclear = `high`.
+- [ ] Every task has a Risk (`low`/`medium`/`high` with reason); unclear = `medium`; `high` only for the
+      task-splitting.md § Risk high list.
 - [ ] Every gap owned by a doc skill has a DU; every DU has a level, a kind, a linked gap, and a decider when
       its level's mode is `ask`; never two doc workers at once; no DU `Verified` without a verifier PASS.
 - [ ] Slice mode: every non-Dropped task has exactly one slice; no task depends on a later slice; the order

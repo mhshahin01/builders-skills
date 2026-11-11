@@ -72,20 +72,27 @@ only wires it. (Source: PLATFORM/T-018 failed three audits on an idle timer buil
 
 ## Risk
 
-Every task card has `Risk`: `low` or `high`, with a short reason. It sets audit depth (audit-rules.md § 1),
-never the gates.
+Every task card has `Risk`: `low`, `medium` or `high`, with a short reason. It sets audit depth
+(audit-rules.md § 1), never the gates.
 
 - `high` when the task **adds or changes the logic** of any of: encryption or keys,
   authentication/authorization, concurrency (a lock, cache, claim or queue it creates or changes), sending
   or money (submissions, replies, caps), consent, personal data writes, data deletion or retention,
   migrations that change existing data, external adapters with side effects.
-- `low` otherwise, including: logging and observability fields, tests-only tasks (race tests too), stubs
-  and ports, read-only endpoints, additive migrations of new tables, UI that displays or uploads through an
-  existing endpoint, docs-only work. Calling high-risk code that another task owns does not make a task
-  `high`. (S-06: SHAREDKERNEL/T-013 log field, RESUME/T-003 test, AUTOAPPLY/T-003 stubs were `high` and
-  cost 2 to 13 h each.)
-- Unsure → `high`. A task becomes `high` when its diff turns out to touch any item above; pre-flight P9
-  enforces this mechanically. Only the user can lower `high` to `low`, quoted on the card.
+- `medium` when nothing on the high list applies, but the task has I/O (an endpoint, migration, UI, event,
+  external call or job) at size M or L, or it edits a file that holds high-risk code without changing that
+  code. The audit keeps the strongest model and trades the full prompt for the focused one (10 minutes).
+- `low` otherwise: size S with no I/O, and also logging and observability fields, tests-only tasks (race
+  tests too), stubs and ports, read-only endpoints, additive migrations of new tables, UI that displays or
+  uploads through an existing endpoint, docs-only work. Calling high-risk code that another task owns does
+  not make a task `high`. (S-06: SHAREDKERNEL/T-013 log field, RESUME/T-003 test, AUTOAPPLY/T-003 stubs
+  were `high` and cost 2 to 13 h each.)
+- Unsure → `medium`. `high` is for the list above only: 181 of the first 204 tasks were `high`, 81 of them
+  size S, because one high-risk word anywhere in a touched file forced it, and each paid for the full audit.
+- Pre-flight P9 enforces the floor from the diff: a high-risk pattern on a line the task added, changed or
+  removed needs `high`; one elsewhere in a file the task edits needs at least `medium`. A `high` card whose
+  diff changes no high-risk line may be set to `medium (P9: no high-risk line in the diff)` when nothing on
+  the high list applies. Going below the P9 floor needs the user's words, quoted on the card.
 
 Test-only files (`src/test/`, `e2e/`, `*.spec.ts`, `playwright.config.ts`) never raise Risk: an e2e task is
 `low` unless it changes production code; pre-flight P9 ignores those files.

@@ -40,12 +40,8 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
      contract between services is level `SDD` or above.
    - **Test plan from the rules**: which fakes or models stand in for the other side and how each answers
      by the real rule (L-035). For every claim, lease or fencing token: a test where the stale holder
-     finishes while the new holder is still mid-flight, and the token conjunct on its own line so
-     `## Removals` can delete it (L-062). Number the invariants `I1…In`: each gets a guard line in
-     `## Removals` tagged `(In)` against the test that exercises it (for a race or at-most-once rule, the
-     interleaving test), or `- In: no guard line: <reason>`. P14 fails an untagged invariant (also in `--lint`),
-     so a test that passes with its mechanism removed is found by `--removals`, not by the audit (T-008, T-009,
-     PLATFORM/T-029 audit 1).
+     finishes while the new holder is still mid-flight (L-062). Number the invariants `I1…In`: each gets a row
+     in the Test map naming the test that exercises it (for a race or at-most-once rule, the interleaving test).
      **Shared state needs a race test (P17, L-010, L-098):** an invariant on state that two threads or fetches share
      (no X while Y, at most one, a pause, a lock, a claim) names a latch-parked test repeated 20 times in the Test
      map; a gate (pause, breaker) is re-checked after the slot is taken, right before each send. `--lint` fails P17
@@ -55,13 +51,13 @@ Read from SKILL.md § Workflow per command. Rules, read budget and quality check
      out-of-range times and numbers)? It answers 400 and is tested (L-117). (b) *Other channels:* does a "never" or "only" rule cover
      every route to the thing, not the obvious one (egress: redirects, IP literals, WebSockets, WebRTC) (L-119)? (c) *Every call site:*
      a rule stated for "any X" gets one test per place X can happen (L-120). (d) *Settings:* a configured value is tested by behaviour at a
-     value apart from its default (L-121). (e) *SQL:* each condition of a predicate named by an invariant has a guard or a test only it
-     fails; P18 checks this (L-118).
-   - **Test map (before any code):** one line per card promise, DoD item, invariant, `no guard line` reason and
-     cancel or shutdown line: the test that proves it, and the line whose deletion must fail that test. A promise
+     value apart from its default (L-121). (e) *SQL:* each condition of a predicate named by an invariant has a test only it
+     fails (L-118).
+   - **Test map (before any code):** one line per card promise, DoD item, invariant and cancel or shutdown
+     line: the test that proves it. A promise
      moved to another task is added to that card with a gap or CHG. A concurrent test also gets a hard time limit
-     and releases parked workers in a `finally`, so a removed guard fails instead of hanging. Most first-audit
-     FAILs are a missing row here; each one costs a full mutate, removals, pre-flight and audit round.
+     and releases parked workers in a `finally`, so a broken guard fails instead of hanging. Most first-audit
+     FAILs are a missing row here; each one costs a pre-flight and audit round.
    Then one fresh reviewer (Agent tool, `general-purpose`, model `haiku`, about 3 minutes, read-only) checks
    the design check against the cited docs. Pass it **only** the card's `## Design check` text and the cited
    anchor sections pasted inline (never the whole doc file, never the code); it returns missing invariants,

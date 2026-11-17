@@ -102,5 +102,5 @@ worth it when several products share one tracker (not now).
 | `slice-rules.md` | Slice mode: end-to-end slices, order (its one home is `tracking/config.md` § Slices), delivery gate, manager report |
 | `lessons-rules.md` | Lessons, recall, promotion, the change log |
 | `audit-rules.md` | The fresh auditor, layer matrix, verdicts, clean export, Stop hook |
-| `scripts/` | `preflight.py` (mechanical checks before any audit; suites deferred to the wave end by default, `--full-suites` and `--suites` run them) and `history.py` (builds `tracking/history.md` from recorded facts, with a `## Speed` block per week) |
+| `scripts/` | `preflight.py` (mechanical checks before any audit; the `--quick` related tests are the only test gate: no full suites, mutation or removals) and `history.py` (builds `tracking/history.md` from recorded facts, with a `## Speed` block per week) |
 | `hooks/` | `stop-audit-guard.js`, an optional Claude Code Stop hook that blocks ending a turn while a task is In review without a passing audit; `post-commit-lint.sh`, an optional git post-commit hook that lints the commit's task |

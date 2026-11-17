@@ -130,31 +130,19 @@ asks before writing.
     security and concurrency, and re-runs pre-flight in audit mode instead of trusting the pasted result.
 8b. **Speed never removes a gate.** Waves, parallel audits and risk tiers change only order and depth;
     every task still gets its own gates, pre-flight, fresh auditor, report and verdict.
-8c. **Run each thing once.** Full test suites run once per code tree (their rows are kept by code tree,
-    whatever task asked: a wave run, a neighbour's run or `--suites` on the same code is reused, and only a
-    required suite with no passing row runs again); one export per wave
-    is reused; a re-audit checks only the delta. Anything re-run must have a reason: the code differs from
-    the tree the report names, report missing, any non-zero failures/errors/skipped, count below the last
-    passing run, or the fix touched the layer. Auditors reuse a valid pre-flight and run only the task's test classes
-    (twice only when the task owns concurrency or timing logic, audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`).
-    The pre-flight caches its suite rows and raw mutation survivors (`tracking/preflight-cache.json`): a
-    re-run whose code is unchanged (only tracking/ files changed, e.g. a card, an equivalent-mutant line or a
-    Touches line) reuses both and re-judges in seconds. `--mutate` stores its result there too, and the first
-    full run reuses it for unchanged code; the removals report survives test-only fixes elsewhere. Never re-run a full pre-flight to fix paperwork: fix
-    it, `--lint`, then re-run (it reuses). Budget: one full pre-flight per task; a second needs a code fix.
+8c. **Run each thing once.** One export per wave is reused; a re-audit checks only the delta. Anything re-run
+    must have a reason: the code differs from the tree the report names, report missing, any failure, or the
+    fix touched the layer. The pre-flight reuses a passing `--quick` on the same code. Auditors reuse a valid
+    pre-flight and run only the task's test classes (twice only when the task owns concurrency or timing logic,
+    audit-rules.md § 3a). Mechanical checks run first in seconds (`--lint`). Never re-run a pre-flight to fix
+    paperwork: fix it, `--lint`, then re-run (it reuses). Budget: one pre-flight per task; a second needs a code fix.
 8e. **Fewer, tighter rounds.** Audit claims freeze at audit 1; only the 7 big points (audit-rules.md § 4)
     can FAIL a task, everything else is a minor gap; after 2 FAILs the user decides (§§ 1c, 4). Test
-    strength is measured by tools (P10 mutation, P11 template bindings), never by a hand sweep repeated each
+    strength is measured by the Test map, P19 and P11 (template bindings), never by a hand sweep repeated each
     round. Audit budget 15-25 min (§ 1d). Small points are the script's job, caught in seconds by `--lint`.
-8f. **Full suites once per wave, deferred by default.** A per-task pre-flight runs the related tests + the
-    reused `--mutate` in place of the full suites, with no flag (user, 2026-11-11: "Go with the recommended
-    approach"). Only three things make the script run the suites on a per-task run, and its `P5 suites` row
-    names the one that did: a new bean type, a config or build file, production code no passing `--mutate`
-    covers. A migration, a removed bean or a changed `@Profile` does not: the related tests hold the migration
-    neighbours and the always-run tests load the context. The full suites run once after the wave's last task
-    (one pre-flight with every wave task and `--full-suites`) and in `slice deliver` (`--suites`,
-    slice-rules.md § 5). A red full run there reopens the task whose classes fail (CHG-029, user: "Apply
-    all 10"). The cost accepted: a cross-task break shows at the wave end or the slice gate, not per task.
+8f. **No full suites, no mutation, no removals** (user, 2026-11-17). The related tests (the `--quick` set:
+    own, always-run, migration neighbours, covering) are the only test gate, per task and per wave. The cost
+    accepted: a break outside the related set shows only when someone runs a full suite by hand.
 8d. **Find mistakes early.** The cheapest gate catches each class of mistake: paperwork → `--lint`; design
     gaps, missed neighbours and missing contract fields → the design check (risk `high`); code defects →
     the audit. A task that fails its first audit records which earlier gate should have caught it.

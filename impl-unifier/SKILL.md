@@ -70,7 +70,7 @@ Support files (paths relative to this skill folder):
 | `discover` | `[KEY]` | Re-scan the code; match new/changed items to tasks; open gaps (discovery-rules.md). |
 | `plan` | `KEY` or `KEY/UC-NN[,…]` or `KEY/P2`; flags `slice`, `reslice` | Split the LLD (and its BRD/SDD links) into tasks for that scope; with `slice`, group them into ordered end-to-end slices (slice-rules.md); `reslice` regroups existing tasks. |
 | `next` | `[KEY]` | Show the next ready task(s), with why it's next. |
-| `wave` | `[KEY] [n]` | Pick up to n (default 3) ready tasks that share no file; build them in parallel worktrees, test them one at a time, run the full suites once, audit them in parallel. |
+| `wave` | `[KEY] [n]` | Pick up to n (default 3) ready tasks that share no file; build them in parallel worktrees, test them one at a time (the `--quick` sets only), audit them in parallel. |
 | `start` | `KEY/T-NNN` | Check readiness and ownership; set In progress; print the task brief. |
 | `done` | `KEY/T-NNN[,KEY/T-MMM…]` | Pre-flight, then one fresh audit per task (in parallel for several); set Done; unblock dependents. |
 | `audit` | `KEY/T-NNN`, `KEY/UC-NN` or `KEY` | Run the consistency auditor (audit-rules.md); write the report; open gaps and lessons. |

@@ -58,10 +58,10 @@ Inputs:
 |---|---|
 | Re-run pre-flight `--audit-mode` (seconds), read card, cited anchors, the task's commits | 5 min |
 | Walk the big points (§ 4) layer by layer, with evidence | 10 min |
-| Tests: the task's own classes (pre-flight counts reused), at most 3 hands-on probes for claims P10/P11 cannot reach | 5-10 min |
+| Tests: the task's own classes (pre-flight counts reused), at most 3 hands-on probes of key invariants | 5-10 min |
 | Delta re-audit (§ 1c): previous findings + fix commits only | ≤ 10 min |
 
-The auditor spends its time on big points only: it does not build mutant sweeps (P10 does), map template
+The auditor spends its time on big points only: it does not map template
 bindings (P11 does), check trailers, Owns, status or lesson coverage (pre-flight does), or grade card text.
 Over budget → finish the layer in hand, record unchecked layers as `not reached` in LAYERS (the tracker
 re-runs only those). Report header records start and finish time.
@@ -85,7 +85,7 @@ The auditor never works in the repository's working tree:
    Then verify and record in the report: `git -C <export> status --porcelain` is empty and
    `git -C <export> rev-parse HEAD` equals the task head. Either fails → fresh export.
    Each auditor still gets an export at exactly its own task head; never two auditors in one export.
-2. The auditor runs code, tests, tools and any mutation experiment **only in the export**. It reads the
+2. The auditor runs code, tests, tools and any hand probe **only in the export**. It reads the
    repository's code only through `git log` / `git show` / `git diff`, and the docs from the docs root.
 3. After the audit - finished, failed, or stopped by the user - the tracker runs `git status` on the code
    root; any change there is reverted before the next commit and noted in the report.
@@ -169,8 +169,7 @@ environment real:
      `failures=0 errors=0 skipped=0 · exit 0`. Commits of other tasks between the task head and that tree do
      not break reuse: the tests passed on the integrated code, which is the code that is pushed (a shared
      checkout made the old "tree = task head" rule fail almost every time, and each failure cost the auditor a
-     full suite run). A report whose `P5 suites` row says `deferred` (rule 8f) is reusable the same way: its
-     `P5 related tests` row stands for the suites until the wave-end or slice-deliver run.
+     full suite run). The report's `P5 related tests` row is the only test row (rule 8f: no full suites).
    - Reuse holds → the auditor runs, in the export, every test class the task added or changed plus the
      classes covering its diff. Risk `high` runs that set **twice** when the task's own non-test code is high risk (a tests-only
      task - every changed file under `src/test/`, `e2e/`, `*.spec.ts` - runs its set once) (flaky and clock/DB-dependent tests show
@@ -212,7 +211,7 @@ real defect in a past audit):
 | 3. Contract: code differs from the LLD API/event/error contract, or a cross-layer hop is broken | SHAREDKERNEL/T-002 Boot's handler answered first; PLATFORM/T-016 trace hop |
 | 4. Concurrency/timing: a lock, claim, cache or timer invariant broken, or tested only one thread at a time | RESUME/T-001 cap race run sequentially; PLATFORM/T-018 idle timer |
 | 5. A cited AC behaves wrongly or has no test that reaches it | PLATFORM/T-011 retry key |
-| 6. Gate not real: P10/P11 green but a claimed behaviour still unguarded, or a required suite or env check not run | PLATFORM/T-050 frontend suites never ran |
+| 6. Gate not real: P11/P19 green but a claimed behaviour still unguarded, or a required test or env check not run | PLATFORM/T-050 frontend suites never ran |
 | 7. Resilience: an external call with no timeout or no tested failure path | AUTOAPPLY/T-010 SSM call under the lock |
 
 Everything else is **minor** (a gap, never a FAIL): card text, wrong commit cited, missing History or
@@ -222,22 +221,11 @@ doc-impact-rules.md § 1), naming,
 log level, an extra test that would be nice. Code that **contradicts** the LLD is never paperwork: that is
 big point 3.
 
-**Auto-skipped mutants (L-054).** The P10 row lists starting-value survivors as `auto (initial values)`; files
-with no logic (templates.md § Mutation suites) are not mutated. The auditor reads the `auto` list: a starting
-value that changes what the user sees or what is sent before any other assignment (a default choice, a default
-mode, a limit) is not a starting value but behaviour, and an untested one is major (big point 6).
-
-**Test strength comes from P10, not hand mutants.** When `config.md` has § Mutation suites, the auditor
-reads the P10 rows of the pre-flight report and the `<T-NNN>-removals.md` report (P14; it may re-run
-`--removals` in the export as its probe), and checks each `## Equivalent mutants` reason; it does not
-build its own mutant sweep. A P10 row `reused from --mutate` is valid (the full run's covering tests include
-the task's own). **The invariant map is the probe list:** P14 has already checked that every Design check
-invariant has a `(I<n>)`-tagged guard or a `no guard line` reason. The auditor judges the map: does the named
-test exercise that invariant (for a race or at-most-once rule, the interleaving test, not a neighbour), and is
-each `no guard line` reason true? A wrong test or reason is major (big point 6). Its hands-on probe targets the
-weakest pair in that map. A claim on the card that P10 cannot reach (UI focus, timing, config wiring) gets
-**one** hands-on probe; a surviving probe is major. Without § Mutation suites, at most 5 hand probes, the
-ones most likely to break a cited AC.
+**Test strength comes from the Test map.** The card's Test map names, for every Design check invariant
+`I<n>`, the test that exercises it. The auditor judges the map: does the named test exercise that invariant
+(for a race or at-most-once rule, the interleaving test, not a neighbour)? A wrong test is major (big point 6).
+At most 5 hands-on probes (deleting a guard line in the export and running its test), the ones most likely to
+break a cited AC; a surviving probe is major.
 
 Finding → gap type: missing layer work = `layer-miss`; missing/wrong logs, metrics, audit trail, events =
 `obs-gap`; differs from doc = `code-drift`; defect = `bug`; no test = `untested-ac`; outside Owns =
@@ -249,7 +237,7 @@ Finding → gap type: missing layer work = `layer-miss`; missing/wrong logs, met
   finding as-is → gap stays open with `accepted by user: "<quote>"`.
 - Loop limit: after the **2nd** FAIL on the same task, stop and ask the user with three options: fix and
   re-audit, split the task (the passing part goes Done), or accept the open findings as gaps. Two FAILs
-  usually mean a doc-gap, a wrong split, or a missing P10 suite, not a careless builder.
+  usually mean a doc-gap, or a wrong split, not a careless builder.
   **One exception, no question:** when every finding of the 2nd FAIL is test-only (the production code is
   correct as written, no blocker, and the fix touches only test files and the card), the tracker runs one
   automatic fix round and a delta re-audit (commands/done-fix.md § The second FAIL). A 3rd FAIL, or a fix
@@ -295,18 +283,15 @@ Pre-flight report: <path> for head <sha>. Reject it if its sha is not the head a
 `python <skill>/scripts/preflight.py --tracking <tracking> --task <KEY/T-NNN> --audit-mode` yourself;
 INFO and SKIPPED rows were not checked by the script: verify them. Tests (§ 3a item 3): reuse the
 pre-flight counts if line 1 head is the task head, its `P5 reuse` row says reusable (re-check that the code
-equals the tree the report names) and every test row is zero failures/errors/skipped (suites, or the related
-tests when the `P5 suites` row says deferred); then run the test classes this task added or changed
+equals the tree the report names) and the `P5 related tests` row is zero failures/errors/skipped; then run the test classes this task added or changed
 plus those covering its commits (risk high: run them twice only when the task owns concurrency or timing logic, § 3a; add one hands-on probe of a key invariant
-from the card's ## Design check). Otherwise run the full suites. State which in the report's Tests line.
+from the card's ## Design check). Otherwise run the related set yourself. State which in the report's Tests line.
 Targeted spec runs: build `--include` paths from the project's angular.json test `include` entries (they
 resolve against `projects/<app>/src`, e.g. `../../../libs/...`); a run with 0 tests is a failure, never a count.
 Design check (risk high): verify the code keeps every invariant in the card's ## Design check and that the
 specs model the real rule each invariant depends on (L-035).
-Test strength: read the pre-flight P10 (mutation) and P11 (template bindings) rows and judge each
-## Equivalent mutants reason; do not build your own mutant sweep. Judge the card's ## Removals invariant map
-(each `(I<n>)` guard → the test that exercises it; each `no guard line` reason): your probe goes to the
-weakest pair. Blocker/major only for the 7 big points
+Test strength: read the pre-flight P11 (template bindings) and P19 (tests map) rows. Judge the card's Test
+map (each invariant `I<n>` → the test that exercises it): your probe goes to the weakest pair. Blocker/major only for the 7 big points
 (audit-rules.md § 4); everything else is minor. Budget 15-25 min (§ 1d); write start and finish time.
 Re-audit: grade only the claims fixed at audit 1; new issues in unchanged code are minor unless security,
 data loss or a broken cited AC (§ 1c Frozen scope).

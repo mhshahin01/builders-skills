@@ -30,21 +30,9 @@ Exact templates for every file the skill writes in `./tracking/`. Replace `<rel>
 |---|---|
 | Compose file | <e.g. docker-compose.yml, or -> |
 
-## Preflight suites
-
-| Suite | Command | Reports | Required when |
-|---|---|---|---|
-| backend | <e.g. cd api && mvn -B -q clean test> | <e.g. api/target/surefire-reports/TEST-*.xml> | paths: api/ |
-| frontend-app | <e.g. cd web && npx ng test app --watch=false --reporters=junit --output-file=test-results/app.xml> | <e.g. web/test-results/app.xml> | paths: web/ |
-| frontend-admin | <e.g. cd web && npx ng test admin --watch=false --reporters=junit --output-file=test-results/admin.xml> | <e.g. web/test-results/admin.xml> | paths: web/ |
-
-Prefer `paths:` over `always`, so a suite runs only when its own code changed; `paths: web/; not: web/e2e/` excludes prefixes (e2e specs never re-run the unit suites). Required suites run in parallel, so no two suites share a build directory or a report file (pre-flight
-deletes each suite's `Reports` matches before its run). Split independent projects (two Angular apps) into
-their own rows so they run side by side.
-
 ## Always-run tests
 
-Run by `preflight.py --quick` (and first in the full pre-flight) with the task's own test classes, the test
+Run by `preflight.py --quick` (and the pre-flight) with the task's own test classes, the test
 classes that name a table the task's migrations write (P16), and the covering tests of its changed classes:
 cross-cutting rules a task can break without touching their files (module/architecture rules, schema version
 gates, full table or index lists). List here only what those three cannot find.
@@ -52,35 +40,6 @@ gates, full table or index lists). List here only what those three cannot find.
 | Test class | Why |
 |---|---|
 | <e.g. ModuleArchitectureTest> | <module and adapter boundaries> |
-
-## Mutation suites
-
-| Suite | Command | Report | Path prefix | Ext | Exclude |
-|---|---|---|---|---|---|
-| backend | <e.g. cd api && mvn -B -q test-compile org.pitest:pitest-maven:mutationCoverage -DtargetClasses={classes} -DoutputFormats=XML -DtimestampedReports=false -Dthreads=4> | <e.g. api/target/pit-reports/mutations.xml> | api/src/main/ | .java | <optional globs, e.g. `*Constants.java`> |
-| frontend | <e.g. cd web && npx stryker run --mutate {files} --reporters json> | <e.g. web/reports/mutation/mutation.json> | web/ | .ts | <optional globs, e.g. `*-constants.ts`> |
-
-Pre-flight P10 runs these after the test suites pass, **only on the task's changed production files**
-(`{classes}` = Java class names, `{files}` = paths relative to the prefix), so a run takes minutes, not an
-audit round. A mutant that survives fails P10 unless the card's `## Equivalent mutants` lists its
-`File.ext:line` with a reason. Quote the line's code in a second backtick group (P10 prints it): the
-entry then also matches after the line moves, so an edit above it never forces a rerun. `--mutate` runs
-the same suites locally on the task's own tests first (minutes, L-060). The full P10 targets the covering
-tests (the task's tests, tests naming a changed class or its interfaces, tests in its package); survivors
-are re-checked against the suite default for their classes only (Spring beans and constructors run only
-while a context starts), so a run takes minutes. This replaces the hand sweep (L-046): the builder fixes survivors before the
-audit; the auditor reads the report. PIT needs the `pitest-maven` plugin with `pitest-junit5-plugin` in
-the pom; Stryker needs `@stryker-mutator/core` and its runner. No table → P10 is INFO (not checked).
-
-What P10 skips (L-054); everything else still needs a killing test or a reasoned card line:
-- **Files with no logic** are never mutated: `*-options.ts`, `*.routes.ts`, `guides.ts`, `index.ts`, tool
-  configs, plus the suite's `Exclude` globs (comma-separated, matched on the file name or the path).
-- **Starting values (auto):** a surviving BooleanLiteral, ArrayDeclaration or ObjectLiteral mutant on a field or
-  constant declaration line (`readonly x = signal(false)`, `o = { … }`, `private y: T | null = null`), and a
-  StringLiteral there only inside `signal(…)`, `model(…)` or `input(…)`. The P10 row lists them as
-  `auto (initial values, L-054): file:line mutator` so the auditor still sees them; they never fail P10.
-- **Still checked:** number literals (limits), constant strings (UI messages), `computed(…)` and arrow-function
-  fields, and every condition, call, return and statement in components, services and pages.
 
 ## Verify worktree
 
@@ -217,18 +176,6 @@ plain text; the builder adds the name with the test.)
 ## Template bindings (P11: each behaviour binding this task adds to an .html template)
 - `[disabled]="busy()"` → `disablesSaveWhileSaving`
 - `(click)="pickOpen.set(true)"` → `opensPickerOnPick`
-
-## Removals (risk high: every Design check guard, tagged with its invariant; run `preflight.py --removals`)
-- `api/src/main/java/.../RoutingServiceImpl.java` `requireOwner(account, offer);` → `RoutingServiceTest#refusesAnotherAccountsOffer` (I1)
-- `api/src/main/java/.../OfferJob.java` `ON CONFLICT (day) DO NOTHING` → `OfferJobIT#twoRunsAtOnceTheSecondSendsNothing` (I4)
-- I6: no guard line: kept by absence (the job writes no other table; diff review)
-
-Every `I<n>` of the Design check has a tagged guard or a `no guard line: <reason>` bullet (P14). The named
-test is the one that exercises the invariant: for a race or at-most-once rule, the interleaving test, never a
-neighbour test that happens to fail.
-
-## Equivalent mutants (only if P10 reports survivors that no test can kill)
-- `RoutingServiceImpl.java:42` `if (score >= threshold) {` ConditionalsBoundary - `>=` and `>` give the same result: the value is never equal here
 
 ## Doc updates (DUs this task raised; P15)
 - [AUTOAPPLY/DU-004](../../doc-updates.md#autoapplydu-004) - LLD 7.3 tie-break rule (fill-silence, LLD, Verified)
@@ -418,7 +365,7 @@ Failed. `Verified`: the verifier's verdict and date. A failed verification appen
 Auditor: <agent/model> · risk <low|medium|high> · 2026-10-19 · commits <shas> · export <head>
 Time: started <HH:MM> · finished <HH:MM> · <n> min (budget 25; delta 10)
 Pre-flight: [T-014-<sha>.md](../preflight/T-014-<sha>.md) · auditor verdict <as written> · recomputed <verdict>
-Tests: <full run in export | reused pre-flight <file> (code = report tree <sha>) + ran <classes>> · Scope: <full | delta of audit-<n>> · Export: <fresh | reused, clean, HEAD = <sha>>
+Tests: <reused pre-flight <file> (code = report tree <sha>) + ran <classes> | ran the related set in export> · Scope: <full | delta of audit-<n>> · Export: <fresh | reused, clean, HEAD = <sha>>
 
 ## Layers
 | Layer | Applies | Result | Evidence |

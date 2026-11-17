@@ -15,7 +15,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 
 # Implementation Plan
 
-> **What this is.** Every use case in chunks 06*, and every stated report, integration or other section capability with no use case, turned into scoped tasks with stable IDs, ordered so that no task comes before something it depends on. Shared prerequisites and duplicate work are consolidated once.
+> **What this is.** Every use case in chunks 06*, and every stated report, integration or other section capability with no use case, turned into scoped tasks with stable IDs, ordered by phase and then by dependency, so that no task comes before something it depends on. Shared prerequisites and duplicate work are consolidated once.
 >
 > **What this is not.** It is not a design. It names what to deliver and how completion is judged; the solution design (SDD) and low-level design (LLD) own the how.
 
@@ -24,7 +24,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 ## How to use this plan
 
 1. Read [[project-slug]-brd-master.md](./[project-slug]-brd-master.md), then the use cases a task cites, before starting the task.
-2. Work wave by wave. A task can start once every task in its **Dependencies** has reached `Ready for test`. Their acceptance is not a start condition. A team may choose to wait for that acceptance, except when a required case of the dependency lists this task in its Needs cell (chunk 16): that wait would never end.
+2. Work phase by phase, and wave by wave inside each phase. A task can start once every task in its **Dependencies** has reached `Ready for test`. Their acceptance is not a start condition. A team may choose to wait for that acceptance, except when a required case of the dependency lists this task in its Needs cell (chunk 16): that wait would never end.
 3. Tasks listed together in a wave can run in parallel.
 4. Record each task's progress in its **Delivery status**: `Not started`, `In progress`, `Ready for test`, then `Accepted`.
    - `Ready for test` (implemented): the delivery team confirms that every expected deliverable is built and ready for testing. Record the date and who confirmed it.
@@ -35,36 +35,41 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 
 ## Use-case coverage
 
-<!-- Every use case from every 06* chunk appears here with at least one task. -->
+<!-- Every use case from every 06* chunk appears here with at least one task. Rows are ordered by Phase, then by UC ID. Phase is inherited from the Use Case Summary in chunk 05. -->
 
-| Use case | Source chunk | Tasks |
-|----------|--------------|-------|
-| UC-01 [Short Title] | [06a](./06a-use-cases-[persona-slug].md) | TASK-01, TASK-03 |
-| UC-02 [Short Title] | [06a](./06a-use-cases-[persona-slug].md) | TASK-04 |
+| Use case | Phase | Source chunk | Tasks |
+|----------|-------|--------------|-------|
+| UC-01 [Short Title] | Phase 1 | [06a](./06a-use-cases-[persona-slug].md) | TASK-01, TASK-03 |
+| UC-02 [Short Title] | Phase 1 | [06a](./06a-use-cases-[persona-slug].md) | TASK-04 |
+| UC-03 [Short Title] | Phase 2 | [06b](./06b-use-cases-[persona-slug].md) | TASK-05 |
 
 ## Execution sequence
 
-<!-- Document order is execution order. Tasks inside one wave have no dependency path between them. Blocked tasks, and tasks caught in a cycle, are not placed in a wave. A Provisional task stays in its wave. -->
+<!-- Document order is execution order: phases in ascending order, then waves in dependency order inside each phase. A wave holds the tasks of one phase only. Wave numbers run on across phases: the first wave of Phase 2 follows the last wave of Phase 1. Tasks inside one wave have no dependency path between them. Blocked tasks, and tasks caught in a cycle, are not placed in a wave. A Provisional task stays in its wave. -->
 
-| Wave | Tasks (can run in parallel) | Depends on |
-|------|-----------------------------|-----------|
-| 1 | TASK-01, TASK-02 | None |
-| 2 | TASK-03, TASK-04 | Wave 1 |
-| Not sequenced | [TASK-NN, TASK-NN] | [DP-01] |
+| Phase | Wave | Tasks (can run in parallel) | Depends on |
+|-------|------|-----------------------------|-----------|
+| Phase 1 | 1 | TASK-01, TASK-02 | None |
+| Phase 1 | 2 | TASK-03, TASK-04 | Wave 1 |
+| Phase 2 | 3 | TASK-05 | Wave 2 |
+| Not sequenced | Not sequenced | [TASK-NN, TASK-NN] | [DP-01] |
 
 ## Dependency problems
 
-<!-- Circular dependency / Missing prerequisite / Blocker. Flagged here, never presented as a valid sequence. If none: write "None identified." and state what was checked. -->
+<!-- Circular dependency / Missing prerequisite / Phase order conflict / Blocker. Flagged here, never presented as a valid sequence. If none: write "None identified." and state what was checked. -->
 
 | ID | Type | Tasks and use cases affected | Evidence | Needed to unblock | To-do item | Status |
 |----|------|------------------------------|----------|-------------------|-----------|--------|
 | DP-01 | [Circular dependency] | [TASK-05 <-> TASK-07 (UC-05, UC-08)] | [UC-05 Preconditions require the outcome of UC-08; UC-08 step 2 requires the outcome of UC-05] | Recommendation: [how the cycle could be broken]. Decision needed from the product manager. | [TD-NN](./14-todo.md) | [Open / Resolved] |
+| DP-02 | [Phase order conflict] | [TASK-04 (UC-02, Phase 1) needs TASK-05 (UC-03, Phase 2)] | [UC-02 Preconditions require the outcome of UC-03] | Recommendation: [move UC-03 to Phase 1, or split the part UC-02 needs into a Phase 1 task]. Decision needed from the product manager. | [TD-NN](./14-todo.md) | [Open / Resolved] |
 
 <!-- Every dependency problem raises a to-do item, which shuts the delivery gate again: finish this chunk, do not start chunk 16, and report what must be decided. -->
 
 ---
 
-## Tasks
+## Phase 1 tasks
+
+<!-- One "## Phase N tasks" block per phase, in ascending order, holding that phase's task blocks in wave order. -->
 
 ### TASK-01: [Title - a capability, in business terms]
 
@@ -73,6 +78,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 | **Objective** | [What is delivered and for whom, one or two sentences] |
 | **Scope** | In: [what this task covers]. Out: [what it leaves to other tasks, by TASK-NN]. |
 | **Type** | [Foundation / Use-case delivery / Requirement delivery / Cross-cutting] |
+| **Phase** | [Phase 1] |
 | **Wave** | [1] |
 | **Source use cases** | [UC links, or None - section-derived capability; cite its source in Source requirements] |
 | **Source requirements** | [UC rules, NFR, matrix, or linked owning section: 08 / Partner, 09 / Report, 11 / Standard] |
@@ -102,10 +108,18 @@ RULES: delivery-chunks.md in the brd-unifier skill. The BRD body is authoritativ
 
 ---
 
-<!-- Repeat the TASK block for every task, in execution order. -->
+<!-- Repeat the TASK block for every task of this phase, in wave order. Then start the next phase's block. -->
 
-### Not sequenced
+## Phase 2 tasks
 
-<!-- Only when dependency problems exist: the task blocks that are Blocked or caught in a cycle go here, after the last wave, with Wave = "Not sequenced". Remove this heading when every task is sequenced. -->
+### TASK-05: [Title]
+
+<!-- Task block as above. -->
+
+---
+
+## Not sequenced
+
+<!-- Only when dependency problems exist: the task blocks that are Blocked or caught in a cycle go here, after the last phase block, with Wave = "Not sequenced". Each keeps its Phase. Remove this heading when every task is sequenced. -->
 
 <!-- MASTER: [project-slug]-brd-master.md | PREV: 14-todo.md | NEXT: 16-uat-bat-test-cases.md -->

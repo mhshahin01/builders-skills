@@ -22,7 +22,7 @@ Chunks 15, 16, and 17 are outside both options. They stay locked behind the deli
 
 | Part | Chunks | What it settles | The user reviews |
 |---|---|---|---|
-| **1** | 00, 01, 02, 03, 04, 05, plus `[project-slug]-brd-master.md` | Why the product exists, the business terms, scope, personas, journeys, the list of use cases | Scope (in / out), personas, and the Use Case Summary: names, actors, and whether each use case holds one goal. Split or merge now, before the details are written. These drive part 2, and changing them later is costly. |
+| **1** | 00, 01, 02, 03, 04, 05, plus `[project-slug]-brd-master.md` | Why the product exists, the business terms, scope, personas, journeys, the list of use cases with their Phase, Priority, and Complexity | Scope (in / out), personas, and the Use Case Summary: names, actors, and whether each use case holds one goal, and each use case's Phase, Priority, and Complexity (accept or adjust every `(proposed)` value; the UC Stats show the totals). Split or merge now, before the details are written. These drive part 2, and changing them later is costly. |
 | **2** | every `06*` chunk, then 07 | The detailed use cases and the Users & Use Cases Matrix | Main flows, alternate and exception flows, business rules with numbers, acceptance criteria, who may do what |
 | **3** | 08, 09, 10, 11, 12, then 13, then 14 | Integrations, reports, NFRs, UI/UX, appendix. Then the independent review. Then the to-do. | The open items (acceptance loop) and the to-do |
 
@@ -38,7 +38,7 @@ Chunks 05 and `06a` are never collapsed into one file in `parts`, even for a sma
 2. **Write the part's chunks** with the normal rules (templates, business language, plain language, Mermaid policy, no gated diagrams).
 3. **Back-fill earlier parts** (parts 2 and 3 only). Later work changes earlier chunks. Apply the change and list it in the part summary:
    - New business terms and acronyms go into the Glossary (02). New assumptions and dependencies go into 02. New domain rules go into 03.
-   - The Use Case Summary (05) follows the detailed use cases: if part 2 renamed, split, merged, or re-assigned a use case, the use case wins and 05 is updated. If this touches the personas or the scope (04), say so clearly: it is a change to what the user approved in part 1.
+   - The Use Case Summary (05) follows the detailed use cases: if part 2 renamed, split, merged, or re-assigned a use case, the use case wins and 05 is updated. Phase, Priority, and Complexity go the other way: chunk 05 is their home, and each detailed block inherits them. A use case added or split off in part 2 gets proposed values in 05 first. The UC Stats are recounted after any of these changes. If this touches the personas or the scope (04), say so clearly: it is a change to what the user approved in part 1.
    - The user has seen the UC IDs in part 1, so they are never renumbered and never reused (`use-case-quality.md` § UC numbering and IDs). A use case added or split off in part 2 takes the next free ID and is listed under its persona in the summary. IDs inside a persona group can then be out of order, which is expected. A use case merged away keeps its row, marked `Merged into UC-NN`; a removed one keeps its row, marked `Removed: [reason]`.
    - Figures index, Tables index, and Table of Contents in chunk 00.
 4. **Plain-language pass** on the chunks written or changed in this part (`writing-style.md`).
@@ -52,12 +52,13 @@ Show a short part summary:
 
 - The files written, and the chunks of earlier parts that were changed by the back-fill, with the reason.
 - Counts: personas, use cases, Mermaid figures, and the `[NEEDS CLARIFICATION: ...]` markers in this part, counted by question (SKILL.md step 9) and split into gaps and proposals to confirm.
+- The UC Stats of chunk 05: the use-case count per Phase, per Priority, and per Complexity. At the end of part 1, list every `(proposed)` value (use case, attribute, proposed value, one-line reason) and ask the product manager to accept or adjust them. Part 2 inherits the values as they stand when the user says to continue; a value still `(proposed)` keeps its tag and its marker. At the end of part 2, list every use case whose detailed flows give another Complexity under the rubric (SKILL.md § Use-case attributes, Recheck after the details exist), with the rubric line that decides it.
 - **What to review now**, from the table above, in two or three lines.
 - The next step: "Say 'continue' for part N, or tell me what to change first."
 
 Then **stop and wait**. Do not start the next part in the same turn. Do not start it on silence, on a thank-you, or on a question about something else. Start it only when the user says so ("continue", "next part", "part 2", "go on"), or gives corrections and then asks to continue. Under an answer policy that names part checkpoints (SKILL.md step 8, Answer policy), show the part summary and start the next part at once.
 
-When the user gives corrections: apply them to the existing chunks first, rerun the exit checklist of that part, update the summary, and only then move on if they asked to.
+When the user gives corrections: apply them to the existing chunks first (an accepted or adjusted Phase, Priority, or Complexity loses its `(proposed)` tag in 05, in any detailed block that shows it, and in the stats), rerun the exit checklist of that part, update the summary, and only then move on if they asked to.
 
 **A correction removes a persona.** Every use case whose Primary Actor it was must be reassigned to another persona or removed. If the user did not say which, ask before applying anything (one question per use case, recommendation first), and do not continue until it is answered. Where the persona was only a Supporting Actor, take it out of that use case. Its matrix column goes too (part 2).
 
@@ -79,12 +80,12 @@ The independent reviewer runs **once**, here, on the whole BRD.
 
 **Part 1**
 
-In a phase-based BRD, the checks below ask for no use case yet in two cases: for a later phase's scope items, and for a persona or objective that only a later phase serves. Such a persona is listed in 04 with its phase label (SKILL.md § Phase-based BRD).
-
 - [ ] Every persona in 04 has a journey in 05 and at least one use case in the Use Case Summary.
 - [ ] Every use case in the summary has a Primary Actor that is a persona from 04, and sits inside In Scope.
 - [ ] Every In Scope item is covered by at least one use case, or is named as an integration, a report, or an NFR to be written in part 3.
 - [ ] Every Business Objective in 01 is served by at least one use case.
+- [ ] Every active use case in the summary has a Phase, a Priority, and a Complexity, each sourced or tagged `(proposed)`, with one marker above the table while any tag remains. Every In Scope item carries its phase label (SKILL.md § Use-case attributes).
+- [ ] The UC Stats match a recount of the Use Case Summary: each table total, and each phase grid's total against By Phase. Merged and removed rows are counted only on the Not counted line.
 - [ ] UC IDs are sequential across the whole summary when first assigned. (After the user has seen them they are never renumbered, so gaps and out-of-order IDs appear later. That is expected.)
 - [ ] The Glossary covers every business term and acronym used in 00-05.
 - [ ] The Summarized Workflow parses and has its Summary line. No new use-case diagram was drawn (gated); a diagram kept from a transformed source is captioned `Pre-existing - re-verify at step 5`.
@@ -95,6 +96,7 @@ In a phase-based BRD, the checks below ask for no use case yet in two cases: for
 - [ ] Every use case in the summary, except rows marked `Merged into UC-NN` or `Removed`, has a detailed block with all nine sub-sections, at the bar of `use-case-quality.md`.
 - [ ] The matrix (07) is derived from the actor fields by the SKILL.md step 6a rules, checked both ways.
 - [ ] The Use Case Summary (05) matches the detailed headings and actors after the back-fill.
+- [ ] Every detailed block shows the Phase, Priority, and Complexity of its Use Case Summary row, tags included, and the UC Stats match a recount.
 - [ ] No new use-case flowchart was drawn (gated to to-do step 5).
 - [ ] No decision-process narration in content chunks (search for `Resolved on`, `The user selected/answered`, `remains partial`, `option A/B` as narrative). Clarifications decided in this part are recorded in `decision-log.md` with working rule-home links.
 

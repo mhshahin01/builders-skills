@@ -13,7 +13,7 @@ LANGUAGE: Business language only. Steps describe what the actor does and what th
 
 All detailed use cases follow this structure:
 
-- **Actor & Goal**: Who performs it, what they want, what triggers it.
+- **Actor & Goal**: Who performs it, what they want, what triggers it, and its Phase, Priority, and Complexity.
 - **Why**: The business value of this use case.
 - **Preconditions**: What must be true before the use case can start.
 - **Main Flow**: Numbered detailed steps - actor action, system response, alternating.
@@ -34,6 +34,11 @@ All detailed use cases follow this structure:
 | **Supporting Actors** | [Other personas or external business parties involved, each labelled as a persona or an external party, e.g., "Persona: Branch Manager; External: Payment Gateway (08)", or "None"] |
 | **Goal** | [What the actor wants to achieve, one sentence] |
 | **Trigger** | [The business event that starts this use case] |
+| **Phase** | [Phase 1] |
+| **Priority** | [High / Medium / Low] |
+| **Complexity** | [High / Medium / Low] |
+
+<!-- Phase, Priority, and Complexity are inherited from the Use Case Summary in chunk 05, their one home, never set here. Copy each value exactly, with its ` (proposed)` tag while it has one. Change them in chunk 05 first (SKILL.md § Use-case attributes). -->
 
 ### Why
 

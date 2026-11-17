@@ -28,6 +28,7 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 - **Testing Comment** records evidence on failure (what was observed vs expected, screen, day, data used) and any deviation accepted by the business.
 - Every test case traces to a UC, NFR or linked owning requirement section, and its Related Task. A report with no UC cites `09 / [Report]`; never invent a UC for it. The traceability matrix and Coverage gaps include section-derived capabilities.
 - A test case passes only when its **Success Criteria** is fully met; partial behaviour is `Failed` with a comment.
+- Cases are grouped by **phase** (one `Phase N` block per phase, in ascending order, following chunk 15). Inside a phase, sections and cases follow the wave of their Related Task, so a case comes after the cases of the tasks it waits for.
 - **Needs** lists what must be ready before the case can run: the tasks that must have reached `Ready for test` in [15-implementation.md](./15-implementation.md), then the prerequisites below that are not marked (all cases). Those marked (all cases) must be in place before the first case runs. Run each case as soon as its Needs are ready. Do not wait for the rest of its section or for a later wave: sections only group cases for the tester.
 - A task is `Accepted` (complete) when every case that names it in Related Task passes (see Task acceptance). Record it in the task's Delivery status in chunk 15. `Ready for test` alone is not complete.
 - A test case marked **(Provisional)** has an expected result that is not final yet; its Success Criteria names the to-do item it waits for. Do not sign off on it until that item is resolved and the case is refreshed.
@@ -45,7 +46,11 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 
 ---
 
-## 1. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])
+## Phase 1
+
+<!-- One "## Phase N" block per phase, in ascending order. A case belongs to the phase of its Related Task in chunk 15 (when it names more than one task, the latest phase among them). Inside the block: the feature-area sections ordered by the earliest wave of their cases' Related Tasks (sections in the same wave keep the tester's walk: access, then the main journey of chunk 05, then administration), then this phase's Cross-Cutting UI/UX Standards section, then its NFR Acceptance section, each only when the phase has such cases. Cases inside a section follow the wave of their Related Task. Section numbers run on across phases. A feature area with cases in two phases gets a section in each phase block; its TC IDs keep running on. -->
+
+### 1. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])
 
 | TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
 |-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|
@@ -56,15 +61,15 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 | TC-XXX-05 | [Short name] (Provisional) | Verify [behaviour whose expected result is not final] | [Concrete example] | [Documented expectation so far]. Pending TD-NN | UC-NN (E2) | TASK-NN | TASK-NN | | |
 | TC-RPT-01 | [Report check] | Verify [the stated report outcome] | [Concrete report action] | [Source-defined outcome] | [09 / Report](./09-reporting-and-analytics.md) | TASK-NN | TASK-NN; P3 | | |
 
-## 2. [Feature area] ([UC-NN, ...])
+### 2. [Feature area] ([UC-NN, ...])
 
 | TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
 |-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|
 | TC-YYY-01 | [Short name] | Verify [...] | [...] | [...] | UC-NN | TASK-NN | TASK-NN | | |
 
-<!-- One numbered section per feature area: a group of cases that share a screen or a goal (it may cover several use cases, or none). Order: access first, then the main journey of chunk 05, then administration, then the two closing sections below. Normally one 3-letter area code per section. Sections are for reading: each case runs when its own Needs are ready. Related Task is the task that delivers the screen or step the case checks. Needs lists tasks first, then prerequisites: TASK-05, TASK-02; P4. -->
+<!-- One numbered section per feature area: a group of cases that share a screen or a goal (it may cover several use cases, or none). Order inside a phase block: by the earliest wave of their Related Tasks; within one wave, access first, then the main journey of chunk 05, then administration; then the phase's two closing sections below. Normally one 3-letter area code per section. Sections are for reading: each case runs when its own Needs are ready. Related Task is the task that delivers the screen or step the case checks. Needs lists tasks first, then prerequisites: TASK-05, TASK-02; P4. -->
 
-## [N]. Cross-Cutting UI/UX Standards (chunk 11)
+### [N]. Cross-Cutting UI/UX Standards (chunk 11)
 
 <!-- One case per task that shows the standard, or per group of such tasks in the same wave, checked on their own screens and related to them. When the cross-cutting task has nothing of its own to see, the case on the earliest screens also names it in Related Task: that is its required case. -->
 
@@ -73,33 +78,47 @@ RULES: delivery-chunks.md in the brd-unifier skill. One combined UAT/BAT suite; 
 | TC-UIX-01 | [Standard name] - [earliest screens] | Verify [a global UI/UX expectation from chunk 11] on [the earliest screens that show it] | [Screens to exercise] | [The standard, observed] | UC-NN | TASK-NN, TASK-NN | TASK-NN, TASK-NN | | |
 | TC-UIX-02 | [Standard name] - [later screens] | Verify [the same expectation] on [the screens of a later task] | [Screens to exercise] | [The standard, observed] | UC-NN | TASK-NN | TASK-NN | | |
 
-## [N+1]. NFR Acceptance (NFR-01..NFR-NN)
+### [N+1]. NFR Acceptance (NFR-01..NFR-NN)
 
 | TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
 |-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|
 | TC-NFR-01 | [Quality name] | Verify [the business expectation of NFR-NN] | [How it is exercised] | [The business measure from chunk 10] | NFR-NN | TASK-NN | TASK-NN | | |
 | TC-NFR-02 | [Quality name] | Verify [an expectation that can only be judged over time] | [What is logged or observed across the UAT period] (BAT observation) | [The business measure from chunk 10] | NFR-NN | TASK-NN | TASK-NN | | |
 
+## Phase 2
+
+<!-- Same structure as the Phase 1 block: feature-area sections in wave order, then this phase's Cross-Cutting UI/UX Standards and NFR Acceptance sections when it has such cases. -->
+
+### [N+2]. [Feature area] ([UC-NN, ...])
+
+| TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment |
+|-------|---------|----------------|------------|------------------|-----------|--------------|-------|----------------|-----------------|
+| TC-ZZZ-01 | [Short name] | Verify [...] | [...] | [...] | UC-NN | TASK-NN | TASK-NN | | |
+
 ---
 
 ## Traceability Matrix
 
-| BRD Reference | Covered By |
-|---------------|-----------|
-| UC-01 [Use case title] | TC-XXX-01..05, TC-UIX-01 |
-| UC-02 [Use case title] | TC-YYY-01..NN |
-| 09 / [Report title] | TC-RPT-01 |
-| NFR-01 [Quality] | TC-NFR-01 |
+<!-- Rows ordered by Phase, then by reference: use cases first (by UC ID), then section-derived capabilities, then NFRs. -->
+
+| BRD Reference | Phase | Covered By |
+|---------------|-------|-----------|
+| UC-01 [Use case title] | Phase 1 | TC-XXX-01..05, TC-UIX-01 |
+| UC-02 [Use case title] | Phase 1 | TC-YYY-01..NN |
+| 09 / [Report title] | Phase 1 | TC-RPT-01 |
+| NFR-01 [Quality] | Phase 1 | TC-NFR-01 |
+| UC-03 [Use case title] | Phase 2 | TC-ZZZ-01..NN |
 
 ## Task acceptance
 
-<!-- One row per task in chunk 15, in execution order, derived from the Related Task column (retired cases excluded). A task is Accepted (complete) when every required case passes; its Delivery status is recorded in chunk 15, not here. Every task has at least one required case: a task with none goes under Coverage gaps. -->
+<!-- One row per task in chunk 15, in execution order (Phase, then Wave), derived from the Related Task column (retired cases excluded). A task is Accepted (complete) when every required case passes; its Delivery status is recorded in chunk 15, not here. Every task has at least one required case: a task with none goes under Coverage gaps. -->
 
-| Task | Wave | Required cases |
-|------|------|----------------|
-| TASK-01 [Title] | 1 | TC-XXX-01..05 |
-| TASK-02 [Title] | 1 | TC-UIX-01 |
-| TASK-03 [Title] | 2 | TC-YYY-01..NN, TC-UIX-01 |
+| Task | Phase | Wave | Required cases |
+|------|-------|------|----------------|
+| TASK-01 [Title] | Phase 1 | 1 | TC-XXX-01..05 |
+| TASK-02 [Title] | Phase 1 | 1 | TC-UIX-01 |
+| TASK-03 [Title] | Phase 1 | 2 | TC-YYY-01..NN, TC-UIX-01 |
+| TASK-05 [Title] | Phase 2 | 3 | TC-ZZZ-01..NN |
 
 ## Provisional and blocked scenarios
 

@@ -15,11 +15,12 @@ PART OF: BRD - [Project Name]
 
 ## In Scope
 
-<!-- Phase-based BRD only (SKILL.md § Phase-based BRD): every scope item carries its phase label, keeping the roadmap period when the source has one, e.g. "Refund self-service (Phase 1, Q1-2027)". -->
-If no source or request assigns a scope item's phase, use `Phase unknown [NEEDS CLARIFICATION: Which phase includes <item>?]` and register the question in chunk 14. A use-case phase table alone does not assign this item.
+<!-- Every scope item carries its phase label, keeping the roadmap period when the source has one, e.g. "Refund self-service (Phase 1, Q1-2027)". An item whose use cases sit in several phases takes the earliest. A phase no source states is proposed, "(Phase 1, proposed)", and the marker below asks about all of them; leave the marker out when no label is proposed (SKILL.md § Use-case attributes, Scope items). -->
 
-- [Scope item 1]
-- [Scope item 2]
+**[NEEDS CLARIFICATION: proposed phase labels for the scope items marked proposed; confirm or adjust]**
+
+- [Scope item 1] (Phase 1, [roadmap period])
+- [Scope item 2] (Phase 2, proposed)
 
 ## Out of Scope
 
@@ -30,7 +31,7 @@ If no source or request assigns a scope item's phase, use `Phase unknown [NEEDS 
 
 # Personas / Actors
 
-<!-- Different actors that operate the system. Each persona should describe their role, goals, and access level. Every persona listed here becomes a column in the Users & Use Cases Matrix (chunk 07) and owns a detailed use-case chunk (06a, 06b, ...). In a phase-based BRD, a persona that only a later phase serves is listed with its phase label, e.g. "Loyalty Manager (Phase 2)", and gets its use-case chunk when its phase starts (SKILL.md § Phase-based BRD). -->
+<!-- Different actors that operate the system. Each persona should describe their role, goals, and access level. Every persona listed here becomes a column in the Users & Use Cases Matrix (chunk 07) and owns a detailed use-case chunk (06a, 06b, ...). -->
 
 | Persona | Role | Key Goals | Access Level |
 |---------|------|-----------|-------------|

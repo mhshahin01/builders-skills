@@ -164,7 +164,7 @@ An inspection confirming that an earlier answer is still applied is evidence/his
 | Kind | Source |
 |---|---|
 | Open question | `OI-NN` with Status `Open` (chunk 13); every inline `[NEEDS CLARIFICATION: ...]` marker (cite chunk + section or UC ID), `proposed` markers included: a proposal (`[NEEDS CLARIFICATION: proposed ...; confirm or replace]`) is collected like any other marker, and the decision needed is to confirm or replace it |
-| Assumption to validate | Chunk 02 assumptions the source did not state as confirmed fact and whose falsity would change a use-case flow, acceptance criterion, or NFR measure. Also Dependencies whose Status is anything other than confirmed (pending, to be verified, confirmed for one party only). § The delivery gate says when such a row is `Resolved`. Constraints are not assumptions: leave them out. Leave out items that only concern a later phase, unless they change a use case of this release. |
+| Assumption to validate | Chunk 02 assumptions the source did not state as confirmed fact and whose falsity would change a use-case flow, acceptance criterion, or NFR measure. Also Dependencies whose Status is anything other than confirmed (pending, to be verified, confirmed for one party only). § The delivery gate says when such a row is `Resolved`. Constraints are not assumptions: leave them out. |
 | Pending decision | Deferred OIs, consistency findings awaiting a choice, Reviewer Notes whose choice is required to finalise the current BRD, and a correction decided but waiting for application (Status `Decided - pending application`, below). Optional editorial advice/future suggestions stay notes. |
 
 **Priority** is derived from what the item blocks, never from guessed business value:
@@ -189,13 +189,13 @@ The generation check leaves step 2 `In progress`. Step 2 is `Complete` only when
 | Check | What to look for |
 |---|---|
 | C1 Conflicting requirements | Same subject, different rule, number, or actor across chunks (use-case rule vs NFR measure vs chunk 03 definition) |
-| C2 Terminology | A term or persona named or used differently from the Glossary (02), chunk 03, or chunk 04 (a persona's phase label in chunk 04 is not part of its name: SKILL.md § Phase-based BRD) |
-| C3 Scope | A use case outside In Scope; an In Scope item with no use case or requirement (a later phase's item in a phase-based BRD needs none yet: SKILL.md § Phase-based BRD); an Out of Scope item a use case implements |
-| C4 Duplicated requirements | The same fact stated in two homes |
-| C5 Missing requirements | An objective (01) with no use case; a persona with no use case (in a phase-based BRD, neither counts when only a later phase serves it: SKILL.md § Phase-based BRD); an integration (08) or report (09) nothing uses; a precondition nothing delivers |
+| C2 Terminology | A term or persona named or used differently from the Glossary (02), chunk 03, or chunk 04 |
+| C3 Scope | A use case outside In Scope; an In Scope item with no use case or requirement, whatever its phase; an Out of Scope item a use case implements; a scope item whose phase label is not the earliest Phase of its use cases |
+| C4 Duplicated requirements | The same fact stated in two homes. The Phase, Priority, and Complexity a detailed use case shows are inherited from chunk 05 and are not a duplicate (a mismatch is a C8 finding). |
+| C5 Missing requirements | An objective (01) with no use case; a persona with no use case; an integration (08) or report (09) nothing uses; a precondition nothing delivers; an active use case with no Phase, Priority, or Complexity |
 | C6 Broken references | Links, identifiers, figure/table indices, PREV/NEXT footers, master index rows. A link or footer that points at a chunk shown as `Locked` (15-17) or `Pending (part N)` is expected, not a finding. |
 | C7 Use case vs acceptance criteria | A criterion that contradicts the flows or rules; an A/E flow with no criterion; a criterion testing behaviour the flows do not describe |
-| C8 Derived views | Use Case Summary (05) vs use-case headings and actors; matrix (07) vs actor fields (SKILL.md step 6a) |
+| C8 Derived views | Use Case Summary (05) vs use-case headings and actors; the Phase, Priority, and Complexity in each detailed use case vs its Use Case Summary row, `(proposed)` tags included; the UC Stats (05) vs a recount of the Use Case Summary (every table total, and each phase grid's total against By Phase); matrix (07) vs actor fields (SKILL.md step 6a) |
 | C9 Diagrams vs narrative | Only after step 5: every diagram element traces to the narrative, and every documented branch appears |
 | C10 Delivery chunks vs body | Chunk 14 at every write (the § Verification before presenting list); 15-17 once they exist: coverage, references, provisional labels |
 
@@ -285,8 +285,12 @@ One actionable plan consolidating every `06*` use case and every stated section 
   - a cross-cutting NFR (10).
 
   Cite the evidence. No tasks the BRD does not imply (no environment, tooling, or technology setup; that is SDD/LLD territory).
-- `Requirement delivery` tasks cover a stated report, integration or other section capability without a UC, even when used by one persona. A later phase's scope item in a phase-based BRD is not one: it gets its tasks once its phase starts (SKILL.md § Phase-based BRD). Cite its source section and actor. Do not mint a UC to satisfy task coverage. These tasks have the same dependency, deliverable, completion and acceptance fields as UC tasks.
-- Duplicate work across use cases is consolidated into one task that names every use case it serves.
+- `Requirement delivery` tasks cover a stated report, integration or other section capability without a UC, even when used by one persona. Cite its source section and actor. Do not mint a UC to satisfy task coverage. These tasks have the same dependency, deliverable, completion and acceptance fields as UC tasks.
+- Duplicate work across use cases is consolidated into one task that names every use case it serves. Use cases of different phases are consolidated only when they cannot be delivered apart; the task then takes the earliest phase, and its Scope says that the later use case ships early.
+- **Every task has a Phase**, inherited, never chosen:
+  - a `Use-case delivery` task takes the Phase of its use case in chunk 05 (the earliest, when it serves several);
+  - a `Requirement delivery` task takes the phase label of its scope item in chunk 04;
+  - a `Foundation` or `Cross-cutting` task takes the earliest phase among the tasks that need it.
 - A shared rule is checked where it shows. When a `Foundation` or `Cross-cutting` task sets up a rule that other tasks show on their own screens (access by role, a UI standard), each of those tasks carries the rule in its completion criteria for its own screens (`07 matrix: roles marked - are refused`). The shared task's own criteria cover what it delivers by itself. If it has nothing of its own to see, they cover the earliest screens that show it. Chunk 16 relates its test cases the same way (§ Chunk 16, Readiness and acceptance).
 
 **Dependencies and order**
@@ -294,7 +298,8 @@ One actionable plan consolidating every `06*` use case and every stated section 
 - A dependency needs evidence too: a Precondition that another use case or task delivers, something one use case creates and another manages, an include/extend relationship, a shared foundation task. Cite it.
 - A precondition that describes a state reached **by using the product** ("the eSIM is suspended", "the supplier is onboarded") is a dependency on the use case that produces that state. It is not a missing prerequisite. A missing prerequisite is a state that nothing in the BRD can produce.
 - Before declaring a circular dependency, try a split along the dependency: if UC-A needs only steps 1-4 of UC-B, make those steps their own task. Declare a cycle only when no split breaks it.
-- Order tasks topologically. **Document order is execution order**: no task appears before a task it depends on. Group tasks into **waves**; tasks in the same wave have no dependency path between them and can run in parallel. Start with tasks that have no unmet dependencies.
+- Order tasks by **phase first, then dependencies**, both ascending. **Document order is execution order**: phases in ascending order, and inside each phase no task appears before a task it depends on. Group each phase's tasks into **waves**; tasks in the same wave have no dependency path between them and can run in parallel. Start with tasks that have no unmet dependencies. A wave holds one phase's tasks only. Wave numbers run on across phases: the first wave of Phase 2 follows the last wave of Phase 1. The plan has one `## Phase N tasks` block per phase, and the Use-case coverage and Execution sequence tables carry a Phase column, in the same order.
+- A task that depends on a task of a **later** phase is a **phase order conflict** (`DP-NN`): an earlier phase cannot ship without something a later phase delivers. A `Foundation` or `Cross-cutting` task never causes one, because it takes the earliest phase that needs it.
 - On refresh, new tasks take the next `TASK-NN` but are placed where the order requires. IDs are labels, not positions.
 
 **Two milestones per task: `Ready for test`, then `Accepted`**
@@ -316,17 +321,19 @@ Implemented and complete are different states. Each task carries a **Delivery st
 |---|---|---|
 | Circular dependency | Tasks that require each other | List the cycle with its evidence; keep those tasks out of the waves; add a `Recommendation:` for breaking the cycle and a `TD-NN` for the decision |
 | Missing prerequisite | A precondition nothing in the BRD delivers | `DP-NN` + `TD-NN`; dependent tasks marked `Blocked` |
+| Phase order conflict | A task depends on a task of a later phase | `DP-NN` + `TD-NN`; the earlier-phase task is marked `Blocked (DP-NN, TD-NN)`; add a `Recommendation:` (move the needed use case to the earlier phase, or split the part that is needed into an earlier-phase task). The product manager decides; the Phase changes in chunk 05 first (SKILL.md § Use-case attributes). |
 | Blocker | A gap found while deriving the plan that blocks a task's Main Flow | New `TD-NN`; task marked `Blocked` or `Provisional (TD-NN)` |
 
 Every dependency problem raises a `TD-NN`, so it shuts the gate again: finish chunk 15, do not start 16, and report what must be decided. The Dependency problems table has a `Status` column (`Open` / `Resolved`).
 
-**`Blocked` or `Provisional`?** `Blocked`: the task's Main Flow cannot be delivered without the answer; it must not be started. `Provisional (TD-NN)`: the task can start; only the part named by the TD is unsettled. A task that depends, directly or through other tasks, on a `Blocked` or not-sequenced task is `Blocked (waits for TASK-NN)` and leaves the waves too. Not-sequenced task blocks are written after the last wave, under a `### Not sequenced` heading, with `Wave` set to `Not sequenced`.
+**`Blocked` or `Provisional`?** `Blocked`: the task's Main Flow cannot be delivered without the answer; it must not be started. `Provisional (TD-NN)`: the task can start; only the part named by the TD is unsettled. A task that depends, directly or through other tasks, on a `Blocked` or not-sequenced task is `Blocked (waits for TASK-NN)` and leaves the waves too. Not-sequenced task blocks are written after the last phase block, under a `## Not sequenced` heading, with `Wave` set to `Not sequenced`. Each keeps its Phase.
 
 **Every task carries:**
 
 - Task ID and title;
 - objective and scope (in / out);
 - type;
+- phase (inherited, as above);
 - wave;
 - source use-case and requirement references;
 - dependencies by task ID or `None`;
@@ -358,12 +365,13 @@ Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh 
 
 **Format**
 
-- Header comment, Owner / Prepared / Baseline / Design reference line, "How to use this document", "Test environment and data prerequisites" (`P1`, `P2`, ...), numbered feature-area sections, Traceability Matrix, Task acceptance, Provisional and blocked scenarios, Coverage gaps, Execution summary, Exit criteria.
-- Section heading: `## N. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])`. `MK-NN` is the screen or flow row of the chunk 14 mockup coverage table; a screen ID appears only where the source material defined one. A feature area is a group of cases that share a screen or a goal. It may cover several use cases, or none (the reference has a dashboard section). Order the sections the way a tester walks the product: access first, then the main journey of chunk 05, then administration, then cross-cutting UI/UX standards, then NFR acceptance.
+- Header comment, Owner / Prepared / Baseline / Design reference line, "How to use this document", "Test environment and data prerequisites" (`P1`, `P2`, ...), one `## Phase N` block per phase holding its numbered feature-area sections, Traceability Matrix, Task acceptance, Provisional and blocked scenarios, Coverage gaps, Execution summary, Exit criteria.
+- **Order: phase first, then dependencies**, following chunk 15. A case belongs to the phase of its Related Task (the latest phase, when it names more than one task). One `## Phase N` block per phase, in ascending order, holds that phase's sections.
+- Section heading, inside its phase block: `### N. [Feature area] ([UC-NN, MK-NN or screen IDs, NFR-NN])`. Section numbers run on across phases. `MK-NN` is the screen or flow row of the chunk 14 mockup coverage table; a screen ID appears only where the source material defined one. A feature area is a group of cases that share a screen or a goal. It may cover several use cases, or none (the reference has a dashboard section). A feature area with cases in two phases gets a section in each phase block, and its TC IDs keep running on. Inside a phase block, order the sections by the earliest wave of their cases' Related Tasks. Sections of the same wave follow the way a tester walks the product: access first, then the main journey of chunk 05, then administration. The phase's cross-cutting UI/UX standards section, then its NFR acceptance section, close the block when the phase has such cases. Inside a section, cases follow the wave of their Related Task.
 - Table columns, in this order: `TC ID | TC Name | TC Description | TC Example | Success Criteria | Related UC | Related Task | Needs | Testing Result | Testing Comment`. `Related Task` and `Needs` are the two added columns: they tie each case to chunk 15 and say when it can run (§ Readiness and acceptance). `Testing Result` and `Testing Comment` stay empty at generation.
 - `Related UC` names the UC and the proved flow/rule/criterion (`UC-04 (E1, AC-3)`), an NFR, or a linked owning requirement section for a no-UC capability (`09 / Daily report`). Several source references are allowed; do not invent a UC for a report.
 - `TC ID` = `TC-[AREA]-NN`. Normally one 3-letter code per section; a section may hold a second code for a distinct sub-area, as the reference does (`NFR` and `LOG`). `TC Description` starts with "Verify". `TC Example` is a concrete action with realistic data. The prerequisites it needs go in `Needs`, not in the example. `Success Criteria` states the observable outcome in business terms.
-- Phased scope uses a tag at the end of the TC Name (the reference uses `(D2)`). Define every tag in the header SCOPE NOTE **and** in the visible `Scope note` line, because the header comment is stripped on merge.
+- Phases are shown by the phase blocks, never by a TC Name tag. Another scope split (a deliverable inside a phase, for example) uses a tag at the end of the TC Name (the reference uses `(D2)`). Define every tag in the header SCOPE NOTE **and** in the visible `Scope note` line, because the header comment is stripped on merge.
 
 **Exit criteria.** The critical-path sections are those whose use cases carry a Business Objective or sit on the Summarized Workflow of chunk 05. Write the list as a `Recommendation:` for the product manager to confirm; do not present it as decided. The Exit criteria also name each dependency of chunk 02 whose `Needed before` is BAT sign-off (sign-off needs it in place) or go-live (named with its owner: it must be in place before go-live, not before sign-off).
 
@@ -377,7 +385,7 @@ Use the latest narratives and diagrams. When chunks 05 or `06*` change, refresh 
 - A case can run as soon as every task in its `Needs` has reached `Ready for test` (chunk 15) and every prerequisite there is in place. Prerequisites marked `(all cases)` are in place before the first case runs.
 - **Later waves stay out.** Every task in `Needs` comes from the Related Task's wave or an earlier one (when `Related Task` names more than one task, the latest of their waves), so a task's acceptance never waits for a later wave. The one exception is a task with nothing of its own to see (a UI standard, a foundation that shows only on other tasks' screens). It is checked on the earliest screens that show it, in a case that names both tasks in `Related Task`. Later screens are checked in their own tasks' cases.
 - A task's **required cases** are the cases that name it in `Related Task`, retired cases excluded. The task is `Accepted` when all of them pass. Every task has at least one required case; a task with none is a coverage gap.
-- **Task acceptance** lists every task in chunk 15 with its wave and its required cases, derived from the `Related Task` column. The Delivery status itself is recorded in chunk 15.
+- **Task acceptance** lists every task in chunk 15, in execution order, with its phase, its wave, and its required cases, derived from the `Related Task` column. The Delivery status itself is recorded in chunk 15.
 - A case whose Related Task, or a task in its `Needs`, is `Blocked` or not sequenced is a **blocked scenario**: list it under Provisional and blocked scenarios with its `DP-NN` / `TD-NN`. (This is not the `Blocked` testing result, which a tester sets during execution.)
 
 **Coverage per use case** (expected behaviour comes from the approved requirements and use cases; chunk 15 adds coverage, dependencies, and sequencing)
@@ -493,6 +501,8 @@ Later confirmed changes must reach the downstream outputs. IDs stay stable; stat
 | An open item is deferred, or a new one appears | TD row stays or is added; step 1 returns to `In progress` | `Stale` and locked |
 | A use case changes (flows, rules, acceptance criteria, actors) | Recheck matrix/consistency and affected diagrams. Reopen only mockup rows whose actor-visible flow, state, rule, role or content changed; record the before/after impact evidence when keeping approval | Stale until the gate is clear, then refresh affected task/test/slide/video content |
 | A use case is added or removed | All of the above | As above, plus Use-case coverage (15), Traceability Matrix and totals (16), series overview (17) |
+| A use case's Phase changes | Consistency check rerun (UC Stats, detailed block, scope label) | 15 and 16 `Stale`, then refresh the task phases and order, the phase blocks, and the Phase columns. 17 only when it cites the phase. |
+| A use case's Priority or Complexity changes | Consistency check rerun (UC Stats, detailed block) | Nothing: chunks 15-17 do not follow these values. |
 | Scope, NFR, integration, report, or UI/UX standard changes | Consistency check rerun | `Stale`, then refresh the tasks, acceptance cases, and slides citing it |
 | Mockups change after approval | Step 4 returns to `In progress` | `Stale`, then refresh visuals and reference inputs in 17 |
 | The project's `AGENTS.md` / `AGENT.md` changes, appears, or is removed | Consistency check rerun | `Stale`, then refresh what it affects |
@@ -604,6 +614,7 @@ Run the first block whenever chunk 14 is written or updated. Run the second bloc
 - [ ] G1-G5 were verified against the files before 15, again before 16, and again before 17.
 - [ ] Every `06*` use case appears in the Use-case coverage table of chunk 15. A stated report, integration or other section capability without a UC has a `Requirement delivery` task citing its source section and actor; no UC was minted for it.
 - [ ] No task appears before its prerequisites; cycles, missing prerequisites, and blockers are in Dependency problems, not in the waves.
+- [ ] Every task carries the Phase it inherits (§ Chunk 15, Deriving tasks). Chunk 15 is ordered by phase, then by wave; every wave holds one phase's tasks; a task that depends on a later-phase task is a `Phase order conflict` in Dependency problems. Chunk 16 has one phase block per phase, in the same order, and each case sits in the phase of its Related Task.
 - [ ] Every test case traces to a UC, NFR or owning requirement section, and a task. No UC was invented for section-only capabilities. Gaps/provisional cases are explicit; totals equal actual rows.
 - [ ] Every task has a Delivery status (`Not started` when first written). None is `Ready for test` without the delivery team's confirmation, no confirmation predates a refresh that changed the task's Expected deliverables, and none is `Accepted` while one of its required cases has not passed.
 - [ ] Every test case has a `Needs` cell that holds its Related Task. No task in `Needs` comes from a later wave than the Related Task, except in the earliest-screen case of a task with nothing of its own to see. No readiness rule is written per section or per wave.

@@ -26,7 +26,7 @@ The embedded templates are the authoritative source: `TEMPLATE-COMBINED.md` for 
 ## Why
 
 - **Business language only, enforced.** The BRD states the WHAT in plain language. Technical content is never spread into the body; it is parked verbatim in the appendix for the SDD, so nothing is lost and nothing leaks.
-- **User-journey first.** Requirements are per-persona use cases (UC-NN) with numbered steps, alternate and exception flows, business rules, and acceptance criteria, not abstract feature statements. Every persona gets a journey, a use-case chunk (in a phase-based BRD, once its phase starts), and a column in the matrix.
+- **User-journey first.** Requirements are per-persona use cases (UC-NN) with numbered steps, alternate and exception flows, business rules, and acceptance criteria, not abstract feature statements. Every persona gets a journey, a use-case chunk, and a column in the matrix. Every use case carries a Phase, a Priority, and a Complexity; chunk 05 opens with UC Stats that count them.
 - **A real review, not a confirmation.** Every full generation ends with a cleared-context adversarial reviewer subagent that writes chunk 13 (Open Items and Clarifications). Each item carries options with tradeoffs, a paste-ready Recommended Answer, and the Why. The skill then walks the user through accept, adjust, defer, or reject, and applies accepted answers to the body. The reviewer also returns a coverage record, one row per risk area: a review with no findings is valid when every area was checked, and it is re-dispatched only when an area is unchecked, a finding lacks evidence, or the author holds a finding wrong. A re-dispatch never changes an item's status: a finding the reviewer keeps after the author showed it wrong carries a `No change: <evidence>` Recommended Answer that the acceptance loop decides.
 - **Parts by default, with a real stop.** In chunks mode the BRD is written in three parts, stopping after parts 1 and 2 so scope, personas, and the use-case list are agreed before the detail is written.
 - **The matrix is derived, never authored.** The Users & Use Cases Matrix is built from the completed use cases and cross-checked both directions; a contradiction means the use case is fixed first, never the matrix.
@@ -41,7 +41,7 @@ The embedded templates are the authoritative source: `TEMPLATE-COMBINED.md` for 
 ### Usage
 
 ```text
-brd-unifier [chunks|combined] [parts|whole] [light] [phase=N]
+brd-unifier [chunks|combined] [parts|whole] [light]
 ```
 
 | Argument | Action |
@@ -51,10 +51,9 @@ brd-unifier [chunks|combined] [parts|whole] [light] [phase=N]
 | `parts` | Write the BRD in three parts (00-05, then `06*` and 07, then 08-14), stopping for the user's review after parts 1 and 2. Default in chunks mode. |
 | `whole` | Write chunks 00-14 in one run. Always used in combined mode and for pure conversions and targeted updates. |
 | `light` | A light run: no chunk 17, no Miro board, and only the consistency reruns the delivery gate needs; the reviewer and plain-language passes still run (SKILL.md § Light run). |
-| `phase=N` | Names the current phase of a phase-based BRD: detailed use cases only for that phase's scope items, and a `Phase` column in the Use Case Summary (SKILL.md § Phase-based BRD). |
 | (empty) | Resume check first: if `[project-slug]-brd-master.md` shows a part Pending or In progress, continue it; a finished BRD is updated in its own mode without the prompt; otherwise prompt for the mode (chunks is the default). |
 
-Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Code, `$brd-unifier chunks parts` in Codex, `/skill:brd-unifier chunks parts` in Kimi Code. Or describe the task in plain words ("turn this SoW into a BRD") and the agent picks the skill from its description. Words count as arguments too: "in one go" means `whole`, "part by part" means `parts`, "light run" means `light`, and "current phase 1" means `phase=1`.
+Invocation prefix depends on the agent: `/brd-unifier chunks parts` in Claude Code, `$brd-unifier chunks parts` in Codex, `/skill:brd-unifier chunks parts` in Kimi Code. Or describe the task in plain words ("turn this SoW into a BRD") and the agent picks the skill from its description. Words count as arguments too: "in one go" means `whole`, "part by part" means `parts`, and "light run" means `light`. `phase=N` is retired: every use case of every phase is detailed and carries its own Phase (SKILL.md § Use-case attributes).
 
 ### The workflow
 
